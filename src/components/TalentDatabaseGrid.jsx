@@ -1,0 +1,440 @@
+import React from 'react';
+import { Box, Chip, Avatar, Link, Stack, Typography, Tooltip } from '@mui/material';
+import {
+  DataGrid,
+  GridToolbarContainer,
+  GridToolbarColumnsButton,
+  GridToolbarFilterButton,
+  GridToolbarDensitySelector,
+  GridToolbarExport,
+  GridToolbarQuickFilter,
+} from '@mui/x-data-grid';
+import {
+  CheckOutlined,
+  CloseOutlined,
+  DescriptionOutlined,
+  LinkOutlined,
+} from '@mui/icons-material';
+import staffData from '../data/staff_talent.json';
+import '../styles/design-tokens.css';
+
+const CustomToolbar = React.forwardRef((props, ref) => {
+  return (
+    <Box
+      ref={ref}
+      sx={{
+        height: '56px',
+        px: 2,
+        borderBottom: '1px solid var(--color-border-primary)',
+        backgroundColor: 'var(--color-background-secondary)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}
+    >
+      <Box sx={{ 
+        display: 'flex', 
+        gap: 2,
+        '& .MuiButtonBase-root': {
+          textTransform: 'none',
+          fontSize: '0.875rem',
+          fontWeight: 500,
+          color: 'var(--color-text-primary)',
+          minWidth: 'auto',
+          padding: '4px',
+          '&:hover': {
+            backgroundColor: 'var(--color-background-tertiary)'
+          }
+        }
+      }}>
+        <GridToolbarColumnsButton />
+        <GridToolbarFilterButton />
+        <GridToolbarDensitySelector />
+        <GridToolbarExport />
+      </Box>
+      <GridToolbarQuickFilter 
+        sx={{
+          '& .MuiInputBase-root': {
+            backgroundColor: 'var(--color-background-primary)',
+            borderRadius: '4px',
+            height: '36px',
+            width: '240px',
+          }
+        }}
+        debounceMs={150}
+      />
+    </Box>
+  );
+});
+
+CustomToolbar.displayName = 'CustomToolbar';
+
+const BooleanCell = ({ value }) => {
+  if (value === true) {
+    return <Chip icon={<CheckOutlined />} label="Yes" size="small" color="success" variant="outlined" />;
+  }
+  if (value === false) {
+    return <Chip icon={<CloseOutlined />} label="No" size="small" color="default" variant="outlined" />;
+  }
+  return null;
+};
+
+const ArrayCell = ({ value }) => {
+  if (!Array.isArray(value) || value.length === 0) return null;
+  return (
+    <Stack direction="row" spacing={0.5} sx={{ overflowX: 'auto', py: 1 }}>
+      {value.map((item, index) => (
+        <Chip key={index} label={item} size="small" variant="outlined" />
+      ))}
+    </Stack>
+  );
+};
+
+const LinkCell = ({ value, type }) => {
+  if (!value) return null;
+  
+  if (type === 'avatar') {
+    return <Avatar src={value} sx={{ width: 32, height: 32 }} />;
+  }
+
+  return (
+    <Tooltip title="View Document">
+      <Link href={value} target="_blank" rel="noopener noreferrer">
+        <DescriptionOutlined color="primary" />
+      </Link>
+    </Tooltip>
+  );
+};
+
+const columns = [
+  // CONTACT INFO
+  { field: 'firstName', headerName: 'First Name', width: 150 },
+  { field: 'lastName', headerName: 'Last Name', width: 150 },
+  { field: 'phone', headerName: 'Phone', width: 150 },
+  { field: 'email', headerName: 'Email', width: 200 },
+  { 
+    field: 'location', 
+    headerName: 'Location (City, State, Country)', 
+    width: 200,
+    valueGetter: (params) => {
+      const { city, state, country } = params.row;
+      return [city, state, country].filter(Boolean).join(', ');
+    }
+  },
+  { 
+    field: 'workAuthUS', 
+    headerName: 'US Sponsorship?', 
+    width: 150, 
+    renderCell: (params) => <BooleanCell value={params.value} /> 
+  },
+  { 
+    field: 'workAuthCA', 
+    headerName: 'CA Sponsorship?', 
+    width: 150, 
+    renderCell: (params) => <BooleanCell value={params.value} /> 
+  },
+
+  // VOLUNTARY ID
+  { field: 'gender', headerName: 'Gender', width: 120 },
+  { field: 'ethnicity', headerName: 'Ethnicity', width: 180 },
+
+  // AGENT
+  { 
+    field: 'hasAgent', 
+    headerName: 'Has Agent?', 
+    width: 120, 
+    renderCell: (params) => <BooleanCell value={params.value} /> 
+  },
+  { field: 'agentName', headerName: 'Agent Name', width: 150 },
+  { field: 'agencyName', headerName: 'Agency Name', width: 150 },
+
+  // EXPERIENCE
+  { 
+    field: 'proPlayerExp', 
+    headerName: 'Pro Player Exp?', 
+    width: 150, 
+    renderCell: (params) => <BooleanCell value={params.value} /> 
+  },
+  { 
+    field: 'mlsPlayerExp', 
+    headerName: 'MLS Player Exp?', 
+    width: 150, 
+    renderCell: (params) => <BooleanCell value={params.value} /> 
+  },
+  { 
+    field: 'mlsClubsPlayed', 
+    headerName: 'MLS Clubs (Played)', 
+    width: 200, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+  { field: 'otherPlayerExp', headerName: 'Other Exp', width: 250 },
+
+  // INTERESTS
+  { field: 'interestArea', headerName: 'Area of Interest', width: 180 },
+  { 
+    field: 'coachingRoles', 
+    headerName: 'Coaching Roles', 
+    width: 250, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+  { 
+    field: 'execRoles', 
+    headerName: 'Exec Roles', 
+    width: 250, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+  { 
+    field: 'techRoles', 
+    headerName: 'Technical Roles', 
+    width: 200, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+  { 
+    field: 'relocation', 
+    headerName: 'Willing to Relocate', 
+    width: 180, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+
+  // COACHING HIST
+  { 
+    field: 'proCoachExp', 
+    headerName: 'Pro Coach Exp?', 
+    width: 150, 
+    renderCell: (params) => <BooleanCell value={params.value} /> 
+  },
+  { 
+    field: 'mlsCoachExp', 
+    headerName: 'MLS Coach Exp?', 
+    width: 150, 
+    renderCell: (params) => <BooleanCell value={params.value} /> 
+  },
+  { 
+    field: 'mlsCoachRoles', 
+    headerName: 'MLS Roles Held', 
+    width: 200, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+  { 
+    field: 'mlsClubsCoached', 
+    headerName: 'MLS Clubs (Coached)', 
+    width: 200, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+  { 
+    field: 'nonMlsCoachExp', 
+    headerName: 'Non-MLS Exp', 
+    width: 200, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+
+  // SPORTING HIST
+  { 
+    field: 'sportingExp', 
+    headerName: 'Sporting Exp?', 
+    width: 150, 
+    renderCell: (params) => <BooleanCell value={params.value} /> 
+  },
+  { 
+    field: 'mlsSportingExp', 
+    headerName: 'MLS Sporting Exp?', 
+    width: 150, 
+    renderCell: (params) => <BooleanCell value={params.value} /> 
+  },
+  { 
+    field: 'mlsClubsSporting', 
+    headerName: 'MLS Clubs (Sporting)', 
+    width: 200, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+  { 
+    field: 'nonMlsSportingExp', 
+    headerName: 'Non-MLS Exp', 
+    width: 200, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+  { 
+    field: 'sportingVertical', 
+    headerName: 'Vertical', 
+    width: 150, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+
+  // EMPLOYMENT
+  { field: 'currentEmployer', headerName: 'Current Employer', width: 200 },
+  { field: 'prevEmployer1', headerName: 'Previous Employer 1', width: 200 },
+  { field: 'prevEmployer2', headerName: 'Previous Employer 2', width: 200 },
+
+  // EDUCATION
+  { field: 'degree', headerName: 'Degree', width: 150 },
+  { 
+    field: 'mlsPrograms', 
+    headerName: 'MLS Programs', 
+    width: 200, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+  { 
+    field: 'coachingLicenses', 
+    headerName: 'Coaching Licenses', 
+    width: 250, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+  { 
+    field: 'sportingCerts', 
+    headerName: 'Sporting Certs', 
+    width: 150, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+  { 
+    field: 'languages', 
+    headerName: 'Languages', 
+    width: 150, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+
+  // DOCS
+  { 
+    field: 'resumeUrl', 
+    headerName: 'Resume', 
+    width: 100, 
+    renderCell: (params) => <LinkCell value={params.value} type="link" /> 
+  },
+  { 
+    field: 'picUrl', 
+    headerName: 'Profile Pic', 
+    width: 100, 
+    renderCell: (params) => <LinkCell value={params.value} type="avatar" /> 
+  },
+];
+
+const columnGroupingModel = [
+  {
+    groupId: 'Contact Info',
+    children: [
+      { field: 'firstName' },
+      { field: 'lastName' },
+      { field: 'phone' },
+      { field: 'email' },
+      { field: 'location' },
+      { field: 'workAuthUS' },
+      { field: 'workAuthCA' },
+    ],
+  },
+  {
+    groupId: 'Voluntary ID',
+    children: [
+      { field: 'gender' },
+      { field: 'ethnicity' },
+    ],
+  },
+  {
+    groupId: 'Agent',
+    children: [
+      { field: 'hasAgent' },
+      { field: 'agentName' },
+      { field: 'agencyName' },
+    ],
+  },
+  {
+    groupId: 'Playing Experience',
+    children: [
+      { field: 'proPlayerExp' },
+      { field: 'mlsPlayerExp' },
+      { field: 'mlsClubsPlayed' },
+      { field: 'otherPlayerExp' },
+    ],
+  },
+  {
+    groupId: 'Interests',
+    children: [
+      { field: 'interestArea' },
+      { field: 'coachingRoles' },
+      { field: 'execRoles' },
+      { field: 'techRoles' },
+      { field: 'relocation' },
+    ],
+  },
+  {
+    groupId: 'Coaching History',
+    children: [
+      { field: 'proCoachExp' },
+      { field: 'mlsCoachExp' },
+      { field: 'mlsCoachRoles' },
+      { field: 'mlsClubsCoached' },
+      { field: 'nonMlsCoachExp' },
+    ],
+  },
+  {
+    groupId: 'Sporting History',
+    children: [
+      { field: 'sportingExp' },
+      { field: 'mlsSportingExp' },
+      { field: 'mlsClubsSporting' },
+      { field: 'nonMlsSportingExp' },
+      { field: 'sportingVertical' },
+    ],
+  },
+  {
+    groupId: 'Employment',
+    children: [
+      { field: 'currentEmployer' },
+      { field: 'prevEmployer1' },
+      { field: 'prevEmployer2' },
+    ],
+  },
+  {
+    groupId: 'Education',
+    children: [
+      { field: 'degree' },
+      { field: 'mlsPrograms' },
+      { field: 'coachingLicenses' },
+      { field: 'sportingCerts' },
+      { field: 'languages' },
+    ],
+  },
+  {
+    groupId: 'Documents',
+    children: [
+      { field: 'resumeUrl' },
+      { field: 'picUrl' },
+    ],
+  },
+];
+
+export default function TalentDatabaseGrid() {
+  return (
+    <Box sx={{ height: 'calc(100vh - 100px)', width: '100%' }}>
+      <DataGrid
+        rows={staffData}
+        columns={columns}
+        columnGroupingModel={columnGroupingModel}
+        slots={{
+          toolbar: CustomToolbar,
+        }}
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 25,
+            },
+          },
+        }}
+        pageSizeOptions={[25, 50, 100]}
+        checkboxSelection
+        disableRowSelectionOnClick
+        sx={{
+          border: 'none',
+          '& .MuiDataGrid-cell': {
+            borderBottom: '1px solid var(--color-border-secondary)',
+          },
+          '& .MuiDataGrid-columnHeaders': {
+            borderBottom: '1px solid var(--color-border-primary)',
+            backgroundColor: 'var(--color-background-secondary)',
+          },
+          '& .MuiDataGrid-footerContainer': {
+            borderTop: '1px solid var(--color-border-primary)',
+          },
+        }}
+      />
+    </Box>
+  );
+}

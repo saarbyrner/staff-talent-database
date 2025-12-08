@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import LayoutWithMainNav from './components/LayoutWithMainNav'
 import SimplePage from './pages/SimplePage'
 import Athletes from './pages/Athletes'
+import StaffDatabase from './pages/StaffDatabase'
 import Screen01_FormsHome from './pages/forms/Screen01_FormsHome'
 import Screen02_FormBuilder from './pages/forms/Screen02_FormBuilder'
 import Screen02_FormResponses from './pages/forms/Screen02_FormResponses'
@@ -17,6 +18,7 @@ function App() {
         <Route path="/medical" element={<SimplePage pageName="Medical" />} />
         <Route path="/analysis" element={<SimplePage pageName="Analysis" />} />
         <Route path="/athlete" element={<Athletes />} />
+        <Route path="/staff" element={<StaffDatabase />} />
         <Route path="/workloads" element={<SimplePage pageName="Workload" />} />
         <Route path="/questionnaires" element={<Screen01_FormsHome />} />
         <Route path="/forms/form_templates" element={<Screen01_FormsHome />} />

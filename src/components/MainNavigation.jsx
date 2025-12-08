@@ -24,7 +24,8 @@ import {
   SettingsOutlined,
   HelpOutlined,
   ChevronLeftOutlined,
-  ChevronRightOutlined
+  ChevronRightOutlined,
+  BadgeOutlined
 } from '@mui/icons-material'
 import '../styles/design-tokens.css'
 
@@ -49,6 +50,13 @@ const navigationItems = [
     label: 'Athletes', 
     icon: PeopleOutlined, 
     path: '/athlete',
+    section: 'main'
+  },
+  { 
+    id: 'staff', 
+    label: 'Staff', 
+    icon: BadgeOutlined, 
+    path: '/staff',
     section: 'main'
   },
   { 
