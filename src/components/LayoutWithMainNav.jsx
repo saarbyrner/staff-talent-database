@@ -51,7 +51,6 @@ const pageTitles = {
   '/questionnaires': 'Forms',
   '/forms/form_templates': 'Forms',
   '/forms/form_answers_sets': 'Forms',
-  '/forms/staff_form': 'Staff Form',
   '/planning': 'Calendar',
   '/activity': 'Activity log',
   '/settings': 'Admin',
@@ -103,8 +102,7 @@ function MedinahLayoutWithMainNav({ children }) {
   const isFormsSection = isFormsMenuOpen
   const formsSecondaryItems = [
     { id: 'form_templates', label: 'Form templates', path: '/forms/form_templates' },
-    { id: 'form_responses', label: 'Form responses', path: '/forms/form_answers_sets' },
-    { id: 'staff_form', label: 'Staff form', path: '/forms/staff_form' }
+    { id: 'form_responses', label: 'Form responses', path: '/forms/form_answers_sets' }
   ]
 
   return (
