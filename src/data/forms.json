@@ -1,0 +1,213 @@
+{
+  "Contact Information Section": [
+    {
+      "name": "firstName",
+      "label": "First Name",
+      "type": "TextField",
+      "required": true
+    },
+    {
+      "name": "lastName",
+      "label": "Last Name",
+      "type": "TextField",
+      "required": true
+    },
+    {
+      "name": "phone",
+      "label": "Phone Number",
+      "type": "TextField",
+      "required": true,
+      "helperText": "Include international country codes if applicable"
+    },
+    {
+      "name": "email",
+      "label": "Email Address",
+      "type": "TextField",
+      "required": true
+    },
+    {
+      "name": "country",
+      "label": "Country",
+      "type": "Select",
+      "required": false,
+      "options": ["USA", "Canada", "Mexico", "Other"]
+    },
+    {
+      "name": "city",
+      "label": "City",
+      "type": "TextField",
+      "required": true
+    },
+    {
+      "name": "usSponsorship",
+      "label": "Will you require United States work sponsorship?",
+      "type": "RadioGroup",
+      "required": true,
+      "options": ["Yes", "No"]
+    },
+    {
+      "name": "caSponsorship",
+      "label": "Will you require Canadian work sponsorship?",
+      "type": "RadioGroup",
+      "required": true,
+      "options": ["Yes", "No"]
+    }
+  ],
+  "Voluntary Self Identification Section": [
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "RadioGroup",
+      "required": false,
+      "options": ["Male", "Female", "Non-binary", "Prefer not to answer"]
+    },
+    {
+      "name": "ethnicity",
+      "label": "Ethnicity",
+      "type": "CheckboxGroup",
+      "required": false,
+      "options": [
+        "White (non Hispanic)", "Hispanic / Latino", "Black", "American Indian or Alaska Native",
+        "Canadian Indigenous or Canadian First Nations", "Asian", "Hawaiian or Pacific Islander",
+        "Arab or Middle Eastern", "Multi-racial", "Prefer not to answer"
+      ]
+    }
+  ],
+  "Agent & Playing Experience Section": [
+    {
+      "name": "hasAgent",
+      "label": "Do you currently have an agent?",
+      "type": "RadioGroup",
+      "required": true,
+      "conditional": true,
+      "options": ["Yes", "No"]
+    },
+    {
+      "name": "agentName",
+      "label": "Agent Name",
+      "type": "TextField",
+      "required": true,
+      "dependency": "hasAgent"
+    },
+    {
+      "name": "agencyName",
+      "label": "Agency Name",
+      "type": "TextField",
+      "required": true,
+      "dependency": "hasAgent"
+    },
+    {
+      "name": "proPlayerExp",
+      "label": "Do you have past professional playing experience?",
+      "type": "RadioGroup",
+      "required": true,
+      "conditional": true,
+      "options": ["Yes", "No"]
+    },
+    {
+      "name": "mlsPlayerExp",
+      "label": "Do you have professional playing experience with an MLS club?",
+      "type": "RadioGroup",
+      "required": true,
+      "dependency": "proPlayerExp",
+      "options": ["Yes", "No"]
+    },
+    {
+      "name": "mlsClubsPlayed",
+      "label": "MLS Clubs (playing experience)",
+      "type": "CheckboxGroup",
+      "required": true,
+      "dependency": "mlsPlayerExp",
+      "options": ["LA Galaxy", "Seattle Sounders", "Toronto FC", "Other"]
+    },
+    {
+      "name": "otherPlayerExp",
+      "label": "Other professional playing experience",
+      "type": "TextField",
+      "multiline": true,
+      "required": false,
+      "helperText": "Please list any other professional clubs you have played with."
+    }
+  ],
+  "Interest Section": [
+    {
+      "name": "interestArea",
+      "label": "What area in MLS are you interested in?",
+      "type": "RadioGroup",
+      "required": true,
+      "options": ["Coaching", "Sporting Executive", "Other Technical Role"]
+    },
+    {
+      "name": "coachingRoles",
+      "label": "What coaching roles are you interested in?",
+      "type": "CheckboxGroup",
+      "required": true,
+      "dependency": "interestArea == 'Coaching'",
+      "options": [
+        "MLS First Team Head Coach", "MLS First Team Assistant Coach", 
+        "MLS NEXT Pro Head Coach", "MLS NEXT Academy Director"
+      ]
+    },
+    {
+      "name": "execRoles",
+      "label": "What executive sporting roles are you interested in?",
+      "type": "CheckboxGroup",
+      "required": true,
+      "dependency": "interestArea == 'Sporting Executive'",
+      "options": [
+        "General Manager or Sporting Director", "Technical Director", 
+        "Chief Soccer Officer"
+      ]
+    },
+    {
+      "name": "techRoles",
+      "label": "What technical roles are you interested in?",
+      "type": "CheckboxGroup",
+      "required": true,
+      "dependency": "interestArea == 'Other Technical Role'",
+      "options": ["Data analyst", "Scout", "Performance Coach"]
+    },
+    {
+      "name": "relocation",
+      "label": "Select locations you are willing to relocate to",
+      "type": "CheckboxGroup",
+      "required": true,
+      "options": ["Northeast", "Southeast", "Midwest", "South", "West", "Canada", "I am not willing to relocate"]
+    }
+  ],
+  "Upload Documents": [
+    {
+      "name": "profilePic",
+      "label": "Upload Profile Picture",
+      "type": "FileUpload",
+      "required": true
+    },
+    {
+      "name": "resume",
+      "label": "Upload Resume",
+      "type": "FileUpload",
+      "required": true
+    },
+    {
+      "name": "coachingLicenseDoc",
+      "label": "Upload Coaching License",
+      "type": "FileUpload",
+      "required": false
+    }
+  ],
+  "Consent": [
+    {
+      "name": "legalConsent",
+      "label": "Legal Statement Agreement",
+      "type": "RadioGroup",
+      "required": true,
+      "options": ["Yes", "No"]
+    },
+    {
+      "name": "consentDate",
+      "label": "Date",
+      "type": "DatePicker",
+      "required": true
+    }
+  ]
+}

@@ -13,16 +13,24 @@ import {
   FormGroup,
   FormControlLabel,
   Switch,
+  TextField,
+  MenuItem,
+  RadioGroup,
+  Radio,
+  Checkbox,
+  Chip
 } from '@mui/material'
 import { ArrowBackOutlined } from '@mui/icons-material'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import dayjs from 'dayjs'
 import '../../styles/design-tokens.css'
 import FormBuilderHeader from '../../components/forms/builder/FormBuilderHeader'
 import MenuTree from '../../components/forms/builder/MenuTree'
 import QuestionEditor from '../../components/forms/builder/QuestionEditor'
-// Use MUI Button for this page
-
-// Prototype data (schema-driven). In a real app this would be fetched by formId.
-import formTemplate from '../../data/formTemplates/test-toggle-switch.json'
+import { staffForm as staffFormDefinition } from '../../data'
+import defaultTemplate from '../../data/formTemplates/test-toggle-switch.json'
 
 function a11yProps(index) {
   return {
@@ -46,14 +54,145 @@ function TabPanel(props) {
   )
 }
 
+const STAFF_FIELD_TYPE_MAP = {
+  TextField: 'text',
+  Select: 'select',
+  RadioGroup: 'radio',
+  CheckboxGroup: 'checkbox',
+  DatePicker: 'date',
+  FileUpload: 'file'
+}
+
+function normalizeStaffField(field = {}, sectionIndex, fieldIndex) {
+  const controlType = STAFF_FIELD_TYPE_MAP[field.type] || 'text'
+  const baseId = field.name || `staff-field-${sectionIndex + 1}-${fieldIndex + 1}`
+  const prompt = field.label || `Untitled field ${fieldIndex + 1}`
+  const helper = field.helperText || ''
+  return {
+    id: baseId,
+    label: prompt,
+    description: field.description || '',
+    helperText: helper,
+    mandatory: Boolean(field.required),
+    dependency: field.dependency || null,
+    conditional: Boolean(field.conditional),
+    type: controlType,
+    options: Array.isArray(field.options) ? field.options : [],
+    meta: {
+      originalType: field.type || 'TextField',
+      multiline: Boolean(field.multiline)
+    }
+  }
+}
+
+function buildStaffFormTemplate(definition) {
+  if (!definition) return null
+
+  const sections = Object.entries(definition).map(([title, fields], sectionIndex) => ({
+    id: `staff-section-${sectionIndex + 1}`,
+    title,
+    items: [
+      {
+        id: `staff-section-${sectionIndex + 1}-subsection`,
+        type: 'subsection',
+        title,
+        items: (fields || []).map((field, fieldIndex) => normalizeStaffField(field, sectionIndex, fieldIndex))
+      }
+    ]
+  }))
+
+  return {
+    id: 'staff_form',
+    title: 'Staff Form',
+    productArea: 'Staffing',
+    category: 'Questionnaire',
+    createdAt: '2025-12-08T00:00:00Z',
+    creator: 'Staff Operations',
+    description: 'Capture staff info',
+    sections
+  }
+}
+
+const STAFF_FORM_TEMPLATE = buildStaffFormTemplate(staffFormDefinition)
+
+const TEMPLATE_REGISTRY = {
+  [defaultTemplate.id]: defaultTemplate,
+  staff_form: STAFF_FORM_TEMPLATE
+}
+
+function cloneTemplate(template) {
+  return JSON.parse(JSON.stringify(template || defaultTemplate))
+}
+
+function getTemplateForFormId(formId) {
+  if (formId && TEMPLATE_REGISTRY[formId]) {
+    return cloneTemplate(TEMPLATE_REGISTRY[formId])
+  }
+  return cloneTemplate(defaultTemplate)
+}
+
+function collectQuestions(form) {
+  const questions = []
+  for (const section of form?.sections || []) {
+    for (const item of section.items || []) {
+      if (item.type === 'subsection') {
+        questions.push(...(item.items || []))
+      }
+    }
+  }
+  return questions
+}
+
+function buildInitialValues(form) {
+  const initial = {}
+  for (const question of collectQuestions(form)) {
+    if (question.type === 'checkbox') {
+      initial[question.id] = []
+    } else if (question.type === 'file') {
+      initial[question.id] = null
+    } else {
+      initial[question.id] = ''
+    }
+  }
+  return initial
+}
+
+function evaluateDependency(question, values) {
+  if (!question?.dependency) return true
+  const dependency = question.dependency.trim()
+  if (!dependency) return true
+
+  if (dependency.includes('==')) {
+    const [rawKey, rawExpected] = dependency.split('==')
+    const key = rawKey.trim()
+    const expected = rawExpected.trim().replace(/^['"]|['"]$/g, '')
+    return values[key] === expected
+  }
+
+  const parentValue = values[dependency]
+  if (Array.isArray(parentValue)) return parentValue.length > 0
+  if (typeof parentValue === 'string') {
+    if (!parentValue) return false
+    return parentValue.toLowerCase() !== 'no'
+  }
+  return Boolean(parentValue)
+}
+
 export default function Screen02_FormBuilder() {
   const navigate = useNavigate()
   // eslint-disable-next-line no-unused-vars
   const { formId } = useParams()
 
-  // For prototype, always use the example template
-  const [form, setForm] = React.useState(formTemplate)
+  const [form, setForm] = React.useState(() => getTemplateForFormId(formId))
   const [tabValue, setTabValue] = React.useState(0)
+  const [previewValues, setPreviewValues] = React.useState(() => buildInitialValues(getTemplateForFormId(formId)))
+
+  React.useEffect(() => {
+    const nextForm = getTemplateForFormId(formId)
+    setForm(nextForm)
+    setPreviewValues(buildInitialValues(nextForm))
+    // no-op: revert section-selection feature
+  }, [formId])
 
   // Prototype: local settings state for Settings tab toggles
   const [settings, setSettings] = React.useState({
@@ -92,31 +231,28 @@ export default function Screen02_FormBuilder() {
     }
   }
 
-  // Flatten questions for simple selection
-  const allQuestions = React.useMemo(() => {
-    const questions = []
-    for (const section of form.sections || []) {
-      for (const item of section.items || []) {
-        if (item.type === 'subsection') {
-          for (const subItem of item.items || []) {
-            if (subItem.type === 'boolean' || subItem.type === 'checkbox' || subItem.type === 'switch') {
-              questions.push(subItem)
-            }
-          }
-        } else if (item.type === 'boolean' || item.type === 'checkbox' || item.type === 'switch') {
-          questions.push(item)
-        }
-      }
-    }
-    return questions
-  }, [form])
+  const allQuestions = React.useMemo(() => collectQuestions(form), [form])
+  const questionRefs = React.useRef({})
+  const sectionRefs = React.useRef({})
 
   const [selectedQuestionId, setSelectedQuestionId] = React.useState(allQuestions[0]?.id)
+  const [selectedSectionId, setSelectedSectionId] = React.useState(() => form.sections?.[0]?.id)
+  
   React.useEffect(() => {
-    if (!selectedQuestionId && allQuestions.length > 0) {
+    if (allQuestions.length === 0) {
+      setSelectedQuestionId(undefined)
+      return
+    }
+    if (!selectedQuestionId || !allQuestions.some(q => q.id === selectedQuestionId)) {
       setSelectedQuestionId(allQuestions[0].id)
     }
   }, [allQuestions, selectedQuestionId])
+  
+  React.useEffect(() => {
+    if (form.sections?.length > 0 && !selectedSectionId) {
+      setSelectedSectionId(form.sections[0].id)
+    }
+  }, [form.sections, selectedSectionId])
 
   const selectedQuestion = React.useMemo(
     () => allQuestions.find(q => q.id === selectedQuestionId) || null,
@@ -124,6 +260,232 @@ export default function Screen02_FormBuilder() {
   )
 
   const isDirty = false // Prototype: Save disabled for now
+
+  const handleQuestionSelect = React.useCallback((questionId) => {
+    setSelectedQuestionId(questionId)
+    // Scroll to the question in preview mode
+    if (tabValue === 1 && questionRefs.current[questionId]) {
+      questionRefs.current[questionId].scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [tabValue])
+
+  const handleSectionSelect = React.useCallback((sectionId) => {
+    setSelectedSectionId(sectionId)
+    // Scroll to the section in preview mode
+    if (tabValue === 1 && sectionRefs.current[sectionId]) {
+      sectionRefs.current[sectionId].scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [tabValue])
+
+  const handlePreviewValueChange = React.useCallback((questionId, nextValue) => {
+    setPreviewValues((prev) => ({ ...prev, [questionId]: nextValue }))
+  }, [])
+
+  const handleCheckboxGroupChange = (questionId, option) => (event) => {
+    const isChecked = event.target.checked
+    setPreviewValues((prev) => {
+      const current = Array.isArray(prev[questionId]) ? prev[questionId] : []
+      if (isChecked) {
+        return { ...prev, [questionId]: [...current, option] }
+      }
+      return { ...prev, [questionId]: current.filter((value) => value !== option) }
+    })
+  }
+
+  const handleFileUpload = (questionId) => (event) => {
+    const file = event.target.files?.[0] || null
+    handlePreviewValueChange(questionId, file)
+  }
+
+  const renderPreviewField = (question) => {
+    if (!evaluateDependency(question, previewValues)) return null
+
+    const prompt = question.label || 'Untitled question'
+    const optionCount = (question.options || []).length
+    const useDropdownForMany = optionCount > 3
+    // Always place answer inputs below the question in preview
+    const needsStack = true
+
+    const helperText = question.helperText ? (
+      <Typography variant="caption" sx={{ color: 'var(--color-text-secondary)', mt: 0.5, display: 'block' }}>
+        {question.helperText}
+      </Typography>
+    ) : null
+
+    const control = (() => {
+      if (question.type === 'text') {
+        return (
+          <TextField
+            variant="filled"
+            size="small"
+            fullWidth
+            placeholder="Enter response"
+            value={previewValues[question.id] || ''}
+            onChange={(event) => handlePreviewValueChange(question.id, event.target.value)}
+            multiline={Boolean(question.meta?.multiline)}
+            minRows={question.meta?.multiline ? 3 : undefined}
+            InputLabelProps={{ shrink: false }}
+          />
+        )
+      }
+
+      if (question.type === 'select') {
+        return (
+          <TextField
+            variant="filled"
+            size="small"
+            fullWidth
+            select
+            value={previewValues[question.id] || ''}
+            onChange={(event) => handlePreviewValueChange(question.id, event.target.value)}
+            SelectProps={{ displayEmpty: true }}
+          >
+            <MenuItem value="">
+              <em>Select</em>
+            </MenuItem>
+            {(question.options || []).map((option) => (
+              <MenuItem key={option} value={option}>{option}</MenuItem>
+            ))}
+          </TextField>
+        )
+      }
+
+      if (question.type === 'radio' || question.type === 'checkbox') {
+        const current = Array.isArray(previewValues[question.id]) ? previewValues[question.id] : (previewValues[question.id] || '')
+        // Use dropdown when there are many options
+        if (useDropdownForMany) {
+          return (
+            <TextField
+              variant="filled"
+              size="small"
+              fullWidth
+              select
+              value={previewValues[question.id] || ''}
+              onChange={(event) => handlePreviewValueChange(question.id, event.target.value)}
+              SelectProps={{ displayEmpty: true }}
+            >
+              <MenuItem value=""><em>Select</em></MenuItem>
+              {(question.options || []).map((option) => (
+                <MenuItem key={option} value={option}>{option}</MenuItem>
+              ))}
+            </TextField>
+          )
+        }
+
+        if (question.type === 'radio') {
+          return (
+            <FormControl component="fieldset">
+              <RadioGroup
+                value={previewValues[question.id] || ''}
+                onChange={(event) => handlePreviewValueChange(question.id, event.target.value)}
+              >
+                {(question.options || []).map((option) => (
+                  <FormControlLabel key={option} value={option} control={<Radio />} label={option} />
+                ))}
+              </RadioGroup>
+            </FormControl>
+          )
+        }
+
+        // checkbox
+        return (
+          <FormGroup>
+            {(question.options || []).map((option) => (
+              <FormControlLabel
+                key={option}
+                control={<Checkbox checked={Array.isArray(previewValues[question.id]) ? previewValues[question.id].includes(option) : false} onChange={handleCheckboxGroupChange(question.id, option)} />}
+                label={option}
+              />
+            ))}
+          </FormGroup>
+        )
+      }
+
+      if (question.type === 'date') {
+        return (
+          <DatePicker
+            value={previewValues[question.id] ? dayjs(previewValues[question.id]) : null}
+            onChange={(newValue) => handlePreviewValueChange(question.id, newValue ? newValue.toISOString() : '')}
+            slotProps={{
+              textField: {
+                variant: 'filled',
+                size: 'small',
+                fullWidth: true,
+                placeholder: 'Select date'
+              }
+            }}
+          />
+        )
+      }
+
+      if (question.type === 'file') {
+        const fileValue = previewValues[question.id]
+        const inputId = `${question.id}-preview-upload`
+        return (
+          <Box sx={{ border: '1px dashed var(--color-border-primary)', borderRadius: 'var(--radius-md)', p: 2 }}>
+            <input id={inputId} type="file" hidden onChange={handleFileUpload(question.id)} />
+            <MuiButton
+              component="label"
+              htmlFor={inputId}
+              variant="contained"
+              size="small"
+              sx={{ textTransform: 'none', backgroundColor: 'var(--button-secondary-bg)', color: 'var(--button-secondary-color)', '&:hover': { backgroundColor: 'var(--button-secondary-hover-bg)' } }}
+            >
+              Upload file
+            </MuiButton>
+            {fileValue && (
+              <Chip
+                label={fileValue.name || 'Uploaded file'}
+                onDelete={() => handlePreviewValueChange(question.id, null)}
+                sx={{ mt: 1 }}
+              />
+            )}
+          </Box>
+        )
+      }
+
+      return (
+        <TextField
+          variant="filled"
+          size="small"
+          fullWidth
+          placeholder="Enter response"
+          value={previewValues[question.id] || ''}
+          onChange={(event) => handlePreviewValueChange(question.id, event.target.value)}
+        />
+      )
+    })()
+
+    return (
+      <Box
+        key={question.id}
+        ref={(el) => { questionRefs.current[question.id] = el }}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1,
+          py: 1.25,
+          borderBottom: '1px solid var(--color-border-secondary)',
+          scrollMarginTop: '16px'
+        }}
+      >
+        <Typography sx={{ fontWeight: 500, color: 'var(--color-text-primary)' }}>
+          {prompt}
+          {question.mandatory && <Typography component="span" sx={{ color: 'var(--color-error)', ml: 0.5 }}>*</Typography>}
+        </Typography>
+        <Box sx={{ mt: 0.5 }} className={(() => {
+          const opts = (question.options || []).length
+          if (question.type === 'text') return 'input-size-l'
+          if (question.type === 'date' || question.type === 'select') return opts > 3 ? 'input-size-m' : 'input-size-s'
+          if (question.type === 'file') return 'input-size-l'
+          return 'input-size-m'
+        })()}>
+          {control}
+          {helperText}
+        </Box>
+      </Box>
+    )
+  }
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -205,11 +567,13 @@ export default function Screen02_FormBuilder() {
         <Divider />
 
         <TabPanel value={tabValue} index={0}>
-          <Box sx={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: 0, minHeight: 'calc(100vh - var(--layout-header-height) - 120px)' }}>
+          <Box className="form-builder" sx={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: 0, minHeight: 'calc(100vh - var(--layout-header-height) - 120px)' }}>
             <MenuTree
               form={form}
               selectedQuestionId={selectedQuestionId}
-              onSelectQuestion={setSelectedQuestionId}
+              onSelectQuestion={handleQuestionSelect}
+              selectedSectionId={selectedSectionId}
+              onSelectSection={handleSectionSelect}
             />
 
             <QuestionEditor
@@ -238,46 +602,42 @@ export default function Screen02_FormBuilder() {
         </TabPanel>
 
         <TabPanel value={tabValue} index={1}>
-          <Box sx={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: 0, minHeight: 'calc(100vh - var(--layout-header-height) - 120px)' }}>
+          <Box className="form-preview" sx={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: 0, minHeight: 'calc(100vh - var(--layout-header-height) - 120px)' }}>
             <MenuTree
               form={form}
               selectedQuestionId={selectedQuestionId}
-              onSelectQuestion={setSelectedQuestionId}
+              onSelectQuestion={handleQuestionSelect}
+              selectedSectionId={selectedSectionId}
+              onSelectSection={handleSectionSelect}
+              mode="preview"
             />
 
-            <Box sx={{ p: 2 }}>
-              <Typography variant="subtitle1" sx={{ mb: 2, color: 'var(--color-text-primary)', fontWeight: 600 }}>
-                Preview
-              </Typography>
-              {(form.sections || []).map((section) => (
-                <Box key={section.id} sx={{ mb: 3 }}>
-                  <Typography variant="body1" sx={{ fontWeight: 600, mb: 1 }}>{section.title}</Typography>
-                  {(section.items || []).map((item) => (
-                    <Box key={item.id} sx={{ pl: 2 }}>
-                      {item.type === 'subsection' && (
-                        <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)', mb: 1 }}>{item.title}</Typography>
-                      )}
-                      {(item.items || []).map((q) => (
-                        <Box key={q.id} sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 1 }}>
-                          <Typography sx={{ minWidth: 280 }}>{q.description}</Typography>
-                          <Box>
-                            {q.ui?.style === 'checkbox' && (
-                              <input type="checkbox" />
-                            )}
-                            {q.ui?.style === 'switch' && (
-                              <input type="checkbox" />
-                            )}
-                            {q.ui?.style === 'toggle' && (
-                              <MuiButton variant="contained" size="small" sx={{ mr: 1 }}>Yes</MuiButton>
-                            )}
-                          </Box>
-                        </Box>
-                      ))}
-                    </Box>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <Box sx={{ p: 3, overflowY: 'auto', backgroundColor: '#fafafa' }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                  {(form.sections || []).filter(section => section.id === selectedSectionId).map((selectedSection) => (
+                    <Paper 
+                      key={selectedSection.id} 
+                      ref={(el) => { sectionRefs.current[selectedSection.id] = el }}
+                      elevation={0} 
+                      sx={{ borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border-primary)', p: 3, scrollMarginTop: '16px' }}
+                    >
+                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>{selectedSection.title}</Typography>
+                      <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)', mb: 2 }}>
+                        {(selectedSection.items || []).reduce((count, item) => count + ((item.items || []).length), 0)} fields
+                      </Typography>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        {(selectedSection.items || []).map((item) => (
+                          <React.Fragment key={item.id}>
+                            {(item.items || []).map((question) => renderPreviewField(question))}
+                          </React.Fragment>
+                        ))}
+                      </Box>
+                    </Paper>
                   ))}
                 </Box>
-              ))}
-            </Box>
+              </Box>
+            </LocalizationProvider>
           </Box>
         </TabPanel>
 

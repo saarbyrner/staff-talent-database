@@ -16,7 +16,8 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Divider
+  Divider,
+  ClickAwayListener
 } from '@mui/material'
 import { 
   Notifications
@@ -50,6 +51,7 @@ const pageTitles = {
   '/questionnaires': 'Forms',
   '/forms/form_templates': 'Forms',
   '/forms/form_answers_sets': 'Forms',
+  '/forms/staff_form': 'Staff Form',
   '/planning': 'Calendar',
   '/activity': 'Activity log',
   '/settings': 'Admin',
@@ -76,6 +78,10 @@ function MedinahLayoutWithMainNav({ children }) {
     setIsFormsMenuOpen((prev) => !prev)
   }
 
+  const handleFormsMenuClose = () => {
+    setIsFormsMenuOpen(false)
+  }
+
   const handleFormsSecondaryClick = (path) => {
     navigate(path)
     setIsFormsMenuOpen(false)
@@ -98,6 +104,7 @@ function MedinahLayoutWithMainNav({ children }) {
   const formsSecondaryItems = [
     { id: 'form_templates', label: 'Form templates', path: '/forms/form_templates' },
     { id: 'form_responses', label: 'Form responses', path: '/forms/form_answers_sets' },
+    { id: 'staff_form', label: 'Staff form', path: '/forms/staff_form' }
   ]
 
   return (
@@ -115,63 +122,65 @@ function MedinahLayoutWithMainNav({ children }) {
 
       {/* Secondary Navigation for Forms */}
       {isFormsSection && (
-        <Box
-          className="mainNavBarDesktop__secondaryMenu mainNavBarDesktop__secondaryMenu--open mainNavBarDesktop__secondaryMenu--mainMenuOpen"
-          sx={{
-            position: 'fixed',
-            top: 0,
-            left: isNavOpen ? 'var(--layout-nav-width)' : 'var(--layout-nav-width-collapsed)',
-            height: '100vh',
-            width: 260,
-            zIndex: 1200,
-            background: 'linear-gradient(180deg, #000000 0%, #111111 40%, #000000 70%, #040037ff 90%, #040037ff 100%)',
-            color: '#ffffff',
-            boxShadow: 'var(--shadow-md)',
-            display: 'flex',
-            flexDirection: 'column',
-            borderRight: '1px solid rgba(255,255,255,0.12)'
-          }}
-        >
-          <Box className="mainNavBarDesktop__secondaryMenuTitle" sx={{ px: 2, py: 1.5, fontWeight: 600 }}>
-            Forms
+        <ClickAwayListener onClickAway={handleFormsMenuClose}>
+          <Box
+            className="mainNavBarDesktop__secondaryMenu mainNavBarDesktop__secondaryMenu--open mainNavBarDesktop__secondaryMenu--mainMenuOpen"
+            sx={{
+              position: 'fixed',
+              top: 0,
+              left: isNavOpen ? 'var(--layout-nav-width)' : 'var(--layout-nav-width-collapsed)',
+              height: '100vh',
+              width: 260,
+              zIndex: 1200,
+              background: 'linear-gradient(180deg, #000000 0%, #111111 40%, #000000 70%, #040037ff 90%, #040037ff 100%)',
+              color: '#ffffff',
+              boxShadow: 'var(--shadow-md)',
+              display: 'flex',
+              flexDirection: 'column',
+              borderRight: '1px solid rgba(255,255,255,0.12)'
+            }}
+          >
+            <Box className="mainNavBarDesktop__secondaryMenuTitle" sx={{ px: 2, py: 1.5, fontWeight: 600 }}>
+              Forms
+            </Box>
+            <Divider sx={{ borderColor: 'rgba(255,255,255,0.12)' }} />
+            <List sx={{ py: 0 }}>
+              {formsSecondaryItems.map((item) => {
+                const isActive = location.pathname === item.path
+                return (
+                  <ListItem key={item.id} disablePadding className={`mainNavBarDesktop__secondaryMenuItem${isActive ? ' mainNavBarDesktop__secondaryMenuItem--active' : ''}`}>
+                    <ListItemButton
+                      onClick={() => handleFormsSecondaryClick(item.path)}
+                      sx={{
+                        height: 40,
+                        px: 2,
+                        position: 'relative',
+                        color: '#ffffff',
+                        '&::before': isActive ? {
+                          content: '""',
+                          position: 'absolute',
+                          left: 0,
+                          top: 0,
+                          bottom: 0,
+                          width: '3px',
+                          backgroundColor: '#ffffff'
+                        } : {},
+                        '&:hover': {
+                          backgroundColor: 'rgba(255,255,255,0.08)'
+                        }
+                      }}
+                    >
+                      <ListItemText
+                        primary={item.label}
+                        primaryTypographyProps={{ fontSize: 14 }}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                )
+              })}
+            </List>
           </Box>
-          <Divider sx={{ borderColor: 'rgba(255,255,255,0.12)' }} />
-          <List sx={{ py: 0 }}>
-            {formsSecondaryItems.map((item) => {
-              const isActive = location.pathname === item.path
-              return (
-                <ListItem key={item.id} disablePadding className={`mainNavBarDesktop__secondaryMenuItem${isActive ? ' mainNavBarDesktop__secondaryMenuItem--active' : ''}`}>
-                  <ListItemButton
-                    onClick={() => handleFormsSecondaryClick(item.path)}
-                    sx={{
-                      height: 40,
-                      px: 2,
-                      position: 'relative',
-                      color: '#ffffff',
-                      '&::before': isActive ? {
-                        content: '""',
-                        position: 'absolute',
-                        left: 0,
-                        top: 0,
-                        bottom: 0,
-                        width: '3px',
-                        backgroundColor: '#ffffff'
-                      } : {},
-                      '&:hover': {
-                        backgroundColor: 'rgba(255,255,255,0.08)'
-                      }
-                    }}
-                  >
-                    <ListItemText
-                      primary={item.label}
-                      primaryTypographyProps={{ fontSize: 14 }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              )
-            })}
-          </List>
-        </Box>
+        </ClickAwayListener>
       )}
 
       {/* Main Content Area */}

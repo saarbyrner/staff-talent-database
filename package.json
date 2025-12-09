@@ -19,7 +19,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.0",
     "@mui/material": "^5.15.0",
-    "@mui/x-data-grid": "^6.19.0",
+    "@mui/x-data-grid-pro": "^6.19.0",
     "@mui/x-date-pickers": "^6.19.0",
     "dayjs": "^1.11.13",
     "prop-types": "^15.8.1",

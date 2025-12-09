@@ -173,3 +173,70 @@
   --icon-size-large: 24px;
 }
 
+/* DataGrid toolbar / filters height consistency */
+.custom-data-grid-toolbar {
+  height: 56px !important;
+  min-height: 56px !important;
+  display: flex;
+  align-items: center;
+}
+
+:root .MuiDataGrid-root.MuiDataGrid-root--densityCompact .custom-data-grid-toolbar,
+:root .MuiDataGrid-root.MuiDataGrid-root--densityCompact .MuiDataGrid-toolbarContainer {
+  height: 48px !important;
+  min-height: 48px !important;
+}
+
+:root .MuiDataGrid-root.MuiDataGrid-root--densityStandard .custom-data-grid-toolbar,
+:root .MuiDataGrid-root.MuiDataGrid-root--densityStandard .MuiDataGrid-toolbarContainer {
+  height: 56px !important;
+  min-height: 56px !important;
+}
+
+:root .MuiDataGrid-root.MuiDataGrid-root--densityComfortable .custom-data-grid-toolbar,
+:root .MuiDataGrid-root.MuiDataGrid-root--densityComfortable .MuiDataGrid-toolbarContainer {
+  height: 64px !important;
+  min-height: 64px !important;
+}
+
+/* Input size helpers: small, medium, large
+   - Small: short controls (e.g. dates, short selects)
+   - Medium: default form controls
+   - Large: multiline or file uploads that need more room
+   Apply by wrapping a control in a container with `.input-size-s|m|l` */
+/* Make wrappers inline so inputs don't expand to full container width */
+.input-size-s,
+.input-size-m,
+.input-size-l {
+  display: inline-block;
+  width: auto;
+  vertical-align: top;
+}
+
+.input-size-s .MuiInputBase-root,
+.input-size-s .MuiFilledInput-root,
+.input-size-s .MuiOutlinedInput-root,
+.input-size-s .MuiSelect-root {
+  max-width: 160px;
+  width: 100%;
+}
+.input-size-m .MuiInputBase-root,
+.input-size-m .MuiFilledInput-root,
+.input-size-m .MuiOutlinedInput-root,
+.input-size-m .MuiSelect-root {
+  max-width: 240px;
+  width: 100%;
+}
+.input-size-l .MuiInputBase-root,
+.input-size-l .MuiFilledInput-root,
+.input-size-l .MuiOutlinedInput-root,
+.input-size-l .MuiSelect-root {
+  max-width: 420px;
+  width: 100%;
+}
+
+/* Opt-out wrapper to allow full width when necessary */
+.no-max {
+  max-width: none !important;
+}
+

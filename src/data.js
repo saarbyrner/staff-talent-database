@@ -10,6 +10,7 @@ import gamesData from './data/games_matches.json'
 import squadsData from './data/squads_teams.json'
 import questionnairesData from './data/questionnaires_wellbeing.json'
 import staffData from './data/users_staff.json'
+import staffFormDefinition from './data/forms.json'
 
 // Export all data for easy access
 export const athletes = athletesData
@@ -20,6 +21,7 @@ export const games = gamesData
 export const squads = squadsData
 export const questionnaires = questionnairesData
 export const staff = staffData
+export const staffForm = staffFormDefinition
 
 // Simple data extracts for backward compatibility and easy access
 export const athletesSimple = athletes.map(athlete => ({

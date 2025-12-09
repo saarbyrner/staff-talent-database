@@ -3,18 +3,26 @@ import {
   Box,
   Typography,
   Grid,
-  Select,
-  MenuItem,
   TextField,
   Button,
   Switch,
   FormControlLabel,
   IconButton,
-  FormControl,
-  InputLabel,
-  Paper
+  Paper,
+  Chip,
+  Select,
+  MenuItem,
+  RadioGroup,
+  Radio,
+  Checkbox,
+  FormGroup,
+  FormControl
 } from '@mui/material'
-import { EditOutlined, DeleteOutlined } from '@mui/icons-material'
+import { DeleteOutlined } from '@mui/icons-material'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import dayjs from 'dayjs'
 
 export default function QuestionEditor({ question, index, onChange }) {
   if (!question) return (
@@ -30,18 +38,160 @@ export default function QuestionEditor({ question, index, onChange }) {
     onChange?.(updated)
   }
 
+  const typeLabels = {
+    text: 'Short answer',
+    select: 'Dropdown',
+    radio: 'Single choice',
+    checkbox: 'Multi-select',
+    date: 'Date',
+    file: 'File upload'
+  }
+
+  const handleFieldChange = (key) => (event) => {
+    handleUpdate({ [key]: event.target.value })
+  }
+
+  const renderInputPreview = () => {
+    const optionCount = (question.options || []).length
+    const useDropdownForMany = optionCount > 3
+    if (question.type === 'text') {
+      return (
+        <TextField
+          disabled
+          variant="filled"
+          size="small"
+          fullWidth
+          placeholder="Enter response"
+          multiline={Boolean(question.meta?.multiline)}
+          minRows={question.meta?.multiline ? 3 : undefined}
+        />
+      )
+    }
+
+    if (question.type === 'select') {
+      return (
+        <TextField
+          disabled
+          variant="filled"
+          size="small"
+          fullWidth
+          select
+          value=""
+          SelectProps={{ displayEmpty: true }}
+        >
+          <MenuItem value="">
+            <em>Select</em>
+          </MenuItem>
+          {(question.options || []).map((option) => (
+            <MenuItem key={option} value={option}>{option}</MenuItem>
+          ))}
+        </TextField>
+      )
+    }
+    if (question.type === 'radio' || question.type === 'checkbox') {
+      if (useDropdownForMany) {
+        return (
+          <TextField
+            disabled
+            variant="filled"
+            size="small"
+            fullWidth
+            select
+            value=""
+            SelectProps={{ displayEmpty: true }}
+          >
+            <MenuItem value=""><em>Select</em></MenuItem>
+            {(question.options || []).map((option) => (
+              <MenuItem key={option} value={option}>{option}</MenuItem>
+            ))}
+          </TextField>
+        )
+      }
+
+      if (question.type === 'radio') {
+        return (
+          <FormControl component="fieldset" disabled>
+            <RadioGroup>
+              {(question.options || []).map((option) => (
+                <FormControlLabel key={option} value={option} control={<Radio />} label={option} />
+              ))}
+            </RadioGroup>
+          </FormControl>
+        )
+      }
+
+      return (
+        <FormGroup>
+          {(question.options || []).map((option) => (
+            <FormControlLabel
+              key={option}
+              control={<Checkbox disabled />}
+              label={option}
+            />
+          ))}
+        </FormGroup>
+      )
+    }
+
+    if (question.type === 'date') {
+      return (
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            disabled
+            slotProps={{
+              textField: {
+                variant: 'filled',
+                size: 'small',
+                fullWidth: true,
+                placeholder: 'Select date'
+              }
+            }}
+          />
+        </LocalizationProvider>
+      )
+    }
+
+    if (question.type === 'file') {
+      return (
+        <Box sx={{ border: '1px dashed var(--color-border-primary)', borderRadius: 'var(--radius-md)', p: 2, opacity: 0.6 }}>
+          <Button
+            disabled
+            variant="contained"
+            size="small"
+            sx={{ textTransform: 'none' }}
+          >
+            Upload file
+          </Button>
+        </Box>
+      )
+    }
+
+    return (
+      <TextField
+        disabled
+        variant="filled"
+        size="small"
+        fullWidth
+        placeholder="Enter response"
+      />
+    )
+  }
+
   return (
     <Paper elevation={1} sx={{ borderRadius: 'var(--radius-md)', px: 3, pt: 2, pb: 2 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h6" sx={{ fontWeight: 600 }}>Question {index}</Typography>
+        <Box>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>Question {index}</Typography>
+          <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>{typeLabels[question.type] || 'Custom field'}</Typography>
+        </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <Button 
-            variant="contained" 
-            size="medium" 
-            sx={{ 
-              textTransform: 'none', 
-              backgroundColor: 'var(--button-secondary-bg)', 
-              color: 'var(--button-secondary-color)', 
+          <Button
+            variant="contained"
+            size="medium"
+            sx={{
+              textTransform: 'none',
+              backgroundColor: 'var(--button-secondary-bg)',
+              color: 'var(--button-secondary-color)',
               boxShadow: 'none',
               '&:hover': { backgroundColor: 'var(--button-secondary-hover-bg)', boxShadow: 'none' }
             }}
@@ -57,80 +207,26 @@ export default function QuestionEditor({ question, index, onChange }) {
         </Box>
       </Box>
 
-      <Grid container spacing={3}>
-        <Grid item>
-          <Box sx={{ minWidth: 240 }}>
-            <FormControl fullWidth size="small" variant="filled">
-              <InputLabel id="qs-label">Question style</InputLabel>
-              <Select
-                labelId="qs-label"
-                value={question.type === 'boolean' ? 'Forms::Elements::Inputs::Boolean' : 'Forms::Elements::Inputs::Boolean'}
-                onChange={() => {}}
-              >
-                <MenuItem value="Forms::Elements::Inputs::Boolean">Yes/No</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-        </Grid>
-        <Grid item>
-          <Box sx={{ minWidth: 320 }}>
-            <TextField
-              size="small"
-              variant="filled"
-              fullWidth
-              label="Question"
-              value={''}
-              onChange={() => {}}
-            />
-          </Box>
-        </Grid>
-      </Grid>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
+        <TextField
+          label="Question prompt"
+          variant="filled"
+          fullWidth
+          multiline
+          value={question.label || ''}
+          onChange={handleFieldChange('label')}
+        />
 
-      <Grid container spacing={3} direction="column" sx={{ mt: 0.5 }}>
-        <Grid item>
-          <TextField
-            size="small"
-            variant="filled"
-            fullWidth
-            label="Description"
-            value={question.description || ''}
-            onChange={(e) => handleUpdate({ description: e.target.value })}
-          />
-        </Grid>
-        <Grid item>
-          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-            <FormControl fullWidth sx={{ maxWidth: 220 }} size="small" variant="filled">
-              <InputLabel id="style-label">Style</InputLabel>
-              <Select
-                labelId="style-label"
-                value={question.ui?.style || 'toggle'}
-                label="Style"
-                onChange={(e) => handleUpdate({ ui: { ...(question.ui || {}), style: e.target.value } })}
-              >
-                <MenuItem value="toggle">Toggle</MenuItem>
-                <MenuItem value="checkbox">Checkbox</MenuItem>
-                <MenuItem value="switch">Switch</MenuItem>
-              </Select>
-            </FormControl>
-            <TextField
-              size="small"
-              variant="filled"
-              disabled
-              label="Option 1"
-              value={question.ui?.labels?.[0] || 'Yes'}
-              sx={{ maxWidth: 220 }}
-            />
-            <TextField
-              size="small"
-              variant="filled"
-              disabled
-              label="Option 2"
-              value={question.ui?.labels?.[1] || 'No'}
-              sx={{ maxWidth: 220 }}
-            />
-          </Box>
-        </Grid>
-      </Grid>
+        <Box className={(() => {
+          const opts = (question.options || []).length
+          if (question.type === 'text') return 'input-size-l'
+          if (question.type === 'date' || question.type === 'select') return opts > 3 ? 'input-size-m' : 'input-size-s'
+          if (question.type === 'file') return 'input-size-l'
+          return 'input-size-m'
+        })()}>
+          {renderInputPreview()}
+        </Box>
+      </Box>
     </Paper>
   )
 }

@@ -134,27 +134,22 @@ function MainNavigation({
       : location.pathname === item.path
     const IconComponent = item.icon
 
-    return (
-      <ListItem 
-        key={item.id} 
-        disablePadding 
-        sx={{ display: 'block' }}
-      >
-        <Tooltip 
-          title={isCollapsed ? item.label : ''} 
-          placement="right"
-          disableHoverListener={!isCollapsed}
-        >
-          <ListItemButton
+    const button = (
+      <ListItemButton
             onClick={() => handleItemClick(item)}
             sx={{
               height: 40,
               justifyContent: isCollapsed ? 'center' : 'initial',
-              pl: 2,
+              pl: isCollapsed ? 0 : 2,
+              pr: isCollapsed ? 0 : 2,
               py: 1,
-              ml: 1, mr: 0,
+              ml: 0,
+              mr: 0,
               mb: 0.5,
               position: 'relative',
+              width: '100%',
+              maxWidth: '100%',
+              overflow: 'hidden',
               backgroundColor: isActive ? 'rgba(255, 255, 255, 0.05)' : 'transparent',
               color: '#ffffff',
               '&::before': isActive ? {
@@ -179,24 +174,52 @@ function MainNavigation({
                 minWidth: 0,
                 mr: isCollapsed ? 0 : 2,
                 justifyContent: 'center',
-                color: 'inherit'
+                color: 'inherit',
+                flexShrink: 0
               }}
             >
               <IconComponent sx={{ fontSize: 20 }} />
             </ListItemIcon>
-            <ListItemText 
-              primary={item.label}
-              sx={{ 
-                opacity: isCollapsed ? 0 : 1,
-                '& .MuiTypography-root': {
-                  fontSize: '14px',
-                  fontWeight: 400,
-                  textTransform: 'none'
-                }
-              }} 
-            />
+            {!isCollapsed && (
+              <ListItemText 
+                primary={item.label}
+                sx={{ 
+                  flex: 1,
+                  overflow: 'hidden',
+                  '& .MuiTypography-root': {
+                    fontSize: '14px',
+                    fontWeight: 400,
+                    textTransform: 'none',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  }
+                }} 
+              />
+            )}
           </ListItemButton>
-        </Tooltip>
+    )
+
+    return (
+      <ListItem 
+        key={item.id} 
+        disablePadding 
+        sx={{ 
+          display: 'block',
+          overflow: 'hidden',
+          width: '100%',
+          maxWidth: '100%',
+          px: 0,
+          mx: 0
+        }}
+      >
+        {isCollapsed ? (
+          <Tooltip title={item.label} placement="right">
+            {button}
+          </Tooltip>
+        ) : (
+          button
+        )}
       </ListItem>
     )
   }
@@ -209,7 +232,8 @@ function MainNavigation({
         background: 'linear-gradient(180deg, #000000 0%, #111111 40%, #000000 70%, #040037ff 90%, #040037ff 100%)',
         color: '#ffffff',
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        overflowX: 'hidden'
       }}
     >
       {/* Header with Logo */}
@@ -244,20 +268,20 @@ function MainNavigation({
       </Box>
 
       {/* Main Navigation Items */}
-      <Box sx={{ flex: 1, overflow: 'auto' }}>
-        <List sx={{ py: 1 }}>
+      <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', width: '100%', maxWidth: '100%' }}>
+        <List disablePadding sx={{ width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
           {navigationItems.map((item) => renderNavItem(item, !isOpen))}
         </List>
       </Box>
 
       {/* Bottom Items */}
-      <Box>
-        <List sx={{ py: 1 }}>
+      <Box sx={{ overflowX: 'hidden', width: '100%', maxWidth: '100%' }}>
+        <List disablePadding sx={{ width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
           {bottomItems.map((item) => renderNavItem(item, !isOpen))}
         </List>
         
         {/* Collapse/Expand Button - Only at bottom, left aligned */}
-        <Box sx={{ p: 1, textAlign: 'left', pl: 2 }}>
+        <Box sx={{ p: 1, textAlign: isOpen ? 'left' : 'center', pl: isOpen ? 2 : 1 }}>
           <IconButton
             onClick={onToggle}
             sx={{ 
@@ -284,12 +308,12 @@ function MainNavigation({
         mr: 0,
         '& .MuiDrawer-paper': {
           marginRight: 0,
-
           width: isOpen ? DRAWER_WIDTH : DRAWER_WIDTH_COLLAPSED,
           boxSizing: 'border-box',
           border: 'none',
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-          transition: 'none'
+          transition: 'none',
+          overflowX: 'hidden'
         }
       }}
       {...props}

@@ -1,14 +1,14 @@
 import React from 'react';
 import { Box, Chip, Avatar, Link, Stack, Typography, Tooltip } from '@mui/material';
 import {
-  DataGrid,
+  DataGridPro as DataGrid,
   GridToolbarContainer,
   GridToolbarColumnsButton,
   GridToolbarFilterButton,
   GridToolbarDensitySelector,
   GridToolbarExport,
   GridToolbarQuickFilter,
-} from '@mui/x-data-grid';
+} from '@mui/x-data-grid-pro';
 import {
   CheckOutlined,
   CloseOutlined,
@@ -16,12 +16,14 @@ import {
   LinkOutlined,
 } from '@mui/icons-material';
 import staffData from '../data/staff_talent.json';
+import { generateInitialsImage } from '../utils/assetManager';
 import '../styles/design-tokens.css';
 
-const CustomToolbar = React.forwardRef((props, ref) => {
+export const CustomToolbar = React.forwardRef((props, ref) => {
   return (
     <Box
       ref={ref}
+      className="custom-data-grid-toolbar"
       sx={{
         height: '56px',
         px: 2,
@@ -90,12 +92,39 @@ const ArrayCell = ({ value }) => {
   );
 };
 
-const LinkCell = ({ value, type }) => {
-  if (!value) return null;
-  
+const getInitials = (name = '') => (
+  name
+    .split(' ')
+    .filter(Boolean)
+    .map(part => part.charAt(0).toUpperCase())
+    .slice(0, 2)
+    .join('') || '—'
+);
+
+const LinkCell = ({ value, type, name = '' }) => {
   if (type === 'avatar') {
-    return <Avatar src={value} sx={{ width: 32, height: 32 }} />;
+    const hasRemoteImage = typeof value === 'string' && value.length > 0 && !value.includes('fake-s3.mls.com');
+    const initials = getInitials(name);
+    const fallbackSrc = generateInitialsImage(name || 'Staff Candidate', 128, '#040037', '#ffffff');
+    const avatarSrc = hasRemoteImage ? value : undefined;
+
+    return (
+      <Avatar
+        src={avatarSrc}
+        sx={{ width: 32, height: 32, fontSize: '0.75rem', fontWeight: 600, bgcolor: 'var(--color-background-secondary)', color: 'var(--color-text-primary)' }}
+        imgProps={{
+          onError: (event) => {
+            event.currentTarget.onerror = null;
+            event.currentTarget.src = fallbackSrc;
+          }
+        }}
+      >
+        {initials}
+      </Avatar>
+    );
   }
+
+  if (!value) return null;
 
   return (
     <Tooltip title="View Document">
@@ -107,6 +136,20 @@ const LinkCell = ({ value, type }) => {
 };
 
 const columns = [
+  {
+    field: 'picUrl',
+    headerName: '',
+    width: 72,
+    sortable: false,
+    filterable: false,
+    renderCell: (params) => (
+      <LinkCell
+        value={params.value}
+        type="avatar"
+        name={`${params.row.firstName || ''} ${params.row.lastName || ''}`.trim()}
+      />
+    )
+  },
   // CONTACT INFO
   { field: 'firstName', headerName: 'First Name', width: 150 },
   { field: 'lastName', headerName: 'Last Name', width: 150 },
@@ -299,18 +342,14 @@ const columns = [
     width: 100, 
     renderCell: (params) => <LinkCell value={params.value} type="link" /> 
   },
-  { 
-    field: 'picUrl', 
-    headerName: 'Profile Pic', 
-    width: 100, 
-    renderCell: (params) => <LinkCell value={params.value} type="avatar" /> 
-  },
+  // picUrl moved to front as a headerless avatar column
 ];
 
 const columnGroupingModel = [
   {
     groupId: 'Contact Info',
     children: [
+      { field: 'picUrl' },
       { field: 'firstName' },
       { field: 'lastName' },
       { field: 'phone' },
