@@ -3,6 +3,8 @@ import LayoutWithMainNav from './components/LayoutWithMainNav'
 import SimplePage from './pages/SimplePage'
 import Athletes from './pages/Athletes'
 import StaffDatabase from './pages/StaffDatabase'
+import StaffProfile from './pages/StaffProfile'
+import StaffFormEdit from './pages/StaffFormEdit'
 import League from './pages/League'
 import Screen01_FormsHome from './pages/forms/Screen01_FormsHome'
 import Screen02_FormBuilder from './pages/forms/Screen02_FormBuilder'
@@ -21,6 +23,8 @@ function App() {
         <Route path="/analysis" element={<SimplePage pageName="Analysis" />} />
         <Route path="/athlete" element={<Athletes />} />
         <Route path="/staff" element={<StaffDatabase />} />
+        <Route path="/staff/:id" element={<StaffProfile />} />
+        <Route path="/staff/:id/edit" element={<StaffFormEdit />} />
         <Route path="/workloads" element={<SimplePage pageName="Workload" />} />
         <Route path="/questionnaires" element={<Screen01_FormsHome />} />
         <Route path="/forms/form_templates" element={<Screen01_FormsHome />} />
@@ -38,6 +42,8 @@ function App() {
         <Route path="/league/analysis" element={<SimplePage pageName="Analysis" />} />
         <Route path="/league/athlete" element={<Athletes />} />
         <Route path="/league/staff" element={<StaffDatabase />} />
+        <Route path="/league/staff/:id" element={<StaffProfile />} />
+        <Route path="/league/staff/:id/edit" element={<StaffFormEdit />} />
         <Route path="/league/forms/form_templates" element={<Screen01_FormsHome />} />
         <Route path="/league/forms/form_answers_sets" element={<Screen02_FormResponses />} />
         <Route path="/league/forms/form_answers_sets/forms/:formId" element={<Screen03_FormResponsesForTemplate />} />

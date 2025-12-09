@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, Chip, Avatar, Link, Stack, Typography, Tooltip } from '@mui/material';
 import {
   DataGridPro as DataGrid,
@@ -441,6 +442,21 @@ const columnGroupingModel = [
 ];
 
 export default function TalentDatabaseGrid() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleRowClick = (params, event) => {
+    // Don't navigate if clicking on checkbox or action buttons
+    if (
+      event.target.closest('.MuiCheckbox-root') ||
+      event.target.closest('.MuiDataGrid-checkboxInput')
+    ) {
+      return;
+    }
+    const basePath = location.pathname.startsWith('/league') ? '/league/staff' : '/staff';
+    navigate(`${basePath}/${params.row.id}`);
+  };
+
   return (
     <Box sx={{ height: 'calc(100vh - 100px)', width: '100%' }}>
       <DataGrid
@@ -459,7 +475,7 @@ export default function TalentDatabaseGrid() {
         }}
         pageSizeOptions={[25, 50, 100]}
         checkboxSelection
-        disableRowSelectionOnClick
+        onRowClick={handleRowClick}
         sx={{
           border: 'none',
           '& .MuiDataGrid-cell': {
@@ -472,6 +488,9 @@ export default function TalentDatabaseGrid() {
           '& .MuiDataGrid-footerContainer': {
             borderTop: '1px solid var(--color-border-primary)',
           },
+          '& .MuiDataGrid-row': {
+            cursor: 'pointer'
+          }
         }}
       />
     </Box>

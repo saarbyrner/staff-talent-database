@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, Typography, Paper, Tabs, Tab, Avatar } from '@mui/material';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import { CustomToolbar } from '../components/TalentDatabaseGrid';
@@ -13,9 +14,23 @@ import '../styles/design-tokens.css';
  */
 function StaffDatabase() {
   const [tab, setTab] = useState(1); // 0 = Staff (My Current Staff), 1 = Talent Database (default)
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleChange = (event, value) => {
     setTab(value);
+  };
+
+  const handleRowClick = (params, event) => {
+    // Don't navigate if clicking on checkbox or action buttons
+    if (
+      event.target.closest('.MuiCheckbox-root') ||
+      event.target.closest('.MuiDataGrid-checkboxInput')
+    ) {
+      return;
+    }
+    const basePath = location.pathname.startsWith('/league') ? '/league/staff' : '/staff';
+    navigate(`${basePath}/${params.row.id}`);
   };
 
   return (
@@ -102,8 +117,8 @@ function StaffDatabase() {
                 { field: 'role', headerName: 'Role', width: 180 }
               ]}
               slots={{ toolbar: CustomToolbar }}
+              onRowClick={handleRowClick}
               checkboxSelection
-              disableRowSelectionOnClick
               pageSizeOptions={[25, 50]}
               initialState={{
                 pagination: { paginationModel: { pageSize: 25 } }
@@ -119,6 +134,9 @@ function StaffDatabase() {
                 },
                 '& .MuiDataGrid-footerContainer': {
                   borderTop: '1px solid var(--color-border-primary)'
+                },
+                '& .MuiDataGrid-row': {
+                  cursor: 'pointer'
                 }
               }}
             />
