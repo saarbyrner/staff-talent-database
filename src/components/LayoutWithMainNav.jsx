@@ -47,6 +47,7 @@ const pageTitles = {
   '/medical': 'Medical',
   '/analysis': 'Analysis',
   '/athlete': 'Athletes',
+  '/staff': 'Staff',
   '/workloads': 'Workload',
   '/questionnaires': 'Forms',
   '/forms/form_templates': 'Forms',
@@ -65,7 +66,19 @@ function MedinahLayoutWithMainNav({ children }) {
   const [userMenuAnchor, setUserMenuAnchor] = useState(null)
   const [isFormsMenuOpen, setIsFormsMenuOpen] = useState(false)
 
+  // Determine if we're in league view mode based on path prefix
+  const isLeagueView = location.pathname.startsWith('/league')
+  const viewMode = isLeagueView ? 'league' : 'default'
+
   const getPageTitle = () => {
+    if (location.pathname === '/league') return 'League'
+    if (location.pathname === '/league/analysis') return 'Analysis'
+    if (location.pathname === '/league/athlete') return 'Athletes'
+    if (location.pathname === '/league/staff') return 'Staff'
+    if (location.pathname.startsWith('/league/forms')) return 'Forms'
+    if (location.pathname === '/league/planning') return 'Calendar'
+    if (location.pathname === '/league/settings') return 'Admin'
+    if (location.pathname === '/league/help') return 'Help'
     return pageTitles[location.pathname] || 'Dashboard'
   }
 
@@ -82,7 +95,9 @@ function MedinahLayoutWithMainNav({ children }) {
   }
 
   const handleFormsSecondaryClick = (path) => {
-    navigate(path)
+    // If in league view, prepend /league to the path
+    const targetPath = viewMode === 'league' ? `/league${path}` : path
+    navigate(targetPath)
     setIsFormsMenuOpen(false)
   }
 
@@ -116,6 +131,7 @@ function MedinahLayoutWithMainNav({ children }) {
         variant="permanent"
         onFormsToggle={handleFormsToggle}
         isFormsMenuOpen={isFormsMenuOpen}
+        viewMode={viewMode}
       />
 
       {/* Secondary Navigation for Forms */}
@@ -130,7 +146,9 @@ function MedinahLayoutWithMainNav({ children }) {
               height: '100vh',
               width: 260,
               zIndex: 1200,
-              background: 'linear-gradient(180deg, #000000 0%, #111111 40%, #000000 70%, #040037ff 90%, #040037ff 100%)',
+              background: viewMode === 'league'
+                ? 'linear-gradient(180deg, #C8102E 0%, #a00d25 40%, #8a0b1f 70%, #6a0818 90%, #6a0818 100%)'
+                : 'linear-gradient(180deg, #000000 0%, #111111 40%, #000000 70%, #040037ff 90%, #040037ff 100%)',
               color: '#ffffff',
               boxShadow: 'var(--shadow-md)',
               display: 'flex',
@@ -144,7 +162,9 @@ function MedinahLayoutWithMainNav({ children }) {
             <Divider sx={{ borderColor: 'rgba(255,255,255,0.12)' }} />
             <List sx={{ py: 0 }}>
               {formsSecondaryItems.map((item) => {
-                const isActive = location.pathname === item.path
+                // Check if item is active, considering league view prefix
+                const currentPath = viewMode === 'league' ? `/league${item.path}` : item.path
+                const isActive = location.pathname === currentPath
                 return (
                   <ListItem key={item.id} disablePadding className={`mainNavBarDesktop__secondaryMenuItem${isActive ? ' mainNavBarDesktop__secondaryMenuItem--active' : ''}`}>
                     <ListItemButton

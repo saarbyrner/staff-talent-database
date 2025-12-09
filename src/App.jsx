@@ -3,6 +3,7 @@ import LayoutWithMainNav from './components/LayoutWithMainNav'
 import SimplePage from './pages/SimplePage'
 import Athletes from './pages/Athletes'
 import StaffDatabase from './pages/StaffDatabase'
+import League from './pages/League'
 import Screen01_FormsHome from './pages/forms/Screen01_FormsHome'
 import Screen02_FormBuilder from './pages/forms/Screen02_FormBuilder'
 import Screen02_FormResponses from './pages/forms/Screen02_FormResponses'
@@ -13,6 +14,7 @@ function App() {
   return (
     <LayoutWithMainNav>
       <Routes>
+        {/* Club View Routes */}
         <Route path="/" element={<SimplePage pageName="Home" />} />
         <Route path="/dashboard" element={<SimplePage pageName="Dashboard" />} />
         <Route path="/medical" element={<SimplePage pageName="Medical" />} />
@@ -30,6 +32,20 @@ function App() {
         <Route path="/activity" element={<SimplePage pageName="Activity log" />} />
         <Route path="/settings" element={<SimplePage pageName="Admin" />} />
         <Route path="/help" element={<SimplePage pageName="Help" />} />
+
+        {/* League View Routes - Same data, different space */}
+        <Route path="/league" element={<League />} />
+        <Route path="/league/analysis" element={<SimplePage pageName="Analysis" />} />
+        <Route path="/league/athlete" element={<Athletes />} />
+        <Route path="/league/staff" element={<StaffDatabase />} />
+        <Route path="/league/forms/form_templates" element={<Screen01_FormsHome />} />
+        <Route path="/league/forms/form_answers_sets" element={<Screen02_FormResponses />} />
+        <Route path="/league/forms/form_answers_sets/forms/:formId" element={<Screen03_FormResponsesForTemplate />} />
+        <Route path="/league/forms/form_answers_sets/:answerSetId" element={<Screen04_FormAnswerSet />} />
+        <Route path="/league/forms/:formId/build" element={<Screen02_FormBuilder />} />
+        <Route path="/league/planning" element={<SimplePage pageName="Calendar" />} />
+        <Route path="/league/settings" element={<SimplePage pageName="Admin" />} />
+        <Route path="/league/help" element={<SimplePage pageName="Help" />} />
       </Routes>
     </LayoutWithMainNav>
   )

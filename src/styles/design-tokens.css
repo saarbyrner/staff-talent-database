@@ -48,6 +48,11 @@
   
   --color-info: #3B4960;
   --color-info-light: #f2f3f5;
+  
+  /* MLS Branding Colors */
+  --color-mls-red: #C8102E;
+  --color-mls-red-hover: #a00d25;
+  --color-mls-red-dark: #8a0b1f;
   --color-info-dark: #232b3a;
   
   /* Chart Colors - From actual Medinah system */

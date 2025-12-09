@@ -114,10 +114,22 @@ function MainNavigation({
   variant = 'permanent',
   onFormsToggle = () => {},
   isFormsMenuOpen = false,
+  viewMode = 'default', // 'default' or 'league'
   ...props 
 }) {
   const location = useLocation()
   const navigate = useNavigate()
+
+  // Filter navigation items based on view mode
+  const getFilteredNavigationItems = () => {
+    if (viewMode === 'league') {
+      // Remove medical, workload, and activity from league view
+      return navigationItems.filter(item => 
+        !['medical', 'workload', 'activity-log'].includes(item.id)
+      )
+    }
+    return navigationItems
+  }
 
   const handleItemClick = (item) => {
     if (item.id === 'forms') {
@@ -125,13 +137,26 @@ function MainNavigation({
       onFormsToggle()
       return
     }
-    navigate(item.path)
+    // If in league view, prepend /league to the path
+    const targetPath = viewMode === 'league' ? `/league${item.path}` : item.path
+    navigate(targetPath)
+  }
+
+  const handleLogoClick = () => {
+    // Toggle between league and club view
+    if (viewMode === 'league') {
+      navigate('/') // Go to club home
+    } else {
+      navigate('/league') // Go to league home
+    }
   }
 
   const renderNavItem = (item, isCollapsed = false) => {
+    // Check if item is active, considering league view prefix
+    const currentPath = viewMode === 'league' ? `/league${item.path}` : item.path
     const isActive = item.id === 'forms'
-      ? location.pathname.startsWith('/forms') || isFormsMenuOpen
-      : location.pathname === item.path
+      ? (viewMode === 'league' ? location.pathname.startsWith('/league/forms') : location.pathname.startsWith('/forms')) || isFormsMenuOpen
+      : location.pathname === currentPath
     const IconComponent = item.icon
 
     const button = (
@@ -229,7 +254,9 @@ function MainNavigation({
       sx={{
         width: isOpen ? DRAWER_WIDTH : DRAWER_WIDTH_COLLAPSED,
         height: '100vh',
-        background: 'linear-gradient(180deg, #000000 0%, #111111 40%, #000000 70%, #040037ff 90%, #040037ff 100%)',
+        background: viewMode === 'league' 
+          ? 'linear-gradient(180deg, #C8102E 0%, #a00d25 40%, #8a0b1f 70%, #6a0818 90%, #6a0818 100%)'
+          : 'linear-gradient(180deg, #000000 0%, #111111 40%, #000000 70%, #040037ff 90%, #040037ff 100%)',
         color: '#ffffff',
         display: 'flex',
         flexDirection: 'column',
@@ -243,8 +270,13 @@ function MainNavigation({
           alignItems: 'center',
           justifyContent: isOpen ? 'flex-start' : 'center',
           p: 2,
-          minHeight: 32
+          minHeight: 32,
+          cursor: 'pointer',
+          '&:hover': {
+            opacity: 0.8
+          }
         }}
+        onClick={handleLogoClick}
       >
         <Box
           sx={{
@@ -270,7 +302,7 @@ function MainNavigation({
       {/* Main Navigation Items */}
       <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', width: '100%', maxWidth: '100%' }}>
         <List disablePadding sx={{ width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
-          {navigationItems.map((item) => renderNavItem(item, !isOpen))}
+          {getFilteredNavigationItems().map((item) => renderNavItem(item, !isOpen))}
         </List>
       </Box>
 
@@ -328,7 +360,8 @@ MainNavigation.propTypes = {
   onToggle: PropTypes.func,
   variant: PropTypes.oneOf(['permanent', 'persistent', 'temporary']),
   onFormsToggle: PropTypes.func,
-  isFormsMenuOpen: PropTypes.bool
+  isFormsMenuOpen: PropTypes.bool,
+  viewMode: PropTypes.oneOf(['default', 'league'])
 }
 
 export default MainNavigation

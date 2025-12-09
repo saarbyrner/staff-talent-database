@@ -4,6 +4,7 @@ import { DataGridPro } from '@mui/x-data-grid-pro';
 import { CustomToolbar } from '../components/TalentDatabaseGrid';
 import TalentDatabaseGrid from '../components/TalentDatabaseGrid';
 import staffList from '../data/users_staff.json';
+import { generateInitialsImage } from '../utils/assetManager';
 import '../styles/design-tokens.css';
 
 /**
@@ -59,10 +60,35 @@ function StaffDatabase() {
                   sortable: false,
                   filterable: false,
                   renderCell: (params) => {
-                    const first = params.row.firstname || '';
-                    const last = params.row.lastname || '';
-                    const initials = `${(first.charAt(0) || '') + (last.charAt(0) || '')}`.toUpperCase() || 'U';
-                    return <Avatar sx={{ width: 32, height: 32 }}>{initials}</Avatar>;
+                    const name = `${params.row.firstname || ''} ${params.row.lastname || ''}`.trim();
+                    const initials = name
+                      .split(' ')
+                      .filter(Boolean)
+                      .map(part => part.charAt(0).toUpperCase())
+                      .slice(0, 2)
+                      .join('') || 'U';
+                    const fallbackSrc = generateInitialsImage(name || 'Staff Member', 128, '#040037', '#ffffff');
+                    
+                    return (
+                      <Avatar
+                        sx={{ 
+                          width: 32, 
+                          height: 32, 
+                          fontSize: '0.75rem', 
+                          fontWeight: 600, 
+                          bgcolor: 'var(--color-background-secondary)', 
+                          color: 'var(--color-text-primary)' 
+                        }}
+                        imgProps={{
+                          onError: (event) => {
+                            event.currentTarget.onerror = null;
+                            event.currentTarget.src = fallbackSrc;
+                          }
+                        }}
+                      >
+                        {initials}
+                      </Avatar>
+                    );
                   }
                 },
                 {
