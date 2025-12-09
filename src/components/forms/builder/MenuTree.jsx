@@ -13,7 +13,7 @@ import {
 import { ExpandMoreOutlined, MoreVertOutlined, DragIndicatorOutlined, CheckCircle, RadioButtonUnchecked } from '@mui/icons-material'
 
 export default function MenuTree({ form, selectedQuestionId, onSelectQuestion, selectedSectionId, onSelectSection, mode = 'build', completionByQuestionId = {} }) {
-  const [expanded, setExpanded] = React.useState(() => (mode === 'build' ? [] : (form.sections || []).map(s => s.id)))
+  const [expanded, setExpanded] = React.useState([])
 
   function toggleExpanded(id) {
     setExpanded((prev) => (
