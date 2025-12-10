@@ -383,20 +383,39 @@ function ExperienceTab({ staffMember }) {
                 {staffMember.mlsClubsCoached?.length > 0 && (
                   <>
                     <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>MLS Clubs</Typography>
-                    <Typography variant="body2" sx={{ color: 'var(--color-text-primary)' }}>
-                      {staffMember.mlsClubsCoached.join(', ')}
-                    </Typography>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {staffMember.mlsClubsCoached.map((club, idx) => (
+                        <Chip key={idx} label={club} size="small" />
+                      ))}
+                    </Box>
                   </>
                 )}
+              </>
+            )}
+            
+            {staffMember.mlsCoachingExpList?.length > 0 && (
+              <>
+                <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>Experience Details</Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                  {staffMember.mlsCoachingExpList.map((exp, idx) => (
+                    <Typography key={idx} variant="body2" sx={{ color: 'var(--color-text-primary)' }}>
+                      {exp}
+                    </Typography>
+                  ))}
+                </Box>
               </>
             )}
             
             {staffMember.nonMlsCoachExp?.length > 0 && (
               <>
                 <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>Other Experience</Typography>
-                <Typography variant="body2" sx={{ color: 'var(--color-text-primary)' }}>
-                  {staffMember.nonMlsCoachExp.join(', ')}
-                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                  {staffMember.nonMlsCoachExp.map((exp, idx) => (
+                    <Typography key={idx} variant="body2" sx={{ color: 'var(--color-text-primary)' }}>
+                      {exp}
+                    </Typography>
+                  ))}
+                </Box>
               </>
             )}
           </Box>
@@ -410,21 +429,38 @@ function ExperienceTab({ staffMember }) {
             Sporting/Executive Experience
           </Typography>
           <Box sx={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 2, rowGap: 2 }}>
-            {staffMember.nonMlsSportingExp?.length > 0 && (
-              <>
-                <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>Experience</Typography>
-                <Typography variant="body2" sx={{ color: 'var(--color-text-primary)' }}>
-                  {staffMember.nonMlsSportingExp.join(', ')}
-                </Typography>
-              </>
-            )}
-            
             {staffMember.sportingVertical?.length > 0 && (
               <>
                 <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>Specializations</Typography>
-                <Typography variant="body2" sx={{ color: 'var(--color-text-primary)' }}>
-                  {staffMember.sportingVertical.join(', ')}
-                </Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {staffMember.sportingVertical.map((vert, idx) => (
+                    <Chip key={idx} label={vert} size="small" />
+                  ))}
+                </Box>
+              </>
+            )}
+            
+            {staffMember.mlsClubsSporting?.length > 0 && (
+              <>
+                <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>MLS Clubs</Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {staffMember.mlsClubsSporting.map((club, idx) => (
+                    <Chip key={idx} label={club} size="small" />
+                  ))}
+                </Box>
+              </>
+            )}
+            
+            {staffMember.nonMlsSportingExp?.length > 0 && (
+              <>
+                <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>Experience</Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                  {staffMember.nonMlsSportingExp.map((exp, idx) => (
+                    <Typography key={idx} variant="body2" sx={{ color: 'var(--color-text-primary)' }}>
+                      {exp}
+                    </Typography>
+                  ))}
+                </Box>
               </>
             )}
           </Box>
@@ -439,6 +475,15 @@ function ExperienceTab({ staffMember }) {
         <Box sx={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 2, rowGap: 2 }}>
           {!isCurrentStaff ? (
             <>
+              {staffMember.currentlyEmployed !== undefined && (
+                <>
+                  <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>Currently Employed</Typography>
+                  <Typography variant="body2" sx={{ color: 'var(--color-text-primary)' }}>
+                    {staffMember.currentlyEmployed ? 'Yes' : 'No'}
+                  </Typography>
+                </>
+              )}
+              
               {staffMember.currentEmployer && (
                 <>
                   <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>Current</Typography>
@@ -462,6 +507,24 @@ function ExperienceTab({ staffMember }) {
                   <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>Previous</Typography>
                   <Typography variant="body2" sx={{ color: 'var(--color-text-primary)' }}>
                     {staffMember.prevEmployer2}
+                  </Typography>
+                </>
+              )}
+              
+              {staffMember.prevEmployer3 && (
+                <>
+                  <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>Previous</Typography>
+                  <Typography variant="body2" sx={{ color: 'var(--color-text-primary)' }}>
+                    {staffMember.prevEmployer3}
+                  </Typography>
+                </>
+              )}
+              
+              {staffMember.prevEmployer4 && (
+                <>
+                  <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>Previous</Typography>
+                  <Typography variant="body2" sx={{ color: 'var(--color-text-primary)' }}>
+                    {staffMember.prevEmployer4}
                   </Typography>
                 </>
               )}
@@ -496,14 +559,27 @@ function QualificationsTab({ staffMember }) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       {/* Education */}
-      {!isCurrentStaff && staffMember.degree && (
+      {!isCurrentStaff && (staffMember.degree || staffMember.highestDegree) && (
         <Paper elevation={0} sx={{ p: 3, border: '1px solid var(--color-border-primary)' }}>
           <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>
             Education
           </Typography>
           <Box sx={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 2, rowGap: 2 }}>
-            <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>Degree</Typography>
-            <Typography variant="body2" sx={{ color: 'var(--color-text-primary)' }}>{staffMember.degree}</Typography>
+            {staffMember.highestDegree?.length > 0 ? (
+              <>
+                <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>Degrees</Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {staffMember.highestDegree.map((deg, idx) => (
+                    <Chip key={idx} label={deg} size="small" />
+                  ))}
+                </Box>
+              </>
+            ) : staffMember.degree ? (
+              <>
+                <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>Degree</Typography>
+                <Typography variant="body2" sx={{ color: 'var(--color-text-primary)' }}>{staffMember.degree}</Typography>
+              </>
+            ) : null}
           </Box>
         </Paper>
       )}
@@ -548,9 +624,25 @@ function QualificationsTab({ staffMember }) {
                 </>
               )}
               
+              {staffMember.sportingDirectorCerts?.length > 0 && (
+                <>
+                  <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>Sporting Director Certifications</Typography>
+                  <Box>
+                    {staffMember.sportingDirectorCerts.map((cert, index) => (
+                      <Chip
+                        key={index}
+                        label={cert}
+                        size="small"
+                        sx={{ mr: 1, mb: 1 }}
+                      />
+                    ))}
+                  </Box>
+                </>
+              )}
+              
               {staffMember.mlsPrograms?.length > 0 && (
                 <>
-                  <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>MLS Programs</Typography>
+                  <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>MLS Programs (Legacy)</Typography>
                   <Box>
                     {staffMember.mlsPrograms.map((program, index) => (
                       <Chip
@@ -561,6 +653,31 @@ function QualificationsTab({ staffMember }) {
                       />
                     ))}
                   </Box>
+                </>
+              )}
+              
+              {staffMember.mlsProgramming?.length > 0 && (
+                <>
+                  <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>MLS Programming</Typography>
+                  <Box>
+                    {staffMember.mlsProgramming.map((program, index) => (
+                      <Chip
+                        key={index}
+                        label={program}
+                        size="small"
+                        sx={{ mr: 1, mb: 1 }}
+                      />
+                    ))}
+                  </Box>
+                </>
+              )}
+              
+              {staffMember.otherLicensesList && (
+                <>
+                  <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>Other Licenses</Typography>
+                  <Typography variant="body2" sx={{ color: 'var(--color-text-primary)' }}>
+                    {staffMember.otherLicensesList}
+                  </Typography>
                 </>
               )}
             </>

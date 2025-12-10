@@ -22,7 +22,7 @@ import {
   List,
   ListItemButton
 } from '@mui/material';
-import { ArrowBack, SaveOutlined, ExpandMoreOutlined, DragIndicatorOutlined } from '@mui/icons-material';
+import { ArrowBack, SaveOutlined, ExpandMoreOutlined, DragIndicatorOutlined, CloudUpload, InsertDriveFile } from '@mui/icons-material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -77,39 +77,80 @@ function StaffFormEdit() {
     // Map staff member data to form field names
     const values = {};
     if (staffMember.source === 'talent') {
+      // Contact Information
       values.firstName = staffMember.firstName || '';
       values.lastName = staffMember.lastName || '';
       values.phone = staffMember.phone || '';
       values.email = staffMember.email || '';
       values.country = staffMember.country || '';
+      values.state = staffMember.state || '';
       values.city = staffMember.city || '';
       values.usSponsorship = staffMember.workAuthUS ? 'No' : 'Yes';
       values.caSponsorship = staffMember.workAuthCA ? 'No' : 'Yes';
+      
+      // Voluntary Self Identification
       values.gender = staffMember.gender || '';
       values.ethnicity = staffMember.ethnicity || '';
+      
+      // Agent & Playing Experience
       values.hasAgent = staffMember.hasAgent ? 'Yes' : 'No';
       values.agentName = staffMember.agentName || '';
       values.agencyName = staffMember.agencyName || '';
       values.proPlayerExp = staffMember.proPlayerExp ? 'Yes' : 'No';
       values.mlsPlayerExp = staffMember.mlsPlayerExp ? 'Yes' : 'No';
-      values.mlsClubsPlayed = staffMember.mlsClubsPlayed?.join(', ') || '';
+      values.mlsClubsPlayed = staffMember.mlsClubsPlayed || [];
       values.otherPlayerExp = staffMember.otherPlayerExp || '';
+      
+      // Interest Section
       values.interestArea = staffMember.interestArea || '';
       values.coachingRoles = staffMember.coachingRoles || [];
       values.execRoles = staffMember.execRoles || [];
       values.techRoles = staffMember.techRoles || [];
       values.relocation = staffMember.relocation || [];
-      values.proCoachExp = staffMember.proCoachExp ? 'Yes' : 'No';
-      values.mlsCoachExp = staffMember.mlsCoachExp ? 'Yes' : 'No';
-      values.degree = staffMember.degree || '';
+      
+      // Professional Coaching Section
+      values.proCoachExpUpdate = staffMember.proCoachExpUpdate ? 'Yes' : 'No';
+      values.prevMlsCoachExp = staffMember.prevMlsCoachExp ? 'Yes' : 'No';
+      values.mlsCoachingExpList = staffMember.mlsCoachingExpList || [];
+      values.mlsClubsCoached = staffMember.mlsClubsCoached || [];
+      values.nonMlsCoachExp = staffMember.nonMlsCoachExp || [];
+      
+      // Professional Sporting Experience Section
+      values.proSportingExpUpdate = staffMember.proSportingExpUpdate ? 'Yes' : 'No';
+      values.prevMlsSportingExp = staffMember.prevMlsSportingExp ? 'Yes' : 'No';
+      values.mlsClubsSporting = staffMember.mlsClubsSporting || [];
+      values.nonMlsSportingExp = staffMember.nonMlsSportingExp || [];
+      values.sportingVertical = staffMember.sportingVertical || [];
+      
+      // Employment History Section
+      values.currentlyEmployed = staffMember.currentlyEmployed ? 'Yes' : 'No';
+      values.currentEmployer = staffMember.currentEmployer || '';
+      values.prevEmployer1 = staffMember.prevEmployer1 || '';
+      values.prevEmployer2 = staffMember.prevEmployer2 || '';
+      values.prevEmployer3 = staffMember.prevEmployer3 || '';
+      values.prevEmployer4 = staffMember.prevEmployer4 || '';
+      
+      // Education & Languages Section
+      values.highestDegree = Array.isArray(staffMember.highestDegree) ? staffMember.highestDegree : (staffMember.degree ? [staffMember.degree] : []);
+      values.mlsProgramming = staffMember.mlsProgramming || staffMember.mlsPrograms || [];
       values.coachingLicenses = staffMember.coachingLicenses || [];
+      values.sportingDirectorCerts = staffMember.sportingDirectorCerts || staffMember.sportingCerts || [];
+      values.otherLicenses = staffMember.otherLicenses ? 'Yes' : 'No';
+      values.otherLicensesList = staffMember.otherLicensesList || '';
       values.languages = staffMember.languages || [];
+      
+      // Upload Documents
+      values.profilePic = staffMember.picUrl || '';
+      values.resume = staffMember.resumeUrl || '';
+      values.coachingLicenseDoc = staffMember.coachingLicenseDoc || '';
+      values.otherCertsDoc = staffMember.otherCertsDoc || '';
     } else if (staffMember.source === 'current') {
       values.firstName = staffMember.firstname || '';
       values.lastName = staffMember.lastname || '';
       values.phone = staffMember.phone || '';
       values.email = staffMember.email || '';
       values.country = staffMember.country || '';
+      values.state = staffMember.state || '';
       values.city = staffMember.city || '';
     }
     
@@ -164,9 +205,19 @@ function StaffFormEdit() {
     const isChecked = event.target.checked;
     setFormValues(prev => {
       const current = Array.isArray(prev[fieldName]) ? prev[fieldName] : [];
-      if (isChecked) {
-        return { ...prev, [fieldName]: [...current, option] };
+      
+      // Special handling for "Not Applicable" - it clears all other selections
+      if (option === 'Not Applicable' && isChecked) {
+        return { ...prev, [fieldName]: ['Not Applicable'] };
       }
+      
+      // If checking any other option, remove "Not Applicable"
+      if (isChecked) {
+        const withoutNA = current.filter(v => v !== 'Not Applicable');
+        return { ...prev, [fieldName]: [...withoutNA, option] };
+      }
+      
+      // Unchecking
       return { ...prev, [fieldName]: current.filter(value => value !== option) };
     });
   };
@@ -185,6 +236,14 @@ function StaffFormEdit() {
 
   const evaluateDependency = (field) => {
     if (!field.dependency) return true;
+    
+    // Handle complex conditional expressions like "interestArea == 'Coaching'"
+    if (typeof field.dependency === 'string' && field.dependency.includes('==')) {
+      const [fieldName, expectedValue] = field.dependency.split('==').map(s => s.trim().replace(/'/g, ''));
+      return formValues[fieldName] === expectedValue;
+    }
+    
+    // Simple field dependency - check if parent field is truthy or "Yes"
     const dependentValue = formValues[field.dependency];
     return dependentValue === 'Yes' || dependentValue === true;
   };
@@ -285,6 +344,49 @@ function StaffFormEdit() {
               }
             }}
           />
+        );
+        break;
+
+      case 'FileUpload':
+        control = (
+          <Box>
+            <Button
+              variant="outlined"
+              component="label"
+              startIcon={<CloudUpload />}
+              sx={{ textTransform: 'none' }}
+            >
+              Choose File
+              <input
+                type="file"
+                hidden
+                accept={fieldId.includes('Pic') || fieldId.includes('picture') ? '.jpg,.jpeg,.png' : '.pdf,.doc,.docx'}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    if (file.size > 10 * 1024 * 1024) {
+                      alert('File size must be less than 10MB');
+                      return;
+                    }
+                    handleValueChange(fieldId, file);
+                  }
+                }}
+              />
+            </Button>
+            {value && typeof value === 'object' && value.name && (
+              <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'var(--color-text-secondary)' }}>
+                Selected: {value.name} ({(value.size / 1024).toFixed(1)} KB)
+              </Typography>
+            )}
+            {value && typeof value === 'string' && value.startsWith('http') && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+                <InsertDriveFile fontSize="small" />
+                <Typography variant="caption" sx={{ color: 'var(--color-text-secondary)' }}>
+                  {value.split('/').pop()}
+                </Typography>
+              </Box>
+            )}
+          </Box>
         );
         break;
 

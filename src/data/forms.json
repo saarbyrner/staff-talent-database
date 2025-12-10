@@ -16,8 +16,7 @@
       "name": "phone",
       "label": "Phone Number",
       "type": "TextField",
-      "required": true,
-      "helperText": "Include international country codes if applicable"
+      "required": true
     },
     {
       "name": "email",
@@ -29,14 +28,22 @@
       "name": "country",
       "label": "Country",
       "type": "Select",
-      "required": false,
-      "options": ["USA", "Canada", "Mexico", "Other"]
+      "required": true,
+      "options": ["USA", "Canada", "Mexico", "Brazil", "Argentina", "England", "Spain", "France", "Germany", "Italy", "Portugal", "Netherlands", "Colombia", "Uruguay", "Chile", "Other"]
+    },
+    {
+      "name": "state",
+      "label": "State",
+      "type": "Select",
+      "required": true,
+      "options": ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"]
     },
     {
       "name": "city",
       "label": "City",
-      "type": "TextField",
-      "required": true
+      "type": "Select",
+      "required": true,
+      "options": ["Atlanta", "Austin", "Baltimore", "Boston", "Charlotte", "Chicago", "Cincinnati", "Cleveland", "Columbus", "Dallas", "Denver", "Detroit", "Houston", "Indianapolis", "Jacksonville", "Kansas City", "Las Vegas", "Los Angeles", "Memphis", "Miami", "Milwaukee", "Minneapolis", "Nashville", "New York", "Oakland", "Orlando", "Philadelphia", "Phoenix", "Pittsburgh", "Portland", "Raleigh", "Sacramento", "Salt Lake City", "San Antonio", "San Diego", "San Francisco", "San Jose", "Seattle", "St. Louis", "Tampa", "Toronto", "Vancouver", "Montreal", "Calgary", "Other"]
     },
     {
       "name": "usSponsorship",
@@ -66,11 +73,7 @@
       "label": "Ethnicity",
       "type": "CheckboxGroup",
       "required": false,
-      "options": [
-        "White (non Hispanic)", "Hispanic / Latino", "Black", "American Indian or Alaska Native",
-        "Canadian Indigenous or Canadian First Nations", "Asian", "Hawaiian or Pacific Islander",
-        "Arab or Middle Eastern", "Multi-racial", "Prefer not to answer"
-      ]
+      "options": ["White (non Hispanic)", "Hispanic / Latino", "Black", "American Indian or Alaska Native", "Canadian Indigenous or Canadian First Nations", "Asian", "Hawaiian or Pacific Islander", "Arab or Middle Eastern", "Multi-racial", "Prefer not to answer"]
     }
   ],
   "Agent & Playing Experience Section": [
@@ -118,15 +121,14 @@
       "type": "CheckboxGroup",
       "required": true,
       "dependency": "mlsPlayerExp",
-      "options": ["LA Galaxy", "Seattle Sounders", "Toronto FC", "Other"]
+      "options": ["Atlanta United FC", "Austin FC", "Charlotte FC", "Chicago Fire FC", "FC Cincinnati", "Colorado Rapids", "Columbus Crew", "DC United", "FC Dallas", "Houston Dynamo FC", "Inter Miami CF", "LA Galaxy", "LAFC", "Minnesota United FC", "CF Montreal", "Nashville SC", "New England Revolution", "New York City FC", "New York Red Bulls", "Orlando City SC", "Philadelphia Union", "Portland Timbers", "Real Salt Lake", "San Jose Earthquakes", "Seattle Sounders FC", "Sporting Kansas City", "St. Louis City SC", "Toronto FC", "Vancouver Whitecaps FC", "Atlanta United 2", "Birmingham Legion FC", "Carolina Core FC", "Chicago Fire FC II", "Colorado Rapids 2", "Columbus Crew 2", "Crown Legacy FC", "FC Cincinnati 2", "Huntsville City FC", "LA Galaxy II", "New England Revolution II", "New York Red Bulls II", "North Carolina FC", "Orlando City B", "Philadelphia Union II", "Portland Timbers 2", "Real Monarchs", "San Jose Earthquakes II", "Sounders FC 2", "Sporting Kansas City II", "St. Louis City SC 2", "The Town FC", "Toronto FC II", "Ventura County FC", "Whitecaps FC 2"]
     },
     {
       "name": "otherPlayerExp",
       "label": "Other professional playing experience",
       "type": "TextField",
       "multiline": true,
-      "required": false,
-      "helperText": "Please list any other professional clubs you have played with."
+      "required": false
     }
   ],
   "Interest Section": [
@@ -143,10 +145,7 @@
       "type": "CheckboxGroup",
       "required": true,
       "dependency": "interestArea == 'Coaching'",
-      "options": [
-        "MLS First Team Head Coach", "MLS First Team Assistant Coach", 
-        "MLS NEXT Pro Head Coach", "MLS NEXT Academy Director"
-      ]
+      "options": ["MLS First Team Head Coach", "MLS First Team Assistant Coach", "MLS First Team Goalkeeper Coach", "Head of Coaching", "Individual Development Plan (IDP) Coach", "MLS NEXT Pro Head Coach", "MLS NEXT Pro Assistant Coach", "MLS NEXT Pro Goalkeeper Coach", "MLS NEXT (Academy) Coach", "MLS NEXT Academy Director", "Community/Grassroots Coach", "Other", "Not Applicable"]
     },
     {
       "name": "execRoles",
@@ -154,10 +153,7 @@
       "type": "CheckboxGroup",
       "required": true,
       "dependency": "interestArea == 'Sporting Executive'",
-      "options": [
-        "General Manager or Sporting Director", "Technical Director", 
-        "Chief Soccer Officer"
-      ]
+      "options": ["Chief Soccer Officer or President of Soccer Operations", "General Manager or Sporting Director", "Assistant General Manager or Sporting Director", "Technical Director", "Assistant Technical Director", "Other Sporting Executive Role", "Not Applicable"]
     },
     {
       "name": "techRoles",
@@ -165,7 +161,7 @@
       "type": "CheckboxGroup",
       "required": true,
       "dependency": "interestArea == 'Other Technical Role'",
-      "options": ["Data analyst", "Scout", "Performance Coach"]
+      "options": ["Data analyst", "Scout", "Athletic trainer", "Performance coach", "Team admin", "Other", "Not Applicable"]
     },
     {
       "name": "relocation",
@@ -173,6 +169,189 @@
       "type": "CheckboxGroup",
       "required": true,
       "options": ["Northeast", "Southeast", "Midwest", "South", "West", "Canada", "I am not willing to relocate"]
+    }
+  ],
+  "Professional Coaching Section": [
+    {
+      "name": "proCoachExpUpdate",
+      "label": "Do you have professional coaching experience to update?",
+      "type": "RadioGroup",
+      "required": true,
+      "conditional": true,
+      "options": ["Yes", "No"]
+    },
+    {
+      "name": "prevMlsCoachExp",
+      "label": "Do you have previous MLS coaching experience?",
+      "type": "RadioGroup",
+      "required": true,
+      "dependency": "proCoachExpUpdate",
+      "options": ["Yes", "No"]
+    },
+    {
+      "name": "mlsCoachingExpList",
+      "label": "List all previous MLS coaching experience",
+      "type": "CheckboxGroup",
+      "required": true,
+      "dependency": "prevMlsCoachExp",
+      "options": ["MLS First Team Head Coaching Experience", "MLS First Team Assistant Coaching Experience", "MLS NEXT Pro Head Coaching Experience", "MLS NEXT Pro Assistant Coaching Experience", "MLS NEXT Academy Coaching Experience"]
+    },
+    {
+      "name": "mlsClubsCoached",
+      "label": "MLS Clubs (coaching experience)",
+      "type": "CheckboxGroup",
+      "required": true,
+      "dependency": "prevMlsCoachExp",
+      "options": ["Atlanta United FC", "Austin FC", "Charlotte FC", "Chicago Fire FC", "FC Cincinnati", "Colorado Rapids", "Columbus Crew", "DC United", "FC Dallas", "Houston Dynamo FC", "Inter Miami CF", "LA Galaxy", "LAFC", "Minnesota United FC", "CF Montreal", "Nashville SC", "New England Revolution", "New York City FC", "New York Red Bulls", "Orlando City SC", "Philadelphia Union", "Portland Timbers", "Real Salt Lake", "San Jose Earthquakes", "Seattle Sounders FC", "Sporting Kansas City", "St. Louis City SC", "Toronto FC", "Vancouver Whitecaps FC", "Atlanta United 2", "Birmingham Legion FC", "Carolina Core FC", "Chicago Fire FC II", "Colorado Rapids 2", "Columbus Crew 2", "Crown Legacy FC", "FC Cincinnati 2", "Huntsville City FC", "LA Galaxy II", "New England Revolution II", "New York Red Bulls II", "North Carolina FC", "Orlando City B", "Philadelphia Union II", "Portland Timbers 2", "Real Monarchs", "San Jose Earthquakes II", "Sounders FC 2", "Sporting Kansas City II", "St. Louis City SC 2", "The Town FC", "Toronto FC II", "Ventura County FC", "Whitecaps FC 2"]
+    },
+    {
+      "name": "nonMlsCoachExp",
+      "label": "Do you have non-MLS coaching experience?",
+      "type": "CheckboxGroup",
+      "required": true,
+      "dependency": "proCoachExpUpdate",
+      "options": ["National Team Coaching Experience", "Other 1st Division Head Coaching Experience", "1st Division Assistant Coaching Experience", "Collegiate Coaching Experience", "Other International Coaching Experience", "Not Applicable"]
+    }
+  ],
+  "Professional Sporting Experience Section": [
+    {
+      "name": "proSportingExpUpdate",
+      "label": "Do you have professional sporting experience to update?",
+      "type": "RadioGroup",
+      "required": true,
+      "conditional": true,
+      "options": ["Yes", "No"]
+    },
+    {
+      "name": "prevMlsSportingExp",
+      "label": "Do you have previous sporting role experience at an MLS Club?",
+      "type": "RadioGroup",
+      "required": true,
+      "dependency": "proSportingExpUpdate",
+      "options": ["Yes", "No"]
+    },
+    {
+      "name": "mlsClubsSporting",
+      "label": "MLS Clubs (sporting experience)",
+      "type": "CheckboxGroup",
+      "required": true,
+      "dependency": "prevMlsSportingExp",
+      "options": ["Atlanta United FC", "Austin FC", "Charlotte FC", "Chicago Fire FC", "FC Cincinnati", "Colorado Rapids", "Columbus Crew", "DC United", "FC Dallas", "Houston Dynamo FC", "Inter Miami CF", "LA Galaxy", "LAFC", "Minnesota United FC", "CF Montreal", "Nashville SC", "New England Revolution", "New York City FC", "New York Red Bulls", "Orlando City SC", "Philadelphia Union", "Portland Timbers", "Real Salt Lake", "San Jose Earthquakes", "Seattle Sounders FC", "Sporting Kansas City", "St. Louis City SC", "Toronto FC", "Vancouver Whitecaps FC", "Atlanta United 2", "Birmingham Legion FC", "Carolina Core FC", "Chicago Fire FC II", "Colorado Rapids 2", "Columbus Crew 2", "Crown Legacy FC", "FC Cincinnati 2", "Huntsville City FC", "LA Galaxy II", "New England Revolution II", "New York Red Bulls II", "North Carolina FC", "Orlando City B", "Philadelphia Union II", "Portland Timbers 2", "Real Monarchs", "San Jose Earthquakes II", "Sounders FC 2", "Sporting Kansas City II", "St. Louis City SC 2", "The Town FC", "Toronto FC II", "Ventura County FC", "Whitecaps FC 2"]
+    },
+    {
+      "name": "nonMlsSportingExp",
+      "label": "Do you have other non-MLS sporting experience?",
+      "type": "CheckboxGroup",
+      "required": true,
+      "dependency": "proSportingExpUpdate",
+      "options": ["National Team Sporting Experience", "USL Sporting Experience", "NWSL Sporting Experience", "Other 1st Division Sporting Experience", "Collegiate Sporting Experience", "Other International Sporting Experience", "Not Applicable"]
+    },
+    {
+      "name": "sportingVertical",
+      "label": "Sporting vertical of experience",
+      "type": "CheckboxGroup",
+      "required": false,
+      "dependency": "proSportingExpUpdate",
+      "options": ["Scouting", "Analytics", "Player Development", "CAP & Player Personnel", "Other", "Not Applicable"]
+    }
+  ],
+  "Employment History Section": [
+    {
+      "name": "currentlyEmployed",
+      "label": "Are you currently employed?",
+      "type": "RadioGroup",
+      "required": true,
+      "conditional": true,
+      "options": ["Yes", "No"]
+    },
+    {
+      "name": "currentEmployer",
+      "label": "Current employer",
+      "type": "TextField",
+      "multiline": true,
+      "required": true,
+      "dependency": "currentlyEmployed"
+    },
+    {
+      "name": "prevEmployer1",
+      "label": "Previous employer 1",
+      "type": "TextField",
+      "multiline": true,
+      "required": true
+    },
+    {
+      "name": "prevEmployer2",
+      "label": "Previous employer 2",
+      "type": "TextField",
+      "multiline": true,
+      "required": false
+    },
+    {
+      "name": "prevEmployer3",
+      "label": "Previous employer 3",
+      "type": "TextField",
+      "multiline": true,
+      "required": false
+    },
+    {
+      "name": "prevEmployer4",
+      "label": "Previous employer 4",
+      "type": "TextField",
+      "multiline": true,
+      "required": false
+    }
+  ],
+  "Education & Languages Section": [
+    {
+      "name": "highestDegree",
+      "label": "Highest education degree obtained",
+      "type": "CheckboxGroup",
+      "required": true,
+      "options": ["Associates Degree", "Bachelors Degree", "Masters Degree", "Doctoral Degree (Ph.D.)", "Other", "Not Applicable"]
+    },
+    {
+      "name": "mlsProgramming",
+      "label": "Do you have any experience with MLS Programming?",
+      "type": "CheckboxGroup",
+      "required": true,
+      "options": ["MLS Advance", "Elite Formation Coaching License", "Match Evaluator Program", "Match Director Program", "League Access Program", "Other", "Not Applicable"]
+    },
+    {
+      "name": "coachingLicenses",
+      "label": "What coaching licenses do you hold?",
+      "type": "CheckboxGroup",
+      "required": true,
+      "options": ["USSF PRO License", "USSF A - Senior License", "USSF A - Youth License", "USSF B License", "USSF C License", "USSF D License", "USSF Grassroots License", "USSF Goalkeeping A License", "UEFA Pro License", "UEFA A License", "UEFA B License", "UEFA C License", "Canada Soccer A License", "Canada Soccer B License", "Canada Soccer C License", "Elite Formation Coaching License (MLS)", "Other", "Not Applicable"]
+    },
+    {
+      "name": "sportingDirectorCerts",
+      "label": "What sporting director certifications do you hold?",
+      "type": "CheckboxGroup",
+      "required": true,
+      "options": ["FIFA", "FA", "The Global Institute of Sport", "Other", "Not Applicable"]
+    },
+    {
+      "name": "otherLicenses",
+      "label": "Do you have any other professional licenses or certifications?",
+      "type": "RadioGroup",
+      "required": true,
+      "conditional": true,
+      "options": ["Yes", "No"]
+    },
+    {
+      "name": "otherLicensesList",
+      "label": "Please list other professional licenses or certifications",
+      "type": "TextField",
+      "multiline": true,
+      "required": true,
+      "dependency": "otherLicenses"
+    },
+    {
+      "name": "languages",
+      "label": "What languages do you speak?",
+      "type": "CheckboxGroup",
+      "required": true,
+      "options": ["English", "Spanish", "French", "Portuguese", "Portuguese (Brazilian)", "German", "Italian", "Dutch", "Russian", "Arabic", "Chinese (Mandarin)", "Japanese", "Korean", "Other"]
     }
   ],
   "Upload Documents": [
@@ -191,6 +370,12 @@
     {
       "name": "coachingLicenseDoc",
       "label": "Upload Coaching License",
+      "type": "FileUpload",
+      "required": false
+    },
+    {
+      "name": "otherCertsDoc",
+      "label": "Upload Other Professional Licensure or Certifications",
       "type": "FileUpload",
       "required": false
     }

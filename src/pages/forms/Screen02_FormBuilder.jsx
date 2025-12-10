@@ -352,8 +352,39 @@ export default function Screen02_FormBuilder() {
 
       if (question.type === 'radio' || question.type === 'checkbox') {
         const current = Array.isArray(previewValues[question.id]) ? previewValues[question.id] : (previewValues[question.id] || '')
-        // Use dropdown when there are many options
-        if (useDropdownForMany) {
+        // Use dropdown when there are many options (>8 for checkbox, >3 for radio)
+        const shouldUseDropdown = question.type === 'checkbox' ? optionCount > 8 : useDropdownForMany
+        
+        if (shouldUseDropdown) {
+          // For checkbox with >8 options, render as Select dropdown
+          if (question.type === 'checkbox') {
+            return (
+              <TextField
+                variant="filled"
+                size="small"
+                fullWidth
+                select
+                SelectProps={{ 
+                  multiple: true,
+                  displayEmpty: true,
+                  renderValue: (selected) => {
+                    if (!selected || selected.length === 0) return <em>Select multiple</em>
+                    return selected.join(', ')
+                  }
+                }}
+                value={Array.isArray(previewValues[question.id]) ? previewValues[question.id] : []}
+                onChange={(event) => handlePreviewValueChange(question.id, event.target.value)}
+              >
+                {(question.options || []).map((option) => (
+                  <MenuItem key={option} value={option}>
+                    <Checkbox checked={(previewValues[question.id] || []).includes(option)} />
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )
+          }
+          // Radio with >3 options
           return (
             <TextField
               variant="filled"
@@ -387,7 +418,7 @@ export default function Screen02_FormBuilder() {
           )
         }
 
-        // checkbox
+        // checkbox with <=8 options
         return (
           <FormGroup>
             {(question.options || []).map((option) => (

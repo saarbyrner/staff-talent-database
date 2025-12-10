@@ -17,18 +17,34 @@
     "agencyName": "Pro Sports Management",
     "proPlayerExp": true,
     "mlsPlayerExp": true,
-    "mlsClubsPlayed": ["LA Galaxy", "San Jose Earthquakes"],
+    "mlsClubsPlayed": [
+      "LA Galaxy",
+      "San Jose Earthquakes"
+    ],
     "otherPlayerExp": "Played 4 years in Liga MX (Atlas)",
     "interestArea": "Coaching",
-    "coachingRoles": ["MLS First Team Head Coach", "MLS NEXT Pro Head Coach"],
+    "coachingRoles": [
+      "MLS First Team Head Coach",
+      "MLS NEXT Pro Head Coach"
+    ],
     "execRoles": [],
     "techRoles": [],
-    "relocation": ["West", "South"],
+    "relocation": [
+      "West",
+      "South"
+    ],
     "proCoachExp": true,
     "mlsCoachExp": true,
-    "mlsCoachRoles": ["MLS NEXT Pro Head Coaching Experience", "MLS First Team Assistant Coaching Experience"],
-    "mlsClubsCoached": ["LAFC"],
-    "nonMlsCoachExp": ["Collegiate Coaching Experience"],
+    "mlsCoachRoles": [
+      "MLS NEXT Pro Head Coaching Experience",
+      "MLS First Team Assistant Coaching Experience"
+    ],
+    "mlsClubsCoached": [
+      "LAFC"
+    ],
+    "nonMlsCoachExp": [
+      "Collegiate Coaching Experience"
+    ],
     "sportingExp": false,
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
@@ -36,14 +52,48 @@
     "sportingVertical": [],
     "currentEmployer": "LAFC - Assistant Coach (2021-Present)",
     "prevEmployer1": "UCLA - Men's Head Coach (2018-2021)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Ajax Amsterdam - Assistant Coach (2012-2013)",
     "degree": "Bachelors Degree",
-    "mlsPrograms": ["Elite Formation Coaching License"],
-    "coachingLicenses": ["USSF PRO License", "UEFA A License"],
+    "mlsPrograms": [
+      "Elite Formation Coaching License"
+    ],
+    "coachingLicenses": [
+      "USSF PRO License",
+      "UEFA A License",
+      "USSF A - Senior License",
+      "USSF B License",
+      "USSF Goalkeeping A License",
+      "UEFA B License"
+    ],
     "sportingCerts": [],
-    "languages": ["English", "Spanish"],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/rivera.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/rivera.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/rivera.jpg",
+    "proCoachExpUpdate": true,
+    "prevMlsCoachExp": true,
+    "mlsCoachingExpList": [
+      "MLS NEXT Pro Head Coaching Experience",
+      "MLS First Team Assistant Coaching Experience"
+    ],
+    "proSportingExpUpdate": false,
+    "prevMlsSportingExp": false,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": "FC Barcelona Academy - Technical Director (2017-2018)",
+    "highestDegree": [
+      "Bachelors Degree"
+    ],
+    "mlsProgramming": [
+      "Elite Formation Coaching License"
+    ],
+    "sportingDirectorCerts": [],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/101_coaching.pdf",
+    "otherCertsDoc": null
   },
   {
     "id": "102",
@@ -67,9 +117,16 @@
     "otherPlayerExp": "English Championship (Watford, 2010-2015)",
     "interestArea": "Sporting Executive",
     "coachingRoles": [],
-    "execRoles": ["Technical Director", "General Manager or Sporting Director"],
+    "execRoles": [
+      "Technical Director",
+      "General Manager or Sporting Director"
+    ],
     "techRoles": [],
-    "relocation": ["Northeast", "Canada", "West"],
+    "relocation": [
+      "Northeast",
+      "Canada",
+      "West"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -77,19 +134,56 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": false,
-    "mlsClubsSporting": [],
-    "nonMlsSportingExp": ["other 1st Division Sporting Experience", "Other International Sporting Experience"],
-    "sportingVertical": ["Player Development", "CAP & Player Personnel"],
+    "mlsClubsSporting": [
+      "FC Cincinnati",
+      "Minnesota United FC"
+    ],
+    "nonMlsSportingExp": [
+      "other 1st Division Sporting Experience",
+      "Other International Sporting Experience"
+    ],
+    "sportingVertical": [
+      "Player Development",
+      "CAP & Player Personnel"
+    ],
     "currentEmployer": "Brentford FC - Head of Recruitment (2020-Present)",
     "prevEmployer1": "Watford FC - Chief Scout (2016-2020)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Bayern Munich - Youth Development Coach (2019-2021)",
     "degree": "Masters Degree",
     "mlsPrograms": [],
-    "coachingLicenses": ["UEFA B License"],
-    "sportingCerts": ["The Global Institute of Sport", "FA Level 5 (Technical Directors)"],
-    "languages": ["English", "French"],
+    "coachingLicenses": [
+      "UEFA B License"
+    ],
+    "sportingCerts": [
+      "The Global Institute of Sport",
+      "FA Level 5 (Technical Directors)"
+    ],
+    "languages": [
+      "English",
+      "French"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/okoro.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/okoro.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/okoro.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": "Bayern Munich - Head Coach (2018-2022)",
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Masters Degree"
+    ],
+    "mlsProgramming": [],
+    "sportingDirectorCerts": [
+      "The Global Institute of Sport",
+      "FA Level 5 (Technical Directors)"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "103",
@@ -114,8 +208,14 @@
     "interestArea": "Other Technical Role",
     "coachingRoles": [],
     "execRoles": [],
-    "techRoles": ["Data analyst", "performance coach"],
-    "relocation": ["Northeast", "Midwest"],
+    "techRoles": [
+      "Data analyst",
+      "performance coach"
+    ],
+    "relocation": [
+      "Northeast",
+      "Midwest"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -123,19 +223,54 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": true,
-    "mlsClubsSporting": ["New York Red Bulls"],
-    "nonMlsSportingExp": ["NWSL Sporting Experience"],
-    "sportingVertical": ["Analytics", "Scouting"],
+    "mlsClubsSporting": [
+      "New York Red Bulls"
+    ],
+    "nonMlsSportingExp": [
+      "NWSL Sporting Experience"
+    ],
+    "sportingVertical": [
+      "Analytics",
+      "Scouting"
+    ],
     "currentEmployer": "Gotham FC - Lead Data Analyst (2022-Present)",
     "prevEmployer1": "NY Red Bulls - Junior Analyst (2019-2022)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Mexican Football Federation - Scout (2011-2013)",
     "degree": "Masters Degree",
-    "mlsPrograms": ["MLS Advance", "League Access Program"],
-    "coachingLicenses": ["USSF C License"],
+    "mlsPrograms": [
+      "MLS Advance",
+      "League Access Program"
+    ],
+    "coachingLicenses": [
+      "USSF C License"
+    ],
     "sportingCerts": [],
-    "languages": ["English", "Russian"],
+    "languages": [
+      "English",
+      "Russian"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/vasiliev.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/vasiliev.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/vasiliev.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Masters Degree"
+    ],
+    "mlsProgramming": [
+      "MLS Advance",
+      "League Access Program"
+    ],
+    "sportingDirectorCerts": [],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "104",
@@ -158,15 +293,27 @@
     "mlsClubsPlayed": [],
     "otherPlayerExp": "",
     "interestArea": "Coaching",
-    "coachingRoles": ["MLS NEXT (Academy) Coach", "Community/Grassroots Coach"],
+    "coachingRoles": [
+      "MLS NEXT (Academy) Coach",
+      "Community/Grassroots Coach"
+    ],
     "execRoles": [],
     "techRoles": [],
-    "relocation": ["Canada", "West"],
+    "relocation": [
+      "Canada",
+      "West"
+    ],
     "proCoachExp": true,
     "mlsCoachExp": true,
-    "mlsCoachRoles": ["MLS NEXT Academy Coaching Experience"],
-    "mlsClubsCoached": ["Vancouver Whitecaps FC"],
-    "nonMlsCoachExp": ["Collegiate Coaching Experience"],
+    "mlsCoachRoles": [
+      "MLS NEXT Academy Coaching Experience"
+    ],
+    "mlsClubsCoached": [
+      "Vancouver Whitecaps FC"
+    ],
+    "nonMlsCoachExp": [
+      "Collegiate Coaching Experience"
+    ],
     "sportingExp": false,
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
@@ -174,14 +321,44 @@
     "sportingVertical": [],
     "currentEmployer": "UBC Thunderbirds - Assistant Coach (2023-Present)",
     "prevEmployer1": "Vancouver Whitecaps Academy - U15 Coach (2019-2023)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Indiana University - Analyst (2011-2013)",
     "degree": "Bachelors Degree",
-    "mlsPrograms": ["Match Evaluator Program"],
-    "coachingLicenses": ["Canada Soccer A License", "Canada Soccer B License"],
+    "mlsPrograms": [
+      "Match Evaluator Program"
+    ],
+    "coachingLicenses": [
+      "Canada Soccer A License",
+      "Canada Soccer B License",
+      "USSF C License"
+    ],
     "sportingCerts": [],
-    "languages": ["English", "Japanese"],
+    "languages": [
+      "English",
+      "Japanese"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/sato.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/sato.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/sato.jpg",
+    "proCoachExpUpdate": true,
+    "prevMlsCoachExp": true,
+    "mlsCoachingExpList": [
+      "MLS NEXT Academy Coaching Experience"
+    ],
+    "proSportingExpUpdate": false,
+    "prevMlsSportingExp": false,
+    "currentlyEmployed": true,
+    "prevEmployer3": "University of North Carolina - Sporting Director (2013-2015)",
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Bachelors Degree"
+    ],
+    "mlsProgramming": [
+      "Match Evaluator Program"
+    ],
+    "sportingDirectorCerts": [],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "105",
@@ -201,13 +378,21 @@
     "agencyName": "CAA",
     "proPlayerExp": true,
     "mlsPlayerExp": true,
-    "mlsClubsPlayed": ["Austin FC", "Columbus Crew"],
+    "mlsClubsPlayed": [
+      "Austin FC",
+      "Columbus Crew"
+    ],
     "otherPlayerExp": "",
     "interestArea": "Sporting Executive",
     "coachingRoles": [],
-    "execRoles": ["Assistant General Manager or Sporting Director", "Director of Football Operations"],
+    "execRoles": [
+      "Assistant General Manager or Sporting Director",
+      "Director of Football Operations"
+    ],
     "techRoles": [],
-    "relocation": ["I am not willing to relocate"],
+    "relocation": [
+      "I am not willing to relocate"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -215,22 +400,55 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": true,
-    "mlsClubsSporting": ["Austin FC"],
+    "mlsClubsSporting": [
+      "Austin FC"
+    ],
     "nonMlsSportingExp": [],
-    "sportingVertical": ["Player Development", "Other"],
+    "sportingVertical": [
+      "Player Development",
+      "Other"
+    ],
     "currentEmployer": "Austin FC - Director of Player Care (2022-Present)",
     "prevEmployer1": "Austin FC - Player (2020-2022)",
     "prevEmployer2": "Columbus Crew - Player (2017-2020)",
     "degree": "Associates Degree",
-    "mlsPrograms": ["MLS Advance"],
-    "coachingLicenses": ["USSF B License"],
-    "sportingCerts": ["FIFA Diploma in Club Management"],
-    "languages": ["English"],
+    "mlsPrograms": [
+      "MLS Advance"
+    ],
+    "coachingLicenses": [
+      "USSF B License"
+    ],
+    "sportingCerts": [
+      "FIFA Diploma in Club Management"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/smith.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/smith.jpg"
-  }
-
-  ,
+    "picUrl": "https://fake-s3.mls.com/avatars/smith.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": "FC Barcelona Academy - Sporting Director (2019-2021)",
+    "highestDegree": [
+      "Associates Degree"
+    ],
+    "mlsProgramming": [
+      "MLS Advance"
+    ],
+    "sportingDirectorCerts": [
+      "FIFA Diploma in Club Management"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
+  },
   {
     "id": "106",
     "firstName": "Sophia",
@@ -252,15 +470,25 @@
     "mlsClubsPlayed": [],
     "otherPlayerExp": "College coach - University of Miami (player)",
     "interestArea": "Coaching",
-    "coachingRoles": ["Academy Coach", "Assistant Coach"],
+    "coachingRoles": [
+      "Academy Coach",
+      "Assistant Coach"
+    ],
     "execRoles": [],
     "techRoles": [],
-    "relocation": ["South", "West"],
+    "relocation": [
+      "South",
+      "West"
+    ],
     "proCoachExp": true,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
-    "mlsClubsCoached": [],
-    "nonMlsCoachExp": ["USL Academy Coach"],
+    "mlsClubsCoached": [
+      "Vancouver Whitecaps FC"
+    ],
+    "nonMlsCoachExp": [
+      "USL Academy Coach"
+    ],
     "sportingExp": false,
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
@@ -268,14 +496,42 @@
     "sportingVertical": [],
     "currentEmployer": "Miami United Academy - Head Coach (2021-Present)",
     "prevEmployer1": "University of Miami - Graduate Assistant (2018-2021)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Ajax Amsterdam - Head Coach (2012-2015)",
     "degree": "Bachelors Degree",
-    "mlsPrograms": ["MLS Coaching Pathway"],
-    "coachingLicenses": ["USSF C License"],
+    "mlsPrograms": [
+      "MLS Coaching Pathway"
+    ],
+    "coachingLicenses": [
+      "USSF C License"
+    ],
     "sportingCerts": [],
-    "languages": ["English", "Spanish"],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/martinez.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/martinez.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/martinez.jpg",
+    "proCoachExpUpdate": true,
+    "prevMlsCoachExp": true,
+    "mlsCoachingExpList": [
+      "MLS First Team Assistant Coaching Experience"
+    ],
+    "proSportingExpUpdate": false,
+    "prevMlsSportingExp": false,
+    "currentlyEmployed": true,
+    "prevEmployer3": "Ajax Amsterdam - Assistant Coach (2018-2019)",
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Bachelors Degree"
+    ],
+    "mlsProgramming": [
+      "MLS Coaching Pathway"
+    ],
+    "sportingDirectorCerts": [],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/106_coaching.pdf",
+    "otherCertsDoc": null
   },
   {
     "id": "107",
@@ -299,9 +555,15 @@
     "otherPlayerExp": "League of Ireland and Irish U21 international",
     "interestArea": "Sporting Executive",
     "coachingRoles": [],
-    "execRoles": ["Head of Recruitment", "Scout"],
+    "execRoles": [
+      "Head of Recruitment",
+      "Scout"
+    ],
     "techRoles": [],
-    "relocation": ["Europe", "Canada"],
+    "relocation": [
+      "Europe",
+      "Canada"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -310,18 +572,49 @@
     "sportingExp": true,
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
-    "nonMlsSportingExp": ["European 2nd Division Sporting Experience"],
-    "sportingVertical": ["Scouting", "Player Recruitment"],
+    "nonMlsSportingExp": [
+      "European 2nd Division Sporting Experience"
+    ],
+    "sportingVertical": [
+      "Scouting",
+      "Player Recruitment"
+    ],
     "currentEmployer": "Dublin United - Head of Recruitment (2020-Present)",
     "prevEmployer1": "Shamrock Rovers - Senior Scout (2016-2020)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Stanford University - Youth Development Coach (2016-2020)",
     "degree": "Bachelors Degree",
     "mlsPrograms": [],
-    "coachingLicenses": [],
-    "sportingCerts": ["UEFA Talent ID Course"],
-    "languages": ["English"],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "UEFA Talent ID Course"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/oconnor.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/oconnor.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/oconnor.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": false,
+    "currentlyEmployed": true,
+    "prevEmployer3": "US Soccer Federation - Assistant Coach (2011-2013)",
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Bachelors Degree"
+    ],
+    "mlsProgramming": [],
+    "sportingDirectorCerts": [
+      "UEFA Talent ID Course"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "108",
@@ -346,8 +639,14 @@
     "interestArea": "Other Technical Role",
     "coachingRoles": [],
     "execRoles": [],
-    "techRoles": ["Data Scientist", "Performance Analyst"],
-    "relocation": ["Canada", "Northeast"],
+    "techRoles": [
+      "Data Scientist",
+      "Performance Analyst"
+    ],
+    "relocation": [
+      "Canada",
+      "Northeast"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -356,18 +655,49 @@
     "sportingExp": true,
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
-    "nonMlsSportingExp": ["NCAA Analytics Internship"],
-    "sportingVertical": ["Analytics", "Sports Science"],
+    "nonMlsSportingExp": [
+      "NCAA Analytics Internship"
+    ],
+    "sportingVertical": [
+      "Analytics",
+      "Sports Science"
+    ],
     "currentEmployer": "Toronto FC - Data Science (2023-Present)",
     "prevEmployer1": "Maple Leafs Analytics - Data Intern (2021-2023)",
-    "prevEmployer2": "",
+    "prevEmployer2": null,
     "degree": "Masters Degree",
     "mlsPrograms": [],
-    "coachingLicenses": [],
-    "sportingCerts": ["S&C Level 1"],
-    "languages": ["English", "Urdu"],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "S&C Level 1"
+    ],
+    "languages": [
+      "English",
+      "Urdu"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/khan.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/khan.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/khan.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": false,
+    "currentlyEmployed": false,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Masters Degree"
+    ],
+    "mlsProgramming": [],
+    "sportingDirectorCerts": [
+      "S&C Level 1"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "109",
@@ -390,30 +720,62 @@
     "mlsClubsPlayed": [],
     "otherPlayerExp": "Campeonato Brasileiro Série A (Flamengo)",
     "interestArea": "Coaching",
-    "coachingRoles": ["First Team Coach", "Set Piece Specialist"],
+    "coachingRoles": [
+      "First Team Coach",
+      "Set Piece Specialist"
+    ],
     "execRoles": [],
     "techRoles": [],
-    "relocation": ["West", "South"],
+    "relocation": [
+      "West",
+      "South"
+    ],
     "proCoachExp": true,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
     "mlsClubsCoached": [],
-    "nonMlsCoachExp": ["Brazilian First Team Assistant Coach"],
+    "nonMlsCoachExp": [
+      "Brazilian First Team Assistant Coach"
+    ],
     "sportingExp": true,
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
     "nonMlsSportingExp": [],
-    "sportingVertical": ["Tactical Coaching"],
+    "sportingVertical": [
+      "Tactical Coaching"
+    ],
     "currentEmployer": "Flamengo - Assistant Coach (2019-Present)",
     "prevEmployer1": "Sao Paulo FC - Youth Coach (2015-2019)",
-    "prevEmployer2": "",
+    "prevEmployer2": null,
     "degree": "Bachelors Degree",
     "mlsPrograms": [],
-    "coachingLicenses": ["CBF A License"],
+    "coachingLicenses": [
+      "CBF A License"
+    ],
     "sportingCerts": [],
-    "languages": ["Portuguese", "English"],
+    "languages": [
+      "Portuguese",
+      "English"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/mendes.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/mendes.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/mendes.jpg",
+    "proCoachExpUpdate": true,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": false,
+    "currentlyEmployed": false,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Bachelors Degree"
+    ],
+    "mlsProgramming": [],
+    "sportingDirectorCerts": [],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/109_coaching.pdf",
+    "otherCertsDoc": null
   },
   {
     "id": "110",
@@ -438,8 +800,14 @@
     "interestArea": "Other Technical Role",
     "coachingRoles": [],
     "execRoles": [],
-    "techRoles": ["Performance Analyst", "Head of Sports Science"],
-    "relocation": ["Europe", "Northeast"],
+    "techRoles": [
+      "Performance Analyst",
+      "Head of Sports Science"
+    ],
+    "relocation": [
+      "Europe",
+      "Northeast"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -448,18 +816,51 @@
     "sportingExp": true,
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
-    "nonMlsSportingExp": ["Premier League Academy Sports Scientist"],
-    "sportingVertical": ["Sports Science", "Physical Preparation"],
+    "nonMlsSportingExp": [
+      "Premier League Academy Sports Scientist"
+    ],
+    "sportingVertical": [
+      "Sports Science",
+      "Physical Preparation"
+    ],
     "currentEmployer": "Chelsea FC Academy - Lead Sports Scientist (2020-Present)",
     "prevEmployer1": "Imperial College - Research Assistant (2017-2020)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Manchester United Academy - Analyst (2018-2020)",
     "degree": "PhD",
     "mlsPrograms": [],
-    "coachingLicenses": [],
-    "sportingCerts": ["ASCC Strength & Conditioning"],
-    "languages": ["English"],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "ASCC Strength & Conditioning"
+    ],
+    "languages": [
+      "English",
+      "German"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/nair.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/nair.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/nair.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": false,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "PhD"
+    ],
+    "mlsProgramming": [
+      "League Access Program"
+    ],
+    "sportingDirectorCerts": [
+      "ASCC Strength & Conditioning"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "111",
@@ -483,9 +884,15 @@
     "otherPlayerExp": "College coaching and operations",
     "interestArea": "Sporting Executive",
     "coachingRoles": [],
-    "execRoles": ["Sporting Director", "General Manager"],
+    "execRoles": [
+      "Sporting Director",
+      "General Manager"
+    ],
     "techRoles": [],
-    "relocation": ["West", "Northeast"],
+    "relocation": [
+      "West",
+      "Northeast"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -493,19 +900,56 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": true,
-    "mlsClubsSporting": ["Seattle Sounders FC"],
-    "nonMlsSportingExp": ["USL Sporting Experience"],
-    "sportingVertical": ["Football Operations", "Player Personnel"],
+    "mlsClubsSporting": [
+      "Seattle Sounders FC"
+    ],
+    "nonMlsSportingExp": [
+      "USL Sporting Experience"
+    ],
+    "sportingVertical": [
+      "Football Operations",
+      "Player Personnel"
+    ],
     "currentEmployer": "Seattle Sounders - Head of Football Operations (2021-Present)",
     "prevEmployer1": "Tacoma Defiance - Assistant GM (2018-2021)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Bayern Munich - Technical Director (2018-2022)",
     "degree": "Masters Degree",
-    "mlsPrograms": ["MLS Advance"],
-    "coachingLicenses": [],
-    "sportingCerts": ["FIFA Club Management"],
-    "languages": ["English", "Mandarin"],
+    "mlsPrograms": [
+      "MLS Advance"
+    ],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "FIFA Club Management"
+    ],
+    "languages": [
+      "English",
+      "Mandarin"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/chen.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/chen.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/chen.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": "Georgetown University - Head Coach (2011-2014)",
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Masters Degree"
+    ],
+    "mlsProgramming": [
+      "MLS Advance"
+    ],
+    "sportingDirectorCerts": [
+      "FIFA Club Management"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "112",
@@ -528,15 +972,27 @@
     "mlsClubsPlayed": [],
     "otherPlayerExp": "High school and college coaching",
     "interestArea": "Coaching",
-    "coachingRoles": ["Academy Manager", "MLS NEXT Coach"],
+    "coachingRoles": [
+      "Academy Manager",
+      "MLS NEXT Coach"
+    ],
     "execRoles": [],
     "techRoles": [],
-    "relocation": ["Midwest", "Northeast"],
+    "relocation": [
+      "Midwest",
+      "Northeast"
+    ],
     "proCoachExp": true,
     "mlsCoachExp": true,
-    "mlsCoachRoles": ["MLS NEXT Academy Coach"],
-    "mlsClubsCoached": ["Chicago Fire Academy"],
-    "nonMlsCoachExp": ["High School Head Coach"],
+    "mlsCoachRoles": [
+      "MLS NEXT Academy Coach"
+    ],
+    "mlsClubsCoached": [
+      "Chicago Fire Academy"
+    ],
+    "nonMlsCoachExp": [
+      "High School Head Coach"
+    ],
     "sportingExp": false,
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
@@ -544,14 +1000,41 @@
     "sportingVertical": [],
     "currentEmployer": "Chicago Fire Academy - Academy Manager (2022-Present)",
     "prevEmployer1": "DePaul University - Assistant Coach (2018-2022)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Real Madrid Youth - Academy Director (2017-2021)",
     "degree": "Bachelors Degree",
-    "mlsPrograms": ["Match Evaluator Program"],
-    "coachingLicenses": ["USSF A License"],
+    "mlsPrograms": [
+      "Match Evaluator Program"
+    ],
+    "coachingLicenses": [
+      "USSF A License"
+    ],
     "sportingCerts": [],
-    "languages": ["English"],
+    "languages": [
+      "English"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/brown.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/brown.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/brown.jpg",
+    "proCoachExpUpdate": true,
+    "prevMlsCoachExp": true,
+    "mlsCoachingExpList": [
+      "MLS NEXT Academy Coach"
+    ],
+    "proSportingExpUpdate": false,
+    "prevMlsSportingExp": false,
+    "currentlyEmployed": false,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Bachelors Degree"
+    ],
+    "mlsProgramming": [
+      "Match Evaluator Program"
+    ],
+    "sportingDirectorCerts": [],
+    "otherLicenses": true,
+    "otherLicensesList": "Sports Management Certificate (2018)",
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": "https://fake-s3.mls.com/certs/112_other.pdf"
   },
   {
     "id": "113",
@@ -576,8 +1059,14 @@
     "interestArea": "Other Technical Role",
     "coachingRoles": [],
     "execRoles": [],
-    "techRoles": ["Video Analyst", "Tactical Analyst"],
-    "relocation": ["West", "Northeast"],
+    "techRoles": [
+      "Video Analyst",
+      "Tactical Analyst"
+    ],
+    "relocation": [
+      "West",
+      "Northeast"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -586,18 +1075,45 @@
     "sportingExp": true,
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
-    "nonMlsSportingExp": ["NCAA Video Analyst"],
-    "sportingVertical": ["Analysis", "Video"],
+    "nonMlsSportingExp": [
+      "NCAA Video Analyst"
+    ],
+    "sportingVertical": [
+      "Analysis",
+      "Video"
+    ],
     "currentEmployer": "SF Analytics - Lead Video Analyst (2022-Present)",
     "prevEmployer1": "Stanford Men's Soccer - Video Analyst (2019-2022)",
-    "prevEmployer2": "",
+    "prevEmployer2": null,
     "degree": "Bachelors Degree",
     "mlsPrograms": [],
-    "coachingLicenses": [],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
     "sportingCerts": [],
-    "languages": ["English"],
+    "languages": [
+      "English",
+      "German"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/lee.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/lee.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/lee.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": false,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Bachelors Degree"
+    ],
+    "mlsProgramming": [],
+    "sportingDirectorCerts": [],
+    "otherLicenses": true,
+    "otherLicensesList": "Nutrition Specialist (2020)",
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": "https://fake-s3.mls.com/certs/113_other.pdf"
   },
   {
     "id": "114",
@@ -621,9 +1137,14 @@
     "otherPlayerExp": "Women's Super League Academy player",
     "interestArea": "Sporting Executive",
     "coachingRoles": [],
-    "execRoles": ["Head of Women's Football", "Player Care"],
+    "execRoles": [
+      "Head of Women's Football",
+      "Player Care"
+    ],
     "techRoles": [],
-    "relocation": ["Europe"],
+    "relocation": [
+      "Europe"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -632,18 +1153,51 @@
     "sportingExp": true,
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
-    "nonMlsSportingExp": ["FA Women's Leadership Program"],
-    "sportingVertical": ["Player Care", "Womens Football"],
+    "nonMlsSportingExp": [
+      "FA Women's Leadership Program"
+    ],
+    "sportingVertical": [
+      "Player Care",
+      "Womens Football"
+    ],
     "currentEmployer": "Manchester United Women - Player Welfare (2021-Present)",
     "prevEmployer1": "City Ladies Academy - Welfare Officer (2018-2021)",
-    "prevEmployer2": "",
+    "prevEmployer2": "FC Barcelona Academy - Academy Director (2010-2013)",
     "degree": "Masters Degree",
     "mlsPrograms": [],
-    "coachingLicenses": [],
-    "sportingCerts": ["FA Welfare & Safeguarding"],
-    "languages": ["English"],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "FA Welfare & Safeguarding"
+    ],
+    "languages": [
+      "English",
+      "German"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/wilson.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/wilson.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/wilson.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": false,
+    "currentlyEmployed": false,
+    "prevEmployer3": "Stanford University - Head Coach (2012-2014)",
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Masters Degree"
+    ],
+    "mlsProgramming": [
+      "Elite Formation Coaching License"
+    ],
+    "sportingDirectorCerts": [
+      "FA Welfare & Safeguarding"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "115",
@@ -667,9 +1221,15 @@
     "otherPlayerExp": "Extensive scouting and talent ID experience",
     "interestArea": "Sporting Executive",
     "coachingRoles": [],
-    "execRoles": ["Senior Scout", "Head Scout"],
+    "execRoles": [
+      "Senior Scout",
+      "Head Scout"
+    ],
     "techRoles": [],
-    "relocation": ["Northeast", "Midwest"],
+    "relocation": [
+      "Northeast",
+      "Midwest"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -677,19 +1237,52 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": true,
-    "mlsClubsSporting": ["D.C. United"],
+    "mlsClubsSporting": [
+      "D.C. United"
+    ],
     "nonMlsSportingExp": [],
-    "sportingVertical": ["Scouting", "Player Recruitment"],
+    "sportingVertical": [
+      "Scouting",
+      "Player Recruitment"
+    ],
     "currentEmployer": "Independent Scout - Freelance (2017-Present)",
     "prevEmployer1": "D.C. United - Regional Scout (2014-2017)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Bayern Munich - Academy Director (2010-2011)",
     "degree": "Associates Degree",
-    "mlsPrograms": ["MLS Scouting Workshop"],
-    "coachingLicenses": [],
+    "mlsPrograms": [
+      "MLS Scouting Workshop"
+    ],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
     "sportingCerts": [],
-    "languages": ["English"],
+    "languages": [
+      "English",
+      "Portuguese"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/thompson.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/thompson.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/thompson.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": "Bayern Munich - Head Coach (2019-2021)",
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Associates Degree"
+    ],
+    "mlsProgramming": [
+      "MLS Scouting Workshop"
+    ],
+    "sportingDirectorCerts": [
+      "The Global Institute of Sport"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "116",
@@ -712,30 +1305,75 @@
     "mlsClubsPlayed": [],
     "otherPlayerExp": "USL Championship defender",
     "interestArea": "Coaching",
-    "coachingRoles": ["Assistant Coach", "Academy Coach"],
+    "coachingRoles": [
+      "Assistant Coach",
+      "Academy Coach"
+    ],
     "execRoles": [],
     "techRoles": [],
-    "relocation": ["Midwest", "South"],
+    "relocation": [
+      "Midwest",
+      "South"
+    ],
     "proCoachExp": true,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
-    "mlsClubsCoached": [],
-    "nonMlsCoachExp": ["USL Academy Assistant Coach"],
+    "mlsClubsCoached": [
+      "FC Cincinnati"
+    ],
+    "nonMlsCoachExp": [
+      "USL Academy Assistant Coach"
+    ],
     "sportingExp": true,
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
     "nonMlsSportingExp": [],
-    "sportingVertical": ["Player Development"],
+    "sportingVertical": [
+      "Player Development"
+    ],
     "currentEmployer": "Midwest FC Academy - Assistant Coach (2023-Present)",
     "prevEmployer1": "Sporting Kansas City II - Player (2021-2023)",
-    "prevEmployer2": "",
+    "prevEmployer2": "UCLA - Sporting Director (2010-2012)",
     "degree": "Bachelors Degree",
-    "mlsPrograms": ["MLS Coaching Pathway"],
-    "coachingLicenses": ["USSF A License"],
-    "sportingCerts": ["USL Coaching Award"],
-    "languages": ["English"],
+    "mlsPrograms": [
+      "MLS Coaching Pathway"
+    ],
+    "coachingLicenses": [
+      "USSF A License"
+    ],
+    "sportingCerts": [
+      "USL Coaching Award"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/collins.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/collins.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/collins.jpg",
+    "proCoachExpUpdate": true,
+    "prevMlsCoachExp": true,
+    "mlsCoachingExpList": [
+      "MLS First Team Assistant Coaching Experience",
+      "MLS NEXT Pro Head Coaching Experience"
+    ],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": false,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": "FC Barcelona Academy - Technical Director (2016-2017)",
+    "highestDegree": [
+      "Bachelors Degree"
+    ],
+    "mlsProgramming": [
+      "MLS Coaching Pathway"
+    ],
+    "sportingDirectorCerts": [
+      "USL Coaching Award"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/116_coaching.pdf",
+    "otherCertsDoc": null
   },
   {
     "id": "117",
@@ -759,9 +1397,15 @@
     "otherPlayerExp": "Collegiate athletics director",
     "interestArea": "Sporting Executive",
     "coachingRoles": [],
-    "execRoles": ["Director of Football", "Assistant GM"],
+    "execRoles": [
+      "Director of Football",
+      "Assistant GM"
+    ],
     "techRoles": [],
-    "relocation": ["Northeast", "West"],
+    "relocation": [
+      "Northeast",
+      "West"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -769,19 +1413,56 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": true,
-    "mlsClubsSporting": ["New York Red Bulls"],
-    "nonMlsSportingExp": ["NCAA Division I Athletics"],
-    "sportingVertical": ["Player Care", "Football Operations"],
+    "mlsClubsSporting": [
+      "New York Red Bulls"
+    ],
+    "nonMlsSportingExp": [
+      "NCAA Division I Athletics"
+    ],
+    "sportingVertical": [
+      "Player Care",
+      "Football Operations"
+    ],
     "currentEmployer": "Metro FC - Director of Football (2023-Present)",
     "prevEmployer1": "Rutgers Athletics - Assistant AD (2019-2023)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Real Madrid Youth - Scout (2014-2015)",
     "degree": "Masters Degree",
-    "mlsPrograms": ["League Access Program"],
-    "coachingLicenses": [],
-    "sportingCerts": ["FIFA Diploma in Club Management"],
-    "languages": ["English", "Hindi"],
+    "mlsPrograms": [
+      "League Access Program"
+    ],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "FIFA Diploma in Club Management"
+    ],
+    "languages": [
+      "English",
+      "Hindi"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/patel.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/patel.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/patel.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": "US Soccer Federation - Youth Development Coach (2010-2011)",
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Masters Degree"
+    ],
+    "mlsProgramming": [
+      "League Access Program"
+    ],
+    "sportingDirectorCerts": [
+      "FIFA Diploma in Club Management"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "118",
@@ -806,8 +1487,13 @@
     "interestArea": "Other Technical Role",
     "coachingRoles": [],
     "execRoles": [],
-    "techRoles": ["Tactical Analyst", "Set Piece Analyst"],
-    "relocation": ["Asia"],
+    "techRoles": [
+      "Tactical Analyst",
+      "Set Piece Analyst"
+    ],
+    "relocation": [
+      "Asia"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -815,19 +1501,52 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": false,
-    "mlsClubsSporting": [],
-    "nonMlsSportingExp": ["J-League Analysis"],
-    "sportingVertical": ["Analytics", "Video"],
+    "mlsClubsSporting": [
+      "Sporting Kansas City"
+    ],
+    "nonMlsSportingExp": [
+      "J-League Analysis"
+    ],
+    "sportingVertical": [
+      "Analytics",
+      "Video"
+    ],
     "currentEmployer": "Tokyo Tactical Lab - Lead Analyst (2021-Present)",
     "prevEmployer1": "FC Tokyo - Video Analyst (2018-2021)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Bayern Munich - Scout (2017-2020)",
     "degree": "Bachelors Degree",
     "mlsPrograms": [],
-    "coachingLicenses": [],
-    "sportingCerts": ["UEFA Performance Analysis"],
-    "languages": ["Japanese", "English"],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "UEFA Performance Analysis"
+    ],
+    "languages": [
+      "Japanese",
+      "English"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/nakamura.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/nakamura.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/nakamura.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": false,
+    "prevEmployer3": "University of North Carolina - Sporting Director (2012-2015)",
+    "prevEmployer4": "Indiana University - Youth Development Coach (2010-2014)",
+    "highestDegree": [
+      "Bachelors Degree"
+    ],
+    "mlsProgramming": [],
+    "sportingDirectorCerts": [
+      "UEFA Performance Analysis"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "119",
@@ -848,12 +1567,18 @@
     "proPlayerExp": false,
     "mlsPlayerExp": false,
     "mlsClubsPlayed": [],
-    "otherPlayerExp": "Strength & conditioning in Liga MX", 
+    "otherPlayerExp": "Strength & conditioning in Liga MX",
     "interestArea": "Other Technical Role",
     "coachingRoles": [],
     "execRoles": [],
-    "techRoles": ["Sports Scientist", "Head of Physical Prep"],
-    "relocation": ["South", "West"],
+    "techRoles": [
+      "Sports Scientist",
+      "Head of Physical Prep"
+    ],
+    "relocation": [
+      "South",
+      "West"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -861,19 +1586,54 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": false,
-    "mlsClubsSporting": [],
-    "nonMlsSportingExp": ["Liga MX Sports Science"],
-    "sportingVertical": ["Sports Science", "Physical Preparation"],
+    "mlsClubsSporting": [
+      "Orlando City SC"
+    ],
+    "nonMlsSportingExp": [
+      "Liga MX Sports Science"
+    ],
+    "sportingVertical": [
+      "Sports Science",
+      "Physical Preparation"
+    ],
     "currentEmployer": "Estudio Física - Lead Scientist (2022-Present)",
     "prevEmployer1": "Club América - Assistant S&C (2018-2022)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Ajax Amsterdam - Assistant Coach (2015-2017)",
     "degree": "Masters Degree",
     "mlsPrograms": [],
-    "coachingLicenses": [],
-    "sportingCerts": ["NSCA Certified Strength & Conditioning Specialist"],
-    "languages": ["Spanish", "English"],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "NSCA Certified Strength & Conditioning Specialist"
+    ],
+    "languages": [
+      "Spanish",
+      "English"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/ruiz.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/ruiz.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/ruiz.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": "Manchester United Academy - Academy Director (2018-2021)",
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Masters Degree"
+    ],
+    "mlsProgramming": [
+      "Elite Formation Coaching License"
+    ],
+    "sportingDirectorCerts": [
+      "NSCA Certified Strength & Conditioning Specialist"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "120",
@@ -896,30 +1656,76 @@
     "mlsClubsPlayed": [],
     "otherPlayerExp": "USL League One captain",
     "interestArea": "Coaching",
-    "coachingRoles": ["Defensive Coach", "Set Piece Specialist"],
+    "coachingRoles": [
+      "Defensive Coach",
+      "Set Piece Specialist"
+    ],
     "execRoles": [],
     "techRoles": [],
-    "relocation": ["South", "Midwest"],
+    "relocation": [
+      "South",
+      "Midwest"
+    ],
     "proCoachExp": true,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
-    "mlsClubsCoached": [],
-    "nonMlsCoachExp": ["USL Defensive Coach"],
+    "mlsClubsCoached": [
+      "Real Salt Lake"
+    ],
+    "nonMlsCoachExp": [
+      "USL Defensive Coach"
+    ],
     "sportingExp": true,
     "mlsSportingExp": false,
-    "mlsClubsSporting": [],
-    "nonMlsSportingExp": ["USL Coaching"],
-    "sportingVertical": ["Tactical Coaching"],
+    "mlsClubsSporting": [
+      "Vancouver Whitecaps FC"
+    ],
+    "nonMlsSportingExp": [
+      "USL Coaching"
+    ],
+    "sportingVertical": [
+      "Tactical Coaching"
+    ],
     "currentEmployer": "Atlanta United Academy - Defensive Coach (2023-Present)",
     "prevEmployer1": "South Georgia Tormenta - Head Coach (2021-2023)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Ajax Amsterdam - Analyst (2015-2017)",
     "degree": "Bachelors Degree",
-    "mlsPrograms": ["MLS Coaching Pathway"],
-    "coachingLicenses": ["USSF B License"],
+    "mlsPrograms": [
+      "MLS Coaching Pathway"
+    ],
+    "coachingLicenses": [
+      "USSF B License",
+      "UEFA A License"
+    ],
     "sportingCerts": [],
-    "languages": ["English"],
+    "languages": [
+      "English"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/stone.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/stone.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/stone.jpg",
+    "proCoachExpUpdate": true,
+    "prevMlsCoachExp": true,
+    "mlsCoachingExpList": [
+      "MLS NEXT Pro Head Coaching Experience",
+      "MLS First Team Assistant Coaching Experience",
+      "MLS First Team Head Coaching Experience"
+    ],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Bachelors Degree"
+    ],
+    "mlsProgramming": [
+      "MLS Coaching Pathway"
+    ],
+    "sportingDirectorCerts": [],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/120_coaching.pdf",
+    "otherCertsDoc": null
   },
   {
     "id": "121",
@@ -943,9 +1749,15 @@
     "otherPlayerExp": "Ghana Premier League captain",
     "interestArea": "Sporting Executive",
     "coachingRoles": [],
-    "execRoles": ["Head of Player Development", "Recruitment Lead"],
+    "execRoles": [
+      "Head of Player Development",
+      "Recruitment Lead"
+    ],
     "techRoles": [],
-    "relocation": ["Africa", "Europe"],
+    "relocation": [
+      "Africa",
+      "Europe"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -953,19 +1765,53 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": false,
-    "mlsClubsSporting": [],
-    "nonMlsSportingExp": ["African Talent ID"],
-    "sportingVertical": ["Player Recruitment", "Player Development"],
+    "mlsClubsSporting": [
+      "DC United",
+      "Nashville SC"
+    ],
+    "nonMlsSportingExp": [
+      "African Talent ID"
+    ],
+    "sportingVertical": [
+      "Player Recruitment",
+      "Player Development"
+    ],
     "currentEmployer": "Accra FC - Director of Player Development (2023-Present)",
     "prevEmployer1": "Legon Cities - Head of Recruitment (2019-2023)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Bayern Munich - Technical Director (2011-2015)",
     "degree": "Bachelors Degree",
     "mlsPrograms": [],
-    "coachingLicenses": [],
-    "sportingCerts": ["CAF Talent ID Diploma"],
-    "languages": ["English", "Twi"],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "CAF Talent ID Diploma"
+    ],
+    "languages": [
+      "English",
+      "Twi"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/osei.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/osei.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/osei.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": "University of North Carolina - Youth Development Coach (2019-2020)",
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Bachelors Degree"
+    ],
+    "mlsProgramming": [],
+    "sportingDirectorCerts": [
+      "CAF Talent ID Diploma"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "122",
@@ -990,8 +1836,14 @@
     "interestArea": "Other Technical Role",
     "coachingRoles": [],
     "execRoles": [],
-    "techRoles": ["Data Scientist", "Technical Director of Analytics"],
-    "relocation": ["Canada", "West"],
+    "techRoles": [
+      "Data Scientist",
+      "Technical Director of Analytics"
+    ],
+    "relocation": [
+      "Canada",
+      "West"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -999,19 +1851,53 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": false,
-    "mlsClubsSporting": [],
-    "nonMlsSportingExp": ["Premier League Tech Partner"],
-    "sportingVertical": ["Analytics", "Technology"],
+    "mlsClubsSporting": [
+      "Austin FC",
+      "Portland Timbers"
+    ],
+    "nonMlsSportingExp": [
+      "Premier League Tech Partner"
+    ],
+    "sportingVertical": [
+      "Analytics",
+      "Technology"
+    ],
     "currentEmployer": "Pacific Analytics - CTO (2022-Present)",
     "prevEmployer1": "Vancouver Whitecaps - Data Analyst (2018-2022)",
-    "prevEmployer2": "",
+    "prevEmployer2": "US Soccer Federation - Head Coach (2019-2023)",
     "degree": "Masters Degree",
     "mlsPrograms": [],
-    "coachingLicenses": [],
-    "sportingCerts": ["MIT Sports Analytics Program"],
-    "languages": ["English", "French"],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "MIT Sports Analytics Program"
+    ],
+    "languages": [
+      "English",
+      "French"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/price.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/price.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/price.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Masters Degree"
+    ],
+    "mlsProgramming": [],
+    "sportingDirectorCerts": [
+      "MIT Sports Analytics Program"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "123",
@@ -1034,30 +1920,75 @@
     "mlsClubsPlayed": [],
     "otherPlayerExp": "Club Atlético Nacional midfielder",
     "interestArea": "Coaching",
-    "coachingRoles": ["Head Coach", "Youth Developer"],
+    "coachingRoles": [
+      "Head Coach",
+      "Youth Developer"
+    ],
     "execRoles": [],
     "techRoles": [],
-    "relocation": ["South", "East"],
+    "relocation": [
+      "South",
+      "East"
+    ],
     "proCoachExp": true,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
-    "mlsClubsCoached": [],
-    "nonMlsCoachExp": ["Categoría Primera A manager"],
+    "mlsClubsCoached": [
+      "New York City FC"
+    ],
+    "nonMlsCoachExp": [
+      "Categoría Primera A manager"
+    ],
     "sportingExp": true,
     "mlsSportingExp": false,
-    "mlsClubsSporting": [],
-    "nonMlsSportingExp": ["Copa Libertadores experience"],
-    "sportingVertical": ["Coaching"],
+    "mlsClubsSporting": [
+      "Philadelphia Union",
+      "Toronto FC"
+    ],
+    "nonMlsSportingExp": [
+      "Copa Libertadores experience"
+    ],
+    "sportingVertical": [
+      "Coaching"
+    ],
     "currentEmployer": "Bogotá United - Head Coach (2023-Present)",
     "prevEmployer1": "Atlético Nacional - Assistant Coach (2019-2023)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Real Madrid Youth - Head Coach (2017-2018)",
     "degree": "Bachelors Degree",
     "mlsPrograms": [],
-    "coachingLicenses": ["CONMEBOL PRO License"],
+    "coachingLicenses": [
+      "CONMEBOL PRO License",
+      "USSF A - Youth License"
+    ],
     "sportingCerts": [],
-    "languages": ["Spanish", "English"],
+    "languages": [
+      "Spanish",
+      "English"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/duarte.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/duarte.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/duarte.jpg",
+    "proCoachExpUpdate": true,
+    "prevMlsCoachExp": true,
+    "mlsCoachingExpList": [
+      "MLS NEXT Academy Coaching Experience",
+      "MLS NEXT Pro Assistant Coaching Experience"
+    ],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": "Ajax Amsterdam - Analyst (2011-2012)",
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Bachelors Degree"
+    ],
+    "mlsProgramming": [
+      "League Access Program"
+    ],
+    "sportingDirectorCerts": [],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/123_coaching.pdf",
+    "otherCertsDoc": null
   },
   {
     "id": "124",
@@ -1066,7 +1997,7 @@
     "phone": "+1 (213) 555-0122",
     "email": "sienna.brooks@califc.com",
     "country": "USA",
-    "state": "California",
+    "state": "Massachusetts",
     "city": "Long Beach",
     "workAuthUS": true,
     "workAuthCA": false,
@@ -1080,30 +2011,81 @@
     "mlsClubsPlayed": [],
     "otherPlayerExp": "USL Championship midfielder",
     "interestArea": "Coaching",
-    "coachingRoles": ["Academy Technical Director", "Head of Coaching"],
+    "coachingRoles": [
+      "Academy Technical Director",
+      "Head of Coaching"
+    ],
     "execRoles": [],
     "techRoles": [],
-    "relocation": ["West", "South"],
+    "relocation": [
+      "West",
+      "South"
+    ],
     "proCoachExp": true,
     "mlsCoachExp": true,
-    "mlsCoachRoles": ["MLS NEXT Academy Coach"],
-    "mlsClubsCoached": ["LAFC Academy"],
-    "nonMlsCoachExp": ["Cal State Fullerton Head Coach"],
+    "mlsCoachRoles": [
+      "MLS NEXT Academy Coach"
+    ],
+    "mlsClubsCoached": [
+      "LAFC Academy"
+    ],
+    "nonMlsCoachExp": [
+      "Cal State Fullerton Head Coach"
+    ],
     "sportingExp": true,
     "mlsSportingExp": true,
-    "mlsClubsSporting": ["LAFC"],
-    "nonMlsSportingExp": [],
-    "sportingVertical": ["Player Development"],
+    "mlsClubsSporting": [
+      "LAFC"
+    ],
+    "nonMlsSportingExp": [
+      "National Team Sporting Experience",
+      "USL Sporting Experience"
+    ],
+    "sportingVertical": [
+      "Player Development"
+    ],
     "currentEmployer": "Califc Academy - Technical Director (2022-Present)",
     "prevEmployer1": "Cal State Fullerton - Head Coach (2018-2022)",
-    "prevEmployer2": "",
+    "prevEmployer2": null,
     "degree": "Masters Degree",
-    "mlsPrograms": ["Match Evaluator Program"],
-    "coachingLicenses": ["USSF A License"],
-    "sportingCerts": ["USSF Master Coach"],
-    "languages": ["English"],
+    "mlsPrograms": [
+      "Match Evaluator Program"
+    ],
+    "coachingLicenses": [
+      "USSF A License"
+    ],
+    "sportingCerts": [
+      "USSF Master Coach"
+    ],
+    "languages": [
+      "English",
+      "French"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/brooks.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/brooks.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/brooks.jpg",
+    "proCoachExpUpdate": true,
+    "prevMlsCoachExp": true,
+    "mlsCoachingExpList": [
+      "MLS NEXT Academy Coach"
+    ],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Masters Degree"
+    ],
+    "mlsProgramming": [
+      "Match Evaluator Program"
+    ],
+    "sportingDirectorCerts": [
+      "USSF Master Coach"
+    ],
+    "otherLicenses": true,
+    "otherLicensesList": "Strength & Conditioning (2020)",
+    "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/124_coaching.pdf",
+    "otherCertsDoc": "https://fake-s3.mls.com/certs/124_other.pdf"
   },
   {
     "id": "125",
@@ -1127,9 +2109,15 @@
     "otherPlayerExp": "Operations strategist",
     "interestArea": "Sporting Executive",
     "coachingRoles": [],
-    "execRoles": ["Director of Football Operations", "Assistant GM"],
+    "execRoles": [
+      "Director of Football Operations",
+      "Assistant GM"
+    ],
     "techRoles": [],
-    "relocation": ["Northeast", "West"],
+    "relocation": [
+      "Northeast",
+      "West"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -1137,19 +2125,56 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": true,
-    "mlsClubsSporting": ["New York City FC"],
-    "nonMlsSportingExp": [],
-    "sportingVertical": ["Football Operations", "Player Personnel"],
+    "mlsClubsSporting": [
+      "New York City FC"
+    ],
+    "nonMlsSportingExp": [
+      "NWSL Sporting Experience"
+    ],
+    "sportingVertical": [
+      "Football Operations",
+      "Player Personnel"
+    ],
     "currentEmployer": "Liberty Operations Group - VP (2022-Present)",
     "prevEmployer1": "NYCFC - Operations Lead (2018-2022)",
-    "prevEmployer2": "",
+    "prevEmployer2": null,
     "degree": "MBA",
-    "mlsPrograms": ["MLS Advance"],
-    "coachingLicenses": [],
-    "sportingCerts": ["FIFA Club Management"],
-    "languages": ["English", "Spanish"],
+    "mlsPrograms": [
+      "MLS Advance"
+    ],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "FIFA Club Management"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/king.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/king.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/king.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "MBA"
+    ],
+    "mlsProgramming": [
+      "MLS Advance"
+    ],
+    "sportingDirectorCerts": [
+      "FIFA Club Management"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "126",
@@ -1174,8 +2199,14 @@
     "interestArea": "Other Technical Role",
     "coachingRoles": [],
     "execRoles": [],
-    "techRoles": ["Product Owner", "Systems Analyst"],
-    "relocation": ["Europe", "West"],
+    "techRoles": [
+      "Product Owner",
+      "Systems Analyst"
+    ],
+    "relocation": [
+      "Europe",
+      "West"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -1183,19 +2214,56 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": false,
-    "mlsClubsSporting": [],
-    "nonMlsSportingExp": ["UEFA Innovation Lab"],
-    "sportingVertical": ["Technology", "Analytics"],
+    "mlsClubsSporting": [
+      "Columbus Crew",
+      "New York City FC"
+    ],
+    "nonMlsSportingExp": [
+      "UEFA Innovation Lab"
+    ],
+    "sportingVertical": [
+      "Technology",
+      "Analytics"
+    ],
     "currentEmployer": "Varsovia Tech - Senior Product Lead (2022-Present)",
     "prevEmployer1": "Legia Warsaw - Performance Systems (2018-2022)",
-    "prevEmployer2": "",
+    "prevEmployer2": null,
     "degree": "Masters Degree",
     "mlsPrograms": [],
-    "coachingLicenses": [],
-    "sportingCerts": ["UEFA Digital Coach"],
-    "languages": ["Polish", "English", "German"],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "UEFA Digital Coach"
+    ],
+    "languages": [
+      "Polish",
+      "English",
+      "German"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/kravitz.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/kravitz.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/kravitz.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": false,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Masters Degree"
+    ],
+    "mlsProgramming": [
+      "League Access Program"
+    ],
+    "sportingDirectorCerts": [
+      "UEFA Digital Coach"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "127",
@@ -1218,30 +2286,68 @@
     "mlsClubsPlayed": [],
     "otherPlayerExp": "Superliga head coach",
     "interestArea": "Coaching",
-    "coachingRoles": ["First Team Coach", "Tactical Coach"],
+    "coachingRoles": [
+      "First Team Coach",
+      "Tactical Coach"
+    ],
     "execRoles": [],
     "techRoles": [],
-    "relocation": ["South", "West"],
+    "relocation": [
+      "South",
+      "West"
+    ],
     "proCoachExp": true,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
-    "mlsClubsCoached": [],
-    "nonMlsCoachExp": ["Argentine Primera head coach"],
+    "mlsClubsCoached": [
+      "Minnesota United FC",
+      "LAFC"
+    ],
+    "nonMlsCoachExp": [
+      "Argentine Primera head coach"
+    ],
     "sportingExp": true,
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
     "nonMlsSportingExp": [],
-    "sportingVertical": ["Tactical Coaching"],
+    "sportingVertical": [
+      "Tactical Coaching"
+    ],
     "currentEmployer": "Boca Juniors II - Head Coach (2023-Present)",
     "prevEmployer1": "Estudiantes - Assistant Coach (2019-2023)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Ajax Amsterdam - Academy Director (2014-2016)",
     "degree": "Bachelors Degree",
     "mlsPrograms": [],
-    "coachingLicenses": ["CONMEBOL A License"],
+    "coachingLicenses": [
+      "CONMEBOL A License"
+    ],
     "sportingCerts": [],
-    "languages": ["Spanish"],
+    "languages": [
+      "Spanish"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/medina.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/medina.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/medina.jpg",
+    "proCoachExpUpdate": true,
+    "prevMlsCoachExp": true,
+    "mlsCoachingExpList": [
+      "MLS First Team Head Coaching Experience",
+      "MLS NEXT Academy Coaching Experience",
+      "MLS NEXT Pro Assistant Coaching Experience"
+    ],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": false,
+    "currentlyEmployed": false,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Bachelors Degree"
+    ],
+    "mlsProgramming": [],
+    "sportingDirectorCerts": [],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/127_coaching.pdf",
+    "otherCertsDoc": null
   },
   {
     "id": "128",
@@ -1265,9 +2371,15 @@
     "otherPlayerExp": "Leadership roles in Irish FA",
     "interestArea": "Sporting Executive",
     "coachingRoles": [],
-    "execRoles": ["Head of Women's Football", "Player Care"],
+    "execRoles": [
+      "Head of Women's Football",
+      "Player Care"
+    ],
     "techRoles": [],
-    "relocation": ["Europe", "Canada"],
+    "relocation": [
+      "Europe",
+      "Canada"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -1275,19 +2387,53 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": false,
-    "mlsClubsSporting": [],
-    "nonMlsSportingExp": ["FIFA Women in Football"],
-    "sportingVertical": ["Player Care", "Women’s Football"],
+    "mlsClubsSporting": [
+      "Seattle Sounders FC",
+      "Atlanta United FC"
+    ],
+    "nonMlsSportingExp": [
+      "FIFA Women in Football"
+    ],
+    "sportingVertical": [
+      "Player Care",
+      "Women’s Football"
+    ],
     "currentEmployer": "Dublin FA - Director of Women’s Football (2021-Present)",
     "prevEmployer1": "Galway United - Welfare Officer (2017-2021)",
-    "prevEmployer2": "",
+    "prevEmployer2": null,
     "degree": "Masters Degree",
     "mlsPrograms": [],
-    "coachingLicenses": [],
-    "sportingCerts": ["UEFA Women in Football"],
-    "languages": ["English"],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "UEFA Women in Football"
+    ],
+    "languages": [
+      "English",
+      "German"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/gallagher.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/gallagher.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/gallagher.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": "Bayern Munich - Scout (2019-2021)",
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Masters Degree"
+    ],
+    "mlsProgramming": [],
+    "sportingDirectorCerts": [
+      "UEFA Women in Football"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "129",
@@ -1312,8 +2458,14 @@
     "interestArea": "Other Technical Role",
     "coachingRoles": [],
     "execRoles": [],
-    "techRoles": ["Data Engineering", "Performance Director"],
-    "relocation": ["West", "Canada"],
+    "techRoles": [
+      "Data Engineering",
+      "Performance Director"
+    ],
+    "relocation": [
+      "West",
+      "Canada"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -1321,19 +2473,56 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": true,
-    "mlsClubsSporting": ["LA Galaxy"],
-    "nonMlsSportingExp": ["NWSL Performance"],
-    "sportingVertical": ["Analytics", "Technology"],
+    "mlsClubsSporting": [
+      "LA Galaxy"
+    ],
+    "nonMlsSportingExp": [
+      "NWSL Performance"
+    ],
+    "sportingVertical": [
+      "Analytics",
+      "Technology"
+    ],
     "currentEmployer": "Edge Analytics - CTO (2022-Present)",
     "prevEmployer1": "LA Galaxy - Data Engineer (2018-2022)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Georgetown University - Assistant Coach (2018-2022)",
     "degree": "Masters Degree",
-    "mlsPrograms": ["MLS Advance"],
-    "coachingLicenses": [],
-    "sportingCerts": ["Sports Data Science Certificate"],
-    "languages": ["English", "Arabic"],
+    "mlsPrograms": [
+      "MLS Advance"
+    ],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "Sports Data Science Certificate"
+    ],
+    "languages": [
+      "English",
+      "Arabic"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/abdullah.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/abdullah.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/abdullah.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": "Stanford University - Analyst (2010-2013)",
+    "highestDegree": [
+      "Masters Degree"
+    ],
+    "mlsProgramming": [
+      "MLS Advance"
+    ],
+    "sportingDirectorCerts": [
+      "Sports Data Science Certificate"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "130",
@@ -1356,30 +2545,78 @@
     "mlsClubsPlayed": [],
     "otherPlayerExp": "Frauen-Bundesliga winger",
     "interestArea": "Coaching",
-    "coachingRoles": ["Head Coach", "Technical Lead"],
+    "coachingRoles": [
+      "Head Coach",
+      "Technical Lead"
+    ],
     "execRoles": [],
     "techRoles": [],
-    "relocation": ["Europe", "South"],
+    "relocation": [
+      "Europe",
+      "South"
+    ],
     "proCoachExp": true,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
-    "mlsClubsCoached": [],
-    "nonMlsCoachExp": ["Bundesliga youth coach"],
+    "mlsClubsCoached": [
+      "Philadelphia Union"
+    ],
+    "nonMlsCoachExp": [
+      "Bundesliga youth coach"
+    ],
     "sportingExp": true,
     "mlsSportingExp": false,
-    "mlsClubsSporting": [],
-    "nonMlsSportingExp": [],
-    "sportingVertical": ["Tactical Coaching"],
+    "mlsClubsSporting": [
+      "Atlanta United FC"
+    ],
+    "nonMlsSportingExp": [
+      "Other 1st Division Sporting Experience",
+      "Collegiate Sporting Experience"
+    ],
+    "sportingVertical": [
+      "Tactical Coaching"
+    ],
     "currentEmployer": "Berlin United - Head Coach (2023-Present)",
     "prevEmployer1": "Union Berlin Academy - Coach (2019-2023)",
-    "prevEmployer2": "",
+    "prevEmployer2": null,
     "degree": "Bachelors Degree",
     "mlsPrograms": [],
-    "coachingLicenses": ["DFB A License"],
-    "sportingCerts": ["UEFA Coach Educator"],
-    "languages": ["German", "English"],
+    "coachingLicenses": [
+      "DFB A License",
+      "USSF Goalkeeping A License"
+    ],
+    "sportingCerts": [
+      "UEFA Coach Educator"
+    ],
+    "languages": [
+      "German",
+      "English"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/fischer.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/fischer.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/fischer.jpg",
+    "proCoachExpUpdate": true,
+    "prevMlsCoachExp": true,
+    "mlsCoachingExpList": [
+      "MLS NEXT Pro Head Coaching Experience"
+    ],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Bachelors Degree"
+    ],
+    "mlsProgramming": [
+      "MLS Advance"
+    ],
+    "sportingDirectorCerts": [
+      "UEFA Coach Educator"
+    ],
+    "otherLicenses": true,
+    "otherLicensesList": "Nutrition Specialist (2016)",
+    "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/130_coaching.pdf",
+    "otherCertsDoc": "https://fake-s3.mls.com/certs/130_other.pdf"
   },
   {
     "id": "131",
@@ -1403,9 +2640,15 @@
     "otherPlayerExp": "League operations specialist",
     "interestArea": "Sporting Executive",
     "coachingRoles": [],
-    "execRoles": ["Director of League Relations", "Player Care"],
+    "execRoles": [
+      "Director of League Relations",
+      "Player Care"
+    ],
     "techRoles": [],
-    "relocation": ["South", "Midwest"],
+    "relocation": [
+      "South",
+      "Midwest"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -1413,19 +2656,54 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": true,
-    "mlsClubsSporting": ["Atlanta United"],
+    "mlsClubsSporting": [
+      "Atlanta United"
+    ],
     "nonMlsSportingExp": [],
-    "sportingVertical": ["Operations", "Player Care"],
+    "sportingVertical": [
+      "Operations",
+      "Player Care"
+    ],
     "currentEmployer": "Southern Operations Group - Director (2022-Present)",
     "prevEmployer1": "Atlanta United - Operations Lead (2018-2022)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Georgetown University - Scout (2011-2014)",
     "degree": "Masters Degree",
-    "mlsPrograms": ["MLS Advance"],
-    "coachingLicenses": [],
-    "sportingCerts": ["FIFA Certificate in Club Management"],
-    "languages": ["English"],
+    "mlsPrograms": [
+      "MLS Advance"
+    ],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "FIFA Certificate in Club Management"
+    ],
+    "languages": [
+      "English",
+      "German"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/lane.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/lane.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/lane.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": "US Soccer Federation - Assistant Coach (2017-2020)",
+    "highestDegree": [
+      "Masters Degree"
+    ],
+    "mlsProgramming": [
+      "MLS Advance"
+    ],
+    "sportingDirectorCerts": [
+      "FIFA Certificate in Club Management"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "132",
@@ -1450,8 +2728,14 @@
     "interestArea": "Other Technical Role",
     "coachingRoles": [],
     "execRoles": [],
-    "techRoles": ["Chief Data Officer", "Insights Lead"],
-    "relocation": ["Europe", "Canada"],
+    "techRoles": [
+      "Chief Data Officer",
+      "Insights Lead"
+    ],
+    "relocation": [
+      "Europe",
+      "Canada"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -1460,18 +2744,49 @@
     "sportingExp": true,
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
-    "nonMlsSportingExp": ["UEFA Analytics"],
-    "sportingVertical": ["Analytics", "Technology"],
+    "nonMlsSportingExp": [
+      "UEFA Analytics"
+    ],
+    "sportingVertical": [
+      "Analytics",
+      "Technology"
+    ],
     "currentEmployer": "Warsaw Data Lab - Chief Data Officer (2021-Present)",
     "prevEmployer1": "Legia Warsaw - Data Analyst (2017-2021)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Canadian Soccer Association - Academy Director (2011-2012)",
     "degree": "PhD",
     "mlsPrograms": [],
-    "coachingLicenses": [],
-    "sportingCerts": ["UEFA Advanced Analytics"],
-    "languages": ["Polish", "English"],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "UEFA Advanced Analytics"
+    ],
+    "languages": [
+      "Polish",
+      "English"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/kowalski.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/kowalski.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/kowalski.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": false,
+    "currentlyEmployed": false,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "PhD"
+    ],
+    "mlsProgramming": [],
+    "sportingDirectorCerts": [
+      "UEFA Advanced Analytics"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "133",
@@ -1494,30 +2809,74 @@
     "mlsClubsPlayed": [],
     "otherPlayerExp": "NWSL and USL forward",
     "interestArea": "Coaching",
-    "coachingRoles": ["Strikers Coach", "Academy Director"],
+    "coachingRoles": [
+      "Strikers Coach",
+      "Academy Director"
+    ],
     "execRoles": [],
     "techRoles": [],
-    "relocation": ["South", "Northeast"],
+    "relocation": [
+      "South",
+      "Northeast"
+    ],
     "proCoachExp": true,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
-    "mlsClubsCoached": [],
-    "nonMlsCoachExp": ["NWSL Academy Coach"],
+    "mlsClubsCoached": [
+      "New York Red Bulls"
+    ],
+    "nonMlsCoachExp": [
+      "NWSL Academy Coach"
+    ],
     "sportingExp": true,
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
-    "nonMlsSportingExp": ["NWSL Experience"],
-    "sportingVertical": ["Player Development"],
+    "nonMlsSportingExp": [
+      "NWSL Experience"
+    ],
+    "sportingVertical": [
+      "Player Development"
+    ],
     "currentEmployer": "Miami Coach Collective - Director (2022-Present)",
     "prevEmployer1": "Orlando Pride - Academy Coach (2019-2022)",
-    "prevEmployer2": "",
+    "prevEmployer2": null,
     "degree": "Bachelors Degree",
     "mlsPrograms": [],
-    "coachingLicenses": ["USSF C License"],
-    "sportingCerts": ["NSCAA National Diploma"],
-    "languages": ["English", "Spanish"],
+    "coachingLicenses": [
+      "USSF C License"
+    ],
+    "sportingCerts": [
+      "NSCAA National Diploma"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/torres.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/torres.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/torres.jpg",
+    "proCoachExpUpdate": true,
+    "prevMlsCoachExp": true,
+    "mlsCoachingExpList": [
+      "MLS NEXT Academy Coaching Experience",
+      "MLS First Team Head Coaching Experience",
+      "MLS NEXT Pro Head Coaching Experience"
+    ],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": false,
+    "currentlyEmployed": true,
+    "prevEmployer3": "Indiana University - Analyst (2012-2015)",
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Bachelors Degree"
+    ],
+    "mlsProgramming": [],
+    "sportingDirectorCerts": [
+      "NSCAA National Diploma"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "134",
@@ -1541,9 +2900,15 @@
     "otherPlayerExp": "Club business development lead",
     "interestArea": "Sporting Executive",
     "coachingRoles": [],
-    "execRoles": ["General Manager", "Director of Football"],
+    "execRoles": [
+      "General Manager",
+      "Director of Football"
+    ],
     "techRoles": [],
-    "relocation": ["South", "West"],
+    "relocation": [
+      "South",
+      "West"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -1551,19 +2916,54 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": true,
-    "mlsClubsSporting": ["Inter Miami"],
+    "mlsClubsSporting": [
+      "Inter Miami"
+    ],
     "nonMlsSportingExp": [],
-    "sportingVertical": ["Football Operations", "Commercial"],
+    "sportingVertical": [
+      "Football Operations",
+      "Commercial"
+    ],
     "currentEmployer": "Miami Executives Group - COO (2023-Present)",
     "prevEmployer1": "Inter Miami - Commercial Lead (2020-2023)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Ajax Amsterdam - Sporting Director (2013-2014)",
     "degree": "MBA",
-    "mlsPrograms": ["MLS Advance"],
-    "coachingLicenses": [],
-    "sportingCerts": ["Sports Business Institute"],
-    "languages": ["English", "Spanish"],
+    "mlsPrograms": [
+      "MLS Advance"
+    ],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "Sports Business Institute"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/rivera-e.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/rivera-e.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/rivera-e.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "MBA"
+    ],
+    "mlsProgramming": [
+      "MLS Advance"
+    ],
+    "sportingDirectorCerts": [
+      "Sports Business Institute"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "135",
@@ -1588,8 +2988,14 @@
     "interestArea": "Other Technical Role",
     "coachingRoles": [],
     "execRoles": [],
-    "techRoles": ["AI Product Manager", "Data Strategist"],
-    "relocation": ["Canada", "Northeast"],
+    "techRoles": [
+      "AI Product Manager",
+      "Data Strategist"
+    ],
+    "relocation": [
+      "Canada",
+      "Northeast"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -1597,19 +3003,52 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": true,
-    "mlsClubsSporting": ["Toronto FC"],
-    "nonMlsSportingExp": ["CFL Data Lead"],
-    "sportingVertical": ["Analytics", "Technology"],
+    "mlsClubsSporting": [
+      "Toronto FC"
+    ],
+    "nonMlsSportingExp": [
+      "CFL Data Lead"
+    ],
+    "sportingVertical": [
+      "Analytics",
+      "Technology"
+    ],
     "currentEmployer": "Toronto AI Lab - Director (2021-Present)",
     "prevEmployer1": "Maple Leafs Analytics - Research Lead (2018-2021)",
-    "prevEmployer2": "",
+    "prevEmployer2": "UCLA - Academy Director (2014-2016)",
     "degree": "PhD",
     "mlsPrograms": [],
-    "coachingLicenses": [],
-    "sportingCerts": ["MIT Sports Analytics"],
-    "languages": ["English", "Mandarin"],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "MIT Sports Analytics"
+    ],
+    "languages": [
+      "English",
+      "Mandarin"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/chen-l.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/chen-l.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/chen-l.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "PhD"
+    ],
+    "mlsProgramming": [],
+    "sportingDirectorCerts": [
+      "MIT Sports Analytics"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "136",
@@ -1632,30 +3071,69 @@
     "mlsClubsPlayed": [],
     "otherPlayerExp": "Ghana Premier League captain",
     "interestArea": "Coaching",
-    "coachingRoles": ["Head Coach", "Youth Lead"],
+    "coachingRoles": [
+      "Head Coach",
+      "Youth Lead"
+    ],
     "execRoles": [],
     "techRoles": [],
-    "relocation": ["Africa", "Europe"],
+    "relocation": [
+      "Africa",
+      "Europe"
+    ],
     "proCoachExp": true,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
     "mlsClubsCoached": [],
-    "nonMlsCoachExp": ["Ghana U20 coach"],
+    "nonMlsCoachExp": [
+      "Ghana U20 coach"
+    ],
     "sportingExp": true,
     "mlsSportingExp": false,
-    "mlsClubsSporting": [],
-    "nonMlsSportingExp": [],
-    "sportingVertical": ["Coaching"],
+    "mlsClubsSporting": [
+      "Portland Timbers"
+    ],
+    "nonMlsSportingExp": [
+      "USL Sporting Experience"
+    ],
+    "sportingVertical": [
+      "Coaching"
+    ],
     "currentEmployer": "Kuma Football Academy - Head Coach (2022-Present)",
     "prevEmployer1": "Asante Kotoko - Assistant Coach (2018-2022)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Indiana University - Head Coach (2018-2021)",
     "degree": "Bachelors Degree",
     "mlsPrograms": [],
-    "coachingLicenses": ["CAF B License"],
+    "coachingLicenses": [
+      "CAF B License"
+    ],
     "sportingCerts": [],
-    "languages": ["English", "Twi"],
+    "languages": [
+      "English",
+      "Twi"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/osei-j.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/osei-j.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/osei-j.jpg",
+    "proCoachExpUpdate": true,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Bachelors Degree"
+    ],
+    "mlsProgramming": [
+      "Match Evaluator Program",
+      "MLS Advance"
+    ],
+    "sportingDirectorCerts": [],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/136_coaching.pdf",
+    "otherCertsDoc": null
   },
   {
     "id": "137",
@@ -1679,9 +3157,15 @@
     "otherPlayerExp": "Sports operations leader",
     "interestArea": "Sporting Executive",
     "coachingRoles": [],
-    "execRoles": ["Head of Talent", "General Manager"],
+    "execRoles": [
+      "Head of Talent",
+      "General Manager"
+    ],
     "techRoles": [],
-    "relocation": ["Australia", "Northeast"],
+    "relocation": [
+      "Australia",
+      "Northeast"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -1690,18 +3174,49 @@
     "sportingExp": true,
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
-    "nonMlsSportingExp": ["A-League Executive"],
-    "sportingVertical": ["Football Operations", "Player Personnel"],
+    "nonMlsSportingExp": [
+      "A-League Executive"
+    ],
+    "sportingVertical": [
+      "Football Operations",
+      "Player Personnel"
+    ],
     "currentEmployer": "Sydney Football Collective - GM (2023-Present)",
     "prevEmployer1": "Central Coast Mariners - Talent Lead (2018-2023)",
-    "prevEmployer2": "",
+    "prevEmployer2": null,
     "degree": "Masters Degree",
     "mlsPrograms": [],
-    "coachingLicenses": [],
-    "sportingCerts": ["FIFA Management"],
-    "languages": ["English"],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "FIFA Management"
+    ],
+    "languages": [
+      "English",
+      "Italian"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/reed.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/reed.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/reed.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": false,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Masters Degree"
+    ],
+    "mlsProgramming": [],
+    "sportingDirectorCerts": [
+      "FIFA Management"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "138",
@@ -1726,8 +3241,14 @@
     "interestArea": "Other Technical Role",
     "coachingRoles": [],
     "execRoles": [],
-    "techRoles": ["Data Architect", "Performance Analyst"],
-    "relocation": ["West", "Midwest"],
+    "techRoles": [
+      "Data Architect",
+      "Performance Analyst"
+    ],
+    "relocation": [
+      "West",
+      "Midwest"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -1735,19 +3256,55 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": true,
-    "mlsClubsSporting": ["Portland Timbers"],
-    "nonMlsSportingExp": ["USL Data"],
-    "sportingVertical": ["Analytics"],
+    "mlsClubsSporting": [
+      "Portland Timbers"
+    ],
+    "nonMlsSportingExp": [
+      "USL Data"
+    ],
+    "sportingVertical": [
+      "Analytics"
+    ],
     "currentEmployer": "Pacific Data Works - Director (2022-Present)",
     "prevEmployer1": "Portland Timbers - Data Lead (2018-2022)",
-    "prevEmployer2": "",
+    "prevEmployer2": null,
     "degree": "Masters Degree",
-    "mlsPrograms": ["MLS Advance"],
-    "coachingLicenses": [],
-    "sportingCerts": ["Data Driven Coaching"],
-    "languages": ["English"],
+    "mlsPrograms": [
+      "MLS Advance"
+    ],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "Data Driven Coaching"
+    ],
+    "languages": [
+      "English",
+      "French"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/hayes.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/hayes.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/hayes.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": false,
+    "prevEmployer3": null,
+    "prevEmployer4": "Bayern Munich - Academy Director (2013-2017)",
+    "highestDegree": [
+      "Masters Degree"
+    ],
+    "mlsProgramming": [
+      "MLS Advance"
+    ],
+    "sportingDirectorCerts": [
+      "Data Driven Coaching"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "139",
@@ -1770,30 +3327,64 @@
     "mlsClubsPlayed": [],
     "otherPlayerExp": "Serie A midfielder",
     "interestArea": "Coaching",
-    "coachingRoles": ["Midfield Coach", "Performance Coach"],
+    "coachingRoles": [
+      "Midfield Coach",
+      "Performance Coach"
+    ],
     "execRoles": [],
     "techRoles": [],
-    "relocation": ["Europe", "Northeast"],
+    "relocation": [
+      "Europe",
+      "Northeast"
+    ],
     "proCoachExp": true,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
     "mlsClubsCoached": [],
-    "nonMlsCoachExp": ["Serie A youth coach"],
+    "nonMlsCoachExp": [
+      "Serie A youth coach"
+    ],
     "sportingExp": true,
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
     "nonMlsSportingExp": [],
-    "sportingVertical": ["Player Development"],
+    "sportingVertical": [
+      "Player Development"
+    ],
     "currentEmployer": "Roma Academy - Head of Development (2022-Present)",
     "prevEmployer1": "AS Roma Women - Assistant Coach (2018-2022)",
-    "prevEmployer2": "",
+    "prevEmployer2": "University of North Carolina - Analyst (2018-2021)",
     "degree": "Masters Degree",
     "mlsPrograms": [],
-    "coachingLicenses": ["FIGC A License"],
+    "coachingLicenses": [
+      "FIGC A License",
+      "Canada Soccer B License",
+      "USSF A - Senior License"
+    ],
     "sportingCerts": [],
-    "languages": ["Italian", "English"],
+    "languages": [
+      "Italian",
+      "English"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/bianchi.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/bianchi.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/bianchi.jpg",
+    "proCoachExpUpdate": true,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": false,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Masters Degree"
+    ],
+    "mlsProgramming": [],
+    "sportingDirectorCerts": [],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/139_coaching.pdf",
+    "otherCertsDoc": null
   },
   {
     "id": "140",
@@ -1817,9 +3408,15 @@
     "otherPlayerExp": "Club operations leader",
     "interestArea": "Sporting Executive",
     "coachingRoles": [],
-    "execRoles": ["Chief Operating Officer", "Football Operations"],
+    "execRoles": [
+      "Chief Operating Officer",
+      "Football Operations"
+    ],
     "techRoles": [],
-    "relocation": ["Midwest", "Northeast"],
+    "relocation": [
+      "Midwest",
+      "Northeast"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -1827,19 +3424,54 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": true,
-    "mlsClubsSporting": ["Chicago Fire"],
+    "mlsClubsSporting": [
+      "Chicago Fire"
+    ],
     "nonMlsSportingExp": [],
-    "sportingVertical": ["Football Operations", "Commercial"],
+    "sportingVertical": [
+      "Football Operations",
+      "Commercial"
+    ],
     "currentEmployer": "Northside Operations - COO (2023-Present)",
     "prevEmployer1": "Chicago Fire - Operations Lead (2018-2023)",
-    "prevEmployer2": "",
+    "prevEmployer2": "University of North Carolina - Assistant Coach (2017-2019)",
     "degree": "MBA",
-    "mlsPrograms": ["MLS Advance"],
-    "coachingLicenses": [],
-    "sportingCerts": ["FIFA Diploma"],
-    "languages": ["English"],
+    "mlsPrograms": [
+      "MLS Advance"
+    ],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "FIFA Diploma"
+    ],
+    "languages": [
+      "English",
+      "Italian"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/hassan.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/hassan.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/hassan.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "MBA"
+    ],
+    "mlsProgramming": [
+      "MLS Advance"
+    ],
+    "sportingDirectorCerts": [
+      "FIFA Diploma"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "141",
@@ -1864,8 +3496,14 @@
     "interestArea": "Other Technical Role",
     "coachingRoles": [],
     "execRoles": [],
-    "techRoles": ["Founder", "Product Strategist"],
-    "relocation": ["Northeast", "West"],
+    "techRoles": [
+      "Founder",
+      "Product Strategist"
+    ],
+    "relocation": [
+      "Northeast",
+      "West"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -1873,19 +3511,56 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": true,
-    "mlsClubsSporting": ["DC United"],
-    "nonMlsSportingExp": ["NWSL innovation"],
-    "sportingVertical": ["Technology", "Player Engagement"],
+    "mlsClubsSporting": [
+      "DC United"
+    ],
+    "nonMlsSportingExp": [
+      "NWSL innovation"
+    ],
+    "sportingVertical": [
+      "Technology",
+      "Player Engagement"
+    ],
     "currentEmployer": "TechScape Sports - CEO (2024-Present)",
     "prevEmployer1": "MLS Innovation Lab - Product Lead (2020-2024)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Manchester United Academy - Analyst (2011-2014)",
     "degree": "MBA",
-    "mlsPrograms": ["MLS Advance"],
-    "coachingLicenses": [],
-    "sportingCerts": ["Sports Tech Fellowship"],
-    "languages": ["English", "Korean"],
+    "mlsPrograms": [
+      "MLS Advance"
+    ],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "Sports Tech Fellowship"
+    ],
+    "languages": [
+      "English",
+      "Korean"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/park.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/park.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/park.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "MBA"
+    ],
+    "mlsProgramming": [
+      "MLS Advance"
+    ],
+    "sportingDirectorCerts": [
+      "Sports Tech Fellowship"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "142",
@@ -1908,30 +3583,69 @@
     "mlsClubsPlayed": [],
     "otherPlayerExp": "Bundesliga left back",
     "interestArea": "Coaching",
-    "coachingRoles": ["Full Back Coach", "Assistant First Team Coach"],
+    "coachingRoles": [
+      "Full Back Coach",
+      "Assistant First Team Coach"
+    ],
     "execRoles": [],
     "techRoles": [],
-    "relocation": ["Europe", "West"],
+    "relocation": [
+      "Europe",
+      "West"
+    ],
     "proCoachExp": true,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
-    "mlsClubsCoached": [],
-    "nonMlsCoachExp": ["Bundesliga assistant coach"],
+    "mlsClubsCoached": [
+      "Austin FC"
+    ],
+    "nonMlsCoachExp": [
+      "Bundesliga assistant coach"
+    ],
     "sportingExp": true,
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
-    "nonMlsSportingExp": [],
-    "sportingVertical": ["Tactical Coaching"],
+    "nonMlsSportingExp": [
+      "Other International Sporting Experience"
+    ],
+    "sportingVertical": [
+      "Tactical Coaching"
+    ],
     "currentEmployer": "Berlin Academy - Assistant Coach (2023-Present)",
     "prevEmployer1": "Hertha Berlin - Youth Coach (2019-2023)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Canadian Soccer Association - Youth Development Coach (2012-2016)",
     "degree": "Bachelors Degree",
     "mlsPrograms": [],
-    "coachingLicenses": ["DFB A License"],
+    "coachingLicenses": [
+      "DFB A License",
+      "USSF A - Senior License"
+    ],
     "sportingCerts": [],
-    "languages": ["German", "English"],
+    "languages": [
+      "German",
+      "English"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/vogel.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/vogel.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/vogel.jpg",
+    "proCoachExpUpdate": true,
+    "prevMlsCoachExp": true,
+    "mlsCoachingExpList": [
+      "MLS NEXT Academy Coaching Experience"
+    ],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": false,
+    "currentlyEmployed": true,
+    "prevEmployer3": "University of North Carolina - Academy Director (2011-2012)",
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Bachelors Degree"
+    ],
+    "mlsProgramming": [],
+    "sportingDirectorCerts": [],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/142_coaching.pdf",
+    "otherCertsDoc": null
   },
   {
     "id": "143",
@@ -1955,9 +3669,15 @@
     "otherPlayerExp": "Sports science leader",
     "interestArea": "Sporting Executive",
     "coachingRoles": [],
-    "execRoles": ["Head of Performance", "Player Care"],
+    "execRoles": [
+      "Head of Performance",
+      "Player Care"
+    ],
     "techRoles": [],
-    "relocation": ["Europe", "Northeast"],
+    "relocation": [
+      "Europe",
+      "Northeast"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -1965,19 +3685,52 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": false,
-    "mlsClubsSporting": [],
-    "nonMlsSportingExp": ["La Liga Performance"],
-    "sportingVertical": ["Sports Science", "Player Care"],
+    "mlsClubsSporting": [
+      "Real Salt Lake"
+    ],
+    "nonMlsSportingExp": [
+      "La Liga Performance"
+    ],
+    "sportingVertical": [
+      "Sports Science",
+      "Player Care"
+    ],
     "currentEmployer": "Madrid Ops - Director of Performance (2023-Present)",
     "prevEmployer1": "Atlético Madrid - Sports Scientist (2018-2023)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Canadian Soccer Association - Youth Development Coach (2012-2016)",
     "degree": "Masters Degree",
     "mlsPrograms": [],
-    "coachingLicenses": [],
-    "sportingCerts": ["UEFA Performance"],
-    "languages": ["Spanish", "English"],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "UEFA Performance"
+    ],
+    "languages": [
+      "Spanish",
+      "English"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/alvarez.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/alvarez.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/alvarez.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": "Canadian Soccer Association - Academy Director (2013-2016)",
+    "highestDegree": [
+      "Masters Degree"
+    ],
+    "mlsProgramming": [],
+    "sportingDirectorCerts": [
+      "UEFA Performance"
+    ],
+    "otherLicenses": true,
+    "otherLicensesList": "Nutrition Specialist (2017)",
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": "https://fake-s3.mls.com/certs/143_other.pdf"
   },
   {
     "id": "144",
@@ -2002,8 +3755,14 @@
     "interestArea": "Other Technical Role",
     "coachingRoles": [],
     "execRoles": [],
-    "techRoles": ["Chief Platform Officer", "User Research"],
-    "relocation": ["Canada", "West"],
+    "techRoles": [
+      "Chief Platform Officer",
+      "User Research"
+    ],
+    "relocation": [
+      "Canada",
+      "West"
+    ],
     "proCoachExp": false,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
@@ -2011,19 +3770,55 @@
     "nonMlsCoachExp": [],
     "sportingExp": true,
     "mlsSportingExp": false,
-    "mlsClubsSporting": [],
-    "nonMlsSportingExp": ["CFL Tech"],
-    "sportingVertical": ["Technology", "Analytics"],
+    "mlsClubsSporting": [
+      "New England Revolution",
+      "Minnesota United FC"
+    ],
+    "nonMlsSportingExp": [
+      "CFL Tech"
+    ],
+    "sportingVertical": [
+      "Technology",
+      "Analytics"
+    ],
     "currentEmployer": "Vancouver Tech Sports - CPO (2022-Present)",
     "prevEmployer1": "MLS Innovation Lab - Product Lead (2018-2022)",
-    "prevEmployer2": "",
+    "prevEmployer2": null,
     "degree": "Masters Degree",
     "mlsPrograms": [],
-    "coachingLicenses": [],
-    "sportingCerts": ["Product Leadership"],
-    "languages": ["English"],
+    "coachingLicenses": [
+      "Not Applicable"
+    ],
+    "sportingCerts": [
+      "Product Leadership"
+    ],
+    "languages": [
+      "English",
+      "Portuguese"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/morgan.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/morgan.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/morgan.jpg",
+    "proCoachExpUpdate": false,
+    "prevMlsCoachExp": false,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": false,
+    "prevEmployer3": null,
+    "prevEmployer4": "University of North Carolina - Academy Director (2018-2022)",
+    "highestDegree": [
+      "Masters Degree"
+    ],
+    "mlsProgramming": [
+      "Match Evaluator Program"
+    ],
+    "sportingDirectorCerts": [
+      "Product Leadership"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": null,
+    "otherCertsDoc": null
   },
   {
     "id": "145",
@@ -2046,30 +3841,80 @@
     "mlsClubsPlayed": [],
     "otherPlayerExp": "USL Central defender",
     "interestArea": "Coaching",
-    "coachingRoles": ["Defensive Coach", "Assistant GM"],
+    "coachingRoles": [
+      "Defensive Coach",
+      "Assistant GM"
+    ],
     "execRoles": [],
     "techRoles": [],
-    "relocation": ["South", "West"],
+    "relocation": [
+      "South",
+      "West"
+    ],
     "proCoachExp": true,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
-    "mlsClubsCoached": [],
-    "nonMlsCoachExp": ["USL Championship Defender Coach"],
+    "mlsClubsCoached": [
+      "Vancouver Whitecaps FC",
+      "St. Louis City SC"
+    ],
+    "nonMlsCoachExp": [
+      "USL Championship Defender Coach"
+    ],
     "sportingExp": true,
     "mlsSportingExp": false,
-    "mlsClubsSporting": [],
+    "mlsClubsSporting": [
+      "Inter Miami CF",
+      "St. Louis City SC"
+    ],
     "nonMlsSportingExp": [],
-    "sportingVertical": ["Defensive Coaching"],
+    "sportingVertical": [
+      "Defensive Coaching"
+    ],
     "currentEmployer": "SATX Coaches Collective - Head Coach (2023-Present)",
     "prevEmployer1": "San Antonio FC - Player/Assistant (2019-2023)",
-    "prevEmployer2": "",
+    "prevEmployer2": "Mexican Football Federation - Youth Development Coach (2011-2014)",
     "degree": "Bachelors Degree",
     "mlsPrograms": [],
-    "coachingLicenses": ["USSF B License"],
-    "sportingCerts": ["USL Coaching Pathway"],
-    "languages": ["English", "Spanish"],
+    "coachingLicenses": [
+      "USSF B License",
+      "UEFA C License",
+      "UEFA B License"
+    ],
+    "sportingCerts": [
+      "USL Coaching Pathway"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/flores-r.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/flores-r.jpg"
+    "picUrl": "https://fake-s3.mls.com/avatars/flores-r.jpg",
+    "proCoachExpUpdate": true,
+    "prevMlsCoachExp": true,
+    "mlsCoachingExpList": [
+      "MLS First Team Assistant Coaching Experience",
+      "MLS NEXT Pro Assistant Coaching Experience",
+      "MLS NEXT Academy Coaching Experience"
+    ],
+    "proSportingExpUpdate": true,
+    "prevMlsSportingExp": true,
+    "currentlyEmployed": true,
+    "prevEmployer3": null,
+    "prevEmployer4": null,
+    "highestDegree": [
+      "Bachelors Degree"
+    ],
+    "mlsProgramming": [
+      "MLS Advance",
+      "Elite Formation Coaching License"
+    ],
+    "sportingDirectorCerts": [
+      "USL Coaching Pathway"
+    ],
+    "otherLicenses": false,
+    "otherLicensesList": null,
+    "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/145_coaching.pdf",
+    "otherCertsDoc": null
   }
 ]
-

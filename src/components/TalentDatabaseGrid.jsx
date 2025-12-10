@@ -196,6 +196,7 @@ const columns = [
       return [city, state, country].filter(Boolean).join(', ');
     }
   },
+  { field: 'state', headerName: 'State', width: 120 },
   { 
     field: 'workAuthUS', 
     headerName: 'US Sponsorship?', 
@@ -359,7 +360,147 @@ const columns = [
     renderCell: (params) => <ArrayCell value={params.value} /> 
   },
 
+  // PROFESSIONAL COACHING
+  { 
+    field: 'proCoachExpUpdate', 
+    headerName: 'Has Coaching Experience Update', 
+    width: 150, 
+    renderCell: (params) => <BooleanCell value={params.value} /> 
+  },
+  { 
+    field: 'prevMlsCoachExp', 
+    headerName: 'Previous MLS Coaching Experience', 
+    width: 150, 
+    renderCell: (params) => <BooleanCell value={params.value} /> 
+  },
+  { 
+    field: 'mlsCoachingExpList', 
+    headerName: 'MLS Coaching Experience Types', 
+    width: 250, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+  { 
+    field: 'mlsClubsCoached', 
+    headerName: 'MLS Clubs Coached', 
+    width: 200, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+  { 
+    field: 'nonMlsCoachExp', 
+    headerName: 'Non-MLS Coaching Experience', 
+    width: 200, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+
+  // PROFESSIONAL SPORTING
+  { 
+    field: 'proSportingExpUpdate', 
+    headerName: 'Has Sporting Experience Update', 
+    width: 150, 
+    renderCell: (params) => <BooleanCell value={params.value} /> 
+  },
+  { 
+    field: 'prevMlsSportingExp', 
+    headerName: 'Previous MLS Sporting Experience', 
+    width: 150, 
+    renderCell: (params) => <BooleanCell value={params.value} /> 
+  },
+  { 
+    field: 'mlsClubsSporting', 
+    headerName: 'MLS Clubs (Sporting)', 
+    width: 200, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+  { 
+    field: 'nonMlsSportingExp', 
+    headerName: 'Non-MLS Sporting Experience', 
+    width: 200, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+  { 
+    field: 'sportingVertical', 
+    headerName: 'Sporting Vertical', 
+    width: 180, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+
+  // EMPLOYMENT HISTORY
+  { 
+    field: 'currentlyEmployed', 
+    headerName: 'Currently Employed', 
+    width: 120, 
+    renderCell: (params) => <BooleanCell value={params.value} /> 
+  },
+  { 
+    field: 'currentEmployer', 
+    headerName: 'Current Employer', 
+    width: 250 
+  },
+  { 
+    field: 'prevEmployer1', 
+    headerName: 'Previous Employer 1', 
+    width: 250 
+  },
+  { 
+    field: 'prevEmployer2', 
+    headerName: 'Previous Employer 2', 
+    width: 250 
+  },
+  { 
+    field: 'prevEmployer3', 
+    headerName: 'Previous Employer 3', 
+    width: 250 
+  },
+  { 
+    field: 'prevEmployer4', 
+    headerName: 'Previous Employer 4', 
+    width: 250 
+  },
+
+  // EDUCATION EXPANDED
+  { 
+    field: 'highestDegree', 
+    headerName: 'Highest Degree', 
+    width: 180, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+  { 
+    field: 'mlsProgramming', 
+    headerName: 'MLS Programming Experience', 
+    width: 200, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+  { 
+    field: 'sportingDirectorCerts', 
+    headerName: 'Sporting Director Certifications', 
+    width: 180, 
+    renderCell: (params) => <ArrayCell value={params.value} /> 
+  },
+  { 
+    field: 'otherLicenses', 
+    headerName: 'Has Other Licenses', 
+    width: 120, 
+    renderCell: (params) => <BooleanCell value={params.value} /> 
+  },
+  { 
+    field: 'otherLicensesList', 
+    headerName: 'Other Licenses List', 
+    width: 200 
+  },
+
   // DOCS
+  { 
+    field: 'coachingLicenseDoc', 
+    headerName: 'Coaching License Document', 
+    width: 150, 
+    renderCell: (params) => params.value ? <LinkCell value={params.value} type="link" /> : null 
+  },
+  { 
+    field: 'otherCertsDoc', 
+    headerName: 'Other Certifications Document', 
+    width: 150, 
+    renderCell: (params) => params.value ? <LinkCell value={params.value} type="link" /> : null 
+  },
   { 
     field: 'resumeUrl', 
     headerName: 'Resume', 
@@ -379,6 +520,7 @@ const columnGroupingModel = [
       { field: 'phone' },
       { field: 'email' },
       { field: 'location' },
+      { field: 'state' },
       { field: 'workAuthUS' },
       { field: 'workAuthCA' },
     ],
@@ -416,40 +558,53 @@ const columnGroupingModel = [
     ],
   },
   {
-    groupId: 'Coaching History',
+    groupId: 'Coaching',
     children: [
       { field: 'proCoachExp' },
       { field: 'mlsCoachExp' },
       { field: 'mlsCoachRoles' },
       { field: 'mlsClubsCoached' },
       { field: 'nonMlsCoachExp' },
+      { field: 'proCoachExpUpdate' },
+      { field: 'prevMlsCoachExp' },
+      { field: 'mlsCoachingExpList' },
     ],
   },
   {
-    groupId: 'Sporting History',
+    groupId: 'Sporting',
     children: [
       { field: 'sportingExp' },
       { field: 'mlsSportingExp' },
       { field: 'mlsClubsSporting' },
       { field: 'nonMlsSportingExp' },
       { field: 'sportingVertical' },
+      { field: 'proSportingExpUpdate' },
+      { field: 'prevMlsSportingExp' },
     ],
   },
   {
     groupId: 'Employment',
     children: [
+      { field: 'currentlyEmployed' },
       { field: 'currentEmployer' },
       { field: 'prevEmployer1' },
       { field: 'prevEmployer2' },
+      { field: 'prevEmployer3' },
+      { field: 'prevEmployer4' },
     ],
   },
   {
     groupId: 'Education',
     children: [
       { field: 'degree' },
+      { field: 'highestDegree' },
       { field: 'mlsPrograms' },
+      { field: 'mlsProgramming' },
       { field: 'coachingLicenses' },
       { field: 'sportingCerts' },
+      { field: 'sportingDirectorCerts' },
+      { field: 'otherLicenses' },
+      { field: 'otherLicensesList' },
       { field: 'languages' },
     ],
   },
@@ -458,6 +613,8 @@ const columnGroupingModel = [
     children: [
       { field: 'resumeUrl' },
       { field: 'picUrl' },
+      { field: 'coachingLicenseDoc' },
+      { field: 'otherCertsDoc' },
     ],
   },
 ];
@@ -504,6 +661,7 @@ export default function TalentDatabaseGrid() {
               roles: true, // Show merged roles column by default
               // Hide all other columns by default
               location: false,
+              state: false,
               workAuthUS: false,
               workAuthCA: false,
               gender: false,
@@ -522,20 +680,35 @@ export default function TalentDatabaseGrid() {
               mlsCoachRoles: false,
               mlsClubsCoached: false,
               nonMlsCoachExp: false,
+              proCoachExpUpdate: false,
+              prevMlsCoachExp: false,
+              mlsCoachingExpList: false,
               sportingExp: false,
               mlsSportingExp: false,
               mlsClubsSporting: false,
               nonMlsSportingExp: false,
               sportingVertical: false,
+              proSportingExpUpdate: false,
+              prevMlsSportingExp: false,
+              currentlyEmployed: false,
               currentEmployer: false,
               prevEmployer1: false,
               prevEmployer2: false,
+              prevEmployer3: false,
+              prevEmployer4: false,
               degree: false,
+              highestDegree: false,
               mlsPrograms: false,
+              mlsProgramming: false,
               coachingLicenses: false,
               sportingCerts: false,
+              sportingDirectorCerts: false,
+              otherLicenses: false,
+              otherLicensesList: false,
               languages: false,
               resumeUrl: false,
+              coachingLicenseDoc: false,
+              otherCertsDoc: false,
             },
           },
         }}
