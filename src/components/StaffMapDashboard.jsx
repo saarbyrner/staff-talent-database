@@ -54,7 +54,29 @@ function StaffMapDashboard() {
     'Seattle': { lat: 47.6062, lon: -122.3321, country: 'USA' },
     'Boston': { lat: 42.3601, lon: -71.0589, country: 'USA' },
     'Philadelphia': { lat: 39.9526, lon: -75.1652, country: 'USA' },
-    'Columbus': { lat: 39.9612, lon: -82.9988, country: 'USA' }
+    'Columbus': { lat: 39.9612, lon: -82.9988, country: 'USA' },
+    'Dublin': { lat: 53.3498, lon: -6.2603, country: 'Ireland' },
+    'Sao Paulo': { lat: -23.5505, lon: -46.6333, country: 'Brazil' },
+    'San Francisco': { lat: 37.7749, lon: -122.4194, country: 'USA' },
+    'Manchester': { lat: 53.4808, lon: -2.2426, country: 'United Kingdom' },
+    'Arlington': { lat: 32.7357, lon: -97.1081, country: 'USA' },
+    'Kansas City': { lat: 39.0997, lon: -94.5786, country: 'USA' },
+    'Jersey City': { lat: 40.7178, lon: -74.0431, country: 'USA' },
+    'Tokyo': { lat: 35.6762, lon: 139.6503, country: 'Japan' },
+    'Mexico City': { lat: 19.4326, lon: -99.1332, country: 'Mexico' },
+    'Atlanta': { lat: 33.7490, lon: -84.3880, country: 'USA' },
+    'Accra': { lat: 5.6037, lon: -0.1870, country: 'Ghana' },
+    'Bogota': { lat: 4.7110, lon: -74.0721, country: 'Colombia' },
+    'Long Beach': { lat: 33.7701, lon: -118.1937, country: 'USA' },
+    'Warsaw': { lat: 52.2297, lon: 21.0122, country: 'Poland' },
+    'Buenos Aires': { lat: -34.6037, lon: -58.3816, country: 'Argentina' },
+    'Berlin': { lat: 52.5200, lon: 13.4050, country: 'Germany' },
+    'Decatur': { lat: 33.7748, lon: -84.2963, country: 'USA' },
+    'Kumasi': { lat: 6.6884, lon: -1.6244, country: 'Ghana' },
+    'Sydney': { lat: -33.8688, lon: 151.2093, country: 'Australia' },
+    'Rome': { lat: 41.9028, lon: 12.4964, country: 'Italy' },
+    'Washington': { lat: 38.9072, lon: -77.0369, country: 'USA' },
+    'San Antonio': { lat: 29.4241, lon: -98.4936, country: 'USA' }
   };
 
   // Aggregate staff by location
@@ -85,7 +107,7 @@ function StaffMapDashboard() {
     return Array.from(locationMap.values());
   };
 
-  // Filter staff data
+  // Filter staff data - Auto-updates when filters change or data is modified
   const filteredStaff = staffTalentData.filter(staff => {
     const countryMatch = selectedCountry === 'all' || staff.country === selectedCountry;
     const roleMatch = selectedRole === 'all' || staff.interestArea === selectedRole;
@@ -94,13 +116,16 @@ function StaffMapDashboard() {
 
   const locations = aggregateStaffByLocation(filteredStaff);
 
-  // Get statistics
+  // Get statistics - Dynamically calculated from current staff data (45 total in database)
   const stats = {
-    totalStaff: filteredStaff.length,
+    totalStaff: filteredStaff.length, // Auto-updates to reflect current staff count
     totalLocations: locations.length,
     countries: [...new Set(filteredStaff.map(s => s.country))].length,
     topLocation: locations.sort((a, b) => b.count - a.count)[0]
   };
+
+  // Log current stats for debugging
+  console.log(`Staff Map Dashboard - Total Staff: ${stats.totalStaff}, Locations: ${stats.totalLocations}, Countries: ${stats.countries}`);
 
   const statCards = [
     {
@@ -130,8 +155,8 @@ function StaffMapDashboard() {
   ];
 
   // Get unique countries and roles for filters
-  const countries = ['all', ...new Set(staffTalentData.map(s => s.country))].sort();
-  const roles = ['all', ...new Set(staffTalentData.map(s => s.interestArea).filter(Boolean))].sort();
+  const countries = ['all', ...[...new Set(staffTalentData.map(s => s.country))].sort()];
+  const roles = ['all', ...[...new Set(staffTalentData.map(s => s.interestArea).filter(Boolean))].sort()];
 
   // Handle resize
   useEffect(() => {

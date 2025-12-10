@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import {
   Box,
   Paper,
@@ -22,6 +22,10 @@ import athletesData from '../../data/athletes.json'
 
 function Screen01_FormsHome() {
   const navigate = useNavigate()
+  const location = useLocation()
+  
+  // Check if we're in league view
+  const isLeagueView = location.pathname.startsWith('/league')
   // Inline stub data to visually render the screen (no behavior)
   const rows = [
     { id: 'f-001', title: 'Daily Wellness Check', type: 'Questionnaire', status: 'Active', owner: 'Performance', updated: 'Today 10:12', due: 'Today 18:00', recipients: 53, completion: 41 },
@@ -45,7 +49,8 @@ function Screen01_FormsHome() {
             underline="none"
             onClick={(e) => {
               e.stopPropagation()
-              navigate(params.row.route || `/forms/${params.row.id}/build`)
+              const basePath = isLeagueView ? '/league/forms' : '/forms'
+              navigate(params.row.route ? (isLeagueView ? `/league${params.row.route}` : params.row.route) : `${basePath}/${params.row.id}/build`)
             }}
             sx={{ color: 'var(--color-text-primary)' }}
           >
