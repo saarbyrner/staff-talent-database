@@ -327,7 +327,14 @@ function StaffFormEdit() {
             {field.helperText}
           </Typography>
         )}
-        <Box sx={{ mt: 0.5 }}>
+        <Box
+          sx={{
+            mt: 0.5,
+            width: '100%',
+            maxWidth: 480,
+            alignSelf: 'flex-start'
+          }}
+        >
           {control}
         </Box>
       </Box>

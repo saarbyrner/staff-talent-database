@@ -473,7 +473,14 @@ export default function Screen02_FormBuilder() {
           {prompt}
           {question.mandatory && <Typography component="span" sx={{ color: 'var(--color-error)', ml: 0.5 }}>*</Typography>}
         </Typography>
-        <Box sx={{ mt: 0.5 }} className={(() => {
+        <Box
+          sx={{
+            mt: 0.5,
+            width: '100%',
+            maxWidth: 480,
+            alignSelf: 'flex-start'
+          }}
+          className={(() => {
           const opts = (question.options || []).length
           if (question.type === 'text') return 'input-size-l'
           if (question.type === 'date' || question.type === 'select') return opts > 3 ? 'input-size-m' : 'input-size-s'

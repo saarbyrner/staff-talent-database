@@ -208,22 +208,31 @@ export default function QuestionEditor({ question, index, onChange }) {
       </Box>
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
-        <TextField
-          label="Question prompt"
-          variant="filled"
-          fullWidth
-          multiline
-          value={question.label || ''}
-          onChange={handleFieldChange('label')}
-        />
+        <Box sx={{ width: '100%', maxWidth: 480, alignSelf: 'flex-start' }}>
+          <TextField
+            label="Question prompt"
+            variant="filled"
+            fullWidth
+            multiline
+            value={question.label || ''}
+            onChange={handleFieldChange('label')}
+          />
+        </Box>
 
-        <Box className={(() => {
-          const opts = (question.options || []).length
-          if (question.type === 'text') return 'input-size-l'
-          if (question.type === 'date' || question.type === 'select') return opts > 3 ? 'input-size-m' : 'input-size-s'
-          if (question.type === 'file') return 'input-size-l'
-          return 'input-size-m'
-        })()}>
+        <Box
+          sx={{
+            width: '100%',
+            maxWidth: 480,
+            alignSelf: 'flex-start'
+          }}
+          className={(() => {
+            const opts = (question.options || []).length
+            if (question.type === 'text') return 'input-size-l'
+            if (question.type === 'date' || question.type === 'select') return opts > 3 ? 'input-size-m' : 'input-size-s'
+            if (question.type === 'file') return 'input-size-l'
+            return 'input-size-m'
+          })()}
+        >
           {renderInputPreview()}
         </Box>
       </Box>
