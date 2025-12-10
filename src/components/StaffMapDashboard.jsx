@@ -23,6 +23,7 @@ import {
 import * as d3 from 'd3';
 import * as d3Geo from 'd3-geo';
 import staffTalentData from '../data/staff_talent.json';
+import worldGeoJson from '../data/world_map.json';
 import '../styles/design-tokens.css';
 
 /**
@@ -152,11 +153,11 @@ function StaffMapDashboard() {
 
     // Create projection
     const projection = d3Geo.geoMercator()
-      .center([-30, 45])
-      .scale(width / 6)
+      .center([0, 20])
+      .scale(width / 6.5)
       .translate([width / 2, height / 2]);
 
-    // Draw world map background (simplified)
+    // Draw world map background
     const g = svg.append('g');
 
     // Draw a simple background rectangle
@@ -168,24 +169,18 @@ function StaffMapDashboard() {
       .attr('fill', '#f0f4f8')
       .attr('opacity', 0.3);
 
-    // Draw some continents as simple shapes for visual context
-    // North America outline (simplified)
-    g.append('rect')
-      .attr('x', width * 0.15)
-      .attr('y', height * 0.2)
-      .attr('width', width * 0.25)
-      .attr('height', height * 0.5)
+    // Draw countries from GeoJSON
+    const pathGenerator = d3Geo.geoPath().projection(projection);
+    
+    g.selectAll('path')
+      .data(worldGeoJson.features)
+      .enter()
+      .append('path')
+      .attr('d', pathGenerator)
       .attr('fill', '#e2e8f0')
-      .attr('opacity', 0.5);
-
-    // Europe outline (simplified)
-    g.append('rect')
-      .attr('x', width * 0.5)
-      .attr('y', height * 0.15)
-      .attr('width', width * 0.15)
-      .attr('height', height * 0.35)
-      .attr('fill', '#e2e8f0')
-      .attr('opacity', 0.5);
+      .attr('stroke', '#cbd5e1')
+      .attr('stroke-width', 0.5)
+      .attr('opacity', 0.8);
 
     // Scale for circle sizes
     const sizeScale = d3.scaleSqrt()
