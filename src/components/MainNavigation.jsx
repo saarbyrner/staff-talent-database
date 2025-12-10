@@ -1,9 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useLocation, useNavigate } from 'react-router-dom'
-import KitmanLogo from '/assets/logos/Kitman Labs base.png'
-import MLSLogo from '/assets/logos/teams/mls/MLS.png'
-import TimbersLogo from '/assets/logos/teams/mls/timbers.png'
+
+const KitmanLogo = '/assets/logos/Kitman Labs base.png'
+const MLSLogo = '/assets/logos/teams/mls/MLS.png'
+const TimbersLogo = '/assets/logos/teams/mls/timbers.png'
+
 import {
   Drawer,
   Box,
