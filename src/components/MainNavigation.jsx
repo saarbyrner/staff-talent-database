@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-const KitmanLogo = '/assets/logos/Kitman Labs base.png'
+const KitmanLogo = '/assets/logos/Kitman_Labs_base.png'
 const MLSLogo = '/assets/logos/teams/mls/MLS.png'
 const TimbersLogo = '/assets/logos/teams/mls/timbers.png'
 
