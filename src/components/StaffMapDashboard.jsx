@@ -102,6 +102,33 @@ function StaffMapDashboard() {
     topLocation: locations.sort((a, b) => b.count - a.count)[0]
   };
 
+  const statCards = [
+    {
+      label: 'Total Staff',
+      value: stats.totalStaff,
+      icon: <People />, 
+      iconColor: 'var(--color-chart-2)'
+    },
+    {
+      label: 'Locations',
+      value: stats.totalLocations,
+      icon: <LocationOn />, 
+      iconColor: 'var(--color-chart-3)'
+    },
+    {
+      label: 'Countries',
+      value: stats.countries,
+      icon: <Public />, 
+      iconColor: 'var(--color-chart-4)'
+    },
+    {
+      label: 'Top Location',
+      value: stats.topLocation?.city || 'N/A',
+      icon: <TrendingUp />, 
+      iconColor: 'var(--color-primary)'
+    }
+  ];
+
   // Get unique countries and roles for filters
   const countries = ['all', ...new Set(staffTalentData.map(s => s.country))].sort();
   const roles = ['all', ...new Set(staffTalentData.map(s => s.interestArea).filter(Boolean))].sort();
@@ -257,7 +284,7 @@ function StaffMapDashboard() {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box>
           <Typography 
-            variant="h4" 
+            variant="h5" 
             sx={{ 
               fontWeight: 700, 
               color: 'var(--color-primary)',
@@ -305,85 +332,33 @@ function StaffMapDashboard() {
 
       {/* Stats Cards */}
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card elevation={0} sx={{ border: '1px solid var(--color-border-primary)' }}>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <Avatar sx={{ bgcolor: 'var(--color-chart-2)', width: 48, height: 48 }}>
-                  <People />
+        {statCards.map(({ label, value, icon, iconColor }) => (
+          <Grid item xs={12} sm={6} md={3} key={label}>
+            <Card
+              elevation={0}
+              sx={{
+                border: '1px solid var(--color-border-primary)',
+                minHeight: 84,
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            >
+              <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+                <Avatar sx={{ bgcolor: iconColor, width: 40, height: 40 }}>
+                  {icon}
                 </Avatar>
-                <Box>
-                  <Typography variant="h4" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
-                    {stats.totalStaff}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                    {value}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Total Staff
+                  <Typography variant="caption" color="text.secondary">
+                    {label}
                   </Typography>
                 </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={6} md={3}>
-          <Card elevation={0} sx={{ border: '1px solid var(--color-border-primary)' }}>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <Avatar sx={{ bgcolor: 'var(--color-chart-3)', width: 48, height: 48 }}>
-                  <LocationOn />
-                </Avatar>
-                <Box>
-                  <Typography variant="h4" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
-                    {stats.totalLocations}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Locations
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={6} md={3}>
-          <Card elevation={0} sx={{ border: '1px solid var(--color-border-primary)' }}>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <Avatar sx={{ bgcolor: 'var(--color-chart-4)', width: 48, height: 48 }}>
-                  <Public />
-                </Avatar>
-                <Box>
-                  <Typography variant="h4" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
-                    {stats.countries}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Countries
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={6} md={3}>
-          <Card elevation={0} sx={{ border: '1px solid var(--color-border-primary)' }}>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <Avatar sx={{ bgcolor: 'var(--color-primary)', width: 48, height: 48 }}>
-                  <TrendingUp />
-                </Avatar>
-                <Box>
-                  <Typography variant="body1" sx={{ fontWeight: 600, color: 'var(--color-primary)' }}>
-                    {stats.topLocation?.city || 'N/A'}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Top Location
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
       </Grid>
 
       {/* Map */}
