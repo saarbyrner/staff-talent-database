@@ -40,11 +40,11 @@ export function getPlayerImage(playerId, playerName = '') {
 /**
  * Get team logo URL with fallback
  * @param {string} teamSlug - Team identifier slug
- * @param {string} league - League identifier (premier-league, nba, etc.)
+ * @param {string} league - League identifier (mls, premier-league, nba, etc.)
  * @param {string} fallback - Fallback image URL
  * @returns {string} Logo URL
  */
-export function getTeamLogo(teamSlug, league = 'premier-league', fallback = PLACEHOLDERS.logo) {
+export function getTeamLogo(teamSlug, league = 'mls', fallback = PLACEHOLDERS.logo) {
   if (!teamSlug) return fallback
   
   // Return PNG from the specific league folder
@@ -159,6 +159,10 @@ export const ASSET_REGISTRY = {
     'organization-logo.png'
   ],
   teams: {
+    'mls': [
+      'timbers.png',
+      'MLS.png'
+    ],
     'premier-league': [
       'arsenal.png',
       'chelsea.png',

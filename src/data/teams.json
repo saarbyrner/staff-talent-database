@@ -1,5 +1,23 @@
 [
   {
+    "id": "mls",
+    "name": "Major League Soccer",
+    "sport": "Soccer",
+    "logo": "mls",
+    "teams": [
+      {
+        "id": "timbers",
+        "name": "Portland Timbers",
+        "city": "Portland",
+        "founded": 2009,
+        "stadium": "Providence Park",
+        "capacity": 25218,
+        "logo": "timbers",
+        "league": "mls"
+      }
+    ]
+  },
+  {
     "id": "premier-league",
     "name": "Premier League",
     "sport": "Football",

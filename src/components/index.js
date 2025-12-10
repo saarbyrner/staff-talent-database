@@ -19,4 +19,4 @@ export { default as AthleteDataGrid } from './AthleteDataGrid'
 // <Icon icon="dashboard" size="medium" />
 // <Card title="Athletes">Card content</Card>
 // <PlayerAvatar playerId="123" playerName="John Smith" size="medium" />
-// <LogoImage type="team" logoId="arsenal" league="premier-league" height={40} />
+// <LogoImage type="team" logoId="timbers" league="mls" height={40} />

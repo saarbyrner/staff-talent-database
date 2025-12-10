@@ -1,7 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useLocation, useNavigate } from 'react-router-dom'
-import KitmanLogo from '/public/assets/logos/Kitman Labs base.png'
+import KitmanLogo from '/assets/logos/Kitman Labs base.png'
+import MLSLogo from '/assets/logos/teams/mls/MLS.png'
+import TimbersLogo from '/assets/logos/teams/mls/timbers.png'
 import {
   Drawer,
   Box,
@@ -256,7 +258,7 @@ function MainNavigation({
         height: '100vh',
         background: viewMode === 'league' 
           ? 'linear-gradient(180deg, #C8102E 0%, #a00d25 40%, #8a0b1f 70%, #6a0818 90%, #6a0818 100%)'
-          : 'linear-gradient(180deg, #000000 0%, #111111 40%, #000000 70%, #040037ff 90%, #040037ff 100%)',
+          : 'linear-gradient(180deg, #004812 0%, #003a0e 40%, #002a09 70%, #001f06 90%, #001f06 100%)',
         color: '#ffffff',
         display: 'flex',
         flexDirection: 'column',
@@ -288,12 +290,13 @@ function MainNavigation({
           }}
         >
           <img
-            src={KitmanLogo}
-            alt="Kitman Labs"
+            src={viewMode === 'league' ? MLSLogo : TimbersLogo}
+            alt={viewMode === 'league' ? 'MLS' : 'Portland Timbers'}
             style={{
               height: '100%',
               width: 'auto',
-              objectFit: 'contain'
+              objectFit: 'contain',
+              mixBlendMode: 'screen'
             }}
           />
         </Box>

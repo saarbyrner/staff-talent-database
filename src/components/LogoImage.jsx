@@ -12,7 +12,7 @@ import '../styles/design-tokens.css'
 function LogoImage({ 
   type = 'organization',
   logoId = 'organization-logo',
-  league = 'premier-league',
+  league = 'mls',
   alt = '',
   width = 'auto',
   height = 32,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Box, Chip, Avatar, Link, Stack, Typography, Tooltip } from '@mui/material';
+import { Box, Chip, Avatar, Link, Stack, Typography, Tooltip, Button } from '@mui/material';
 import {
   DataGridPro as DataGrid,
   GridToolbarContainer,
@@ -15,12 +15,21 @@ import {
   CloseOutlined,
   DescriptionOutlined,
   LinkOutlined,
+  AddOutlined,
 } from '@mui/icons-material';
 import staffData from '../data/staff_talent.json';
 import { generateInitialsImage } from '../utils/assetManager';
 import '../styles/design-tokens.css';
 
 export const CustomToolbar = React.forwardRef((props, ref) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  const handleAddClick = () => {
+    const basePath = location.pathname.startsWith('/league') ? '/league/staff' : '/staff';
+    navigate(`${basePath}/new`);
+  };
+  
   return (
     <Box
       ref={ref}
@@ -55,17 +64,39 @@ export const CustomToolbar = React.forwardRef((props, ref) => {
         <GridToolbarDensitySelector />
         <GridToolbarExport />
       </Box>
-      <GridToolbarQuickFilter 
-        sx={{
-          '& .MuiInputBase-root': {
-            backgroundColor: 'var(--color-background-primary)',
-            borderRadius: '4px',
-            height: '36px',
-            width: '240px',
-          }
-        }}
-        debounceMs={150}
-      />
+      <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+        <GridToolbarQuickFilter 
+          sx={{
+            '& .MuiInputBase-root': {
+              backgroundColor: 'var(--color-background-primary)',
+              borderRadius: '4px',
+              height: '36px',
+              width: '240px',
+            }
+          }}
+          debounceMs={150}
+        />
+        <Button
+          variant="contained"
+          startIcon={<AddOutlined />}
+          onClick={handleAddClick}
+          sx={{
+            textTransform: 'none',
+            fontSize: '0.875rem',
+            fontWeight: 500,
+            backgroundColor: 'var(--color-primary)',
+            color: '#ffffff !important',
+            minWidth: 'auto',
+            padding: '6px 12px',
+            '&:hover': {
+              backgroundColor: 'var(--color-primary-hover)',
+              color: '#ffffff !important'
+            }
+          }}
+        >
+          Add
+        </Button>
+      </Box>
     </Box>
   );
 });
@@ -470,6 +501,53 @@ export default function TalentDatabaseGrid() {
           pagination: {
             paginationModel: {
               pageSize: 25,
+            },
+          },
+          columns: {
+            columnVisibilityModel: {
+              // Show first 5 columns by default
+              picUrl: true,
+              firstName: true,
+              lastName: true,
+              phone: true,
+              email: true,
+              // Hide all other columns by default
+              location: false,
+              workAuthUS: false,
+              workAuthCA: false,
+              gender: false,
+              ethnicity: false,
+              hasAgent: false,
+              agentName: false,
+              agencyName: false,
+              proPlayerExp: false,
+              mlsPlayerExp: false,
+              mlsClubsPlayed: false,
+              otherPlayerExp: false,
+              interestArea: false,
+              coachingRoles: false,
+              execRoles: false,
+              techRoles: false,
+              relocation: false,
+              proCoachExp: false,
+              mlsCoachExp: false,
+              mlsCoachRoles: false,
+              mlsClubsCoached: false,
+              nonMlsCoachExp: false,
+              sportingExp: false,
+              mlsSportingExp: false,
+              mlsClubsSporting: false,
+              nonMlsSportingExp: false,
+              sportingVertical: false,
+              currentEmployer: false,
+              prevEmployer1: false,
+              prevEmployer2: false,
+              degree: false,
+              mlsPrograms: false,
+              coachingLicenses: false,
+              sportingCerts: false,
+              languages: false,
+              resumeUrl: false,
             },
           },
         }}

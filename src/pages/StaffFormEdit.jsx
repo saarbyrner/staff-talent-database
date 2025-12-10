@@ -15,9 +15,14 @@ import {
   Checkbox,
   Chip,
   IconButton,
-  Divider
+  Divider,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  List,
+  ListItemButton
 } from '@mui/material';
-import { ArrowBack, SaveOutlined } from '@mui/icons-material';
+import { ArrowBack, SaveOutlined, ExpandMoreOutlined, DragIndicatorOutlined } from '@mui/icons-material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -37,11 +42,22 @@ function StaffFormEdit() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Check if we're creating a new staff member (either id is undefined or 'new')
+  const isNewStaff = !id || id === 'new' || location.pathname.includes('/new');
+
+  // Debug logging
+  console.log('StaffFormEdit - location.pathname:', location.pathname);
+  console.log('StaffFormEdit - id:', id);
+  console.log('StaffFormEdit - isNewStaff:', isNewStaff);
+
   // Determine if we're viewing from league context
   const isLeagueView = location.pathname.startsWith('/league');
 
-  // Find staff member
+  // Find staff member (or null if creating new)
   const staffMember = React.useMemo(() => {
+    // If creating new staff, return null
+    if (isNewStaff) return null;
+    
     let member = staffTalentData.find(s => s.id === id);
     if (member) return { ...member, source: 'talent' };
     
@@ -49,7 +65,10 @@ function StaffFormEdit() {
     if (member) return { ...member, source: 'current' };
     
     return null;
-  }, [id]);
+  }, [id, isNewStaff]);
+
+  console.log('StaffFormEdit - staffMember:', staffMember);
+  console.log('StaffFormEdit - isNewStaff check:', isNewStaff, '- Will show error?', !isNewStaff && !staffMember);
 
   // Initialize form values from staff member data
   const [formValues, setFormValues] = React.useState(() => {
@@ -97,13 +116,48 @@ function StaffFormEdit() {
     return values;
   });
 
+  // State for accordion expansion and field refs
+  const [expandedSections, setExpandedSections] = React.useState([]);
+  const [selectedSectionIndex, setSelectedSectionIndex] = React.useState(0);
+  const [selectedFieldId, setSelectedFieldId] = React.useState(null);
+  const fieldRefs = React.useRef({});
+
   const handleBack = () => {
     const basePath = isLeagueView ? '/league/staff' : '/staff';
-    navigate(`${basePath}/${id}`);
+    if (isNewStaff) {
+      navigate(basePath);
+    } else {
+      navigate(`${basePath}/${id}`);
+    }
   };
 
   const handleValueChange = (fieldName, value) => {
     setFormValues(prev => ({ ...prev, [fieldName]: value }));
+  };
+
+  const toggleSection = (sectionIndex) => {
+    setExpandedSections((prev) =>
+      prev.includes(sectionIndex) ? prev.filter(x => x !== sectionIndex) : [...prev, sectionIndex]
+    );
+  };
+
+  const handleSectionClick = (sectionIndex) => {
+    setSelectedSectionIndex(sectionIndex);
+  };
+
+  const handleFieldClick = (fieldId, sectionIndex) => {
+    // Expand section if not already expanded
+    setExpandedSections((prev) => prev.includes(sectionIndex) ? prev : [...prev, sectionIndex]);
+    // Set selected section
+    setSelectedSectionIndex(sectionIndex);
+    // Set selected field
+    setSelectedFieldId(fieldId);
+    // Scroll to field
+    setTimeout(() => {
+      if (fieldRefs.current[fieldId]) {
+        fieldRefs.current[fieldId].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
   };
 
   const handleCheckboxGroupChange = (fieldName, option) => (event) => {
@@ -120,8 +174,13 @@ function StaffFormEdit() {
   const handleSave = () => {
     console.log('Saving form values:', formValues);
     // In a real app, this would save to the backend
-    alert('Form saved successfully!');
-    handleBack();
+    if (isNewStaff) {
+      alert('New staff member created successfully!');
+    } else {
+      alert('Form saved successfully!');
+    }
+    const basePath = isLeagueView ? '/league/staff' : '/staff';
+    navigate(basePath);
   };
 
   const evaluateDependency = (field) => {
@@ -245,12 +304,14 @@ function StaffFormEdit() {
     return (
       <Box
         key={`${sectionIndex}-${fieldIndex}`}
+        ref={(el) => { fieldRefs.current[fieldId] = el }}
         sx={{
           display: 'flex',
           flexDirection: 'column',
           gap: 1,
           py: 1.5,
           borderBottom: '1px solid var(--color-border-secondary)',
+          scrollMarginTop: '16px'
         }}
       >
         <Typography sx={{ fontWeight: 500, color: 'var(--color-text-primary)' }}>
@@ -273,7 +334,8 @@ function StaffFormEdit() {
     );
   };
 
-  if (!staffMember) {
+  // Only show error if staff not found and not creating a new one
+  if (!isNewStaff && !staffMember) {
     return (
       <Box sx={{ p: 3 }}>
         <Typography>Staff member not found</Typography>
@@ -281,9 +343,13 @@ function StaffFormEdit() {
     );
   }
 
-  const displayName = staffMember.source === 'talent'
+  const displayName = isNewStaff
+    ? 'New Staff Member'
+    : staffMember && staffMember.source === 'talent'
     ? `${staffMember.firstName} ${staffMember.lastName}`
-    : `${staffMember.firstname} ${staffMember.lastname}`;
+    : staffMember
+    ? `${staffMember.firstname} ${staffMember.lastname}`
+    : 'New Staff Member';
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -327,33 +393,144 @@ function StaffFormEdit() {
           </Box>
           
           <Typography variant="h5" sx={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>
-            Edit Staff Information: {displayName}
+            {isNewStaff ? 'Add New Staff Member' : `Edit Staff Information: ${displayName}`}
           </Typography>
         </Paper>
 
-        {/* Form Content */}
-        <Box sx={{ flexGrow: 1, overflow: 'auto', p: 3 }}>
-          <Paper elevation={0} sx={{ p: 3, border: '1px solid var(--color-border-primary)' }}>
-            {staffFormDefinition && Object.entries(staffFormDefinition).map(([sectionTitle, fields], sectionIndex) => (
-              <Box key={sectionIndex} sx={{ mb: 4 }}>
-                <Typography
-                  variant="h6"
+        {/* Form Content with Side Panel */}
+        <Box sx={{ flexGrow: 1, overflow: 'hidden', display: 'flex' }}>
+          {/* Left Side Panel - Menu Tree */}
+          <Box sx={{
+            width: '340px',
+            borderRight: '1px solid var(--color-border-primary)',
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            overflowY: 'auto',
+            backgroundColor: 'var(--color-background-primary)'
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1, pl: 2, pr: 2, pt: 2 }}>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>Menu</Typography>
+            </Box>
+
+            <List aria-label="Form Menu" disablePadding sx={{ flexGrow: 1 }}>
+              {staffFormDefinition && Object.entries(staffFormDefinition).map(([sectionTitle, fields], sectionIndex) => (
+                <Box key={sectionIndex}>
+                  <Accordion
+                    elevation={0}
+                    expanded={expandedSections.includes(sectionIndex)}
+                    onChange={() => toggleSection(sectionIndex)}
+                    sx={{
+                      boxShadow: 'none',
+                      borderRadius: 0,
+                      '&:hover': { backgroundColor: 'var(--color-background-secondary)' },
+                      '&:before': { display: 'none' }
+                    }}
+                  >
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreOutlined />}
+                      onClick={(e) => {
+                        // Only trigger section selection if not clicking the expand icon
+                        if (!e.target.closest('.MuiAccordionSummary-expandIconWrapper')) {
+                          handleSectionClick(sectionIndex);
+                        }
+                      }}
+                      sx={{
+                        pl: 2,
+                        pr: 2,
+                        '& .MuiAccordionSummary-content': { my: 1.5 },
+                        ...(selectedSectionIndex === sectionIndex && {
+                          backgroundColor: 'var(--color-background-secondary)'
+                        })
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                          <Typography variant="body1" sx={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>
+                            {sectionTitle}
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: 'var(--color-text-secondary)' }}>
+                            {fields.length} field{fields.length === 1 ? '' : 's'}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </AccordionSummary>
+                    <AccordionDetails sx={{ pl: 0, pr: 0, pt: 0, pb: 0 }}>
+                      <List component="div" disablePadding>
+                        {fields.map((field, fieldIndex) => {
+                          const fieldId = field.name;
+                          return (
+                            <ListItemButton
+                              key={fieldId}
+                              selected={selectedFieldId === fieldId}
+                              onClick={() => handleFieldClick(fieldId, sectionIndex)}
+                              sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1.5,
+                                borderRadius: 0,
+                                pl: 4,
+                                pr: 2,
+                                py: 1
+                              }}
+                            >
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  flex: 1,
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap'
+                                }}
+                              >
+                                {field.label?.length > 35 ? `${field.label.slice(0, 35)}...` : field.label}
+                              </Typography>
+                            </ListItemButton>
+                          );
+                        })}
+                      </List>
+                    </AccordionDetails>
+                  </Accordion>
+                </Box>
+              ))}
+            </List>
+          </Box>
+
+          {/* Right Content Area - Form Fields */}
+          <Box sx={{ flexGrow: 1, overflow: 'auto', p: 3, backgroundColor: '#fafafa' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              {staffFormDefinition && Object.entries(staffFormDefinition)
+                .filter(([, ], sectionIndex) => sectionIndex === selectedSectionIndex)
+                .map(([sectionTitle, fields], ) => (
+                <Paper
+                  key={selectedSectionIndex}
+                  elevation={0}
                   sx={{
-                    fontWeight: 600,
-                    color: 'var(--color-text-primary)',
-                    mb: 2,
-                    pb: 1,
-                    borderBottom: '2px solid var(--color-border-primary)',
+                    borderRadius: 'var(--radius-lg)',
+                    border: '1px solid var(--color-border-primary)',
+                    p: 3
                   }}
                 >
-                  {sectionTitle}
-                </Typography>
-                <Box sx={{ pl: 0 }}>
-                  {fields.map((field, fieldIndex) => renderField(field, sectionIndex, fieldIndex))}
-                </Box>
-              </Box>
-            ))}
-          </Paper>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 600,
+                      color: 'var(--color-text-primary)',
+                      mb: 1
+                    }}
+                  >
+                    {sectionTitle}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)', mb: 2 }}>
+                    {fields.length} field{fields.length === 1 ? '' : 's'}
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    {fields.map((field, fieldIndex) => renderField(field, selectedSectionIndex, fieldIndex))}
+                  </Box>
+                </Paper>
+              ))}
+            </Box>
+          </Box>
         </Box>
       </Box>
     </LocalizationProvider>

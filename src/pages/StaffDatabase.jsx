@@ -106,12 +106,8 @@ function StaffDatabase() {
                     );
                   }
                 },
-                {
-                  field: 'name',
-                  headerName: 'Name',
-                  width: 240,
-                  valueGetter: (params) => `${params.row.firstname || ''} ${params.row.lastname || ''}`
-                },
+                { field: 'firstname', headerName: 'First Name', width: 150 },
+                { field: 'lastname', headerName: 'Last Name', width: 150 },
                 { field: 'phone', headerName: 'Phone', width: 160 },
                 { field: 'email', headerName: 'Email', width: 240 },
                 { field: 'role', headerName: 'Role', width: 180 }

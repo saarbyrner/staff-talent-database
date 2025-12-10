@@ -6,6 +6,7 @@ import StaffDatabase from './pages/StaffDatabase'
 import StaffProfile from './pages/StaffProfile'
 import StaffFormEdit from './pages/StaffFormEdit'
 import League from './pages/League'
+import StaffMapDashboard from './components/StaffMapDashboard'
 import Screen01_FormsHome from './pages/forms/Screen01_FormsHome'
 import Screen02_FormBuilder from './pages/forms/Screen02_FormBuilder'
 import Screen02_FormResponses from './pages/forms/Screen02_FormResponses'
@@ -20,9 +21,10 @@ function App() {
         <Route path="/" element={<SimplePage pageName="Home" />} />
         <Route path="/dashboard" element={<SimplePage pageName="Dashboard" />} />
         <Route path="/medical" element={<SimplePage pageName="Medical" />} />
-        <Route path="/analysis" element={<SimplePage pageName="Analysis" />} />
+        <Route path="/analysis" element={<StaffMapDashboard />} />
         <Route path="/athlete" element={<Athletes />} />
         <Route path="/staff" element={<StaffDatabase />} />
+        <Route path="/staff/new" element={<StaffFormEdit />} />
         <Route path="/staff/:id" element={<StaffProfile />} />
         <Route path="/staff/:id/edit" element={<StaffFormEdit />} />
         <Route path="/workloads" element={<SimplePage pageName="Workload" />} />
@@ -39,9 +41,10 @@ function App() {
 
         {/* League View Routes - Same data, different space */}
         <Route path="/league" element={<League />} />
-        <Route path="/league/analysis" element={<SimplePage pageName="Analysis" />} />
+        <Route path="/league/analysis" element={<StaffMapDashboard />} />
         <Route path="/league/athlete" element={<Athletes />} />
         <Route path="/league/staff" element={<StaffDatabase />} />
+        <Route path="/league/staff/new" element={<StaffFormEdit />} />
         <Route path="/league/staff/:id" element={<StaffProfile />} />
         <Route path="/league/staff/:id/edit" element={<StaffFormEdit />} />
         <Route path="/league/forms/form_templates" element={<Screen01_FormsHome />} />

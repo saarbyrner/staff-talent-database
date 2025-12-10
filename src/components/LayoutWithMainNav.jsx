@@ -148,7 +148,7 @@ function MedinahLayoutWithMainNav({ children }) {
               zIndex: 1200,
               background: viewMode === 'league'
                 ? 'linear-gradient(180deg, #C8102E 0%, #a00d25 40%, #8a0b1f 70%, #6a0818 90%, #6a0818 100%)'
-                : 'linear-gradient(180deg, #000000 0%, #111111 40%, #000000 70%, #040037ff 90%, #040037ff 100%)',
+                : 'linear-gradient(180deg, #004812 0%, #003a0e 40%, #002a09 70%, #001f06 90%, #001f06 100%)',
               color: '#ffffff',
               boxShadow: 'var(--shadow-md)',
               display: 'flex',

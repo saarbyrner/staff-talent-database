@@ -55,6 +55,13 @@
   --color-mls-red-dark: #8a0b1f;
   --color-info-dark: #232b3a;
   
+  /* Portland Timbers Colors */
+  --color-timbers-green: #004812;
+  --color-timbers-green-hover: #003a0e;
+  --color-timbers-green-dark: #002a09;
+  --color-timbers-gold: #EEE600;
+  --color-timbers-gold-hover: #d4cf00;
+  
   /* Chart Colors - From actual Medinah system */
   --color-chart-1: #3B4960;
   --color-chart-2: #29AE61;
