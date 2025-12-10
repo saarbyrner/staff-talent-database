@@ -247,21 +247,13 @@ const columns = [
   // INTERESTS
   { field: 'interestArea', headerName: 'Area of Interest', width: 180 },
   { 
-    field: 'coachingRoles', 
-    headerName: 'Coaching Roles', 
-    width: 250, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-  { 
-    field: 'execRoles', 
-    headerName: 'Exec Roles', 
-    width: 250, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-  { 
-    field: 'techRoles', 
-    headerName: 'Technical Roles', 
-    width: 200, 
+    field: 'roles', 
+    headerName: 'Roles', 
+    width: 300, 
+    valueGetter: (params) => {
+      const { coachingRoles = [], execRoles = [], techRoles = [] } = params.row;
+      return [...coachingRoles, ...execRoles, ...techRoles];
+    },
     renderCell: (params) => <ArrayCell value={params.value} /> 
   },
   { 
@@ -419,9 +411,7 @@ const columnGroupingModel = [
     groupId: 'Interests',
     children: [
       { field: 'interestArea' },
-      { field: 'coachingRoles' },
-      { field: 'execRoles' },
-      { field: 'techRoles' },
+      { field: 'roles' },
       { field: 'relocation' },
     ],
   },
@@ -511,6 +501,7 @@ export default function TalentDatabaseGrid() {
               lastName: true,
               phone: true,
               email: true,
+              roles: true, // Show merged roles column by default
               // Hide all other columns by default
               location: false,
               workAuthUS: false,
@@ -525,9 +516,6 @@ export default function TalentDatabaseGrid() {
               mlsClubsPlayed: false,
               otherPlayerExp: false,
               interestArea: false,
-              coachingRoles: false,
-              execRoles: false,
-              techRoles: false,
               relocation: false,
               proCoachExp: false,
               mlsCoachExp: false,
