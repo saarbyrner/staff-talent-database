@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Box, Typography, Paper, Tabs, Tab, Avatar } from '@mui/material';
+import { Box, Typography, Paper, Tabs, Tab, Avatar, Button } from '@mui/material';
+import { MailOutline } from '@mui/icons-material';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import { CustomToolbar } from '../components/TalentDatabaseGrid';
 import TalentDatabaseGrid from '../components/TalentDatabaseGrid';
+import InviteModal from '../components/InviteModal';
 import staffList from '../data/users_staff.json';
 import { generateInitialsImage } from '../utils/assetManager';
 import '../styles/design-tokens.css';
@@ -14,6 +16,7 @@ import '../styles/design-tokens.css';
  */
 function StaffDatabase() {
   const [tab, setTab] = useState(1); // 0 = Staff (My Current Staff), 1 = Talent Database (default)
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -47,10 +50,25 @@ function StaffDatabase() {
           mt: -3,
         }}
       >
-        <Tabs value={tab} onChange={handleChange} aria-label="Staff Tabs" sx={{ px: 0 }}>
-          <Tab label="Staff" value={0} />
-          <Tab label="Talent Database" value={1} />
-        </Tabs>
+        <Box sx={{ display: 'flex', alignItems: 'center', px: 3 }}>
+          <Tabs value={tab} onChange={handleChange} aria-label="Staff Tabs" sx={{ flexGrow: 1 }}>
+            <Tab label="Staff" value={0} />
+            <Tab label="Talent Database" value={1} />
+          </Tabs>
+          {tab === 1 && (
+            <Button
+              variant="outlined"
+              startIcon={<MailOutline />}
+              onClick={() => setInviteModalOpen(true)}
+              sx={{
+                textTransform: 'none',
+                ml: 2
+              }}
+            >
+              Invite
+            </Button>
+          )}
+        </Box>
       </Paper>
 
       <Paper 
@@ -139,6 +157,11 @@ function StaffDatabase() {
           </Box>
         )}
       </Paper>
+
+      <InviteModal 
+        open={inviteModalOpen} 
+        onClose={() => setInviteModalOpen(false)} 
+      />
     </Box>
   );
 }
