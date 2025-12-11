@@ -144,6 +144,9 @@ function StaffFormEdit() {
       values.resume = staffMember.resumeUrl || '';
       values.coachingLicenseDoc = staffMember.coachingLicenseDoc || '';
       values.otherCertsDoc = staffMember.otherCertsDoc || '';
+      
+      // Preferences
+      values.profilePrivacy = staffMember.profilePrivacy || 'Public';
     } else if (staffMember.source === 'current') {
       values.firstName = staffMember.firstname || '';
       values.lastName = staffMember.lastname || '';

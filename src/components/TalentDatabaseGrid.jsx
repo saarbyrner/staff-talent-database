@@ -188,6 +188,30 @@ const columns = [
   { field: 'phone', headerName: 'Phone', width: 150 },
   { field: 'email', headerName: 'Email', width: 200 },
   { 
+    field: 'profilePrivacy', 
+    headerName: 'Profile Privacy', 
+    width: 140,
+    renderCell: (params) => {
+      const value = params.value || 'Public';
+      const isPrivate = value === 'Private';
+      return (
+        <Chip 
+          label={value} 
+          size="small" 
+          color={isPrivate ? 'default' : 'success'} 
+          variant="outlined"
+          sx={{
+            fontWeight: 500,
+            ...(isPrivate && {
+              borderColor: 'var(--color-border-primary)',
+              color: 'var(--color-text-secondary)'
+            })
+          }}
+        />
+      );
+    }
+  },
+  { 
     field: 'location', 
     headerName: 'Location (City, State, Country)', 
     width: 200,
@@ -622,6 +646,20 @@ const columnGroupingModel = [
 export default function TalentDatabaseGrid() {
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Check if viewing from league admin context
+  const isLeagueView = location.pathname.startsWith('/league');
+  
+  // Filter data based on view context
+  const filteredStaffData = React.useMemo(() => {
+    if (isLeagueView) {
+      // League admins see all profiles
+      return staffData;
+    } else {
+      // Club users only see Public profiles (filter out Private)
+      return staffData.filter(staff => staff.profilePrivacy !== 'Private');
+    }
+  }, [isLeagueView]);
 
   const handleRowClick = (params, event) => {
     // Don't navigate if clicking on checkbox or action buttons
@@ -638,7 +676,7 @@ export default function TalentDatabaseGrid() {
   return (
     <Box sx={{ height: 'calc(100vh - 100px)', width: '100%' }}>
       <DataGrid
-        rows={staffData}
+        rows={filteredStaffData}
         columns={columns}
         columnGroupingModel={columnGroupingModel}
         slots={{
@@ -652,12 +690,13 @@ export default function TalentDatabaseGrid() {
           },
           columns: {
             columnVisibilityModel: {
-              // Show first 5 columns by default
+              // Show first 5-6 columns by default
               picUrl: true,
               firstName: true,
               lastName: true,
               phone: true,
               email: true,
+              profilePrivacy: isLeagueView, // Only show in league view
               roles: true, // Show merged roles column by default
               // Hide all other columns by default
               location: false,

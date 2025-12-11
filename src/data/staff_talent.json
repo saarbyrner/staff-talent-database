@@ -93,7 +93,8 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/101_coaching.pdf",
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "profilePrivacy": "Public"
   },
   {
     "id": "102",
@@ -183,7 +184,8 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "profilePrivacy": "Private"
   },
   {
     "id": "103",
@@ -270,7 +272,8 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "profilePrivacy": "Public"
   },
   {
     "id": "104",
@@ -358,7 +361,8 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "profilePrivacy": "Public"
   },
   {
     "id": "105",
@@ -447,7 +451,8 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "profilePrivacy": "Private"
   },
   {
     "id": "106",
@@ -531,7 +536,8 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/106_coaching.pdf",
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "profilePrivacy": "Public"
   },
   {
     "id": "107",
@@ -614,7 +620,8 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "profilePrivacy": "Private"
   },
   {
     "id": "108",
@@ -697,7 +704,8 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "profilePrivacy": "Public"
   },
   {
     "id": "109",

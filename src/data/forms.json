@@ -380,6 +380,16 @@
       "required": false
     }
   ],
+  "Preferences": [
+    {
+      "name": "profilePrivacy",
+      "label": "Profile Privacy",
+      "type": "RadioGroup",
+      "required": true,
+      "options": ["Public", "Private"],
+      "helperText": "Public: Visible to all Club Users. Private: Visible only to League Administrators"
+    }
+  ],
   "Consent": [
     {
       "name": "legalConsent",
