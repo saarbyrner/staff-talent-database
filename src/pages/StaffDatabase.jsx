@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Box, Typography, Paper, Tabs, Tab, Avatar, Button } from '@mui/material';
-import { MailOutline } from '@mui/icons-material';
+import { Box, Typography, Paper, Tabs, Tab, Avatar } from '@mui/material';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import { CustomToolbar } from '../components/TalentDatabaseGrid';
 import TalentDatabaseGrid from '../components/TalentDatabaseGrid';
@@ -50,25 +49,10 @@ function StaffDatabase() {
           mt: -3,
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', px: 3 }}>
-          <Tabs value={tab} onChange={handleChange} aria-label="Staff Tabs" sx={{ flexGrow: 1 }}>
-            <Tab label="Staff" value={0} />
-            <Tab label="Talent Database" value={1} />
-          </Tabs>
-          {tab === 1 && (
-            <Button
-              variant="outlined"
-              startIcon={<MailOutline />}
-              onClick={() => setInviteModalOpen(true)}
-              sx={{
-                textTransform: 'none',
-                ml: 2
-              }}
-            >
-              Invite
-            </Button>
-          )}
-        </Box>
+        <Tabs value={tab} onChange={handleChange} aria-label="Staff Tabs" sx={{ px: 0 }}>
+          <Tab label="Staff" value={0} />
+          <Tab label="Talent Database" value={1} />
+        </Tabs>
       </Paper>
 
       <Paper 
@@ -80,7 +64,7 @@ function StaffDatabase() {
           overflow: 'hidden'
         }}
       >
-        {tab === 1 && <TalentDatabaseGrid />}
+        {tab === 1 && <TalentDatabaseGrid onInviteClick={() => setInviteModalOpen(true)} />}
         {tab === 0 && (
           <Box sx={{ height: '100%', width: '100%' }}>
             <DataGridPro

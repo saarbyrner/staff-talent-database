@@ -16,6 +16,7 @@ import {
   DescriptionOutlined,
   LinkOutlined,
   AddOutlined,
+  MailOutline,
 } from '@mui/icons-material';
 import staffData from '../data/staff_talent.json';
 import { generateInitialsImage } from '../utils/assetManager';
@@ -24,6 +25,7 @@ import '../styles/design-tokens.css';
 export const CustomToolbar = React.forwardRef((props, ref) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { onInviteClick } = props;
   
   const handleAddClick = () => {
     const basePath = location.pathname.startsWith('/league') ? '/league/staff' : '/staff';
@@ -76,6 +78,28 @@ export const CustomToolbar = React.forwardRef((props, ref) => {
           }}
           debounceMs={150}
         />
+        {onInviteClick && (
+          <Button
+            variant="outlined"
+            startIcon={<MailOutline />}
+            onClick={onInviteClick}
+            sx={{
+              textTransform: 'none',
+              fontSize: '0.875rem',
+              fontWeight: 500,
+              borderColor: 'var(--color-border-primary)',
+              color: 'var(--color-text-primary)',
+              minWidth: 'auto',
+              padding: '6px 12px',
+              '&:hover': {
+                borderColor: 'var(--color-text-primary)',
+                backgroundColor: 'var(--color-background-tertiary)'
+              }
+            }}
+          >
+            Invite
+          </Button>
+        )}
         <Button
           variant="contained"
           startIcon={<AddOutlined />}
@@ -643,7 +667,7 @@ const columnGroupingModel = [
   },
 ];
 
-export default function TalentDatabaseGrid() {
+export default function TalentDatabaseGrid({ onInviteClick }) {
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -681,6 +705,11 @@ export default function TalentDatabaseGrid() {
         columnGroupingModel={columnGroupingModel}
         slots={{
           toolbar: CustomToolbar,
+        }}
+        slotProps={{
+          toolbar: {
+            onInviteClick,
+          },
         }}
         initialState={{
           pagination: {

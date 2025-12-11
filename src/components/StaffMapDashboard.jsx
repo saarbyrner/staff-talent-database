@@ -76,7 +76,22 @@ function StaffMapDashboard() {
     'Sydney': { lat: -33.8688, lon: 151.2093, country: 'Australia' },
     'Rome': { lat: 41.9028, lon: 12.4964, country: 'Italy' },
     'Washington': { lat: 38.9072, lon: -77.0369, country: 'USA' },
-    'San Antonio': { lat: 29.4241, lon: -98.4936, country: 'USA' }
+    'San Antonio': { lat: 29.4241, lon: -98.4936, country: 'USA' },
+    'Raleigh': { lat: 35.7796, lon: -78.6382, country: 'USA' },
+    'Omaha': { lat: 41.2565, lon: -95.9345, country: 'USA' },
+    'Sacramento': { lat: 38.5816, lon: -121.4944, country: 'USA' },
+    'Tucson': { lat: 32.2226, lon: -110.9747, country: 'USA' },
+    'Albuquerque': { lat: 35.0844, lon: -106.6504, country: 'USA' },
+    'Baltimore': { lat: 39.2904, lon: -76.6122, country: 'USA' },
+    'Louisville': { lat: 38.2527, lon: -85.7585, country: 'USA' },
+    'Las Vegas': { lat: 36.1699, lon: -115.1398, country: 'USA' },
+    'Colorado Springs': { lat: 38.8339, lon: -104.8214, country: 'USA' },
+    'Mesa': { lat: 33.4152, lon: -111.8315, country: 'USA' },
+    'Fresno': { lat: 36.7378, lon: -119.7871, country: 'USA' },
+    'Milwaukee': { lat: 43.0389, lon: -87.9065, country: 'USA' },
+    'Memphis': { lat: 35.1495, lon: -90.0490, country: 'USA' },
+    'Detroit': { lat: 42.3314, lon: -83.0458, country: 'USA' },
+    'Nashville': { lat: 36.1627, lon: -86.7816, country: 'USA' }
   };
 
   // Aggregate staff by location
@@ -116,7 +131,7 @@ function StaffMapDashboard() {
 
   const locations = aggregateStaffByLocation(filteredStaff);
 
-  // Get statistics - Dynamically calculated from current staff data (45 total in database)
+  // Get statistics - Dynamically calculated from current staff data (75 total in database)
   const stats = {
     totalStaff: filteredStaff.length, // Auto-updates to reflect current staff count
     totalLocations: locations.length,
@@ -239,10 +254,10 @@ function StaffMapDashboard() {
       .domain([0, d3.max(locations, d => d.count)])
       .range([8, 40]);
 
-    // Color scale based on count
+    // Color scale based on count - using actual hex values instead of CSS variables
     const colorScale = d3.scaleSequential()
       .domain([0, d3.max(locations, d => d.count)])
-      .interpolator(d3.interpolateRgb('var(--color-chart-2)', 'var(--color-primary)'));
+      .interpolator(d3.interpolateRgb('#29AE61', '#3B4960')); // chart-2 (green) to primary (navy)
 
     // Draw location markers
     const markers = g.selectAll('.location-marker')
@@ -292,14 +307,22 @@ function StaffMapDashboard() {
       .attr('pointer-events', 'none')
       .text(d => d.count);
 
-    // Add zoom behavior
+    // Add zoom behavior with proper constraints
     const zoom = d3.zoom()
-      .scaleExtent([1, 8])
+      .scaleExtent([0.5, 10]) // Allow zooming out to 0.5x and in to 10x
+      .translateExtent([[-width * 0.5, -height * 0.5], [width * 1.5, height * 1.5]]) // Limit panning
       .on('zoom', (event) => {
         g.attr('transform', event.transform);
       });
 
     svg.call(zoom);
+    
+    // Add double-click to reset zoom
+    svg.on('dblclick.zoom', () => {
+      svg.transition()
+        .duration(750)
+        .call(zoom.transform, d3.zoomIdentity);
+    });
 
   }, [locations, dimensions]);
 
