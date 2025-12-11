@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, Chip, Avatar, Link, Stack, Typography, Tooltip, Button } from '@mui/material';
 import {
@@ -17,9 +17,11 @@ import {
   LinkOutlined,
   AddOutlined,
   MailOutline,
+  EditOutlined,
 } from '@mui/icons-material';
 import staffData from '../data/staff_talent.json';
 import { generateInitialsImage } from '../utils/assetManager';
+import BulkEditBar from './BulkEditBar';
 import '../styles/design-tokens.css';
 
 export const CustomToolbar = React.forwardRef((props, ref) => {
@@ -670,6 +672,8 @@ const columnGroupingModel = [
 export default function TalentDatabaseGrid({ onInviteClick }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [selectedRows, setSelectedRows] = React.useState([]);
+  const [bulkEditOpen, setBulkEditOpen] = React.useState(false);
   
   // Check if viewing from league admin context
   const isLeagueView = location.pathname.startsWith('/league');
@@ -697,8 +701,36 @@ export default function TalentDatabaseGrid({ onInviteClick }) {
     navigate(`${basePath}/${params.row.id}`);
   };
 
+  const handleBulkEditSave = (updates) => {
+    console.log('Bulk editing fields:', Object.keys(updates), 'for', selectedRows.length, 'staff members');
+    console.log('Updates:', updates);
+    
+    // In a real application, this would update the backend/database
+    const selectedStaff = filteredStaffData.filter(staff => selectedRows.includes(staff.id));
+    console.log('Selected staff:', selectedStaff.map(s => `${s.firstName} ${s.lastName}`));
+    
+    // TODO: Implement actual data update logic
+    // This would typically be an API call to update multiple records
+    const updateSummary = Object.entries(updates)
+      .map(([field, value]) => `${field}: ${JSON.stringify(value)}`)
+      .join(', ');
+    
+    alert(`Would update ${updateSummary} for ${selectedRows.length} staff members`);
+    
+    // Clear selection and close bulk edit bar
+    setSelectedRows([]);
+    setBulkEditOpen(false);
+  };
+
   return (
     <Box sx={{ height: 'calc(100vh - 100px)', width: '100%' }}>
+      {selectedRows.length > 0 && (
+        <BulkEditBar
+          selectedCount={selectedRows.length}
+          onSave={handleBulkEditSave}
+          onCancel={() => setSelectedRows([])}
+        />
+      )}
       <DataGrid
         rows={filteredStaffData}
         columns={columns}
@@ -711,6 +743,8 @@ export default function TalentDatabaseGrid({ onInviteClick }) {
             onInviteClick,
           },
         }}
+        rowSelectionModel={selectedRows}
+        onRowSelectionModelChange={(newSelection) => setSelectedRows(newSelection)}
         initialState={{
           pagination: {
             paginationModel: {
