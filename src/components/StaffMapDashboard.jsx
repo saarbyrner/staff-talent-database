@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { 
   Box, 
   Paper, 
@@ -33,10 +33,13 @@ import '../styles/design-tokens.css';
 function StaffMapDashboard() {
   const svgRef = useRef(null);
   const containerRef = useRef(null);
+  const zoomRef = useRef(null);
+  const gRef = useRef(null); // Store reference to the g element
   const [selectedCountry, setSelectedCountry] = useState('all');
   const [selectedRole, setSelectedRole] = useState('all');
   const [hoveredLocation, setHoveredLocation] = useState(null);
   const [dimensions, setDimensions] = useState({ width: 1000, height: 500 });
+  const [mapKey, setMapKey] = useState(0); // Force re-render only when needed
 
   // Geocode cities to coordinates (simplified mapping)
   const cityCoordinates = {
@@ -123,13 +126,15 @@ function StaffMapDashboard() {
   };
 
   // Filter staff data - Auto-updates when filters change or data is modified
-  const filteredStaff = staffTalentData.filter(staff => {
-    const countryMatch = selectedCountry === 'all' || staff.country === selectedCountry;
-    const roleMatch = selectedRole === 'all' || staff.interestArea === selectedRole;
-    return countryMatch && roleMatch;
-  });
+  const filteredStaff = useMemo(() => {
+    return staffTalentData.filter(staff => {
+      const countryMatch = selectedCountry === 'all' || staff.country === selectedCountry;
+      const roleMatch = selectedRole === 'all' || staff.interestArea === selectedRole;
+      return countryMatch && roleMatch;
+    });
+  }, [selectedCountry, selectedRole]);
 
-  const locations = aggregateStaffByLocation(filteredStaff);
+  const locations = useMemo(() => aggregateStaffByLocation(filteredStaff), [filteredStaff]);
 
   // Get statistics - Dynamically calculated from current staff data (75 total in database)
   const stats = {
@@ -206,12 +211,18 @@ function StaffMapDashboard() {
     console.log('Rendering map with', locations.length, 'locations');
     console.log('Dimensions:', dimensions);
 
-    // Clear previous content
-    d3.select(svgRef.current).selectAll('*').remove();
-
     const { width, height } = dimensions;
 
-    const svg = d3.select(svgRef.current)
+    // Get or create SVG
+    let svg = d3.select(svgRef.current);
+    
+    // Store current transform before clearing
+    const currentTransform = zoomRef.current || d3.zoomIdentity;
+    
+    // Clear previous content
+    svg.selectAll('*').remove();
+    
+    svg
       .attr('width', width)
       .attr('height', height)
       .attr('viewBox', `0 0 ${width} ${height}`);
@@ -225,7 +236,8 @@ function StaffMapDashboard() {
       .translate([width / 2, height / 2]);
 
     // Draw world map background
-    const g = svg.append('g');
+    const g = svg.append('g')
+      .attr('class', 'map-container');
 
     // Draw a simple background rectangle
     g.append('rect')
@@ -307,21 +319,38 @@ function StaffMapDashboard() {
       .attr('pointer-events', 'none')
       .text(d => d.count);
 
-    // Add zoom behavior with proper constraints
+    // Add zoom behavior
     const zoom = d3.zoom()
-      .scaleExtent([0.5, 10]) // Allow zooming out to 0.5x and in to 10x
-      .translateExtent([[-width * 0.5, -height * 0.5], [width * 1.5, height * 1.5]]) // Limit panning
+      .scaleExtent([0.5, 10])
       .on('zoom', (event) => {
-        g.attr('transform', event.transform);
+        const transform = event.transform;
+        g.attr('transform', transform);
+        
+        // Scale circles and stroke inversely to maintain consistent visual size
+        const scale = transform.k;
+        markers.selectAll('circle')
+          .attr('r', d => sizeScale(d.count) / scale)
+          .attr('stroke-width', 2 / scale);
+        
+        markers.selectAll('text')
+          .attr('font-size', d => Math.max(10, Math.min(16, sizeScale(d.count) / 2)) / scale);
+        
+        zoomRef.current = event.transform;
       });
 
     svg.call(zoom);
+    
+    // Restore previous zoom state if it exists
+    if (currentTransform && (currentTransform.k !== 1 || currentTransform.x !== 0 || currentTransform.y !== 0)) {
+      svg.call(zoom.transform, currentTransform);
+    }
     
     // Add double-click to reset zoom
     svg.on('dblclick.zoom', () => {
       svg.transition()
         .duration(750)
         .call(zoom.transform, d3.zoomIdentity);
+      zoomRef.current = d3.zoomIdentity;
     });
 
   }, [locations, dimensions]);
