@@ -12,7 +12,9 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel
+  InputLabel,
+  Tabs,
+  Tab
 } from '@mui/material';
 import { 
   LocationOn, 
@@ -24,6 +26,7 @@ import * as d3 from 'd3';
 import * as d3Geo from 'd3-geo';
 import staffTalentData from '../data/staff_talent.json';
 import worldGeoJson from '../data/world_map.json';
+import CoachLeaderboard from './CoachLeaderboard';
 import '../styles/design-tokens.css';
 
 /**
@@ -40,6 +43,9 @@ function StaffMapDashboard() {
   const [hoveredLocation, setHoveredLocation] = useState(null);
   const [dimensions, setDimensions] = useState({ width: 1000, height: 500 });
   const [mapKey, setMapKey] = useState(0); // Force re-render only when needed
+  const [activeTab, setActiveTab] = useState(0);
+  const chartRef = useRef(null);
+  const chartContainerRef = useRef(null);
 
   // Geocode cities to coordinates (simplified mapping)
   const cityCoordinates = {
@@ -353,10 +359,43 @@ function StaffMapDashboard() {
       zoomRef.current = d3.zoomIdentity;
     });
 
-  }, [locations, dimensions]);
+  }, [locations, dimensions, activeTab]);
 
   return (
-    <Box sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column', gap: 3 }}>
+    <Box sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column', gap: 3, backgroundColor: '#fafafa' }}>
+      {/* Tabs */}
+      <Paper
+        elevation={0}
+        sx={{
+          borderBottom: '1px solid var(--color-border-primary)',
+          backgroundColor: 'var(--color-background-primary)',
+          borderRadius: 0,
+          mx: -3,
+          mt: -3,
+          mb: 0,
+        }}
+      >
+        <Tabs 
+          value={activeTab} 
+          onChange={(e, newValue) => setActiveTab(newValue)}
+          sx={{
+            px: 3,
+            '& .MuiTab-root': {
+              textTransform: 'none',
+              fontWeight: 500,
+              fontSize: '0.875rem',
+            }
+          }}
+        >
+          <Tab label="Location Analysis" />
+          <Tab label="Employment Stability" />
+          <Tab label="Origin Breakdown" />
+          <Tab label="Qualification Standards" />
+          <Tab label="Talent Pipeline" />
+          <Tab label="Coach Leaderboard" />
+        </Tabs>
+      </Paper>
+
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box>
@@ -368,47 +407,52 @@ function StaffMapDashboard() {
               mb: 0.5
             }}
           >
-            Staff Location Analysis
+            {['Location Analysis', 'Employment Stability', 'Origin Breakdown', 'Qualification Standards', 'Talent Pipeline', 'Coach Leaderboard'][activeTab]}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Geographic distribution and insights
+            {activeTab === 0 ? 'Geographic distribution and insights' : activeTab === 1 ? 'Employment trends and stability metrics' : activeTab === 2 ? 'Domestic vs. international talent comparison' : activeTab === 3 ? 'Coaching license and credential trends' : activeTab === 4 ? 'Tag progression and talent development pipeline' : 'Performance metrics and staff rankings'}
           </Typography>
         </Box>
 
-        {/* Filters */}
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <FormControl size="small" sx={{ minWidth: 150 }}>
-            <InputLabel>Country</InputLabel>
-            <Select
-              value={selectedCountry}
-              onChange={(e) => setSelectedCountry(e.target.value)}
-              label="Country"
-            >
-              <MenuItem value="all">All Countries</MenuItem>
-              {countries.slice(1).map(country => (
-                <MenuItem key={country} value={country}>{country}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+        {/* Filters - Only show on Location tab */}
+        {activeTab === 0 && (
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <FormControl size="small" sx={{ minWidth: 150 }}>
+              <InputLabel>Country</InputLabel>
+              <Select
+                value={selectedCountry}
+                onChange={(e) => setSelectedCountry(e.target.value)}
+                label="Country"
+              >
+                <MenuItem value="all">All Countries</MenuItem>
+                {countries.slice(1).map(country => (
+                  <MenuItem key={country} value={country}>{country}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-          <FormControl size="small" sx={{ minWidth: 180 }}>
-            <InputLabel>Role</InputLabel>
-            <Select
-              value={selectedRole}
-              onChange={(e) => setSelectedRole(e.target.value)}
-              label="Role"
-            >
-              <MenuItem value="all">All Roles</MenuItem>
-              {roles.slice(1).map(role => (
-                <MenuItem key={role} value={role}>{role}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
+            <FormControl size="small" sx={{ minWidth: 180 }}>
+              <InputLabel>Role</InputLabel>
+              <Select
+                value={selectedRole}
+                onChange={(e) => setSelectedRole(e.target.value)}
+                label="Role"
+              >
+                <MenuItem value="all">All Roles</MenuItem>
+                {roles.slice(1).map(role => (
+                  <MenuItem key={role} value={role}>{role}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+        )}
       </Box>
 
-      {/* Stats Cards */}
-      <Grid container spacing={2}>
+      {/* Location Analysis Tab */}
+      {activeTab === 0 && (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          {/* Stats Cards */}
+          <Grid container spacing={2}>
         {statCards.map(({ label, value, icon, iconColor }) => (
           <Grid item xs={12} sm={6} md={3} key={label}>
             <Card
@@ -577,6 +621,1779 @@ function StaffMapDashboard() {
             </Box>
           </Box>
         </Paper>
+      </Paper>
+        </Box>
+      )}
+
+      {/* Employment Stability Tab */}
+      {activeTab === 1 && (
+        <EmploymentStabilityChart staffData={staffTalentData} />
+      )}
+
+      {/* Origin Breakdown Tab */}
+      {activeTab === 2 && (
+        <OriginBreakdownChart staffData={staffTalentData} />
+      )}
+
+      {/* Qualification Standards Tab */}
+      {activeTab === 3 && (
+        <QualificationStandardsChart staffData={staffTalentData} />
+      )}
+
+      {/* Talent Pipeline Tab */}
+      {activeTab === 4 && (
+        <TalentPipelineChart staffData={staffTalentData} />
+      )}
+
+      {/* Coach Leaderboard Tab */}
+      {activeTab === 5 && (
+        <CoachLeaderboard />
+      )}
+    </Box>
+  );
+}
+
+/**
+ * Employment Stability Chart Component
+ * Displays employment rate trends over time with quarterly data
+ */
+function EmploymentStabilityChart({ staffData }) {
+  const chartRef = useRef(null);
+  const containerRef = useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 1000, height: 400 });
+
+  // Generate seasonal employment data
+  const employmentData = useMemo(() => {
+    // Generate data for the last 5 MLS seasons
+    const seasons = [];
+    const currentYear = new Date().getFullYear();
+    
+    for (let i = 4; i >= 0; i--) {
+      const seasonYear = currentYear - i;
+      const seasonLabel = `${seasonYear} Season`;
+      
+      // Calculate employment percentage (simulated with some variance)
+      // In real implementation, this would come from actual historical data
+      const baseRate = 65; // Base employment rate
+      const variance = Math.sin(i * 0.5) * 8; // Add some realistic variation
+      const employmentRate = Math.min(100, Math.max(0, baseRate + variance + (Math.random() * 5 - 2.5)));
+      
+      seasons.push({
+        season: seasonLabel,
+        seasonYear,
+        employmentRate: Number(employmentRate.toFixed(1)),
+        index: 4 - i
+      });
+    }
+    
+    return seasons;
+  }, []);
+
+  // Calculate average employment rate
+  const averageRate = useMemo(() => {
+    const sum = employmentData.reduce((acc, d) => acc + d.employmentRate, 0);
+    return Number((sum / employmentData.length).toFixed(1));
+  }, [employmentData]);
+
+  // Calculate current employment stats
+  const currentStats = useMemo(() => {
+    const employed = staffData.filter(s => s.currentlyEmployed === true || s.currentEmployer).length;
+    const total = staffData.length;
+    const percentage = total > 0 ? Number(((employed / total) * 100).toFixed(1)) : 0;
+    
+    return {
+      employed,
+      total,
+      percentage
+    };
+  }, [staffData]);
+
+  // Handle resize
+  useEffect(() => {
+    if (!containerRef.current) return;
+    
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const width = containerRef.current.clientWidth - 64;
+        setDimensions({ width: width > 0 ? width : 1000, height: 400 });
+      }
+    };
+    
+    updateDimensions();
+    const resizeObserver = new ResizeObserver(updateDimensions);
+    resizeObserver.observe(containerRef.current);
+    
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  // Draw chart
+  useEffect(() => {
+    if (!chartRef.current || employmentData.length === 0) return;
+
+    const { width, height } = dimensions;
+    const margin = { top: 20, right: 30, bottom: 70, left: 60 };
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+
+    // Clear previous content
+    d3.select(chartRef.current).selectAll('*').remove();
+
+    const svg = d3.select(chartRef.current)
+      .attr('width', width)
+      .attr('height', height);
+
+    const g = svg.append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    // Scales
+    const xScale = d3.scaleLinear()
+      .domain([0, employmentData.length - 1])
+      .range([0, innerWidth]);
+
+    const yScale = d3.scaleLinear()
+      .domain([0, 100])
+      .range([innerHeight, 0]);
+
+    // Line generator
+    const line = d3.line()
+      .x((d, i) => xScale(i))
+      .y(d => yScale(d.employmentRate))
+      .curve(d3.curveMonotoneX);
+
+    // Area generator for gradient fill
+    const area = d3.area()
+      .x((d, i) => xScale(i))
+      .y0(innerHeight)
+      .y1(d => yScale(d.employmentRate))
+      .curve(d3.curveMonotoneX);
+
+    // Add gradient definition
+    const gradient = svg.append('defs')
+      .append('linearGradient')
+      .attr('id', 'area-gradient')
+      .attr('x1', '0%')
+      .attr('y1', '0%')
+      .attr('x2', '0%')
+      .attr('y2', '100%');
+
+    gradient.append('stop')
+      .attr('offset', '0%')
+      .attr('stop-color', '#29AE61')
+      .attr('stop-opacity', 0.3);
+
+    gradient.append('stop')
+      .attr('offset', '100%')
+      .attr('stop-color', '#29AE61')
+      .attr('stop-opacity', 0.05);
+
+    // Grid lines
+    g.append('g')
+      .attr('class', 'grid')
+      .selectAll('line')
+      .data(yScale.ticks(5))
+      .enter()
+      .append('line')
+      .attr('x1', 0)
+      .attr('x2', innerWidth)
+      .attr('y1', d => yScale(d))
+      .attr('y2', d => yScale(d))
+      .attr('stroke', '#e2e8f0')
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', '2,2');
+
+    // Draw area
+    g.append('path')
+      .datum(employmentData)
+      .attr('fill', 'url(#area-gradient)')
+      .attr('d', area);
+
+    // Draw employment rate line
+    g.append('path')
+      .datum(employmentData)
+      .attr('fill', 'none')
+      .attr('stroke', '#29AE61')
+      .attr('stroke-width', 3)
+      .attr('d', line);
+
+    // Draw average line
+    g.append('line')
+      .attr('x1', 0)
+      .attr('x2', innerWidth)
+      .attr('y1', yScale(averageRate))
+      .attr('y2', yScale(averageRate))
+      .attr('stroke', '#3B4960')
+      .attr('stroke-width', 2)
+      .attr('stroke-dasharray', '5,5')
+      .attr('opacity', 0.7);
+
+    // Average line label
+    g.append('text')
+      .attr('x', innerWidth - 5)
+      .attr('y', yScale(averageRate) - 5)
+      .attr('text-anchor', 'end')
+      .attr('fill', '#3B4960')
+      .attr('font-size', '12px')
+      .attr('font-weight', 600)
+      .text(`Avg: ${averageRate}%`);
+
+    // Add data points
+    g.selectAll('.dot')
+      .data(employmentData)
+      .enter()
+      .append('circle')
+      .attr('class', 'dot')
+      .attr('cx', (d, i) => xScale(i))
+      .attr('cy', d => yScale(d.employmentRate))
+      .attr('r', 5)
+      .attr('fill', '#29AE61')
+      .attr('stroke', '#ffffff')
+      .attr('stroke-width', 2)
+      .style('cursor', 'pointer')
+      .on('mouseenter', function(event, d) {
+        d3.select(this)
+          .transition()
+          .duration(200)
+          .attr('r', 7);
+      })
+      .on('mouseleave', function() {
+        d3.select(this)
+          .transition()
+          .duration(200)
+          .attr('r', 5);
+      })
+      .append('title')
+      .text(d => `${d.season}: ${d.employmentRate}%`);
+
+    // X-axis
+    const xAxis = d3.axisBottom(xScale)
+      .tickValues(d3.range(employmentData.length))
+      .tickFormat((d, i) => employmentData[i]?.season || '');
+
+    g.append('g')
+      .attr('transform', `translate(0,${innerHeight})`)
+      .call(xAxis)
+      .selectAll('text')
+      .attr('transform', 'rotate(-45)')
+      .style('text-anchor', 'end')
+      .attr('dx', '-0.5em')
+      .attr('dy', '0.5em')
+      .style('font-size', '11px');
+
+    // Y-axis
+    const yAxis = d3.axisLeft(yScale)
+      .ticks(5)
+      .tickFormat(d => `${d}%`);
+
+    g.append('g')
+      .call(yAxis)
+      .selectAll('text')
+      .style('font-size', '11px');
+
+    // Y-axis label
+    g.append('text')
+      .attr('transform', 'rotate(-90)')
+      .attr('x', -innerHeight / 2)
+      .attr('y', -45)
+      .attr('text-anchor', 'middle')
+      .attr('fill', 'var(--color-text-secondary)')
+      .attr('font-size', '12px')
+      .attr('font-weight', 600)
+      .text('Employment Rate (%)');
+
+  }, [employmentData, dimensions, averageRate]);
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      {/* Stats Cards */}
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card
+            elevation={0}
+            sx={{
+              border: '1px solid var(--color-border-primary)',
+              minHeight: 84,
+            }}
+          >
+            <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+              <Avatar sx={{ bgcolor: 'var(--color-chart-2)', width: 40, height: 40 }}>
+                <TrendingUp />
+              </Avatar>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                  {currentStats.percentage}%
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Current Employment Rate
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Card
+            elevation={0}
+            sx={{
+              border: '1px solid var(--color-border-primary)',
+              minHeight: 84,
+            }}
+          >
+            <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+              <Avatar sx={{ bgcolor: 'var(--color-primary)', width: 40, height: 40 }}>
+                <People />
+              </Avatar>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                  {currentStats.employed}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Currently Employed
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Card
+            elevation={0}
+            sx={{
+              border: '1px solid var(--color-border-primary)',
+              minHeight: 84,
+            }}
+          >
+            <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+              <Avatar sx={{ bgcolor: 'var(--color-chart-3)', width: 40, height: 40 }}>
+                <Public />
+              </Avatar>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                  {averageRate}%
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Average Rate (5 Seasons)
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Card
+            elevation={0}
+            sx={{
+              border: '1px solid var(--color-border-primary)',
+              minHeight: 84,
+            }}
+          >
+            <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+              <Avatar sx={{ bgcolor: 'var(--color-chart-4)', width: 40, height: 40 }}>
+                <LocationOn />
+              </Avatar>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                  {currentStats.total}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Total in Database
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {/* Chart */}
+      <Paper
+        ref={containerRef}
+        elevation={0}
+        sx={{
+          flex: 1,
+          border: '1px solid var(--color-border-primary)',
+          borderRadius: 1,
+          p: 3,
+          backgroundColor: '#ffffff',
+          minHeight: 450
+        }}
+      >
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600, color: 'var(--color-primary)', mb: 0.5 }}>
+            Employment Rate Trend
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Percentage of database candidates holding active club roles over the last 5 MLS seasons
+          </Typography>
+        </Box>
+        
+        {/* Legend */}
+        <Box sx={{ display: 'flex', gap: 3, mb: 2, justifyContent: 'flex-start' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box
+              sx={{
+                width: 20,
+                height: 3,
+                bgcolor: '#29AE61',
+                borderRadius: 1
+              }}
+            />
+            <Typography variant="caption" sx={{ fontWeight: 500 }}>
+              Active Employment Rate
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box
+              sx={{
+                width: 20,
+                height: 2,
+                bgcolor: '#3B4960',
+                borderRadius: 1,
+                opacity: 0.7,
+                borderTop: '2px dashed #3B4960'
+              }}
+            />
+            <Typography variant="caption" sx={{ fontWeight: 500 }}>
+              Average Rate
+            </Typography>
+          </Box>
+        </Box>
+
+        <svg 
+          ref={chartRef}
+          style={{ width: '100%', display: 'block' }}
+        />
+      </Paper>
+    </Box>
+  );
+}
+
+/**
+ * Origin Breakdown Chart Component
+ * Displays domestic vs international staff over time with stacked bars
+ */
+function OriginBreakdownChart({ staffData }) {
+  const chartRef = useRef(null);
+  const containerRef = useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 1000, height: 400 });
+
+  // Generate yearly origin data
+  const originData = useMemo(() => {
+    // Generate data for the last 5 MLS seasons
+    const seasons = [];
+    const currentYear = new Date().getFullYear();
+    
+    for (let i = 4; i >= 0; i--) {
+      const seasonYear = currentYear - i;
+      const seasonLabel = `${seasonYear} Season`;
+      
+      // Calculate domestic vs international counts (simulated with growth trend)
+      // In real implementation, this would come from actual hiring data
+      const baseTotal = 10 + (4 - i) * 3; // Growing from 10 to 22
+      const internationalRatio = 0.25 + (i * 0.03); // Growing international ratio
+      
+      const international = Math.round(baseTotal * internationalRatio);
+      const domestic = baseTotal - international;
+      
+      seasons.push({
+        season: seasonLabel,
+        seasonYear,
+        domestic,
+        international,
+        total: baseTotal
+      });
+    }
+    
+    return seasons;
+  }, []);
+
+  // Calculate current stats
+  const currentStats = useMemo(() => {
+    // Count based on country (USA = domestic, others = international)
+    const domestic = staffData.filter(s => s.country === 'USA').length;
+    const international = staffData.filter(s => s.country && s.country !== 'USA').length;
+    const total = staffData.length;
+    const intlPercentage = total > 0 ? Number(((international / total) * 100).toFixed(1)) : 0;
+    
+    return {
+      domestic,
+      international,
+      total,
+      intlPercentage
+    };
+  }, [staffData]);
+
+  // Handle resize
+  useEffect(() => {
+    if (!containerRef.current) return;
+    
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const width = containerRef.current.clientWidth - 64;
+        setDimensions({ width: width > 0 ? width : 1000, height: 400 });
+      }
+    };
+    
+    updateDimensions();
+    const resizeObserver = new ResizeObserver(updateDimensions);
+    resizeObserver.observe(containerRef.current);
+    
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  // Draw chart
+  useEffect(() => {
+    if (!chartRef.current || originData.length === 0) return;
+
+    const { width, height } = dimensions;
+    const margin = { top: 20, right: 30, bottom: 60, left: 60 };
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+
+    // Clear previous content
+    d3.select(chartRef.current).selectAll('*').remove();
+
+    const svg = d3.select(chartRef.current)
+      .attr('width', width)
+      .attr('height', height);
+
+    const g = svg.append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    // Scales
+    const xScale = d3.scaleBand()
+      .domain(originData.map(d => d.season))
+      .range([0, innerWidth])
+      .padding(0.3);
+
+    const maxTotal = d3.max(originData, d => d.total);
+    const yScale = d3.scaleLinear()
+      .domain([0, maxTotal * 1.1])
+      .range([innerHeight, 0]);
+
+    // Grid lines
+    g.append('g')
+      .attr('class', 'grid')
+      .selectAll('line')
+      .data(yScale.ticks(5))
+      .enter()
+      .append('line')
+      .attr('x1', 0)
+      .attr('x2', innerWidth)
+      .attr('y1', d => yScale(d))
+      .attr('y2', d => yScale(d))
+      .attr('stroke', '#e2e8f0')
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', '2,2');
+
+    // Stack the data
+    const stack = d3.stack()
+      .keys(['domestic', 'international']);
+    
+    const stackedData = stack(originData);
+
+    // Color scale
+    const colors = {
+      domestic: '#3B4960', // Primary navy
+      international: '#29AE61' // Chart green
+    };
+
+    // Draw bars
+    const groups = g.selectAll('g.series')
+      .data(stackedData)
+      .enter()
+      .append('g')
+      .attr('class', 'series')
+      .attr('fill', d => colors[d.key]);
+
+    const bars = groups.selectAll('rect')
+      .data(d => d)
+      .enter()
+      .append('rect')
+      .attr('x', (d, i) => xScale(originData[i].season))
+      .attr('y', d => yScale(d[1]))
+      .attr('height', d => yScale(d[0]) - yScale(d[1]))
+      .attr('width', xScale.bandwidth())
+      .style('cursor', 'pointer')
+      .on('mouseenter', function(event, d) {
+        d3.select(this)
+          .transition()
+          .duration(200)
+          .attr('opacity', 0.8);
+      })
+      .on('mouseleave', function() {
+        d3.select(this)
+          .transition()
+          .duration(200)
+          .attr('opacity', 1);
+      });
+
+    // Add tooltips to bars
+    bars.each(function(d, i) {
+      const rect = d3.select(this);
+      const parentGroup = d3.select(this.parentNode);
+      const key = parentGroup.datum().key;
+      const data = originData[i];
+      
+      rect.append('title')
+        .text(`${data.season} - ${key === 'domestic' ? 'Domestic' : 'International'}: ${data[key]}`);
+    });
+
+    // Add value labels on bars
+    groups.each(function() {
+      const group = d3.select(this);
+      const key = group.datum().key;
+      
+      group.selectAll('text')
+        .data(d => d)
+        .enter()
+        .append('text')
+        .attr('x', (d, i) => xScale(originData[i].season) + xScale.bandwidth() / 2)
+        .attr('y', d => {
+          const barHeight = yScale(d[0]) - yScale(d[1]);
+          return yScale(d[1]) + barHeight / 2;
+        })
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'middle')
+        .attr('fill', '#ffffff')
+        .attr('font-size', '12px')
+        .attr('font-weight', 600)
+        .attr('pointer-events', 'none')
+        .text((d, i) => {
+          const value = originData[i][key];
+          return value > 0 ? value : '';
+        });
+    });
+
+    // X-axis
+    const xAxis = d3.axisBottom(xScale);
+
+    g.append('g')
+      .attr('transform', `translate(0,${innerHeight})`)
+      .call(xAxis)
+      .selectAll('text')
+      .style('font-size', '12px');
+
+    // Y-axis
+    const yAxis = d3.axisLeft(yScale)
+      .ticks(5)
+      .tickFormat(d => d);
+
+    g.append('g')
+      .call(yAxis)
+      .selectAll('text')
+      .style('font-size', '11px');
+
+    // Y-axis label
+    g.append('text')
+      .attr('transform', 'rotate(-90)')
+      .attr('x', -innerHeight / 2)
+      .attr('y', -45)
+      .attr('text-anchor', 'middle')
+      .attr('fill', 'var(--color-text-secondary)')
+      .attr('font-size', '12px')
+      .attr('font-weight', 600)
+      .text('Total Hired Staff');
+
+  }, [originData, dimensions]);
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      {/* Stats Cards */}
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card
+            elevation={0}
+            sx={{
+              border: '1px solid var(--color-border-primary)',
+              minHeight: 84,
+            }}
+          >
+            <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+              <Avatar sx={{ bgcolor: '#3B4960', width: 40, height: 40 }}>
+                <LocationOn />
+              </Avatar>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                  {currentStats.domestic}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Domestic Staff
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Card
+            elevation={0}
+            sx={{
+              border: '1px solid var(--color-border-primary)',
+              minHeight: 84,
+            }}
+          >
+            <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+              <Avatar sx={{ bgcolor: '#29AE61', width: 40, height: 40 }}>
+                <Public />
+              </Avatar>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                  {currentStats.international}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  International Staff
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Card
+            elevation={0}
+            sx={{
+              border: '1px solid var(--color-border-primary)',
+              minHeight: 84,
+            }}
+          >
+            <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+              <Avatar sx={{ bgcolor: 'var(--color-chart-3)', width: 40, height: 40 }}>
+                <TrendingUp />
+              </Avatar>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                  {currentStats.intlPercentage}%
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  International Ratio
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Card
+            elevation={0}
+            sx={{
+              border: '1px solid var(--color-border-primary)',
+              minHeight: 84,
+            }}
+          >
+            <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+              <Avatar sx={{ bgcolor: 'var(--color-chart-4)', width: 40, height: 40 }}>
+                <People />
+              </Avatar>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                  {currentStats.total}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Total Staff
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {/* Chart */}
+      <Paper
+        ref={containerRef}
+        elevation={0}
+        sx={{
+          flex: 1,
+          border: '1px solid var(--color-border-primary)',
+          borderRadius: 1,
+          p: 3,
+          backgroundColor: '#ffffff',
+          minHeight: 450
+        }}
+      >
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600, color: 'var(--color-primary)', mb: 0.5 }}>
+            Domestic vs. International Talent
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Volume of domestic vs. imported talent hired over the last 5 MLS seasons
+          </Typography>
+        </Box>
+        
+        {/* Legend */}
+        <Box sx={{ display: 'flex', gap: 3, mb: 2, justifyContent: 'flex-start' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box
+              sx={{
+                width: 20,
+                height: 20,
+                bgcolor: '#3B4960',
+                borderRadius: 0.5
+              }}
+            />
+            <Typography variant="caption" sx={{ fontWeight: 500 }}>
+              Domestic (USA)
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box
+              sx={{
+                width: 20,
+                height: 20,
+                bgcolor: '#29AE61',
+                borderRadius: 0.5
+              }}
+            />
+            <Typography variant="caption" sx={{ fontWeight: 500 }}>
+              International
+            </Typography>
+          </Box>
+        </Box>
+
+        <svg 
+          ref={chartRef}
+          style={{ width: '100%', display: 'block' }}
+        />
+      </Paper>
+    </Box>
+  );
+}
+
+/**
+ * Qualification Standards Chart Component
+ * Displays coaching license trends over time with multiple lines
+ */
+function QualificationStandardsChart({ staffData }) {
+  const chartRef = useRef(null);
+  const containerRef = useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 1000, height: 400 });
+
+  // Generate seasonal qualification data
+  const qualificationData = useMemo(() => {
+    // Generate data for the last 5 MLS seasons
+    const seasons = [];
+    const currentYear = new Date().getFullYear();
+    
+    for (let i = 4; i >= 0; i--) {
+      const seasonYear = currentYear - i;
+      const seasonLabel = `${seasonYear} Season`;
+      
+      // Calculate license counts with growth trends (simulated)
+      // In real implementation, this would come from actual credential data
+      const progress = (4 - i) / 4; // 0 to 1 over time
+      
+      const proLicense = Math.round(8 + progress * 7); // Growing from 8 to 15
+      const aLicense = Math.round(15 + progress * 10); // Growing from 15 to 25
+      const bLicense = Math.round(20 + progress * 8); // Growing from 20 to 28
+      
+      seasons.push({
+        season: seasonLabel,
+        seasonYear,
+        index: 4 - i,
+        proLicense,
+        aLicense,
+        bLicense,
+        total: proLicense + aLicense + bLicense
+      });
+    }
+    
+    return seasons;
+  }, []);
+
+  // Calculate current stats from actual data
+  const currentStats = useMemo(() => {
+    // Count based on coachingLicenses field
+    let proCount = 0;
+    let aCount = 0;
+    let bCount = 0;
+    
+    staffData.forEach(staff => {
+      if (staff.coachingLicenses) {
+        const licenses = Array.isArray(staff.coachingLicenses) 
+          ? staff.coachingLicenses 
+          : [staff.coachingLicenses];
+        
+        const hasProLicense = licenses.some(license => 
+          license && (license.includes('Pro') || license.includes('PRO'))
+        );
+        const hasALicense = licenses.some(license => 
+          license && !license.includes('Pro') && !license.includes('PRO') && 
+          (license.includes('A') || license.includes('UEFA A') || license.includes('USSF A'))
+        );
+        const hasBLicense = licenses.some(license => 
+          license && (license.includes('B') || license.includes('UEFA B') || license.includes('USSF B'))
+        );
+        
+        if (hasProLicense) proCount++;
+        else if (hasALicense) aCount++;
+        else if (hasBLicense) bCount++;
+      }
+    });
+    
+    const total = proCount + aCount + bCount;
+    const avgPerSeason = qualificationData.length > 0 
+      ? Number((qualificationData.reduce((sum, d) => sum + d.total, 0) / qualificationData.length).toFixed(0))
+      : 0;
+    
+    return {
+      proCount,
+      aCount,
+      bCount,
+      total,
+      avgPerSeason
+    };
+  }, [staffData, qualificationData]);
+
+  // Handle resize
+  useEffect(() => {
+    if (!containerRef.current) return;
+    
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const width = containerRef.current.clientWidth - 64;
+        setDimensions({ width: width > 0 ? width : 1000, height: 400 });
+      }
+    };
+    
+    updateDimensions();
+    const resizeObserver = new ResizeObserver(updateDimensions);
+    resizeObserver.observe(containerRef.current);
+    
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  // Draw chart
+  useEffect(() => {
+    if (!chartRef.current || qualificationData.length === 0) return;
+
+    const { width, height } = dimensions;
+    const margin = { top: 20, right: 30, bottom: 70, left: 60 };
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+
+    // Clear previous content
+    d3.select(chartRef.current).selectAll('*').remove();
+
+    const svg = d3.select(chartRef.current)
+      .attr('width', width)
+      .attr('height', height);
+
+    const g = svg.append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    // Scales
+    const xScale = d3.scaleLinear()
+      .domain([0, qualificationData.length - 1])
+      .range([0, innerWidth]);
+
+    const maxValue = d3.max(qualificationData, d => Math.max(d.proLicense, d.aLicense, d.bLicense));
+    const yScale = d3.scaleLinear()
+      .domain([0, maxValue * 1.1])
+      .range([innerHeight, 0]);
+
+    // Line generators
+    const lineProLicense = d3.line()
+      .x((d, i) => xScale(i))
+      .y(d => yScale(d.proLicense))
+      .curve(d3.curveMonotoneX);
+
+    const lineALicense = d3.line()
+      .x((d, i) => xScale(i))
+      .y(d => yScale(d.aLicense))
+      .curve(d3.curveMonotoneX);
+
+    const lineBLicense = d3.line()
+      .x((d, i) => xScale(i))
+      .y(d => yScale(d.bLicense))
+      .curve(d3.curveMonotoneX);
+
+    // Colors for each license level
+    const colors = {
+      pro: '#E63946', // Red for Pro
+      a: '#29AE61', // Green for A
+      b: '#3B4960' // Navy for B
+    };
+
+    // Grid lines
+    g.append('g')
+      .attr('class', 'grid')
+      .selectAll('line')
+      .data(yScale.ticks(5))
+      .enter()
+      .append('line')
+      .attr('x1', 0)
+      .attr('x2', innerWidth)
+      .attr('y1', d => yScale(d))
+      .attr('y2', d => yScale(d))
+      .attr('stroke', '#e2e8f0')
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', '2,2');
+
+    // Draw Pro License line
+    g.append('path')
+      .datum(qualificationData)
+      .attr('fill', 'none')
+      .attr('stroke', colors.pro)
+      .attr('stroke-width', 3)
+      .attr('d', lineProLicense);
+
+    // Draw A License line
+    g.append('path')
+      .datum(qualificationData)
+      .attr('fill', 'none')
+      .attr('stroke', colors.a)
+      .attr('stroke-width', 3)
+      .attr('d', lineALicense);
+
+    // Draw B License line
+    g.append('path')
+      .datum(qualificationData)
+      .attr('fill', 'none')
+      .attr('stroke', colors.b)
+      .attr('stroke-width', 3)
+      .attr('d', lineBLicense);
+
+    // Add Pro License data points
+    g.selectAll('.dot-pro')
+      .data(qualificationData)
+      .enter()
+      .append('circle')
+      .attr('class', 'dot-pro')
+      .attr('cx', (d, i) => xScale(i))
+      .attr('cy', d => yScale(d.proLicense))
+      .attr('r', 5)
+      .attr('fill', colors.pro)
+      .attr('stroke', '#ffffff')
+      .attr('stroke-width', 2)
+      .style('cursor', 'pointer')
+      .on('mouseenter', function() {
+        d3.select(this).transition().duration(200).attr('r', 7);
+      })
+      .on('mouseleave', function() {
+        d3.select(this).transition().duration(200).attr('r', 5);
+      })
+      .append('title')
+      .text(d => `${d.season}\nUEFA/USSF Pro: ${d.proLicense}`);
+
+    // Add A License data points
+    g.selectAll('.dot-a')
+      .data(qualificationData)
+      .enter()
+      .append('circle')
+      .attr('class', 'dot-a')
+      .attr('cx', (d, i) => xScale(i))
+      .attr('cy', d => yScale(d.aLicense))
+      .attr('r', 5)
+      .attr('fill', colors.a)
+      .attr('stroke', '#ffffff')
+      .attr('stroke-width', 2)
+      .style('cursor', 'pointer')
+      .on('mouseenter', function() {
+        d3.select(this).transition().duration(200).attr('r', 7);
+      })
+      .on('mouseleave', function() {
+        d3.select(this).transition().duration(200).attr('r', 5);
+      })
+      .append('title')
+      .text(d => `${d.season}\nUEFA/USSF A: ${d.aLicense}`);
+
+    // Add B License data points
+    g.selectAll('.dot-b')
+      .data(qualificationData)
+      .enter()
+      .append('circle')
+      .attr('class', 'dot-b')
+      .attr('cx', (d, i) => xScale(i))
+      .attr('cy', d => yScale(d.bLicense))
+      .attr('r', 5)
+      .attr('fill', colors.b)
+      .attr('stroke', '#ffffff')
+      .attr('stroke-width', 2)
+      .style('cursor', 'pointer')
+      .on('mouseenter', function() {
+        d3.select(this).transition().duration(200).attr('r', 7);
+      })
+      .on('mouseleave', function() {
+        d3.select(this).transition().duration(200).attr('r', 5);
+      })
+      .append('title')
+      .text(d => `${d.season}\nUEFA/USSF B: ${d.bLicense}`);
+
+    // X-axis
+    const xAxis = d3.axisBottom(xScale)
+      .tickValues(d3.range(qualificationData.length))
+      .tickFormat((d, i) => qualificationData[i]?.season || '');
+
+    g.append('g')
+      .attr('transform', `translate(0,${innerHeight})`)
+      .call(xAxis)
+      .selectAll('text')
+      .attr('transform', 'rotate(-45)')
+      .style('text-anchor', 'end')
+      .attr('dx', '-0.5em')
+      .attr('dy', '0.5em')
+      .style('font-size', '11px');
+
+    // Y-axis
+    const yAxis = d3.axisLeft(yScale)
+      .ticks(5)
+      .tickFormat(d => d);
+
+    g.append('g')
+      .call(yAxis)
+      .selectAll('text')
+      .style('font-size', '11px');
+
+    // Y-axis label
+    g.append('text')
+      .attr('transform', 'rotate(-90)')
+      .attr('x', -innerHeight / 2)
+      .attr('y', -45)
+      .attr('text-anchor', 'middle')
+      .attr('fill', 'var(--color-text-secondary)')
+      .attr('font-size', '12px')
+      .attr('font-weight', 600)
+      .text('Count of Active Staff');
+
+  }, [qualificationData, dimensions]);
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      {/* Stats Cards */}
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card
+            elevation={0}
+            sx={{
+              border: '1px solid var(--color-border-primary)',
+              minHeight: 84,
+            }}
+          >
+            <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+              <Avatar sx={{ bgcolor: '#E63946', width: 40, height: 40 }}>
+                <TrendingUp />
+              </Avatar>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                  {currentStats.proCount}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  UEFA/USSF Pro
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Card
+            elevation={0}
+            sx={{
+              border: '1px solid var(--color-border-primary)',
+              minHeight: 84,
+            }}
+          >
+            <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+              <Avatar sx={{ bgcolor: '#29AE61', width: 40, height: 40 }}>
+                <People />
+              </Avatar>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                  {currentStats.aCount}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  UEFA/USSF A
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Card
+            elevation={0}
+            sx={{
+              border: '1px solid var(--color-border-primary)',
+              minHeight: 84,
+            }}
+          >
+            <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+              <Avatar sx={{ bgcolor: '#3B4960', width: 40, height: 40 }}>
+                <Public />
+              </Avatar>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                  {currentStats.bCount}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  UEFA/USSF B
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Card
+            elevation={0}
+            sx={{
+              border: '1px solid var(--color-border-primary)',
+              minHeight: 84,
+            }}
+          >
+            <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+              <Avatar sx={{ bgcolor: 'var(--color-chart-4)', width: 40, height: 40 }}>
+                <LocationOn />
+              </Avatar>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                  {currentStats.avgPerSeason}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Avg per Season
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {/* Chart */}
+      <Paper
+        ref={containerRef}
+        elevation={0}
+        sx={{
+          flex: 1,
+          border: '1px solid var(--color-border-primary)',
+          borderRadius: 1,
+          p: 3,
+          backgroundColor: '#ffffff',
+          minHeight: 450
+        }}
+      >
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600, color: 'var(--color-primary)', mb: 0.5 }}>
+            Coaching License Trends
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Evolution of coaching credential standards across the last 5 MLS seasons
+          </Typography>
+        </Box>
+        
+        {/* Legend */}
+        <Box sx={{ display: 'flex', gap: 3, mb: 2, justifyContent: 'flex-start', flexWrap: 'wrap' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box
+              sx={{
+                width: 20,
+                height: 3,
+                bgcolor: '#E63946',
+                borderRadius: 1
+              }}
+            />
+            <Typography variant="caption" sx={{ fontWeight: 500 }}>
+              UEFA/USSF Pro (Top Tier)
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box
+              sx={{
+                width: 20,
+                height: 3,
+                bgcolor: '#29AE61',
+                borderRadius: 1
+              }}
+            />
+            <Typography variant="caption" sx={{ fontWeight: 500 }}>
+              UEFA/USSF A (High Tier)
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box
+              sx={{
+                width: 20,
+                height: 3,
+                bgcolor: '#3B4960',
+                borderRadius: 1
+              }}
+            />
+            <Typography variant="caption" sx={{ fontWeight: 500 }}>
+              UEFA/USSF B (Mid Tier)
+            </Typography>
+          </Box>
+        </Box>
+
+        <svg 
+          ref={chartRef}
+          style={{ width: '100%', display: 'block' }}
+        />
+      </Paper>
+    </Box>
+  );
+}
+
+/**
+ * Talent Pipeline Chart Component
+ * Displays funnel chart showing tag progression from High Potential → Emerging → Proven
+ */
+function TalentPipelineChart({ staffData }) {
+  const chartRef = useRef(null);
+  const containerRef = useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 1000, height: 400 });
+
+  // Calculate current tag counts
+  const pipelineData = useMemo(() => {
+    let highPotentialCount = 0;
+    let emergingCount = 0;
+    let provenCount = 0;
+    
+    staffData.forEach(staff => {
+      if (staff.tags && Array.isArray(staff.tags)) {
+        const tags = staff.tags.map(t => t.toLowerCase());
+        
+        if (tags.some(tag => tag.includes('proven'))) {
+          provenCount++;
+        } else if (tags.some(tag => tag.includes('emerging'))) {
+          emergingCount++;
+        } else if (tags.some(tag => tag.includes('high potential') || tag.includes('potential'))) {
+          highPotentialCount++;
+        }
+      }
+    });
+    
+    return [
+      {
+        stage: 'High Potential',
+        count: highPotentialCount,
+        percentage: 100, // Starting point is always 100%
+        color: '#3B4960',
+        width: 100
+      },
+      {
+        stage: 'Emerging',
+        count: emergingCount,
+        percentage: highPotentialCount > 0 ? Number(((emergingCount / highPotentialCount) * 100).toFixed(1)) : 0,
+        color: '#29AE61',
+        width: emergingCount > 0 ? (emergingCount / highPotentialCount) * 100 : 80
+      },
+      {
+        stage: 'Proven',
+        count: provenCount,
+        percentage: highPotentialCount > 0 ? Number(((provenCount / highPotentialCount) * 100).toFixed(1)) : 0,
+        color: '#E63946',
+        width: provenCount > 0 && emergingCount > 0 ? (provenCount / emergingCount) * 100 : 60
+      }
+    ];
+  }, [staffData]);
+
+  // Calculate conversion rates
+  const conversionRates = useMemo(() => {
+    const hpToEmerging = pipelineData[0].count > 0 
+      ? Number(((pipelineData[1].count / pipelineData[0].count) * 100).toFixed(1))
+      : 0;
+    const emergingToProven = pipelineData[1].count > 0 
+      ? Number(((pipelineData[2].count / pipelineData[1].count) * 100).toFixed(1))
+      : 0;
+    const overallConversion = pipelineData[0].count > 0 
+      ? Number(((pipelineData[2].count / pipelineData[0].count) * 100).toFixed(1))
+      : 0;
+    
+    return {
+      hpToEmerging,
+      emergingToProven,
+      overallConversion
+    };
+  }, [pipelineData]);
+
+  // Handle resize
+  useEffect(() => {
+    if (!containerRef.current) return;
+    
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const width = containerRef.current.clientWidth - 64;
+        setDimensions({ width: width > 0 ? width : 1000, height: 400 });
+      }
+    };
+    
+    updateDimensions();
+    const resizeObserver = new ResizeObserver(updateDimensions);
+    resizeObserver.observe(containerRef.current);
+    
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  // Draw horizontal funnel chart
+  useEffect(() => {
+    if (!chartRef.current || pipelineData.length === 0) return;
+
+    const { width, height } = dimensions;
+    const margin = { top: 60, right: 60, bottom: 60, left: 60 };
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+
+    // Clear previous content
+    d3.select(chartRef.current).selectAll('*').remove();
+
+    const svg = d3.select(chartRef.current)
+      .attr('width', width)
+      .attr('height', height);
+
+    const g = svg.append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    // Define gradient for smooth color transitions
+    const defs = svg.append('defs');
+    
+    const gradient = defs.append('linearGradient')
+      .attr('id', 'funnel-gradient')
+      .attr('gradientUnits', 'userSpaceOnUse')
+      .attr('x1', 0)
+      .attr('y1', 0)
+      .attr('x2', innerWidth)
+      .attr('y2', 0);
+    
+    gradient.append('stop')
+      .attr('offset', '0%')
+      .attr('stop-color', '#3B4960');
+    
+    gradient.append('stop')
+      .attr('offset', '50%')
+      .attr('stop-color', '#29AE61');
+    
+    gradient.append('stop')
+      .attr('offset', '100%')
+      .attr('stop-color', '#E63946');
+
+    // Create horizontal scale for stages
+    const xScale = d3.scaleLinear()
+      .domain([0, pipelineData.length - 1])
+      .range([0, innerWidth]);
+
+    // Scale for funnel height based on count
+    const maxCount = d3.max(pipelineData, d => d.count);
+    const heightScale = d3.scaleLinear()
+      .domain([0, maxCount])
+      .range([0, innerHeight * 0.8]);
+
+    // Prepare data points for the funnel path
+    const funnelPoints = pipelineData.map((stage, i) => ({
+      x: xScale(i),
+      y: heightScale(stage.count),
+      stage: stage,
+      index: i
+    }));
+
+    // Create area generator for smooth curves
+    const area = d3.area()
+      .x(d => d.x)
+      .y0(innerHeight / 2)
+      .y1(d => innerHeight / 2 - d.y / 2)
+      .curve(d3.curveCatmullRom.alpha(0.5));
+
+    const areaMirror = d3.area()
+      .x(d => d.x)
+      .y0(innerHeight / 2)
+      .y1(d => innerHeight / 2 + d.y / 2)
+      .curve(d3.curveCatmullRom.alpha(0.5));
+
+    // Draw the top half of funnel
+    g.append('path')
+      .datum(funnelPoints)
+      .attr('fill', 'url(#funnel-gradient)')
+      .attr('opacity', 0.85)
+      .attr('d', area);
+
+    // Draw the bottom half of funnel (mirror)
+    g.append('path')
+      .datum(funnelPoints)
+      .attr('fill', 'url(#funnel-gradient)')
+      .attr('opacity', 0.85)
+      .attr('d', areaMirror);
+
+    // Add center line
+    g.append('line')
+      .attr('x1', 0)
+      .attr('y1', innerHeight / 2)
+      .attr('x2', innerWidth)
+      .attr('y2', innerHeight / 2)
+      .attr('stroke', '#64748b')
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', '4,4')
+      .attr('opacity', 0.3);
+
+    // Draw stage markers and labels
+    funnelPoints.forEach((point, i) => {
+      const stageGroup = g.append('g')
+        .attr('class', `stage-${i}`)
+        .attr('transform', `translate(${point.x},${innerHeight / 2})`);
+
+      // Vertical line marker
+      stageGroup.append('line')
+        .attr('x1', 0)
+        .attr('y1', -point.y / 2 - 10)
+        .attr('x2', 0)
+        .attr('y2', point.y / 2 + 10)
+        .attr('stroke', point.stage.color)
+        .attr('stroke-width', 3)
+        .attr('opacity', 0.9);
+
+      // Circle marker at center
+      stageGroup.append('circle')
+        .attr('cx', 0)
+        .attr('cy', 0)
+        .attr('r', 6)
+        .attr('fill', point.stage.color)
+        .attr('stroke', '#ffffff')
+        .attr('stroke-width', 2)
+        .style('cursor', 'pointer')
+        .on('mouseenter', function() {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr('r', 8);
+        })
+        .on('mouseleave', function() {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr('r', 6);
+        })
+        .append('title')
+        .text(`${point.stage.stage}: ${point.stage.count} staff (${point.stage.percentage}% of pipeline)`);
+
+      // Stage name label (above funnel)
+      stageGroup.append('text')
+        .attr('x', 0)
+        .attr('y', -point.y / 2 - 25)
+        .attr('text-anchor', 'middle')
+        .attr('fill', point.stage.color)
+        .attr('font-size', '14px')
+        .attr('font-weight', 700)
+        .text(point.stage.stage);
+
+      // Count label (above stage name)
+      stageGroup.append('text')
+        .attr('x', 0)
+        .attr('y', -point.y / 2 - 45)
+        .attr('text-anchor', 'middle')
+        .attr('fill', point.stage.color)
+        .attr('font-size', '24px')
+        .attr('font-weight', 700)
+        .text(point.stage.count);
+
+      // Percentage label (below funnel)
+      stageGroup.append('text')
+        .attr('x', 0)
+        .attr('y', point.y / 2 + 30)
+        .attr('text-anchor', 'middle')
+        .attr('fill', '#64748b')
+        .attr('font-size', '12px')
+        .attr('font-weight', 600)
+        .text(`${point.stage.percentage}%`);
+
+      // Conversion rate labels
+      if (i < funnelPoints.length - 1) {
+        const nextPoint = funnelPoints[i + 1];
+        const midX = (point.x + nextPoint.x) / 2;
+        const conversionRate = point.stage.count > 0 
+          ? Number(((nextPoint.stage.count / point.stage.count) * 100).toFixed(1))
+          : 0;
+
+        // Conversion rate label
+        g.append('text')
+          .attr('x', midX)
+          .attr('y', innerHeight / 2)
+          .attr('text-anchor', 'middle')
+          .attr('fill', '#ffffff')
+          .attr('font-size', '12px')
+          .attr('font-weight', 700)
+          .text(`${conversionRate}%`);
+      }
+    });
+
+    // Define arrow marker for horizontal direction
+    defs.append('marker')
+      .attr('id', 'arrowhead-horizontal')
+      .attr('markerWidth', 10)
+      .attr('markerHeight', 10)
+      .attr('refX', 9)
+      .attr('refY', 3)
+      .attr('orient', 'auto')
+      .append('polygon')
+      .attr('points', '0 0, 10 3, 0 6')
+      .attr('fill', '#94a3b8');
+
+  }, [pipelineData, dimensions]);
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      {/* Stats Cards */}
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card
+            elevation={0}
+            sx={{
+              border: '1px solid var(--color-border-primary)',
+              minHeight: 84,
+            }}
+          >
+            <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+              <Avatar sx={{ bgcolor: '#3B4960', width: 40, height: 40 }}>
+                <People />
+              </Avatar>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                  {pipelineData[0].count}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  High Potential
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Card
+            elevation={0}
+            sx={{
+              border: '1px solid var(--color-border-primary)',
+              minHeight: 84,
+            }}
+          >
+            <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+              <Avatar sx={{ bgcolor: '#29AE61', width: 40, height: 40 }}>
+                <TrendingUp />
+              </Avatar>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                  {pipelineData[1].count}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Emerging
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Card
+            elevation={0}
+            sx={{
+              border: '1px solid var(--color-border-primary)',
+              minHeight: 84,
+            }}
+          >
+            <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+              <Avatar sx={{ bgcolor: '#E63946', width: 40, height: 40 }}>
+                <Public />
+              </Avatar>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                  {pipelineData[2].count}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Proven
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Card
+            elevation={0}
+            sx={{
+              border: '1px solid var(--color-border-primary)',
+              minHeight: 84,
+            }}
+          >
+            <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+              <Avatar sx={{ bgcolor: 'var(--color-chart-4)', width: 40, height: 40 }}>
+                <LocationOn />
+              </Avatar>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                  {conversionRates.overallConversion}%
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Overall Conversion
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {/* Chart */}
+      <Paper
+        ref={containerRef}
+        elevation={0}
+        sx={{
+          flex: 1,
+          border: '1px solid var(--color-border-primary)',
+          borderRadius: 1,
+          p: 3,
+          backgroundColor: '#ffffff',
+          minHeight: 450
+        }}
+      >
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600, color: 'var(--color-primary)', mb: 0.5 }}>
+            Talent Development Pipeline
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Progression funnel showing talent advancement from High Potential through to Proven status
+          </Typography>
+        </Box>
+        
+        {/* Legend */}
+        <Box sx={{ display: 'flex', gap: 3, mb: 2, justifyContent: 'flex-start', flexWrap: 'wrap' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box
+              sx={{
+                width: 20,
+                height: 20,
+                bgcolor: '#3B4960',
+                borderRadius: 0.5
+              }}
+            />
+            <Typography variant="caption" sx={{ fontWeight: 500 }}>
+              High Potential (Entry)
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box
+              sx={{
+                width: 20,
+                height: 20,
+                bgcolor: '#29AE61',
+                borderRadius: 0.5
+              }}
+            />
+            <Typography variant="caption" sx={{ fontWeight: 500 }}>
+              Emerging (Developing)
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box
+              sx={{
+                width: 20,
+                height: 20,
+                bgcolor: '#E63946',
+                borderRadius: 0.5
+              }}
+            />
+            <Typography variant="caption" sx={{ fontWeight: 500 }}>
+              Proven (Top Tier)
+            </Typography>
+          </Box>
+        </Box>
+
+        <svg 
+          ref={chartRef}
+          style={{ width: '100%', display: 'block' }}
+        />
       </Paper>
     </Box>
   );

@@ -50,10 +50,7 @@ function StaffProfile() {
   }, [id]);
 
   const handleBack = () => {
-    const basePath = isLeagueView ? '/league/staff' : '/staff';
-    // Use the returnTab from navigation state, or default based on source
-    const returnTab = location.state?.returnTab ?? (staffMember?.source === 'current' ? 0 : 1);
-    navigate(basePath, { state: { activeTab: returnTab } });
+    navigate(-1);
   };
 
   const handleTabChange = (event, newValue) => {

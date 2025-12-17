@@ -49,8 +49,8 @@
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
     "tags": [
-      "Proven",
-      "Homegrown"
+      "Homegrown",
+      "High Potential"
     ],
     "nonMlsSportingExp": [],
     "sportingVertical": [],
@@ -191,7 +191,6 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Private",
     "tags": [
-      "Emerging",
       "High Potential"
     ]
   },
@@ -283,7 +282,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Proven"
+      "High Potential"
     ]
   },
   {
@@ -375,8 +374,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "High Potential",
-      "Emerging"
+      "High Potential"
     ]
   },
   {
@@ -470,7 +468,7 @@
     "profilePrivacy": "Private",
     "tags": [
       "Homegrown",
-      "Proven"
+      "High Potential"
     ]
   },
   {
@@ -558,7 +556,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Emerging"
+      "High Potential"
     ]
   },
   {
@@ -645,7 +643,6 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Private",
     "tags": [
-      "Proven",
       "High Potential"
     ]
   },
@@ -733,7 +730,8 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Homegrown"
+      "Homegrown",
+      "High Potential"
     ]
   },
   {
@@ -902,8 +900,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Proven",
-      "Emerging"
+      "High Potential"
     ]
   },
   {
@@ -1084,8 +1081,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": "https://fake-s3.mls.com/certs/112_other.pdf",
     "tags": [
-      "Emerging",
-      "Proven"
+      "High Potential"
     ]
   },
   {
@@ -1255,7 +1251,7 @@
     "otherCertsDoc": null,
     "tags": [
       "Homegrown",
-      "Emerging"
+      "High Potential"
     ]
   },
   {
@@ -1343,9 +1339,8 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Proven",
-      "High Potential",
-      "Homegrown"
+      "Homegrown",
+      "High Potential"
     ]
   },
   {
@@ -1439,7 +1434,7 @@
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/116_coaching.pdf",
     "otherCertsDoc": null,
     "tags": [
-      "Emerging"
+      "High Potential"
     ]
   },
   {
@@ -1531,8 +1526,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "High Potential",
-      "Proven"
+      "High Potential"
     ]
   },
   {
@@ -1619,7 +1613,8 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Homegrown"
+      "Homegrown",
+      "High Potential"
     ]
   },
   {
@@ -1709,7 +1704,6 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Emerging",
       "High Potential"
     ]
   },
@@ -1805,7 +1799,7 @@
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/120_coaching.pdf",
     "otherCertsDoc": null,
     "tags": [
-      "Proven"
+      "High Potential"
     ]
   },
   {
@@ -1894,8 +1888,8 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Proven",
-      "Homegrown"
+      "Homegrown",
+      "High Potential"
     ]
   },
   {
@@ -1984,7 +1978,6 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Emerging",
       "High Potential"
     ]
   },
@@ -2079,7 +2072,7 @@
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/123_coaching.pdf",
     "otherCertsDoc": null,
     "tags": [
-      "Proven"
+      "High Potential"
     ]
   },
   {
@@ -2179,8 +2172,7 @@
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/124_coaching.pdf",
     "otherCertsDoc": "https://fake-s3.mls.com/certs/124_other.pdf",
     "tags": [
-      "High Potential",
-      "Emerging"
+      "High Potential"
     ]
   },
   {
@@ -2273,7 +2265,7 @@
     "otherCertsDoc": null,
     "tags": [
       "Homegrown",
-      "Proven"
+      "High Potential"
     ]
   },
   {
@@ -2365,7 +2357,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Emerging"
+      "High Potential"
     ]
   },
   {
@@ -2452,7 +2444,6 @@
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/127_coaching.pdf",
     "otherCertsDoc": null,
     "tags": [
-      "Proven",
       "High Potential"
     ]
   },
@@ -2542,7 +2533,8 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Homegrown"
+      "Homegrown",
+      "High Potential"
     ]
   },
   {
@@ -2731,8 +2723,7 @@
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/130_coaching.pdf",
     "otherCertsDoc": "https://fake-s3.mls.com/certs/130_other.pdf",
     "tags": [
-      "Proven",
-      "Emerging"
+      "High Potential"
     ]
   },
   {
@@ -2820,7 +2811,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "High Potential"
+    ]
   },
   {
     "id": "132",
@@ -2903,7 +2897,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "High Potential"
+    ]
   },
   {
     "id": "133",
@@ -2993,7 +2990,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "High Potential"
+    ]
   },
   {
     "id": "134",
@@ -3080,7 +3080,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "High Potential"
+    ]
   },
   {
     "id": "135",
@@ -3165,7 +3168,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "136",
@@ -3250,7 +3256,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/136_coaching.pdf",
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "137",
@@ -3333,7 +3342,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "138",
@@ -3421,7 +3433,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "139",
@@ -3501,7 +3516,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/139_coaching.pdf",
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "140",
@@ -3588,7 +3606,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "141",
@@ -3677,7 +3698,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "142",
@@ -3762,7 +3786,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/142_coaching.pdf",
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "143",
@@ -3847,7 +3874,10 @@
     "otherLicenses": true,
     "otherLicensesList": "Nutrition Specialist (2017)",
     "coachingLicenseDoc": null,
-    "otherCertsDoc": "https://fake-s3.mls.com/certs/143_other.pdf"
+    "otherCertsDoc": "https://fake-s3.mls.com/certs/143_other.pdf",
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "144",
@@ -3935,7 +3965,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "145",
@@ -4032,7 +4065,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/145_coaching.pdf",
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "146",
@@ -4114,7 +4150,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "147",
@@ -4201,7 +4240,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "148",
@@ -4276,7 +4318,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "149",
@@ -4364,7 +4409,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "150",
@@ -4440,7 +4488,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "151",
@@ -4525,7 +4576,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "152",
@@ -4600,7 +4654,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "153",
@@ -4675,7 +4732,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/153_coaching.pdf",
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "154",
@@ -4755,7 +4815,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "155",
@@ -4848,7 +4911,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "156",
@@ -4930,7 +4996,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "157",
@@ -5003,7 +5072,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Proven"
+    ]
   },
   {
     "id": "158",
@@ -5083,7 +5155,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Proven"
+    ]
   },
   {
     "id": "159",
@@ -5162,7 +5237,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Proven"
+    ]
   },
   {
     "id": "160",
@@ -5241,7 +5319,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Proven"
+    ]
   },
   {
     "id": "161",
@@ -5321,7 +5402,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Private"
+    "profilePrivacy": "Private",
+    "tags": [
+      "Proven"
+    ]
   },
   {
     "id": "162",
@@ -5401,7 +5485,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Proven"
+    ]
   },
   {
     "id": "163",
@@ -5481,7 +5568,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Proven"
+    ]
   },
   {
     "id": "164",
@@ -5556,7 +5646,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/164_coaching.pdf",
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Proven"
+    ]
   },
   {
     "id": "165",
@@ -5647,7 +5740,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Private"
+    "profilePrivacy": "Private",
+    "tags": [
+      "Proven"
+    ]
   },
   {
     "id": "166",
@@ -5735,7 +5831,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/166_coaching.pdf",
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Proven"
+    ]
   },
   {
     "id": "167",
@@ -5814,7 +5913,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Proven"
+    ]
   },
   {
     "id": "168",
@@ -5902,7 +6004,10 @@
     "otherLicensesList": "Mental Performance Coach (2017)",
     "coachingLicenseDoc": null,
     "otherCertsDoc": "https://fake-s3.mls.com/certs/168_other.pdf",
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Proven"
+    ]
   },
   {
     "id": "169",
@@ -5986,7 +6091,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Proven"
+    ]
   },
   {
     "id": "170",
@@ -6061,7 +6169,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Private"
+    "profilePrivacy": "Private",
+    "tags": [
+      "Proven"
+    ]
   },
   {
     "id": "171",
@@ -6141,7 +6252,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Proven"
+    ]
   },
   {
     "id": "172",
@@ -6220,7 +6334,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "High Potential"
+    ]
   },
   {
     "id": "173",
@@ -6309,7 +6426,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "High Potential"
+    ]
   },
   {
     "id": "174",
@@ -6384,7 +6504,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "High Potential"
+    ]
   },
   {
     "id": "175",
@@ -6479,6 +6602,9 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "High Potential"
+    ]
   }
 ]

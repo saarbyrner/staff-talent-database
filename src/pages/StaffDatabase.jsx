@@ -24,6 +24,9 @@ function StaffDatabase() {
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [watchlistIds, setWatchlistIds] = useState(INITIAL_WATCHLIST);
   const navigate = useNavigate();
+  
+  // Check if we're in league view
+  const isLeagueView = location.pathname.startsWith('/league');
 
   const handleChange = (event, value) => {
     setTab(value);
@@ -68,7 +71,7 @@ function StaffDatabase() {
       >
         <Tabs value={tab} onChange={handleChange} aria-label="Staff Tabs" sx={{ px: 0 }}>
           <Tab label="Staff" value={0} />
-          <Tab label="Watchlist" value={1} />
+          {!isLeagueView && <Tab label="Watchlist" value={1} />}
           <Tab label="Talent Database" value={2} />
         </Tabs>
       </Paper>

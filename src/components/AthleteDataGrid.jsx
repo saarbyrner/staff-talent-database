@@ -164,9 +164,12 @@ const AthleteDataGrid = ({
       field: 'name',
       headerName: 'Name',
       width: 180,
-      valueGetter: (_value, row) => {
-        if (!row || !row.firstname || !row.lastname) return '';
-        return `${row.firstname} ${row.lastname}`;
+      renderCell: (params) => {
+        const { firstname, lastname } = params.row;
+        return firstname && lastname ? `${firstname} ${lastname}` : '';
+      },
+      valueGetter: (value, row) => {
+        return row?.firstname && row?.lastname ? `${row.firstname} ${row.lastname}` : '';
       },
       filterable: true,
       groupable: false,
@@ -217,7 +220,7 @@ const AthleteDataGrid = ({
       type: 'number',
       width: 110,
       filterable: true,
-      valueFormatter: (params) => `${params.value}%`,
+      valueFormatter: (value) => `${value}%`,
     },
     {
       field: 'fitness_level',
@@ -239,7 +242,7 @@ const AthleteDataGrid = ({
       type: 'number',
       width: 130,
       filterable: true,
-      valueFormatter: (params) => params.value ? params.value.toFixed(1) : '-',
+      valueFormatter: (value) => (typeof value === 'number' ? value.toFixed(1) : '-'),
     },
     {
       field: 'wellbeing_score',
@@ -247,7 +250,7 @@ const AthleteDataGrid = ({
       type: 'number',
       width: 110,
       filterable: true,
-      valueFormatter: (params) => params.value ? params.value.toFixed(1) : '-',
+      valueFormatter: (value) => (typeof value === 'number' ? value.toFixed(1) : '-'),
     },
     {
       field: 'last_assessment',

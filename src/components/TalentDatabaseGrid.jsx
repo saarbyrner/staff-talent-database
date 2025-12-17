@@ -34,7 +34,7 @@ import '../styles/design-tokens.css';
 export const CustomToolbar = React.forwardRef((props, ref) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { onInviteClick, onManageTags } = props;
+  const { onInviteClick, onManageTags, hideAddButton } = props;
   
   const handleAddClick = () => {
     const basePath = location.pathname.startsWith('/league') ? '/league/staff' : '/staff';
@@ -131,26 +131,28 @@ export const CustomToolbar = React.forwardRef((props, ref) => {
             Invite
           </Button>
         )}
-        <Button
-          variant="contained"
-          startIcon={<AddOutlined />}
-          onClick={handleAddClick}
-          sx={{
-            textTransform: 'none',
-            fontSize: '0.875rem',
-            fontWeight: 500,
-            backgroundColor: 'var(--color-primary)',
-            color: '#ffffff !important',
-            minWidth: 'auto',
-            padding: '6px 12px',
-            '&:hover': {
-              backgroundColor: 'var(--color-primary-hover)',
-              color: '#ffffff !important'
-            }
-          }}
-        >
-          Add
-        </Button>
+        {!hideAddButton && (
+          <Button
+            variant="contained"
+            startIcon={<AddOutlined />}
+            onClick={handleAddClick}
+            sx={{
+              textTransform: 'none',
+              fontSize: '0.875rem',
+              fontWeight: 500,
+              backgroundColor: 'var(--color-primary)',
+              color: '#ffffff !important',
+              minWidth: 'auto',
+              padding: '6px 12px',
+              '&:hover': {
+                backgroundColor: 'var(--color-primary-hover)',
+                color: '#ffffff !important'
+              }
+            }}
+          >
+            Add
+          </Button>
+        )}
       </Box>
     </Box>
   );
@@ -222,8 +224,23 @@ const LinkCell = ({ value, type, name = '' }) => {
   );
 };
 
-const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist) => [
-  {
+const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeagueView = false) => {
+  const watchlistColumn = isLeagueView ? {
+    field: 'watchlistCount',
+    headerName: 'Watchlist',
+    width: 100,
+    type: 'number',
+    valueGetter: (params) => {
+       const seed = params.row.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+       return (seed % 15) + 1;
+    },
+    renderCell: (params) => (
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+        <VisibilityOutlined fontSize="small" color="action" />
+        <Typography variant="body2">{params.value}</Typography>
+      </Box>
+    )
+  } : {
     field: 'watchlist',
     headerName: '',
     width: 60,
@@ -255,7 +272,10 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist) => [
         </Tooltip>
       );
     }
-  },
+  };
+
+  return [
+  watchlistColumn,
   {
     field: 'picUrl',
     headerName: '',
@@ -667,6 +687,7 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist) => [
   },
   // picUrl moved to front as a headerless avatar column
 ];
+};
 
 const columnGroupingModel = [
   {
@@ -910,7 +931,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
     if (event) {
       handleTagsClick(staffId, event.currentTarget);
     }
-  }, watchlistIds, onAddToWatchlist), [watchlistIds, onAddToWatchlist]);
+  }, watchlistIds, onAddToWatchlist, isLeagueView), [watchlistIds, onAddToWatchlist, isLeagueView]);
   
   const selectedStaff = selectedStaffForTags 
     ? filteredStaffData.find(s => s.id === selectedStaffForTags)
@@ -976,7 +997,8 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
           columns: {
             columnVisibilityModel: {
               // Show first 5-6 columns by default
-              watchlist: true,
+              watchlist: !isLeagueView,
+              watchlistCount: isLeagueView,
               picUrl: true,
               firstName: true,
               lastName: true,
