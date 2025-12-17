@@ -14,10 +14,11 @@ import '../styles/design-tokens.css';
  * Displays staff talent profiles in a DataGrid
  */
 function StaffDatabase() {
-  const [tab, setTab] = useState(1); // 0 = Staff (My Current Staff), 1 = Talent Database (default)
+  // Check if we're returning from a staff profile with a specific tab to show
+  const location = useLocation();
+  const [tab, setTab] = useState(location.state?.activeTab ?? 1); // 0 = Staff (My Current Staff), 1 = Talent Database (default)
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleChange = (event, value) => {
     setTab(value);
@@ -32,7 +33,8 @@ function StaffDatabase() {
       return;
     }
     const basePath = location.pathname.startsWith('/league') ? '/league/staff' : '/staff';
-    navigate(`${basePath}/${params.row.id}`);
+    // Pass the current tab in state so StaffProfile knows which tab to return to
+    navigate(`${basePath}/${params.row.id}`, { state: { returnTab: tab } });
   };
 
   return (
@@ -85,9 +87,11 @@ function StaffDatabase() {
                       .slice(0, 2)
                       .join('') || 'U';
                     const fallbackSrc = generateInitialsImage(name || 'Staff Member', 128, '#040037', '#ffffff');
+                    const hasRemoteImage = params.row.profilePic && params.row.profilePic.length > 0;
                     
                     return (
                       <Avatar
+                        src={hasRemoteImage ? params.row.profilePic : undefined}
                         sx={{ 
                           width: 32, 
                           height: 32, 

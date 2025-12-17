@@ -1,7 +1,7 @@
 [
   {
     "id": "101",
-    "firstName": "Mateo",
+    "firstName": "James",
     "lastName": "Rivera",
     "phone": "+1 (555) 010-9988",
     "email": "m.rivera@example.com",
@@ -71,7 +71,7 @@
       "Spanish"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/rivera.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/rivera.jpg",
+    "picUrl": "/assets/headshots/204_639.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": true,
     "mlsCoachingExpList": [
@@ -98,7 +98,7 @@
   },
   {
     "id": "102",
-    "firstName": "James",
+    "firstName": "Michael",
     "lastName": "Okoro",
     "phone": "+44 20 7946 0958",
     "email": "j.okoro@fake.co.uk",
@@ -164,7 +164,7 @@
       "French"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/okoro.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/okoro.jpg",
+    "picUrl": "/assets/headshots/208_421.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -189,7 +189,7 @@
   },
   {
     "id": "103",
-    "firstName": "Elena",
+    "firstName": "Robert",
     "lastName": "Vasiliev",
     "phone": "+1 (212) 555-0123",
     "email": "elena.v@analytics.net",
@@ -198,7 +198,7 @@
     "city": "New York",
     "workAuthUS": true,
     "workAuthCA": true,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "White (non Hispanic)",
     "hasAgent": false,
     "agentName": "",
@@ -252,7 +252,7 @@
       "Russian"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/vasiliev.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/vasiliev.jpg",
+    "picUrl": "/assets/headshots/210_035.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -277,7 +277,7 @@
   },
   {
     "id": "104",
-    "firstName": "Kenji",
+    "firstName": "John",
     "lastName": "Sato",
     "phone": "+1 (604) 555-0199",
     "email": "k.sato@vancouver.ca",
@@ -340,7 +340,7 @@
       "Japanese"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/sato.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/sato.jpg",
+    "picUrl": "/assets/headshots/215_914.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": true,
     "mlsCoachingExpList": [
@@ -366,7 +366,7 @@
   },
   {
     "id": "105",
-    "firstName": "Jordan",
+    "firstName": "David",
     "lastName": "Smith",
     "phone": "+1 (512) 555-9000",
     "email": "j.smith@sportsexec.com",
@@ -375,7 +375,7 @@
     "city": "Austin",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Non-binary",
+    "gender": "Male",
     "ethnicity": "Multi-racial",
     "hasAgent": true,
     "agentName": "Creative Artists Agency",
@@ -430,7 +430,7 @@
       "Spanish"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/smith.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/smith.jpg",
+    "picUrl": "/assets/headshots/216_549.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -456,7 +456,7 @@
   },
   {
     "id": "106",
-    "firstName": "Sophia",
+    "firstName": "William",
     "lastName": "Martinez",
     "phone": "+1 (305) 555-0147",
     "email": "s.martinez@coaching.org",
@@ -465,7 +465,7 @@
     "city": "Miami",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "Hispanic / Latino",
     "hasAgent": false,
     "agentName": "",
@@ -515,7 +515,7 @@
       "Spanish"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/martinez.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/martinez.jpg",
+    "picUrl": "/assets/headshots/225_100.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": true,
     "mlsCoachingExpList": [
@@ -541,7 +541,7 @@
   },
   {
     "id": "107",
-    "firstName": "Liam",
+    "firstName": "Richard",
     "lastName": "O'Connor",
     "phone": "+353 1 555 0199",
     "email": "liam.oconnor@recruit.ie",
@@ -601,7 +601,7 @@
       "Spanish"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/oconnor.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/oconnor.jpg",
+    "picUrl": "/assets/headshots/226_537.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -625,7 +625,7 @@
   },
   {
     "id": "108",
-    "firstName": "Aisha",
+    "firstName": "Joseph",
     "lastName": "Khan",
     "phone": "+1 (416) 555-0188",
     "email": "a.khan@analytics.ca",
@@ -634,7 +634,7 @@
     "city": "Toronto",
     "workAuthUS": false,
     "workAuthCA": true,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "South Asian",
     "hasAgent": false,
     "agentName": "",
@@ -685,7 +685,7 @@
       "Urdu"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/khan.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/khan.jpg",
+    "picUrl": "/assets/headshots/227_236.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -709,7 +709,7 @@
   },
   {
     "id": "109",
-    "firstName": "Carlos",
+    "firstName": "Thomas",
     "lastName": "Mendes",
     "phone": "+55 11 5555 0190",
     "email": "c.mendes@brfootball.com",
@@ -766,7 +766,7 @@
       "English"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/mendes.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/mendes.jpg",
+    "picUrl": "/assets/headshots/227_796.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -787,7 +787,7 @@
   },
   {
     "id": "110",
-    "firstName": "Priya",
+    "firstName": "Christopher",
     "lastName": "Nair",
     "phone": "+44 20 5555 0102",
     "email": "priya.nair@perform.uk",
@@ -796,7 +796,7 @@
     "city": "London",
     "workAuthUS": false,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "South Asian",
     "hasAgent": false,
     "agentName": "",
@@ -847,7 +847,7 @@
       "German"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/nair.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/nair.jpg",
+    "picUrl": "/assets/headshots/228_618.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -872,7 +872,7 @@
   },
   {
     "id": "111",
-    "firstName": "David",
+    "firstName": "Daniel",
     "lastName": "Chen",
     "phone": "+1 (206) 555-0133",
     "email": "d.chen@sportexec.com",
@@ -936,7 +936,7 @@
       "Mandarin"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/chen.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/chen.jpg",
+    "picUrl": "/assets/headshots/229_261.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -961,7 +961,7 @@
   },
   {
     "id": "112",
-    "firstName": "Olivia",
+    "firstName": "Matthew",
     "lastName": "Brown",
     "phone": "+1 (312) 555-0166",
     "email": "olivia.brown@coachsquad.com",
@@ -970,7 +970,7 @@
     "city": "Chicago",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "White (non Hispanic)",
     "hasAgent": false,
     "agentName": "",
@@ -1021,7 +1021,7 @@
       "English"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/brown.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/brown.jpg",
+    "picUrl": "/assets/headshots/230_869.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": true,
     "mlsCoachingExpList": [
@@ -1046,7 +1046,7 @@
   },
   {
     "id": "113",
-    "firstName": "Marcus",
+    "firstName": "Anthony",
     "lastName": "Lee",
     "phone": "+1 (415) 555-0177",
     "email": "m.lee@videotech.io",
@@ -1104,7 +1104,7 @@
       "German"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/lee.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/lee.jpg",
+    "picUrl": "/assets/headshots/231_281.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -1125,7 +1125,7 @@
   },
   {
     "id": "114",
-    "firstName": "Emma",
+    "firstName": "Mark",
     "lastName": "Wilson",
     "phone": "+44 7911 123456",
     "email": "emma.wilson@sporting.co.uk",
@@ -1134,7 +1134,7 @@
     "city": "Manchester",
     "workAuthUS": false,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "White (non Hispanic)",
     "hasAgent": false,
     "agentName": "",
@@ -1184,7 +1184,7 @@
       "German"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/wilson.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/wilson.jpg",
+    "picUrl": "/assets/headshots/231_478.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -1209,7 +1209,7 @@
   },
   {
     "id": "115",
-    "firstName": "Henry",
+    "firstName": "Donald",
     "lastName": "Thompson",
     "phone": "+1 (703) 555-0111",
     "email": "h.thompson@scoutnet.com",
@@ -1269,7 +1269,7 @@
       "Portuguese"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/thompson.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/thompson.jpg",
+    "picUrl": "/assets/headshots/232_363.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -1294,7 +1294,7 @@
   },
   {
     "id": "116",
-    "firstName": "Avery",
+    "firstName": "Steven",
     "lastName": "Collins",
     "phone": "+1 (913) 555-0106",
     "email": "avery.collins@midwestfc.com",
@@ -1303,7 +1303,7 @@
     "city": "Kansas City",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Non-binary",
+    "gender": "Male",
     "ethnicity": "White (non Hispanic)",
     "hasAgent": false,
     "agentName": "",
@@ -1357,7 +1357,7 @@
       "Spanish"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/collins.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/collins.jpg",
+    "picUrl": "/assets/headshots/232_432.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": true,
     "mlsCoachingExpList": [
@@ -1385,7 +1385,7 @@
   },
   {
     "id": "117",
-    "firstName": "Nia",
+    "firstName": "Andrew",
     "lastName": "Patel",
     "phone": "+1 (551) 555-0199",
     "email": "nia.patel@metroexec.com",
@@ -1394,7 +1394,7 @@
     "city": "Jersey City",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "South Asian",
     "hasAgent": false,
     "agentName": "",
@@ -1449,7 +1449,7 @@
       "Hindi"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/patel.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/patel.jpg",
+    "picUrl": "/assets/headshots/233_049.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -1474,7 +1474,7 @@
   },
   {
     "id": "118",
-    "firstName": "Leo",
+    "firstName": "Paul",
     "lastName": "Nakamura",
     "phone": "+81 3 5555 0180",
     "email": "leo.nakamura@tokyocoaching.jp",
@@ -1535,7 +1535,7 @@
       "English"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/nakamura.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/nakamura.jpg",
+    "picUrl": "/assets/headshots/233_064.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -1558,7 +1558,7 @@
   },
   {
     "id": "119",
-    "firstName": "Gabriela",
+    "firstName": "Joshua",
     "lastName": "Ruiz",
     "phone": "+52 55 5555 0125",
     "email": "gabriela.ruiz@estudio.mx",
@@ -1567,7 +1567,7 @@
     "city": "Mexico City",
     "workAuthUS": false,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "Hispanic / Latino",
     "hasAgent": false,
     "agentName": "",
@@ -1620,7 +1620,7 @@
       "English"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/ruiz.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/ruiz.jpg",
+    "picUrl": "/assets/headshots/233_419.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -1645,7 +1645,7 @@
   },
   {
     "id": "120",
-    "firstName": "Marcus",
+    "firstName": "Kenneth",
     "lastName": "Stone",
     "phone": "+1 (404) 555-0170",
     "email": "marcus.stone@atlcoaching.com",
@@ -1710,7 +1710,7 @@
       "English"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/stone.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/stone.jpg",
+    "picUrl": "/assets/headshots/234_378.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": true,
     "mlsCoachingExpList": [
@@ -1737,7 +1737,7 @@
   },
   {
     "id": "121",
-    "firstName": "Tessa",
+    "firstName": "Kevin",
     "lastName": "Osei",
     "phone": "+233 30 555 0188",
     "email": "tessa.osei@accrafc.org",
@@ -1746,7 +1746,7 @@
     "city": "Accra",
     "workAuthUS": false,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "Black",
     "hasAgent": false,
     "agentName": "",
@@ -1800,7 +1800,7 @@
       "Twi"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/osei.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/osei.jpg",
+    "picUrl": "/assets/headshots/234_642.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -1823,7 +1823,7 @@
   },
   {
     "id": "122",
-    "firstName": "Dylan",
+    "firstName": "Brian",
     "lastName": "Price",
     "phone": "+1 (604) 555-0182",
     "email": "dylan.price@pacificanalytics.ca",
@@ -1886,7 +1886,7 @@
       "French"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/price.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/price.jpg",
+    "picUrl": "/assets/headshots/234_906.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -1909,7 +1909,7 @@
   },
   {
     "id": "123",
-    "firstName": "Rafael",
+    "firstName": "George",
     "lastName": "Duarte",
     "phone": "+57 1 5555 0144",
     "email": "rafael.duarte@bogotacoaching.co",
@@ -1974,7 +1974,7 @@
       "English"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/duarte.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/duarte.jpg",
+    "picUrl": "/assets/headshots/235_212.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": true,
     "mlsCoachingExpList": [
@@ -2000,7 +2000,7 @@
   },
   {
     "id": "124",
-    "firstName": "Sienna",
+    "firstName": "Timothy",
     "lastName": "Brooks",
     "phone": "+1 (213) 555-0122",
     "email": "sienna.brooks@califc.com",
@@ -2009,7 +2009,7 @@
     "city": "Long Beach",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "Black",
     "hasAgent": false,
     "agentName": "",
@@ -2070,7 +2070,7 @@
       "French"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/brooks.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/brooks.jpg",
+    "picUrl": "/assets/headshots/235_243.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": true,
     "mlsCoachingExpList": [
@@ -2097,7 +2097,7 @@
   },
   {
     "id": "125",
-    "firstName": "Noah",
+    "firstName": "Ronald",
     "lastName": "King",
     "phone": "+1 (646) 555-0155",
     "email": "noah.king@libertyops.com",
@@ -2161,7 +2161,7 @@
       "Spanish"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/king.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/king.jpg",
+    "picUrl": "/assets/headshots/235_790.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -2186,7 +2186,7 @@
   },
   {
     "id": "126",
-    "firstName": "Mila",
+    "firstName": "Edward",
     "lastName": "Kravitz",
     "phone": "+48 22 555 0111",
     "email": "mila.kravitz@varsovia.tech",
@@ -2195,7 +2195,7 @@
     "city": "Warsaw",
     "workAuthUS": false,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "White (non Hispanic)",
     "hasAgent": false,
     "agentName": "",
@@ -2250,7 +2250,7 @@
       "German"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/kravitz.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/kravitz.jpg",
+    "picUrl": "/assets/headshots/237_692.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -2275,7 +2275,7 @@
   },
   {
     "id": "127",
-    "firstName": "Oscar",
+    "firstName": "Jason",
     "lastName": "Medina",
     "phone": "+54 11 5555 0166",
     "email": "oscar.medina@bocacoaches.ar",
@@ -2334,7 +2334,7 @@
       "Spanish"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/medina.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/medina.jpg",
+    "picUrl": "/assets/headshots/238_073.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": true,
     "mlsCoachingExpList": [
@@ -2359,7 +2359,7 @@
   },
   {
     "id": "128",
-    "firstName": "Fiona",
+    "firstName": "Jeffrey",
     "lastName": "Gallagher",
     "phone": "+353 1 5555 0133",
     "email": "fiona.gallagher@dublinfc.ie",
@@ -2368,7 +2368,7 @@
     "city": "Dublin",
     "workAuthUS": false,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "White (non Hispanic)",
     "hasAgent": false,
     "agentName": "",
@@ -2422,7 +2422,7 @@
       "German"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/gallagher.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/gallagher.jpg",
+    "picUrl": "/assets/headshots/239_085.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -2445,7 +2445,7 @@
   },
   {
     "id": "129",
-    "firstName": "Tariq",
+    "firstName": "Ryan",
     "lastName": "Abdullah",
     "phone": "+1 (213) 555-0134",
     "email": "tariq.abdullah@edgeanalytics.us",
@@ -2509,7 +2509,7 @@
       "Arabic"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/abdullah.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/abdullah.jpg",
+    "picUrl": "/assets/headshots/239_818.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -2534,7 +2534,7 @@
   },
   {
     "id": "130",
-    "firstName": "Zoe",
+    "firstName": "Jacob",
     "lastName": "Fischer",
     "phone": "+49 30 5555 0149",
     "email": "zoe.fischer@berlincoaches.de",
@@ -2543,7 +2543,7 @@
     "city": "Berlin",
     "workAuthUS": false,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "White (non Hispanic)",
     "hasAgent": false,
     "agentName": "",
@@ -2601,7 +2601,7 @@
       "English"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/fischer.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/fischer.jpg",
+    "picUrl": "/assets/headshots/242_444.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": true,
     "mlsCoachingExpList": [
@@ -2628,7 +2628,7 @@
   },
   {
     "id": "131",
-    "firstName": "Harper",
+    "firstName": "Nicholas",
     "lastName": "Lane",
     "phone": "+1 (404) 555-0188",
     "email": "harper.lane@southernops.com",
@@ -2637,7 +2637,7 @@
     "city": "Decatur",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "White (non Hispanic)",
     "hasAgent": false,
     "agentName": "",
@@ -2690,7 +2690,7 @@
       "German"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/lane.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/lane.jpg",
+    "picUrl": "/assets/headshots/243_715.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -2715,7 +2715,7 @@
   },
   {
     "id": "132",
-    "firstName": "Mateusz",
+    "firstName": "Eric",
     "lastName": "Kowalski",
     "phone": "+48 22 555 0180",
     "email": "mateusz.kowalski@warsawdata.pl",
@@ -2775,7 +2775,7 @@
       "English"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/kowalski.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/kowalski.jpg",
+    "picUrl": "/assets/headshots/243_780.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -2798,7 +2798,7 @@
   },
   {
     "id": "133",
-    "firstName": "Camila",
+    "firstName": "Jonathan",
     "lastName": "Torres",
     "phone": "+1 (305) 555-0172",
     "email": "camila.torres@miamicoaches.org",
@@ -2807,7 +2807,7 @@
     "city": "Miami",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "Hispanic / Latino",
     "hasAgent": false,
     "agentName": "",
@@ -2861,7 +2861,7 @@
       "Spanish"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/torres.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/torres.jpg",
+    "picUrl": "/assets/headshots/244_161.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": true,
     "mlsCoachingExpList": [
@@ -2888,7 +2888,7 @@
   },
   {
     "id": "134",
-    "firstName": "Ethan",
+    "firstName": "Stephen",
     "lastName": "Rivera",
     "phone": "+1 (786) 555-0160",
     "email": "ethan.rivera@miamiexecs.com",
@@ -2950,7 +2950,7 @@
       "Spanish"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/rivera-e.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/rivera-e.jpg",
+    "picUrl": "/assets/headshots/244_904.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -2975,7 +2975,7 @@
   },
   {
     "id": "135",
-    "firstName": "Lina",
+    "firstName": "Larry",
     "lastName": "Chen",
     "phone": "+1 (416) 555-0183",
     "email": "lina.chen@torontoai.ca",
@@ -2984,7 +2984,7 @@
     "city": "Toronto",
     "workAuthUS": false,
     "workAuthCA": true,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "Asian",
     "hasAgent": false,
     "agentName": "",
@@ -3037,7 +3037,7 @@
       "Mandarin"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/chen-l.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/chen-l.jpg",
+    "picUrl": "/assets/headshots/245_155.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -3060,7 +3060,7 @@
   },
   {
     "id": "136",
-    "firstName": "Jasper",
+    "firstName": "Justin",
     "lastName": "Osei",
     "phone": "+233 50 555 0199",
     "email": "jasper.osei@kumafootball.com",
@@ -3121,7 +3121,7 @@
       "Twi"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/osei-j.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/osei-j.jpg",
+    "picUrl": "/assets/headshots/245_367.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -3145,7 +3145,7 @@
   },
   {
     "id": "137",
-    "firstName": "Naomi",
+    "firstName": "Scott",
     "lastName": "Reed",
     "phone": "+61 2 5555 0144",
     "email": "naomi.reed@aussieops.au",
@@ -3154,7 +3154,7 @@
     "city": "Sydney",
     "workAuthUS": false,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "White (non Hispanic)",
     "hasAgent": false,
     "agentName": "",
@@ -3205,7 +3205,7 @@
       "Italian"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/reed.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/reed.jpg",
+    "picUrl": "/assets/headshots/246_104.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -3228,7 +3228,7 @@
   },
   {
     "id": "138",
-    "firstName": "Connor",
+    "firstName": "Brandon",
     "lastName": "Hayes",
     "phone": "+1 (503) 555-0120",
     "email": "connor.hayes@pacificdata.us",
@@ -3291,7 +3291,7 @@
       "French"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/hayes.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/hayes.jpg",
+    "picUrl": "/assets/headshots/247_394.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -3316,7 +3316,7 @@
   },
   {
     "id": "139",
-    "firstName": "Sofia",
+    "firstName": "Benjamin",
     "lastName": "Bianchi",
     "phone": "+39 06 5555 0191",
     "email": "sofia.bianchi@romaacademy.it",
@@ -3325,7 +3325,7 @@
     "city": "Rome",
     "workAuthUS": false,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "White (non Hispanic)",
     "hasAgent": false,
     "agentName": "",
@@ -3375,7 +3375,7 @@
       "English"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/bianchi.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/bianchi.jpg",
+    "picUrl": "/assets/headshots/248_266.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -3396,7 +3396,7 @@
   },
   {
     "id": "140",
-    "firstName": "Malik",
+    "firstName": "Samuel",
     "lastName": "Hassan",
     "phone": "+1 (312) 555-0185",
     "email": "malik.hassan@northsideops.com",
@@ -3458,7 +3458,7 @@
       "Italian"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/hassan.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/hassan.jpg",
+    "picUrl": "/assets/headshots/255_151.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -3483,7 +3483,7 @@
   },
   {
     "id": "141",
-    "firstName": "Ivy",
+    "firstName": "Raymond",
     "lastName": "Park",
     "phone": "+1 (202) 555-0110",
     "email": "ivy.park@techscape.io",
@@ -3492,7 +3492,7 @@
     "city": "Washington",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "Asian",
     "hasAgent": false,
     "agentName": "",
@@ -3547,7 +3547,7 @@
       "Korean"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/park.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/park.jpg",
+    "picUrl": "/assets/headshots/257_534.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -3572,7 +3572,7 @@
   },
   {
     "id": "142",
-    "firstName": "Kai",
+    "firstName": "Gregory",
     "lastName": "Vogel",
     "phone": "+49 30 5555 0198",
     "email": "kai.vogel@berlinacademy.de",
@@ -3634,7 +3634,7 @@
       "English"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/vogel.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/vogel.jpg",
+    "picUrl": "/assets/headshots/204_639.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": true,
     "mlsCoachingExpList": [
@@ -3657,7 +3657,7 @@
   },
   {
     "id": "143",
-    "firstName": "Lena",
+    "firstName": "Alexander",
     "lastName": "Alvarez",
     "phone": "+34 91 5555 0141",
     "email": "lena.alvarez@madridops.es",
@@ -3666,7 +3666,7 @@
     "city": "Madrid",
     "workAuthUS": false,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "White (non Hispanic)",
     "hasAgent": false,
     "agentName": "",
@@ -3719,7 +3719,7 @@
       "English"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/alvarez.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/alvarez.jpg",
+    "picUrl": "/assets/headshots/208_421.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -3742,7 +3742,7 @@
   },
   {
     "id": "144",
-    "firstName": "Jules",
+    "firstName": "Patrick",
     "lastName": "Morgan",
     "phone": "+1 (604) 555-0185",
     "email": "jules.morgan@vancouvertech.ca",
@@ -3751,7 +3751,7 @@
     "city": "Vancouver",
     "workAuthUS": false,
     "workAuthCA": true,
-    "gender": "Non-binary",
+    "gender": "Male",
     "ethnicity": "Multi-racial",
     "hasAgent": false,
     "agentName": "",
@@ -3805,7 +3805,7 @@
       "Portuguese"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/morgan.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/morgan.jpg",
+    "picUrl": "/assets/headshots/210_035.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -3830,7 +3830,7 @@
   },
   {
     "id": "145",
-    "firstName": "Rico",
+    "firstName": "Frank",
     "lastName": "Flores",
     "phone": "+1 (210) 555-0187",
     "email": "rico.flores@satxcoaches.com",
@@ -3897,7 +3897,7 @@
       "Spanish"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/flores-r.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/flores-r.jpg",
+    "picUrl": "/assets/headshots/215_914.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": true,
     "mlsCoachingExpList": [
@@ -3927,7 +3927,7 @@
   },
   {
     "id": "146",
-    "firstName": "Benjamin",
+    "firstName": "Dennis",
     "lastName": "Scott",
     "phone": "+1 (555) 122-4455",
     "email": "b.scott@example.com",
@@ -3986,7 +3986,7 @@
       "German"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/scott_146.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/scott_146.jpg",
+    "picUrl": "/assets/headshots/216_549.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -4009,7 +4009,7 @@
   },
   {
     "id": "147",
-    "firstName": "Emma",
+    "firstName": "Jerry",
     "lastName": "Taylor",
     "phone": "+1 (555) 679-6911",
     "email": "e.taylor@example.com",
@@ -4018,7 +4018,7 @@
     "city": "Raleigh",
     "workAuthUS": true,
     "workAuthCA": true,
-    "gender": "Non-binary",
+    "gender": "Male",
     "ethnicity": "Pacific Islander",
     "hasAgent": true,
     "agentName": "Maria Rodriguez",
@@ -4074,7 +4074,7 @@
       "Spanish"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/taylor_147.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/taylor_147.jpg",
+    "picUrl": "/assets/headshots/225_100.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -4096,7 +4096,7 @@
   },
   {
     "id": "148",
-    "firstName": "Emily",
+    "firstName": "Tyler",
     "lastName": "Green",
     "phone": "+1 (555) 949-5305",
     "email": "e.green@example.com",
@@ -4105,7 +4105,7 @@
     "city": "Raleigh",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Non-binary",
+    "gender": "Male",
     "ethnicity": "Asian",
     "hasAgent": false,
     "agentName": null,
@@ -4151,7 +4151,7 @@
       "English"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/green_148.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/green_148.jpg",
+    "picUrl": "/assets/headshots/226_537.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -4171,7 +4171,7 @@
   },
   {
     "id": "149",
-    "firstName": "Diego",
+    "firstName": "Aaron",
     "lastName": "Jackson",
     "phone": "+1 (555) 185-5617",
     "email": "d.jackson@example.com",
@@ -4236,7 +4236,7 @@
       "Spanish"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/jackson_149.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/jackson_149.jpg",
+    "picUrl": "/assets/headshots/227_236.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": true,
     "mlsCoachingExpList": [
@@ -4259,7 +4259,7 @@
   },
   {
     "id": "150",
-    "firstName": "David",
+    "firstName": "Jose",
     "lastName": "Baker",
     "phone": "+1 (555) 791-5029",
     "email": "d.baker@example.com",
@@ -4268,7 +4268,7 @@
     "city": "Omaha",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Non-binary",
+    "gender": "Male",
     "ethnicity": "Prefer not to say",
     "hasAgent": true,
     "agentName": "John Williams",
@@ -4315,7 +4315,7 @@
       "Italian"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/baker_150.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/baker_150.jpg",
+    "picUrl": "/assets/headshots/227_796.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -4335,7 +4335,7 @@
   },
   {
     "id": "151",
-    "firstName": "Elena",
+    "firstName": "Adam",
     "lastName": "Martin",
     "phone": "+1 (555) 637-4665",
     "email": "e.martin@example.com",
@@ -4398,7 +4398,7 @@
       "English"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/martin_151.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/martin_151.jpg",
+    "picUrl": "/assets/headshots/228_618.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": true,
     "mlsCoachingExpList": [
@@ -4420,7 +4420,7 @@
   },
   {
     "id": "152",
-    "firstName": "Harper",
+    "firstName": "Nathan",
     "lastName": "Gonzalez",
     "phone": "+1 (555) 886-3338",
     "email": "h.gonzalez@example.com",
@@ -4429,7 +4429,7 @@
     "city": "Atlanta",
     "workAuthUS": true,
     "workAuthCA": true,
-    "gender": "Non-binary",
+    "gender": "Male",
     "ethnicity": "Prefer not to say",
     "hasAgent": false,
     "agentName": null,
@@ -4475,7 +4475,7 @@
       "Italian"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/gonzalez_152.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/gonzalez_152.jpg",
+    "picUrl": "/assets/headshots/229_261.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -4495,7 +4495,7 @@
   },
   {
     "id": "153",
-    "firstName": "Julian",
+    "firstName": "Henry",
     "lastName": "Thompson",
     "phone": "+1 (555) 368-8104",
     "email": "j.thompson@example.com",
@@ -4504,7 +4504,7 @@
     "city": "Atlanta",
     "workAuthUS": true,
     "workAuthCA": true,
-    "gender": "Non-binary",
+    "gender": "Male",
     "ethnicity": "Two or More Races",
     "hasAgent": true,
     "agentName": "James Wilson",
@@ -4550,7 +4550,7 @@
       "Dutch"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/thompson_153.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/thompson_153.jpg",
+    "picUrl": "/assets/headshots/230_869.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -4570,7 +4570,7 @@
   },
   {
     "id": "154",
-    "firstName": "Rafael",
+    "firstName": "Zachary",
     "lastName": "Carter",
     "phone": "+1 (555) 440-4821",
     "email": "r.carter@example.com",
@@ -4579,7 +4579,7 @@
     "city": "Mesa",
     "workAuthUS": true,
     "workAuthCA": true,
-    "gender": "Non-binary",
+    "gender": "Male",
     "ethnicity": "White / Caucasian",
     "hasAgent": false,
     "agentName": null,
@@ -4628,7 +4628,7 @@
       "Spanish"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/carter_154.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/carter_154.jpg",
+    "picUrl": "/assets/headshots/231_281.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -4650,7 +4650,7 @@
   },
   {
     "id": "155",
-    "firstName": "Zoe",
+    "firstName": "Douglas",
     "lastName": "Harris",
     "phone": "+1 (555) 195-3576",
     "email": "z.harris@example.com",
@@ -4659,7 +4659,7 @@
     "city": "Kansas City",
     "workAuthUS": true,
     "workAuthCA": true,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "White / Caucasian",
     "hasAgent": false,
     "agentName": null,
@@ -4719,7 +4719,7 @@
       "English"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/harris_155.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/harris_155.jpg",
+    "picUrl": "/assets/headshots/231_478.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": true,
     "mlsCoachingExpList": [
@@ -4743,7 +4743,7 @@
   },
   {
     "id": "156",
-    "firstName": "Ava",
+    "firstName": "Peter",
     "lastName": "Mitchell",
     "phone": "+1 (555) 691-8293",
     "email": "a.mitchell@example.com",
@@ -4803,7 +4803,7 @@
       "French"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/mitchell_156.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/mitchell_156.jpg",
+    "picUrl": "/assets/headshots/232_363.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -4825,7 +4825,7 @@
   },
   {
     "id": "157",
-    "firstName": "Nathan",
+    "firstName": "Kyle",
     "lastName": "Sanchez",
     "phone": "+1 (555) 567-7987",
     "email": "n.sanchez@example.com",
@@ -4834,7 +4834,7 @@
     "city": "Sacramento",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Non-binary",
+    "gender": "Male",
     "ethnicity": "Black / African American",
     "hasAgent": false,
     "agentName": null,
@@ -4878,7 +4878,7 @@
       "English"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/sanchez_157.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/sanchez_157.jpg",
+    "picUrl": "/assets/headshots/232_432.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -4898,7 +4898,7 @@
   },
   {
     "id": "158",
-    "firstName": "Lucas",
+    "firstName": "Noah",
     "lastName": "Roberts",
     "phone": "+1 (555) 486-1866",
     "email": "l.roberts@example.com",
@@ -4907,7 +4907,7 @@
     "city": "Sacramento",
     "workAuthUS": true,
     "workAuthCA": true,
-    "gender": "Non-binary",
+    "gender": "Male",
     "ethnicity": "Asian",
     "hasAgent": true,
     "agentName": "James Wilson",
@@ -4955,7 +4955,7 @@
       "Dutch"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/roberts_158.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/roberts_158.jpg",
+    "picUrl": "/assets/headshots/233_049.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -4978,7 +4978,7 @@
   },
   {
     "id": "159",
-    "firstName": "Chloe",
+    "firstName": "Ethan",
     "lastName": "Ramirez",
     "phone": "+1 (555) 263-6899",
     "email": "c.ramirez@example.com",
@@ -4987,7 +4987,7 @@
     "city": "Fresno",
     "workAuthUS": true,
     "workAuthCA": true,
-    "gender": "Non-binary",
+    "gender": "Male",
     "ethnicity": "Two or More Races",
     "hasAgent": false,
     "agentName": null,
@@ -5034,7 +5034,7 @@
       "Dutch"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/ramirez_159.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/ramirez_159.jpg",
+    "picUrl": "/assets/headshots/233_064.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -5057,7 +5057,7 @@
   },
   {
     "id": "160",
-    "firstName": "Emma",
+    "firstName": "Jeremy",
     "lastName": "Phillips",
     "phone": "+1 (555) 509-6029",
     "email": "e.phillips@example.com",
@@ -5066,7 +5066,7 @@
     "city": "Tucson",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Non-binary",
+    "gender": "Male",
     "ethnicity": "Prefer not to say",
     "hasAgent": false,
     "agentName": null,
@@ -5114,7 +5114,7 @@
       "Spanish"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/phillips_160.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/phillips_160.jpg",
+    "picUrl": "/assets/headshots/233_419.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -5136,7 +5136,7 @@
   },
   {
     "id": "161",
-    "firstName": "James",
+    "firstName": "Walter",
     "lastName": "Lewis",
     "phone": "+1 (555) 260-7569",
     "email": "j.lewis@example.com",
@@ -5145,7 +5145,7 @@
     "city": "Tucson",
     "workAuthUS": true,
     "workAuthCA": true,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "Black / African American",
     "hasAgent": true,
     "agentName": "Michael Roberts",
@@ -5196,7 +5196,7 @@
       "Dutch"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/lewis_161.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/lewis_161.jpg",
+    "picUrl": "/assets/headshots/234_378.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -5216,7 +5216,7 @@
   },
   {
     "id": "162",
-    "firstName": "Diego",
+    "firstName": "Christian",
     "lastName": "Martinez",
     "phone": "+1 (555) 476-4149",
     "email": "d.martinez@example.com",
@@ -5225,7 +5225,7 @@
     "city": "Albuquerque",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Non-binary",
+    "gender": "Male",
     "ethnicity": "Hispanic / Latino",
     "hasAgent": false,
     "agentName": null,
@@ -5276,7 +5276,7 @@
       "Portuguese"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/martinez_162.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/martinez_162.jpg",
+    "picUrl": "/assets/headshots/234_642.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -5296,7 +5296,7 @@
   },
   {
     "id": "163",
-    "firstName": "David",
+    "firstName": "Keith",
     "lastName": "Walker",
     "phone": "+1 (555) 935-5435",
     "email": "d.walker@example.com",
@@ -5305,7 +5305,7 @@
     "city": "Albuquerque",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "Asian",
     "hasAgent": false,
     "agentName": null,
@@ -5353,7 +5353,7 @@
       "Dutch"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/walker_163.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/walker_163.jpg",
+    "picUrl": "/assets/headshots/234_906.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -5376,7 +5376,7 @@
   },
   {
     "id": "164",
-    "firstName": "Elena",
+    "firstName": "Roger",
     "lastName": "Williams",
     "phone": "+1 (555) 320-2874",
     "email": "e.williams@example.com",
@@ -5385,7 +5385,7 @@
     "city": "Milwaukee",
     "workAuthUS": true,
     "workAuthCA": true,
-    "gender": "Non-binary",
+    "gender": "Male",
     "ethnicity": "Prefer not to say",
     "hasAgent": true,
     "agentName": "Sarah Jenkins",
@@ -5431,7 +5431,7 @@
       "Portuguese"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/williams_164.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/williams_164.jpg",
+    "picUrl": "/assets/headshots/235_212.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -5451,7 +5451,7 @@
   },
   {
     "id": "165",
-    "firstName": "Harper",
+    "firstName": "Terry",
     "lastName": "Young",
     "phone": "+1 (555) 166-1666",
     "email": "h.young@example.com",
@@ -5460,7 +5460,7 @@
     "city": "Baltimore",
     "workAuthUS": true,
     "workAuthCA": true,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "Asian",
     "hasAgent": false,
     "agentName": null,
@@ -5517,7 +5517,7 @@
       "Dutch"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/young_165.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/young_165.jpg",
+    "picUrl": "/assets/headshots/235_243.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -5542,7 +5542,7 @@
   },
   {
     "id": "166",
-    "firstName": "Julian",
+    "firstName": "Austin",
     "lastName": "Garcia",
     "phone": "+1 (555) 494-1631",
     "email": "j.garcia@example.com",
@@ -5551,7 +5551,7 @@
     "city": "Baltimore",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "Native American",
     "hasAgent": false,
     "agentName": null,
@@ -5608,7 +5608,7 @@
       "Italian"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/garcia_166.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/garcia_166.jpg",
+    "picUrl": "/assets/headshots/235_790.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": true,
     "mlsCoachingExpList": [
@@ -5630,7 +5630,7 @@
   },
   {
     "id": "167",
-    "firstName": "Rafael",
+    "firstName": "Sean",
     "lastName": "King",
     "phone": "+1 (555) 973-2988",
     "email": "r.king@example.com",
@@ -5639,7 +5639,7 @@
     "city": "Louisville",
     "workAuthUS": true,
     "workAuthCA": true,
-    "gender": "Non-binary",
+    "gender": "Male",
     "ethnicity": "White / Caucasian",
     "hasAgent": true,
     "agentName": "Michael Roberts",
@@ -5689,7 +5689,7 @@
       "Italian"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/king_167.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/king_167.jpg",
+    "picUrl": "/assets/headshots/237_692.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -5709,7 +5709,7 @@
   },
   {
     "id": "168",
-    "firstName": "Zoe",
+    "firstName": "Gerald",
     "lastName": "Wilson",
     "phone": "+1 (555) 750-1319",
     "email": "z.wilson@example.com",
@@ -5718,7 +5718,7 @@
     "city": "Louisville",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Non-binary",
+    "gender": "Male",
     "ethnicity": "Two or More Races",
     "hasAgent": false,
     "agentName": null,
@@ -5774,7 +5774,7 @@
       "Dutch"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/wilson_168.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/wilson_168.jpg",
+    "picUrl": "/assets/headshots/238_073.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": true,
     "mlsCoachingExpList": [
@@ -5797,7 +5797,7 @@
   },
   {
     "id": "169",
-    "firstName": "Ava",
+    "firstName": "Carl",
     "lastName": "Lopez",
     "phone": "+1 (555) 206-7219",
     "email": "a.lopez@example.com",
@@ -5806,7 +5806,7 @@
     "city": "Memphis",
     "workAuthUS": true,
     "workAuthCA": true,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "Black / African American",
     "hasAgent": true,
     "agentName": "Maria Rodriguez",
@@ -5856,7 +5856,7 @@
       "French"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/lopez_169.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/lopez_169.jpg",
+    "picUrl": "/assets/headshots/239_085.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -5881,7 +5881,7 @@
   },
   {
     "id": "170",
-    "firstName": "Nathan",
+    "firstName": "Harold",
     "lastName": "Anderson",
     "phone": "+1 (555) 317-2283",
     "email": "n.anderson@example.com",
@@ -5890,7 +5890,7 @@
     "city": "Las Vegas",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Non-binary",
+    "gender": "Male",
     "ethnicity": "Black / African American",
     "hasAgent": false,
     "agentName": null,
@@ -5936,7 +5936,7 @@
       "English"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/anderson_170.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/anderson_170.jpg",
+    "picUrl": "/assets/headshots/239_818.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -5956,7 +5956,7 @@
   },
   {
     "id": "171",
-    "firstName": "Lucas",
+    "firstName": "Dylan",
     "lastName": "Hill",
     "phone": "+1 (555) 924-1696",
     "email": "l.hill@example.com",
@@ -5965,7 +5965,7 @@
     "city": "Las Vegas",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Non-binary",
+    "gender": "Male",
     "ethnicity": "Two or More Races",
     "hasAgent": false,
     "agentName": null,
@@ -6014,7 +6014,7 @@
       "Dutch"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/hill_171.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/hill_171.jpg",
+    "picUrl": "/assets/headshots/242_444.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -6036,7 +6036,7 @@
   },
   {
     "id": "172",
-    "firstName": "Chloe",
+    "firstName": "Arthur",
     "lastName": "Taylor",
     "phone": "+1 (555) 110-9328",
     "email": "c.taylor@example.com",
@@ -6045,7 +6045,7 @@
     "city": "Portland",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "Native American",
     "hasAgent": true,
     "agentName": "Patricia Davis",
@@ -6092,7 +6092,7 @@
       "Spanish"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/taylor_172.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/taylor_172.jpg",
+    "picUrl": "/assets/headshots/243_715.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -6115,7 +6115,7 @@
   },
   {
     "id": "173",
-    "firstName": "Emma",
+    "firstName": "Lawrence",
     "lastName": "Green",
     "phone": "+1 (555) 361-2035",
     "email": "e.green@example.com",
@@ -6181,7 +6181,7 @@
       "Spanish"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/green_173.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/green_173.jpg",
+    "picUrl": "/assets/headshots/243_780.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -6204,7 +6204,7 @@
   },
   {
     "id": "174",
-    "firstName": "James",
+    "firstName": "Jordan",
     "lastName": "Jackson",
     "phone": "+1 (555) 349-3766",
     "email": "j.jackson@example.com",
@@ -6213,7 +6213,7 @@
     "city": "Detroit",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "Black / African American",
     "hasAgent": false,
     "agentName": null,
@@ -6259,7 +6259,7 @@
       "French"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/jackson_174.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/jackson_174.jpg",
+    "picUrl": "/assets/headshots/244_161.png",
     "proCoachExpUpdate": false,
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
@@ -6279,7 +6279,7 @@
   },
   {
     "id": "175",
-    "firstName": "Diego",
+    "firstName": "Jesse",
     "lastName": "Adams",
     "phone": "+1 (555) 277-1366",
     "email": "d.adams@example.com",
@@ -6288,7 +6288,7 @@
     "city": "Nashville",
     "workAuthUS": true,
     "workAuthCA": false,
-    "gender": "Female",
+    "gender": "Male",
     "ethnicity": "Pacific Islander",
     "hasAgent": true,
     "agentName": "Patricia Davis",
@@ -6349,7 +6349,7 @@
       "Dutch"
     ],
     "resumeUrl": "https://fake-s3.mls.com/resumes/adams_175.pdf",
-    "picUrl": "https://fake-s3.mls.com/avatars/adams_175.jpg",
+    "picUrl": "/assets/headshots/244_904.png",
     "proCoachExpUpdate": true,
     "prevMlsCoachExp": true,
     "mlsCoachingExpList": [

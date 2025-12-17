@@ -51,7 +51,9 @@ function StaffProfile() {
 
   const handleBack = () => {
     const basePath = isLeagueView ? '/league/staff' : '/staff';
-    navigate(basePath);
+    // Use the returnTab from navigation state, or default based on source
+    const returnTab = location.state?.returnTab ?? (staffMember?.source === 'current' ? 0 : 1);
+    navigate(basePath, { state: { activeTab: returnTab } });
   };
 
   const handleTabChange = (event, newValue) => {
@@ -84,7 +86,9 @@ function StaffProfile() {
     .slice(0, 2)
     .join('') || 'SM';
   
-  const avatarSrc = staffMember.picUrl || generateInitialsImage(displayName, 128, '#040037', '#ffffff');
+  // Handle both picUrl (talent) and profilePic (current staff)
+  const imageUrl = staffMember.picUrl || staffMember.profilePic;
+  const avatarSrc = imageUrl || generateInitialsImage(displayName, 128, '#040037', '#ffffff');
 
   // Determine role/position
   const role = staffMember.source === 'talent' 

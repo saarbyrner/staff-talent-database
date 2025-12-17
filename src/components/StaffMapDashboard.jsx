@@ -491,6 +491,7 @@ function StaffMapDashboard() {
               {hoveredLocation.staff.slice(0, 5).map((staff, idx) => (
                 <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Avatar
+                    src={staff.picUrl}
                     sx={{
                       width: 24,
                       height: 24,

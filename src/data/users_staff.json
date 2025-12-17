@@ -3,7 +3,7 @@
     "id": 1,
     "username": "r.martinez",
     "email": "roberto.martinez@medinahfc.com",
-    "firstname": "Roberto",
+    "firstname": "James",
     "lastname": "Martinez",
     "role": "Head Coach",
     "permission_group": "Coaching Staff",
@@ -20,7 +20,11 @@
       "FA Level 5 Coaching",
       "Sports Psychology Certificate"
     ],
-    "specializations": ["Tactical Analysis", "Player Development", "Team Management"],
+    "specializations": [
+      "Tactical Analysis",
+      "Player Development",
+      "Team Management"
+    ],
     "squads": [
       {
         "squad_id": 1,
@@ -30,13 +34,15 @@
     ],
     "last_login": "2024-01-15T07:30:00Z",
     "created_at": "2022-06-01T10:00:00Z",
-    "updated_at": "2024-01-15T07:30:00Z"
+    "updated_at": "2024-01-15T07:30:00Z",
+    "gender": "Male",
+    "profilePic": "/assets/headshots/204_639.png"
   },
   {
     "id": 2,
     "username": "s.johnson",
     "email": "sarah.johnson@medinahfc.com",
-    "firstname": "Sarah",
+    "firstname": "Michael",
     "lastname": "Johnson",
     "role": "Assistant Coach",
     "permission_group": "Coaching Staff",
@@ -53,7 +59,11 @@
       "FA Level 4 Coaching",
       "Fitness Training Certificate"
     ],
-    "specializations": ["Fitness Training", "Recovery Programs", "Youth Development"],
+    "specializations": [
+      "Fitness Training",
+      "Recovery Programs",
+      "Youth Development"
+    ],
     "squads": [
       {
         "squad_id": 1,
@@ -63,13 +73,15 @@
     ],
     "last_login": "2024-01-15T08:00:00Z",
     "created_at": "2022-08-15T10:00:00Z",
-    "updated_at": "2024-01-15T08:00:00Z"
+    "updated_at": "2024-01-15T08:00:00Z",
+    "gender": "Male",
+    "profilePic": "/assets/headshots/208_421.png"
   },
   {
     "id": 3,
     "username": "dr.mitchell",
     "email": "sarah.mitchell@medinahfc.com",
-    "firstname": "Dr. Sarah",
+    "firstname": "Robert",
     "lastname": "Mitchell",
     "role": "Team Doctor",
     "permission_group": "Medical Staff",
@@ -86,7 +98,11 @@
       "Diploma in Sports Medicine",
       "FFSEM Fellowship"
     ],
-    "specializations": ["Sports Medicine", "Injury Prevention", "Emergency Care"],
+    "specializations": [
+      "Sports Medicine",
+      "Injury Prevention",
+      "Emergency Care"
+    ],
     "squads": [
       {
         "squad_id": 1,
@@ -101,13 +117,15 @@
     ],
     "last_login": "2024-01-14T16:45:00Z",
     "created_at": "2021-03-01T10:00:00Z",
-    "updated_at": "2024-01-14T16:45:00Z"
+    "updated_at": "2024-01-14T16:45:00Z",
+    "gender": "Male",
+    "profilePic": "/assets/headshots/210_035.png"
   },
   {
     "id": 4,
     "username": "m.thompson",
     "email": "michael.thompson@medinahfc.com",
-    "firstname": "Michael",
+    "firstname": "John",
     "lastname": "Thompson",
     "role": "Physiotherapist",
     "permission_group": "Medical Staff",
@@ -124,7 +142,11 @@
       "MSc Sports Rehabilitation",
       "ACPSM Membership"
     ],
-    "specializations": ["Injury Rehabilitation", "Movement Analysis", "Manual Therapy"],
+    "specializations": [
+      "Injury Rehabilitation",
+      "Movement Analysis",
+      "Manual Therapy"
+    ],
     "squads": [
       {
         "squad_id": 1,
@@ -134,13 +156,15 @@
     ],
     "last_login": "2024-01-15T09:15:00Z",
     "created_at": "2020-09-01T10:00:00Z",
-    "updated_at": "2024-01-15T09:15:00Z"
+    "updated_at": "2024-01-15T09:15:00Z",
+    "gender": "Male",
+    "profilePic": "/assets/headshots/215_914.png"
   },
   {
     "id": 5,
     "username": "m.stevens",
     "email": "mike.stevens@medinahfc.com",
-    "firstname": "Mike",
+    "firstname": "David",
     "lastname": "Stevens",
     "role": "Strength & Conditioning Coach",
     "permission_group": "Coaching Staff",
@@ -157,7 +181,11 @@
       "MSc Exercise Science",
       "UKSCA Accreditation"
     ],
-    "specializations": ["Strength Training", "Power Development", "Injury Prevention"],
+    "specializations": [
+      "Strength Training",
+      "Power Development",
+      "Injury Prevention"
+    ],
     "squads": [
       {
         "squad_id": 1,
@@ -172,13 +200,15 @@
     ],
     "last_login": "2024-01-15T07:45:00Z",
     "created_at": "2021-07-01T10:00:00Z",
-    "updated_at": "2024-01-15T07:45:00Z"
+    "updated_at": "2024-01-15T07:45:00Z",
+    "gender": "Male",
+    "profilePic": "/assets/headshots/216_549.png"
   },
   {
     "id": 6,
     "username": "dr.adams",
     "email": "jennifer.adams@medinahfc.com",
-    "firstname": "Dr. Jennifer",
+    "firstname": "William",
     "lastname": "Adams",
     "role": "Sports Psychologist",
     "permission_group": "Medical Staff",
@@ -195,7 +225,11 @@
       "BPS Chartered Psychologist",
       "BASES Accredited"
     ],
-    "specializations": ["Performance Psychology", "Mental Health", "Team Dynamics"],
+    "specializations": [
+      "Performance Psychology",
+      "Mental Health",
+      "Team Dynamics"
+    ],
     "squads": [
       {
         "squad_id": 1,
@@ -205,13 +239,15 @@
     ],
     "last_login": "2024-01-14T14:20:00Z",
     "created_at": "2022-01-15T10:00:00Z",
-    "updated_at": "2024-01-14T14:20:00Z"
+    "updated_at": "2024-01-14T14:20:00Z",
+    "gender": "Male",
+    "profilePic": "/assets/headshots/225_100.png"
   },
   {
     "id": 7,
     "username": "l.chen",
     "email": "lisa.chen@medinahfc.com",
-    "firstname": "Lisa",
+    "firstname": "Richard",
     "lastname": "Chen",
     "role": "Sports Nutritionist",
     "permission_group": "Medical Staff",
@@ -228,7 +264,11 @@
       "Registered Dietitian",
       "SENr Accredited"
     ],
-    "specializations": ["Performance Nutrition", "Recovery Nutrition", "Supplementation"],
+    "specializations": [
+      "Performance Nutrition",
+      "Recovery Nutrition",
+      "Supplementation"
+    ],
     "squads": [
       {
         "squad_id": 1,
@@ -243,13 +283,15 @@
     ],
     "last_login": "2024-01-15T11:30:00Z",
     "created_at": "2021-11-01T10:00:00Z",
-    "updated_at": "2024-01-15T11:30:00Z"
+    "updated_at": "2024-01-15T11:30:00Z",
+    "gender": "Male",
+    "profilePic": "/assets/headshots/226_537.png"
   },
   {
     "id": 8,
     "username": "j.parker",
     "email": "james.parker@medinahfc.com",
-    "firstname": "James",
+    "firstname": "Joseph",
     "lastname": "Parker",
     "role": "Performance Analyst",
     "permission_group": "Analysis Staff",
@@ -266,7 +308,11 @@
       "MSc Performance Analysis",
       "ISPAS Certified"
     ],
-    "specializations": ["Match Analysis", "Player Tracking", "Data Analytics"],
+    "specializations": [
+      "Match Analysis",
+      "Player Tracking",
+      "Data Analytics"
+    ],
     "squads": [
       {
         "squad_id": 1,
@@ -276,13 +322,15 @@
     ],
     "last_login": "2024-01-15T10:00:00Z",
     "created_at": "2022-03-01T10:00:00Z",
-    "updated_at": "2024-01-15T10:00:00Z"
+    "updated_at": "2024-01-15T10:00:00Z",
+    "gender": "Male",
+    "profilePic": "/assets/headshots/227_236.png"
   },
   {
     "id": 9,
     "username": "admin",
     "email": "admin@medinahfc.com",
-    "firstname": "System",
+    "firstname": "Thomas",
     "lastname": "Administrator",
     "role": "System Admin",
     "permission_group": "Administrators",
@@ -299,17 +347,23 @@
       "Systems Administration",
       "Database Management"
     ],
-    "specializations": ["System Management", "Database Administration", "Security"],
+    "specializations": [
+      "System Management",
+      "Database Administration",
+      "Security"
+    ],
     "squads": [],
     "last_login": "2024-01-15T08:00:00Z",
     "created_at": "2020-01-01T10:00:00Z",
-    "updated_at": "2024-01-15T08:00:00Z"
+    "updated_at": "2024-01-15T08:00:00Z",
+    "gender": "Male",
+    "profilePic": "/assets/headshots/227_796.png"
   },
   {
     "id": 10,
     "username": "a.thompson",
     "email": "alex.thompson@medinahfc.com",
-    "firstname": "Alex",
+    "firstname": "Christopher",
     "lastname": "Thompson",
     "role": "Reserve Team Coach",
     "permission_group": "Coaching Staff",
@@ -326,7 +380,11 @@
       "FA Level 3 Coaching",
       "Youth Development"
     ],
-    "specializations": ["Youth Development", "Player Pathways", "Tactical Training"],
+    "specializations": [
+      "Youth Development",
+      "Player Pathways",
+      "Tactical Training"
+    ],
     "squads": [
       {
         "squad_id": 2,
@@ -336,6 +394,8 @@
     ],
     "last_login": "2024-01-15T09:30:00Z",
     "created_at": "2023-01-01T10:00:00Z",
-    "updated_at": "2024-01-15T09:30:00Z"
+    "updated_at": "2024-01-15T09:30:00Z",
+    "gender": "Male",
+    "profilePic": "/assets/headshots/228_618.png"
   }
 ]
