@@ -48,6 +48,10 @@
     "sportingExp": false,
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
+    "tags": [
+      "Proven",
+      "Homegrown"
+    ],
     "nonMlsSportingExp": [],
     "sportingVertical": [],
     "currentEmployer": "LAFC - Assistant Coach (2021-Present)",
@@ -185,7 +189,11 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Private"
+    "profilePrivacy": "Private",
+    "tags": [
+      "Emerging",
+      "High Potential"
+    ]
   },
   {
     "id": "103",
@@ -273,7 +281,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Proven"
+    ]
   },
   {
     "id": "104",
@@ -362,7 +373,11 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "High Potential",
+      "Emerging"
+    ]
   },
   {
     "id": "105",
@@ -452,7 +467,11 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Private"
+    "profilePrivacy": "Private",
+    "tags": [
+      "Homegrown",
+      "Proven"
+    ]
   },
   {
     "id": "106",
@@ -537,7 +556,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/106_coaching.pdf",
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "107",
@@ -621,7 +643,11 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Private"
+    "profilePrivacy": "Private",
+    "tags": [
+      "Proven",
+      "High Potential"
+    ]
   },
   {
     "id": "108",
@@ -705,7 +731,10 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "tags": [
+      "Homegrown"
+    ]
   },
   {
     "id": "109",
@@ -783,7 +812,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/109_coaching.pdf",
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "High Potential"
+    ]
   },
   {
     "id": "110",
@@ -868,7 +900,11 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Proven",
+      "Emerging"
+    ]
   },
   {
     "id": "111",
@@ -957,7 +993,11 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Homegrown",
+      "High Potential"
+    ]
   },
   {
     "id": "112",
@@ -1042,7 +1082,11 @@
     "otherLicenses": true,
     "otherLicensesList": "Sports Management Certificate (2018)",
     "coachingLicenseDoc": null,
-    "otherCertsDoc": "https://fake-s3.mls.com/certs/112_other.pdf"
+    "otherCertsDoc": "https://fake-s3.mls.com/certs/112_other.pdf",
+    "tags": [
+      "Emerging",
+      "Proven"
+    ]
   },
   {
     "id": "113",
@@ -1121,7 +1165,10 @@
     "otherLicenses": true,
     "otherLicensesList": "Nutrition Specialist (2020)",
     "coachingLicenseDoc": null,
-    "otherCertsDoc": "https://fake-s3.mls.com/certs/113_other.pdf"
+    "otherCertsDoc": "https://fake-s3.mls.com/certs/113_other.pdf",
+    "tags": [
+      "High Potential"
+    ]
   },
   {
     "id": "114",
@@ -1205,7 +1252,11 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Homegrown",
+      "Emerging"
+    ]
   },
   {
     "id": "115",
@@ -1290,7 +1341,12 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Proven",
+      "High Potential",
+      "Homegrown"
+    ]
   },
   {
     "id": "116",
@@ -1381,7 +1437,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/116_coaching.pdf",
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "117",
@@ -1470,7 +1529,11 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "High Potential",
+      "Proven"
+    ]
   },
   {
     "id": "118",
@@ -1554,7 +1617,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Homegrown"
+    ]
   },
   {
     "id": "119",
@@ -1641,7 +1707,11 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Emerging",
+      "High Potential"
+    ]
   },
   {
     "id": "120",
@@ -1733,7 +1803,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/120_coaching.pdf",
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Proven"
+    ]
   },
   {
     "id": "121",
@@ -1819,7 +1892,11 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Proven",
+      "Homegrown"
+    ]
   },
   {
     "id": "122",
@@ -1905,7 +1982,11 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Emerging",
+      "High Potential"
+    ]
   },
   {
     "id": "123",
@@ -1996,7 +2077,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/123_coaching.pdf",
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Proven"
+    ]
   },
   {
     "id": "124",
@@ -2093,7 +2177,11 @@
     "otherLicenses": true,
     "otherLicensesList": "Strength & Conditioning (2020)",
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/124_coaching.pdf",
-    "otherCertsDoc": "https://fake-s3.mls.com/certs/124_other.pdf"
+    "otherCertsDoc": "https://fake-s3.mls.com/certs/124_other.pdf",
+    "tags": [
+      "High Potential",
+      "Emerging"
+    ]
   },
   {
     "id": "125",
@@ -2182,7 +2270,11 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Homegrown",
+      "Proven"
+    ]
   },
   {
     "id": "126",
@@ -2271,7 +2363,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Emerging"
+    ]
   },
   {
     "id": "127",
@@ -2355,7 +2450,11 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/127_coaching.pdf",
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Proven",
+      "High Potential"
+    ]
   },
   {
     "id": "128",
@@ -2441,7 +2540,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "Homegrown"
+    ]
   },
   {
     "id": "129",
@@ -2530,7 +2632,10 @@
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
-    "otherCertsDoc": null
+    "otherCertsDoc": null,
+    "tags": [
+      "High Potential"
+    ]
   },
   {
     "id": "130",
@@ -2624,7 +2729,11 @@
     "otherLicenses": true,
     "otherLicensesList": "Nutrition Specialist (2016)",
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/130_coaching.pdf",
-    "otherCertsDoc": "https://fake-s3.mls.com/certs/130_other.pdf"
+    "otherCertsDoc": "https://fake-s3.mls.com/certs/130_other.pdf",
+    "tags": [
+      "Proven",
+      "Emerging"
+    ]
   },
   {
     "id": "131",

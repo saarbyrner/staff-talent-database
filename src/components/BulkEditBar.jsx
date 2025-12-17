@@ -11,8 +11,14 @@ import {
   Typography,
   Chip,
   Autocomplete,
+  Divider,
+  Stack,
+  IconButton,
 } from '@mui/material';
-import { SaveOutlined } from '@mui/icons-material';
+import { SaveOutlined, AddOutlined, RemoveOutlined } from '@mui/icons-material';
+import TagSelector from './TagSelector';
+
+const DEFAULT_TAGS = ['Proven', 'Emerging', 'High Potential', 'Homegrown'];
 
 const INTEREST_AREAS = [
   'Coaching',
@@ -92,6 +98,8 @@ function BulkEditBar({ selectedCount, onSave, onCancel }) {
   const [country, setCountry] = useState('');
   const [hasAgent, setHasAgent] = useState('');
   const [relocation, setRelocation] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [tagSelectorAnchor, setTagSelectorAnchor] = useState(null);
 
   const getRoleOptions = () => {
     switch (roleType) {
@@ -120,7 +128,9 @@ function BulkEditBar({ selectedCount, onSave, onCancel }) {
     if (country) updates.country = country;
     if (hasAgent !== '') updates.hasAgent = hasAgent === 'true';
     if (relocation.length > 0) updates.relocation = relocation;
-
+    if (tags.length > 0) {
+      updates.tags = { action: 'add', values: tags };
+    }
     if (Object.keys(updates).length === 0) {
       alert('Please select at least one field to update');
       return;
@@ -129,7 +139,17 @@ function BulkEditBar({ selectedCount, onSave, onCancel }) {
     onSave(updates);
   };
 
-  const hasChanges = interestArea || (roleType && roles.length > 0) || gender || ethnicity || city || state || country || hasAgent !== '' || relocation.length > 0;
+  const hasChanges = 
+    interestArea || 
+    (roleType && roles.length > 0) || 
+    gender || 
+    ethnicity || 
+    city || 
+    state || 
+    country || 
+    hasAgent !== '' || 
+    relocation.length > 0 ||
+    tags.length > 0;
 
   return (
     <Paper
@@ -373,7 +393,29 @@ function BulkEditBar({ selectedCount, onSave, onCancel }) {
             ))
           }
         />
+
+        {/* Tags */}
+        <TextField
+          size="small"
+          variant="filled"
+          label="Tags"
+          value={tags.length > 0 ? `${tags.length} tag${tags.length > 1 ? 's' : ''} selected` : ''}
+          onClick={(e) => setTagSelectorAnchor(e.currentTarget)}
+          placeholder="Click to add tags"
+          sx={{ minWidth: 200, cursor: 'pointer' }}
+          InputProps={{
+            readOnly: true,
+          }}
+        />
       </Box>
+        
+      {/* Tag Selector Popover */}
+      <TagSelector
+        selectedTags={tags}
+        onChange={setTags}
+        anchorEl={tagSelectorAnchor}
+        onClose={() => setTagSelectorAnchor(null)}
+      />
     </Paper>
   );
 }

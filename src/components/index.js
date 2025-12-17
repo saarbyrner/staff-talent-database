@@ -11,6 +11,9 @@ export { default as PlayerAvatar } from './PlayerAvatar'
 export { default as LogoImage } from './LogoImage'
 export { default as MainNavigation } from './MainNavigation'
 export { default as AthleteDataGrid } from './AthleteDataGrid'
+export { default as TagChip } from './TagChip'
+export { default as TagSelector } from './TagSelector'
+export { default as TagManagementDrawer } from './TagManagementDrawer'
 
 // Usage Examples:
 // import { Button, Icon, Card, PlayerAvatar, LogoImage } from '../components'

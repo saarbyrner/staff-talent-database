@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Box, Chip, Avatar, Link, Stack, Typography, Tooltip, Button } from '@mui/material';
+import { Box, Chip, Avatar, Link, Stack, Typography, Tooltip, Button, IconButton } from '@mui/material';
 import {
   DataGridPro as DataGrid,
   GridToolbarContainer,
@@ -18,16 +18,21 @@ import {
   AddOutlined,
   MailOutline,
   EditOutlined,
+  LocalOfferOutlined,
+  LabelOutlined,
 } from '@mui/icons-material';
 import staffData from '../data/staff_talent.json';
 import { generateInitialsImage } from '../utils/assetManager';
 import BulkEditBar from './BulkEditBar';
+import TagChip from './TagChip';
+import TagSelector from './TagSelector';
+import TagManagementDrawer from './TagManagementDrawer';
 import '../styles/design-tokens.css';
 
 export const CustomToolbar = React.forwardRef((props, ref) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { onInviteClick } = props;
+  const { onInviteClick, onManageTags } = props;
   
   const handleAddClick = () => {
     const basePath = location.pathname.startsWith('/league') ? '/league/staff' : '/staff';
@@ -80,6 +85,28 @@ export const CustomToolbar = React.forwardRef((props, ref) => {
           }}
           debounceMs={150}
         />
+        {onManageTags && (
+          <Button
+            variant="outlined"
+            startIcon={<LabelOutlined />}
+            onClick={onManageTags}
+            sx={{
+              textTransform: 'none',
+              fontSize: '0.875rem',
+              fontWeight: 500,
+              borderColor: 'var(--color-border-primary)',
+              color: 'var(--color-text-primary)',
+              minWidth: 'auto',
+              padding: '6px 12px',
+              '&:hover': {
+                borderColor: 'var(--color-text-primary)',
+                backgroundColor: 'var(--color-background-tertiary)'
+              }
+            }}
+          >
+            Tags
+          </Button>
+        )}
         {onInviteClick && (
           <Button
             variant="outlined"
@@ -193,7 +220,7 @@ const LinkCell = ({ value, type, name = '' }) => {
   );
 };
 
-const columns = [
+const createColumns = (onTagsClick) => [
   {
     field: 'picUrl',
     headerName: '',
@@ -213,6 +240,52 @@ const columns = [
   { field: 'lastName', headerName: 'Last Name', width: 150 },
   { field: 'phone', headerName: 'Phone', width: 150 },
   { field: 'email', headerName: 'Email', width: 200 },
+  {
+    field: 'tags',
+    headerName: 'Tags',
+    width: 250,
+    sortable: false,
+    renderCell: (params) => {
+      const tags = params.value || [];
+      return (
+        <Stack 
+          direction="row" 
+          spacing={0.5} 
+          alignItems="center"
+          sx={{ 
+            py: 1,
+            width: '100%',
+            overflow: 'hidden'
+          }}
+        >
+          {tags.slice(0, 3).map((tag) => (
+            <TagChip key={tag} label={tag} size="small" />
+          ))}
+          {tags.length > 3 && (
+            <Typography variant="caption" color="text.secondary" sx={{ ml: 0.5 }}>
+              +{tags.length - 3}
+            </Typography>
+          )}
+          <IconButton
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              onTagsClick(params.row.id, e);
+            }}
+            sx={{
+              ml: 'auto',
+              color: 'var(--color-text-secondary)',
+              '&:hover': {
+                color: 'var(--color-primary)',
+              }
+            }}
+          >
+            <LocalOfferOutlined fontSize="small" />
+          </IconButton>
+        </Stack>
+      );
+    }
+  },
   { 
     field: 'profilePrivacy', 
     headerName: 'Profile Privacy', 
@@ -569,6 +642,8 @@ const columnGroupingModel = [
       { field: 'lastName' },
       { field: 'phone' },
       { field: 'email' },
+      { field: 'tags' },
+      { field: 'profilePrivacy' },
       { field: 'location' },
       { field: 'state' },
       { field: 'workAuthUS' },
@@ -674,6 +749,12 @@ export default function TalentDatabaseGrid({ onInviteClick }) {
   const location = useLocation();
   const [selectedRows, setSelectedRows] = React.useState([]);
   const [bulkEditOpen, setBulkEditOpen] = React.useState(false);
+  const [localStaffData, setLocalStaffData] = React.useState(staffData);
+  
+  // Tag management state
+  const [tagSelectorAnchor, setTagSelectorAnchor] = React.useState(null);
+  const [selectedStaffForTags, setSelectedStaffForTags] = React.useState(null);
+  const [tagManagementOpen, setTagManagementOpen] = React.useState(false);
   
   // Check if viewing from league admin context
   const isLeagueView = location.pathname.startsWith('/league');
@@ -682,12 +763,12 @@ export default function TalentDatabaseGrid({ onInviteClick }) {
   const filteredStaffData = React.useMemo(() => {
     if (isLeagueView) {
       // League admins see all profiles
-      return staffData;
+      return localStaffData;
     } else {
       // Club users only see Public profiles (filter out Private)
-      return staffData.filter(staff => staff.profilePrivacy !== 'Private');
+      return localStaffData.filter(staff => staff.profilePrivacy !== 'Private');
     }
-  }, [isLeagueView]);
+  }, [isLeagueView, localStaffData]);
 
   const handleRowClick = (params, event) => {
     // Don't navigate if clicking on checkbox or action buttons
@@ -700,27 +781,94 @@ export default function TalentDatabaseGrid({ onInviteClick }) {
     const basePath = location.pathname.startsWith('/league') ? '/league/staff' : '/staff';
     navigate(`${basePath}/${params.row.id}`);
   };
+  
+  // Tag handlers
+  const handleTagsClick = (staffId, anchorEl) => {
+    setSelectedStaffForTags(staffId);
+    setTagSelectorAnchor(anchorEl || document.activeElement);
+  };
+  
+  const handleTagsChange = (staffId, newTags) => {
+    setLocalStaffData(prevData =>
+      prevData.map(staff =>
+        staff.id === staffId ? { ...staff, tags: newTags } : staff
+      )
+    );
+  };
+  
+  const handleTagSelectorClose = () => {
+    setTagSelectorAnchor(null);
+    setSelectedStaffForTags(null);
+  };
+  
+  const handleUpdateTag = (oldTag, newTag) => {
+    setLocalStaffData(prevData =>
+      prevData.map(staff => ({
+        ...staff,
+        tags: staff.tags ? staff.tags.map(t => t === oldTag ? newTag : t) : []
+      }))
+    );
+  };
+  
+  const handleDeleteTag = (tagToDelete) => {
+    setLocalStaffData(prevData =>
+      prevData.map(staff => ({
+        ...staff,
+        tags: staff.tags ? staff.tags.filter(t => t !== tagToDelete) : []
+      }))
+    );
+  };
 
   const handleBulkEditSave = (updates) => {
     console.log('Bulk editing fields:', Object.keys(updates), 'for', selectedRows.length, 'staff members');
     console.log('Updates:', updates);
     
-    // In a real application, this would update the backend/database
+    // Process tags if present
+    if (updates.tags) {
+      const { action, values } = updates.tags;
+      setLocalStaffData(prevData =>
+        prevData.map(staff => {
+          if (!selectedRows.includes(staff.id)) return staff;
+          
+          let newTags = staff.tags || [];
+          if (action === 'add') {
+            // Add tags (avoiding duplicates, max 5)
+            const tagsToAdd = values.filter(tag => !newTags.includes(tag));
+            newTags = [...newTags, ...tagsToAdd].slice(0, 5);
+          } else if (action === 'remove') {
+            // Remove tags
+            newTags = newTags.filter(tag => !values.includes(tag));
+          }
+          
+          return { ...staff, tags: newTags };
+        })
+      );
+    }
+    
+    // In a real application, other updates would also be applied here
     const selectedStaff = filteredStaffData.filter(staff => selectedRows.includes(staff.id));
     console.log('Selected staff:', selectedStaff.map(s => `${s.firstName} ${s.lastName}`));
     
-    // TODO: Implement actual data update logic
-    // This would typically be an API call to update multiple records
     const updateSummary = Object.entries(updates)
       .map(([field, value]) => `${field}: ${JSON.stringify(value)}`)
       .join(', ');
     
-    alert(`Would update ${updateSummary} for ${selectedRows.length} staff members`);
+    alert(`Updated ${updateSummary} for ${selectedRows.length} staff members`);
     
     // Clear selection and close bulk edit bar
     setSelectedRows([]);
     setBulkEditOpen(false);
   };
+  
+  const columns = React.useMemo(() => createColumns((staffId, event) => {
+    if (event) {
+      handleTagsClick(staffId, event.currentTarget);
+    }
+  }), []);
+  
+  const selectedStaff = selectedStaffForTags 
+    ? filteredStaffData.find(s => s.id === selectedStaffForTags)
+    : null;
 
   return (
     <Box sx={{ height: 'calc(100vh - 100px)', width: '100%' }}>
@@ -731,6 +879,32 @@ export default function TalentDatabaseGrid({ onInviteClick }) {
           onCancel={() => setSelectedRows([])}
         />
       )}
+      
+      {/* Tag Selector Popover */}
+      {selectedStaff && (
+        <TagSelector
+          selectedTags={selectedStaff.tags || []}
+          onChange={(newTags) => handleTagsChange(selectedStaff.id, newTags)}
+          anchorEl={tagSelectorAnchor}
+          onClose={handleTagSelectorClose}
+          maxTags={5}
+        />
+      )}
+      
+      {/* Tag Management Drawer */}
+      <TagManagementDrawer
+        open={tagManagementOpen}
+        onClose={() => setTagManagementOpen(false)}
+        staffData={localStaffData}
+        onUpdateTag={handleUpdateTag}
+        onDeleteTag={handleDeleteTag}
+        onAddTag={(tagName) => {
+          // Create a new tag by adding it to the first selected staff or showing a message
+          console.log('New tag created:', tagName);
+          alert(`Tag "${tagName}" created! You can now apply it to staff members.`);
+        }}
+      />
+      
       <DataGrid
         rows={filteredStaffData}
         columns={columns}
@@ -741,6 +915,7 @@ export default function TalentDatabaseGrid({ onInviteClick }) {
         slotProps={{
           toolbar: {
             onInviteClick,
+            onManageTags: () => setTagManagementOpen(true),
           },
         }}
         rowSelectionModel={selectedRows}
@@ -759,6 +934,7 @@ export default function TalentDatabaseGrid({ onInviteClick }) {
               lastName: true,
               phone: true,
               email: true,
+              tags: true, // Show tags column by default
               profilePrivacy: isLeagueView, // Only show in league view
               roles: true, // Show merged roles column by default
               // Hide all other columns by default
