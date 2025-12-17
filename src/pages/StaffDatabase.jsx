@@ -4,10 +4,14 @@ import { Box, Typography, Paper, Tabs, Tab, Avatar } from '@mui/material';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import { CustomToolbar } from '../components/TalentDatabaseGrid';
 import TalentDatabaseGrid from '../components/TalentDatabaseGrid';
+import WatchlistGrid from '../components/WatchlistGrid';
 import InviteModal from '../components/InviteModal';
 import staffList from '../data/users_staff.json';
 import { generateInitialsImage } from '../utils/assetManager';
 import '../styles/design-tokens.css';
+
+// Initialize watchlist with some pre-populated staff IDs
+const INITIAL_WATCHLIST = ['101', '102', '105', '110', '115'];
 
 /**
  * Staff Database page
@@ -16,12 +20,23 @@ import '../styles/design-tokens.css';
 function StaffDatabase() {
   // Check if we're returning from a staff profile with a specific tab to show
   const location = useLocation();
-  const [tab, setTab] = useState(location.state?.activeTab ?? 1); // 0 = Staff (My Current Staff), 1 = Talent Database (default)
+  const [tab, setTab] = useState(location.state?.activeTab ?? 2); // 0 = Staff, 1 = Watchlist, 2 = Talent Database (default)
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const [watchlistIds, setWatchlistIds] = useState(INITIAL_WATCHLIST);
   const navigate = useNavigate();
 
   const handleChange = (event, value) => {
     setTab(value);
+  };
+
+  const handleAddToWatchlist = (staffId) => {
+    if (!watchlistIds.includes(staffId)) {
+      setWatchlistIds([...watchlistIds, staffId]);
+    }
+  };
+
+  const handleRemoveFromWatchlist = (staffId) => {
+    setWatchlistIds(watchlistIds.filter(id => id !== staffId));
   };
 
   const handleRowClick = (params, event) => {
@@ -53,7 +68,8 @@ function StaffDatabase() {
       >
         <Tabs value={tab} onChange={handleChange} aria-label="Staff Tabs" sx={{ px: 0 }}>
           <Tab label="Staff" value={0} />
-          <Tab label="Talent Database" value={1} />
+          <Tab label="Watchlist" value={1} />
+          <Tab label="Talent Database" value={2} />
         </Tabs>
       </Paper>
 
@@ -66,7 +82,19 @@ function StaffDatabase() {
           overflow: 'hidden'
         }}
       >
-        {tab === 1 && <TalentDatabaseGrid onInviteClick={() => setInviteModalOpen(true)} />}
+        {tab === 2 && (
+          <TalentDatabaseGrid 
+            onInviteClick={() => setInviteModalOpen(true)} 
+            watchlistIds={watchlistIds}
+            onAddToWatchlist={handleAddToWatchlist}
+          />
+        )}
+        {tab === 1 && (
+          <WatchlistGrid 
+            watchlistIds={watchlistIds}
+            onRemoveFromWatchlist={handleRemoveFromWatchlist}
+          />
+        )}
         {tab === 0 && (
           <Box sx={{ height: '100%', width: '100%' }}>
             <DataGridPro

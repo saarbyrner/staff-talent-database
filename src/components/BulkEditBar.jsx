@@ -15,7 +15,7 @@ import {
   Stack,
   IconButton,
 } from '@mui/material';
-import { SaveOutlined, AddOutlined, RemoveOutlined } from '@mui/icons-material';
+import { SaveOutlined, AddOutlined, RemoveOutlined, Visibility } from '@mui/icons-material';
 import TagSelector from './TagSelector';
 
 const DEFAULT_TAGS = ['Proven', 'Emerging', 'High Potential', 'Homegrown'];
@@ -87,7 +87,7 @@ const COUNTRIES = [
   'Brazil', 'Argentina', 'Colombia', 'Japan', 'Australia', 'Ghana', 'Poland', 'Ireland'
 ];
 
-function BulkEditBar({ selectedCount, onSave, onCancel }) {
+function BulkEditBar({ selectedCount, onSave, onCancel, onAddToWatchlist }) {
   const [interestArea, setInterestArea] = useState('');
   const [roleType, setRoleType] = useState('');
   const [roles, setRoles] = useState([]);
@@ -178,6 +178,25 @@ function BulkEditBar({ selectedCount, onSave, onCancel }) {
           />
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
+          {onAddToWatchlist && (
+            <Button
+              onClick={onAddToWatchlist}
+              variant="outlined"
+              size="small"
+              startIcon={<Visibility />}
+              sx={{ 
+                textTransform: 'none',
+                borderColor: 'var(--color-primary)',
+                color: 'var(--color-primary)',
+                '&:hover': {
+                  borderColor: 'var(--color-primary-hover)',
+                  backgroundColor: 'var(--color-background-tertiary)'
+                }
+              }}
+            >
+              Add to Watchlist
+            </Button>
+          )}
           <Button
             onClick={onCancel}
             color="inherit"

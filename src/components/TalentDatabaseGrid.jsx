@@ -20,6 +20,8 @@ import {
   EditOutlined,
   LocalOfferOutlined,
   LabelOutlined,
+  Visibility,
+  VisibilityOutlined,
 } from '@mui/icons-material';
 import staffData from '../data/staff_talent.json';
 import { generateInitialsImage } from '../utils/assetManager';
@@ -220,7 +222,40 @@ const LinkCell = ({ value, type, name = '' }) => {
   );
 };
 
-const createColumns = (onTagsClick) => [
+const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist) => [
+  {
+    field: 'watchlist',
+    headerName: '',
+    width: 60,
+    sortable: false,
+    filterable: false,
+    renderCell: (params) => {
+      const isWatchlisted = watchlistIds.includes(params.row.id);
+      return (
+        <Tooltip title={isWatchlisted ? "Remove from Watchlist" : "Add to Watchlist"}>
+          <IconButton
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleWatchlist(params.row.id);
+            }}
+            sx={{
+              color: isWatchlisted ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+              '&:hover': {
+                backgroundColor: 'var(--color-background-tertiary)',
+              }
+            }}
+          >
+            {isWatchlisted ? (
+              <Visibility fontSize="small" />
+            ) : (
+              <VisibilityOutlined fontSize="small" />
+            )}
+          </IconButton>
+        </Tooltip>
+      );
+    }
+  },
   {
     field: 'picUrl',
     headerName: '',
@@ -637,6 +672,7 @@ const columnGroupingModel = [
   {
     groupId: 'Contact Info',
     children: [
+      { field: 'watchlist' },
       { field: 'picUrl' },
       { field: 'firstName' },
       { field: 'lastName' },
@@ -744,7 +780,7 @@ const columnGroupingModel = [
   },
 ];
 
-export default function TalentDatabaseGrid({ onInviteClick }) {
+export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], onAddToWatchlist }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedRows, setSelectedRows] = React.useState([]);
@@ -859,12 +895,22 @@ export default function TalentDatabaseGrid({ onInviteClick }) {
     setSelectedRows([]);
     setBulkEditOpen(false);
   };
+
+  const handleBulkAddToWatchlist = () => {
+    selectedRows.forEach(staffId => {
+      if (onAddToWatchlist) {
+        onAddToWatchlist(staffId);
+      }
+    });
+    alert(`Added ${selectedRows.length} staff member${selectedRows.length > 1 ? 's' : ''} to watchlist`);
+    setSelectedRows([]);
+  };
   
   const columns = React.useMemo(() => createColumns((staffId, event) => {
     if (event) {
       handleTagsClick(staffId, event.currentTarget);
     }
-  }), []);
+  }, watchlistIds, onAddToWatchlist), [watchlistIds, onAddToWatchlist]);
   
   const selectedStaff = selectedStaffForTags 
     ? filteredStaffData.find(s => s.id === selectedStaffForTags)
@@ -877,6 +923,7 @@ export default function TalentDatabaseGrid({ onInviteClick }) {
           selectedCount={selectedRows.length}
           onSave={handleBulkEditSave}
           onCancel={() => setSelectedRows([])}
+          onAddToWatchlist={handleBulkAddToWatchlist}
         />
       )}
       
@@ -929,6 +976,7 @@ export default function TalentDatabaseGrid({ onInviteClick }) {
           columns: {
             columnVisibilityModel: {
               // Show first 5-6 columns by default
+              watchlist: true,
               picUrl: true,
               firstName: true,
               lastName: true,
