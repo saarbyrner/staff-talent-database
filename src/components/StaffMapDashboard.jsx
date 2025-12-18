@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { 
   Box, 
   Paper, 
@@ -14,26 +15,59 @@ import {
   FormControl,
   InputLabel,
   Tabs,
-  Tab
+  Tab,
+  IconButton
 } from '@mui/material';
 import { 
   LocationOn, 
   People, 
   Public, 
-  TrendingUp 
+  TrendingUp,
+  SettingsOutlined
 } from '@mui/icons-material';
 import * as d3 from 'd3';
 import * as d3Geo from 'd3-geo';
 import staffTalentData from '../data/staff_talent.json';
 import worldGeoJson from '../data/world_map.json';
 import CoachLeaderboard from './CoachLeaderboard';
+import DashboardSettingsDrawer from './DashboardSettingsDrawer';
 import '../styles/design-tokens.css';
+
+// Default dashboard visibility settings
+const DEFAULT_DASHBOARD_SETTINGS = {
+  locationAnalysis: true,
+  employmentStability: true,
+  originBreakdown: true,
+  qualificationStandards: true,
+  talentPipeline: true,
+  coachLeaderboard: true,
+};
+
+// Load dashboard settings from localStorage
+const loadDashboardSettings = () => {
+  try {
+    const saved = localStorage.getItem('dashboardSettings');
+    return saved ? JSON.parse(saved) : DEFAULT_DASHBOARD_SETTINGS;
+  } catch (e) {
+    return DEFAULT_DASHBOARD_SETTINGS;
+  }
+};
+
+// Save dashboard settings to localStorage
+const saveDashboardSettings = (settings) => {
+  try {
+    localStorage.setItem('dashboardSettings', JSON.stringify(settings));
+  } catch (e) {
+    console.error('Failed to save dashboard settings:', e);
+  }
+};
 
 /**
  * Staff Map Dashboard Component
  * Displays a comprehensive dashboard with a map showcasing staff locations
  */
 function StaffMapDashboard() {
+  const location = useLocation();
   const svgRef = useRef(null);
   const containerRef = useRef(null);
   const zoomRef = useRef(null);
@@ -46,6 +80,11 @@ function StaffMapDashboard() {
   const [activeTab, setActiveTab] = useState(0);
   const chartRef = useRef(null);
   const chartContainerRef = useRef(null);
+  const [settingsDrawerOpen, setSettingsDrawerOpen] = useState(false);
+  const [dashboardSettings, setDashboardSettings] = useState(loadDashboardSettings);
+  
+  // Check if we're in league view
+  const isLeagueView = location.pathname.startsWith('/league');
 
   // Geocode cities to coordinates (simplified mapping)
   const cityCoordinates = {
@@ -361,6 +400,35 @@ function StaffMapDashboard() {
 
   }, [locations, dimensions, activeTab]);
 
+  // Define all dashboards with their settings keys
+  const allDashboards = [
+    { id: 'locationAnalysis', label: 'Location Analysis', description: 'Geographic distribution and insights' },
+    { id: 'employmentStability', label: 'Employment Stability', description: 'Employment trends and stability metrics' },
+    { id: 'originBreakdown', label: 'Origin Breakdown', description: 'Domestic vs. international talent comparison' },
+    { id: 'qualificationStandards', label: 'Qualification Standards', description: 'Coaching license and credential trends' },
+    { id: 'talentPipeline', label: 'Talent Pipeline', description: 'Tag progression and talent development pipeline' },
+    { id: 'coachLeaderboard', label: 'Coach Leaderboard', description: 'Performance metrics and staff rankings' },
+  ];
+
+  // Filter visible dashboards based on settings (only in club view)
+  // League view always shows all dashboards
+  const visibleDashboards = isLeagueView 
+    ? allDashboards 
+    : allDashboards.filter(dashboard => dashboardSettings[dashboard.id]);
+
+  // Ensure activeTab is within bounds of visible dashboards
+  useEffect(() => {
+    if (activeTab >= visibleDashboards.length && visibleDashboards.length > 0) {
+      setActiveTab(0);
+    }
+  }, [activeTab, visibleDashboards.length]);
+
+  // Handle settings update
+  const handleUpdateSettings = (newSettings) => {
+    setDashboardSettings(newSettings);
+    saveDashboardSettings(newSettings);
+  };
+
   return (
     <Box sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column', gap: 3, backgroundColor: '#fafafa' }}>
       {/* Tabs */}
@@ -373,27 +441,45 @@ function StaffMapDashboard() {
           mx: -3,
           mt: -3,
           mb: 0,
+          position: 'relative',
         }}
       >
-        <Tabs 
-          value={activeTab} 
-          onChange={(e, newValue) => setActiveTab(newValue)}
-          sx={{
-            px: 3,
-            '& .MuiTab-root': {
-              textTransform: 'none',
-              fontWeight: 500,
-              fontSize: '0.875rem',
-            }
-          }}
-        >
-          <Tab label="Location Analysis" />
-          <Tab label="Employment Stability" />
-          <Tab label="Origin Breakdown" />
-          <Tab label="Qualification Standards" />
-          <Tab label="Talent Pipeline" />
-          <Tab label="Coach Leaderboard" />
-        </Tabs>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tabs 
+            value={activeTab} 
+            onChange={(e, newValue) => setActiveTab(newValue)}
+            sx={{
+              flex: 1,
+              px: 3,
+              '& .MuiTab-root': {
+                textTransform: 'none',
+                fontWeight: 500,
+                fontSize: '0.875rem',
+              }
+            }}
+          >
+            {visibleDashboards.map(dashboard => (
+              <Tab key={dashboard.id} label={dashboard.label} />
+            ))}
+          </Tabs>
+          {isLeagueView && (
+            <Tooltip title="Configure club view dashboards">
+              <IconButton
+                onClick={() => setSettingsDrawerOpen(true)}
+                size="small"
+                sx={{ 
+                  mr: 2,
+                  color: 'var(--color-text-secondary)',
+                  '&:hover': {
+                    color: 'var(--color-primary)',
+                  }
+                }}
+              >
+                <SettingsOutlined fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
       </Paper>
 
       {/* Header */}
@@ -407,15 +493,15 @@ function StaffMapDashboard() {
               mb: 0.5
             }}
           >
-            {['Location Analysis', 'Employment Stability', 'Origin Breakdown', 'Qualification Standards', 'Talent Pipeline', 'Coach Leaderboard'][activeTab]}
+            {visibleDashboards[activeTab]?.label || 'Dashboard'}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {activeTab === 0 ? 'Geographic distribution and insights' : activeTab === 1 ? 'Employment trends and stability metrics' : activeTab === 2 ? 'Domestic vs. international talent comparison' : activeTab === 3 ? 'Coaching license and credential trends' : activeTab === 4 ? 'Tag progression and talent development pipeline' : 'Performance metrics and staff rankings'}
+            {visibleDashboards[activeTab]?.description || ''}
           </Typography>
         </Box>
 
         {/* Filters - Only show on Location tab */}
-        {activeTab === 0 && (
+        {visibleDashboards[activeTab]?.id === 'locationAnalysis' && (
           <Box sx={{ display: 'flex', gap: 2 }}>
             <FormControl size="small" sx={{ minWidth: 150 }}>
               <InputLabel>Country</InputLabel>
@@ -449,7 +535,7 @@ function StaffMapDashboard() {
       </Box>
 
       {/* Location Analysis Tab */}
-      {activeTab === 0 && (
+      {visibleDashboards[activeTab]?.id === 'locationAnalysis' && (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           {/* Stats Cards */}
           <Grid container spacing={2}>
@@ -626,29 +712,37 @@ function StaffMapDashboard() {
       )}
 
       {/* Employment Stability Tab */}
-      {activeTab === 1 && (
+      {visibleDashboards[activeTab]?.id === 'employmentStability' && (
         <EmploymentStabilityChart staffData={staffTalentData} />
       )}
 
       {/* Origin Breakdown Tab */}
-      {activeTab === 2 && (
+      {visibleDashboards[activeTab]?.id === 'originBreakdown' && (
         <OriginBreakdownChart staffData={staffTalentData} />
       )}
 
       {/* Qualification Standards Tab */}
-      {activeTab === 3 && (
+      {visibleDashboards[activeTab]?.id === 'qualificationStandards' && (
         <QualificationStandardsChart staffData={staffTalentData} />
       )}
 
       {/* Talent Pipeline Tab */}
-      {activeTab === 4 && (
+      {visibleDashboards[activeTab]?.id === 'talentPipeline' && (
         <TalentPipelineChart staffData={staffTalentData} />
       )}
 
       {/* Coach Leaderboard Tab */}
-      {activeTab === 5 && (
+      {visibleDashboards[activeTab]?.id === 'coachLeaderboard' && (
         <CoachLeaderboard />
       )}
+
+      {/* Dashboard Settings Drawer */}
+      <DashboardSettingsDrawer
+        open={settingsDrawerOpen}
+        onClose={() => setSettingsDrawerOpen(false)}
+        dashboardSettings={dashboardSettings}
+        onUpdateSettings={handleUpdateSettings}
+      />
     </Box>
   );
 }
