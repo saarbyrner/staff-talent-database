@@ -49,8 +49,7 @@
     "mlsSportingExp": false,
     "mlsClubsSporting": [],
     "tags": [
-      "Homegrown",
-      "High Potential"
+      "Proven"
     ],
     "nonMlsSportingExp": [],
     "sportingVertical": [],
@@ -191,7 +190,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Private",
     "tags": [
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -282,7 +281,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "High Potential"
+      "Emerging"
     ]
   },
   {
@@ -374,7 +373,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "High Potential"
+      "Emerging"
     ]
   },
   {
@@ -467,8 +466,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Private",
     "tags": [
-      "Homegrown",
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -556,7 +554,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "High Potential"
+      "Emerging"
     ]
   },
   {
@@ -643,7 +641,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Private",
     "tags": [
-      "High Potential"
+      "Emerging"
     ]
   },
   {
@@ -730,8 +728,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Homegrown",
-      "High Potential"
+      "Emerging"
     ]
   },
   {
@@ -812,7 +809,7 @@
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/109_coaching.pdf",
     "otherCertsDoc": null,
     "tags": [
-      "High Potential"
+      "Emerging"
     ]
   },
   {
@@ -900,7 +897,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "High Potential"
+      "Emerging"
     ]
   },
   {
@@ -992,8 +989,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Homegrown",
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -1081,7 +1077,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": "https://fake-s3.mls.com/certs/112_other.pdf",
     "tags": [
-      "High Potential"
+      "Emerging"
     ]
   },
   {
@@ -1250,8 +1246,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Homegrown",
-      "High Potential"
+      "Emerging"
     ]
   },
   {
@@ -1339,8 +1334,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Homegrown",
-      "High Potential"
+      "Emerging"
     ]
   },
   {
@@ -1434,7 +1428,7 @@
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/116_coaching.pdf",
     "otherCertsDoc": null,
     "tags": [
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -1526,7 +1520,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -1613,8 +1607,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Homegrown",
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -1704,7 +1697,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -1799,7 +1792,7 @@
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/120_coaching.pdf",
     "otherCertsDoc": null,
     "tags": [
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -1888,8 +1881,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Homegrown",
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -1978,7 +1970,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -2072,7 +2064,7 @@
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/123_coaching.pdf",
     "otherCertsDoc": null,
     "tags": [
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -2172,7 +2164,7 @@
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/124_coaching.pdf",
     "otherCertsDoc": "https://fake-s3.mls.com/certs/124_other.pdf",
     "tags": [
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -2264,8 +2256,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Homegrown",
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -2357,7 +2348,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -2444,7 +2435,7 @@
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/127_coaching.pdf",
     "otherCertsDoc": null,
     "tags": [
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -2533,8 +2524,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Homegrown",
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -2626,7 +2616,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -2723,7 +2713,7 @@
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/130_coaching.pdf",
     "otherCertsDoc": "https://fake-s3.mls.com/certs/130_other.pdf",
     "tags": [
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -2813,7 +2803,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -2899,7 +2889,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "High Potential"
+      "Emerging"
     ]
   },
   {
@@ -2992,7 +2982,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -3082,7 +3072,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -3170,7 +3160,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Emerging"
+      "Proven"
     ]
   },
   {
@@ -3435,7 +3425,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Emerging"
+      "Proven"
     ]
   },
   {
@@ -3608,7 +3598,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Emerging"
+      "Proven"
     ]
   },
   {
@@ -3700,7 +3690,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Emerging"
+      "Proven"
     ]
   },
   {
@@ -3788,7 +3778,7 @@
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/142_coaching.pdf",
     "otherCertsDoc": null,
     "tags": [
-      "Emerging"
+      "Proven"
     ]
   },
   {
@@ -3876,7 +3866,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": "https://fake-s3.mls.com/certs/143_other.pdf",
     "tags": [
-      "Emerging"
+      "Proven"
     ]
   },
   {
@@ -3967,7 +3957,7 @@
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
-      "Emerging"
+      "Proven"
     ]
   },
   {
@@ -4067,7 +4057,7 @@
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/145_coaching.pdf",
     "otherCertsDoc": null,
     "tags": [
-      "Emerging"
+      "Proven"
     ]
   },
   {
@@ -4152,7 +4142,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Emerging"
+      "High Potential"
     ]
   },
   {
@@ -4242,7 +4232,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Emerging"
+      "Proven"
     ]
   },
   {
@@ -4320,7 +4310,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Emerging"
+      "Unproven"
     ]
   },
   {
@@ -4490,7 +4480,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Emerging"
+      "Unproven"
     ]
   },
   {
@@ -4656,7 +4646,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Emerging"
+      "Unproven"
     ]
   },
   {
@@ -4734,7 +4724,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Emerging"
+      "High Potential"
     ]
   },
   {
@@ -4817,7 +4807,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Emerging"
+      "High Potential"
     ]
   },
   {
@@ -4913,7 +4903,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Emerging"
+      "Proven"
     ]
   },
   {
@@ -4998,7 +4988,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Emerging"
+      "High Potential"
     ]
   },
   {
@@ -5074,7 +5064,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Proven"
+      "Unproven"
     ]
   },
   {
@@ -5157,7 +5147,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Proven"
+      "Unproven"
     ]
   },
   {
@@ -5239,7 +5229,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Proven"
+      "Unproven"
     ]
   },
   {
@@ -5321,7 +5311,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Proven"
+      "Emerging"
     ]
   },
   {
@@ -5404,7 +5394,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Private",
     "tags": [
-      "Proven"
+      "High Potential"
     ]
   },
   {
@@ -5487,7 +5477,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Proven"
+      "Unproven"
     ]
   },
   {
@@ -5570,7 +5560,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Proven"
+      "Unproven"
     ]
   },
   {
@@ -5648,7 +5638,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Proven"
+      "High Potential"
     ]
   },
   {
@@ -5915,7 +5905,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Proven"
+      "Emerging"
     ]
   },
   {
@@ -6006,7 +5996,7 @@
     "otherCertsDoc": "https://fake-s3.mls.com/certs/168_other.pdf",
     "profilePrivacy": "Public",
     "tags": [
-      "Proven"
+      "Emerging"
     ]
   },
   {
@@ -6093,7 +6083,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Proven"
+      "Emerging"
     ]
   },
   {
@@ -6171,7 +6161,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Private",
     "tags": [
-      "Proven"
+      "Unproven"
     ]
   },
   {
@@ -6254,7 +6244,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "Proven"
+      "Unproven"
     ]
   },
   {
@@ -6336,7 +6326,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "High Potential"
+      "Unproven"
     ]
   },
   {
@@ -6428,7 +6418,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "High Potential"
+      "Proven"
     ]
   },
   {
@@ -6506,7 +6496,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "High Potential"
+      "Unproven"
     ]
   },
   {
@@ -6604,7 +6594,7 @@
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
     "tags": [
-      "High Potential"
+      "Emerging"
     ]
   }
 ]

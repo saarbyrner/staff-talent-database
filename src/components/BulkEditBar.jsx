@@ -18,7 +18,7 @@ import {
 import { SaveOutlined, AddOutlined, RemoveOutlined, Visibility } from '@mui/icons-material';
 import TagSelector from './TagSelector';
 
-const DEFAULT_TAGS = ['Proven', 'Emerging', 'High Potential', 'Homegrown'];
+const DEFAULT_TAGS = ['Unproven', 'Emerging', 'High Potential', 'Proven'];
 
 const INTEREST_AREAS = [
   'Coaching',
@@ -87,7 +87,7 @@ const COUNTRIES = [
   'Brazil', 'Argentina', 'Colombia', 'Japan', 'Australia', 'Ghana', 'Poland', 'Ireland'
 ];
 
-function BulkEditBar({ selectedCount, onSave, onCancel, onAddToWatchlist }) {
+function BulkEditBar({ selectedCount, onSave, onCancel, onAddToWatchlist, isLeagueView = false }) {
   const [interestArea, setInterestArea] = useState('');
   const [roleType, setRoleType] = useState('');
   const [roles, setRoles] = useState([]);
@@ -434,6 +434,7 @@ function BulkEditBar({ selectedCount, onSave, onCancel, onAddToWatchlist }) {
         onChange={setTags}
         anchorEl={tagSelectorAnchor}
         onClose={() => setTagSelectorAnchor(null)}
+        isLeagueView={isLeagueView}
       />
     </Paper>
   );

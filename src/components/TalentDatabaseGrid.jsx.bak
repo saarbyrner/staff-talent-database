@@ -23,7 +23,6 @@ import {
   Visibility,
   VisibilityOutlined,
   InboxOutlined,
-  NotesOutlined,
 } from '@mui/icons-material';
 import staffData from '../data/staff_talent.json';
 import { generateInitialsImage } from '../utils/assetManager';
@@ -33,7 +32,6 @@ import TagSelector from './TagSelector';
 import TagManagementDrawer from './TagManagementDrawer';
 import TagApprovalDrawer from './TagApprovalDrawer';
 import ClubApprovalInbox from './ClubApprovalInbox';
-import NotesDrawer from './NotesDrawer';
 import '../styles/design-tokens.css';
 
 export const CustomToolbar = React.forwardRef((props, ref) => {
@@ -253,7 +251,7 @@ const LinkCell = ({ value, type, name = '' }) => {
   );
 };
 
-const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeagueView = false, onNotesClick, staffNotes = {}) => {
+const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeagueView = false) => {
   const watchlistColumn = isLeagueView ? {
     field: 'watchlistCount',
     headerName: 'Watchlist',
@@ -303,45 +301,8 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     }
   };
 
-  const notesColumn = {
-    field: 'notes',
-    headerName: '',
-    width: 60,
-    sortable: false,
-    filterable: false,
-    renderCell: (params) => {
-      const noteCount = staffNotes[params.row.id]?.length || 0;
-      return (
-        <Tooltip title={noteCount > 0 ? `${noteCount} private note${noteCount > 1 ? 's' : ''}` : "Add private note"}>
-          <IconButton
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              onNotesClick(params.row.id);
-            }}
-            sx={{
-              color: noteCount > 0 ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-              '&:hover': {
-                backgroundColor: 'var(--color-background-tertiary)',
-              }
-            }}
-          >
-            {noteCount > 0 ? (
-              <Badge badgeContent={noteCount} color="primary" max={99}>
-                <NotesOutlined fontSize="small" />
-              </Badge>
-            ) : (
-              <NotesOutlined fontSize="small" />
-            )}
-          </IconButton>
-        </Tooltip>
-      );
-    }
-  };
-
   return [
   watchlistColumn,
-  notesColumn,
   {
     field: 'picUrl',
     headerName: '',
@@ -760,7 +721,6 @@ const columnGroupingModel = [
     groupId: 'Contact Info',
     children: [
       { field: 'watchlist' },
-      { field: 'notes' },
       { field: 'picUrl' },
       { field: 'firstName' },
       { field: 'lastName' },
@@ -879,11 +839,6 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
   const [tagSelectorAnchor, setTagSelectorAnchor] = React.useState(null);
   const [selectedStaffForTags, setSelectedStaffForTags] = React.useState(null);
   const [tagManagementOpen, setTagManagementOpen] = React.useState(false);
-  
-  // Notes management state
-  const [notesDrawerOpen, setNotesDrawerOpen] = React.useState(false);
-  const [selectedStaffForNotes, setSelectedStaffForNotes] = React.useState(null);
-  const [staffNotes, setStaffNotes] = React.useState({});
   
   // Approval system state
   const [pendingApprovals, setPendingApprovals] = React.useState([
@@ -1056,57 +1011,6 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
     setSelectedStaffForTags(null);
   };
   
-  // Notes handlers
-  const handleNotesClick = (staffId) => {
-    const staff = filteredStaffData.find(s => s.id === staffId);
-    setSelectedStaffForNotes(staff);
-    setNotesDrawerOpen(true);
-  };
-  
-  const handleAddNote = (staffId, noteText) => {
-    const newNote = {
-      id: `note-${Date.now()}`,
-      staffId,
-      text: noteText,
-      authorName: 'Current User', // In real app, get from auth context
-      authorInitials: 'CU',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    
-    setStaffNotes(prev => ({
-      ...prev,
-      [staffId]: [...(prev[staffId] || []), newNote]
-    }));
-    
-    setToastMessage('Note added successfully');
-    setToastOpen(true);
-  };
-  
-  const handleUpdateNote = (staffId, noteId, newText) => {
-    setStaffNotes(prev => ({
-      ...prev,
-      [staffId]: (prev[staffId] || []).map(note =>
-        note.id === noteId
-          ? { ...note, text: newText, updatedAt: new Date().toISOString() }
-          : note
-      )
-    }));
-    
-    setToastMessage('Note updated successfully');
-    setToastOpen(true);
-  };
-  
-  const handleDeleteNote = (staffId, noteId) => {
-    setStaffNotes(prev => ({
-      ...prev,
-      [staffId]: (prev[staffId] || []).filter(note => note.id !== noteId)
-    }));
-    
-    setToastMessage('Note deleted successfully');
-    setToastOpen(true);
-  };
-  
   const handleUpdateTag = (oldTag, newTag) => {
     setLocalStaffData(prevData =>
       prevData.map(staff => ({
@@ -1126,7 +1030,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
   };
   
   // Approval handlers
-  const handleApproveTagChange = (approvalId, note = '') => {
+  const handleApproveTagChange = (approvalId) => {
     const approval = pendingApprovals.find(a => a.id === approvalId);
     if (approval) {
       // Apply the tag change
@@ -1136,32 +1040,21 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
         )
       );
       
-      // Update the sent approvals for the club (if we track those globally)
-      // For now, just remove from pending
+      // Remove from pending
       setPendingApprovals(prev => prev.filter(a => a.id !== approvalId));
       
-      // In a real app, you'd also update the approval in the club's sent list with the response
-      // setSentApprovals(prev => prev.map(a => 
-      //   a.id === approvalId ? { ...a, status: 'approved', responseMessage: note } : a
-      // ));
-      
-      setToastMessage(`Approved tag change for ${approval.staffName}${note ? ' with note' : ''}`);
+      setToastMessage(`Approved tag change for ${approval.staffName}`);
       setToastOpen(true);
     }
   };
   
-  const handleRejectTagChange = (approvalId, note = '') => {
+  const handleRejectTagChange = (approvalId) => {
     const approval = pendingApprovals.find(a => a.id === approvalId);
     if (approval) {
       // Remove from pending without applying
       setPendingApprovals(prev => prev.filter(a => a.id !== approvalId));
       
-      // In a real app, you'd update the approval in the club's sent list with the response
-      // setSentApprovals(prev => prev.map(a => 
-      //   a.id === approvalId ? { ...a, status: 'rejected', responseMessage: note } : a
-      // ));
-      
-      setToastMessage(`Rejected tag change for ${approval.staffName}${note ? ' with note' : ''}`);
+      setToastMessage(`Rejected tag change for ${approval.staffName}`);
       setToastOpen(true);
     }
   };
@@ -1250,18 +1143,11 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
     setSelectedRows([]);
   };
   
-  const columns = React.useMemo(() => createColumns(
-    (staffId, event) => {
-      if (event) {
-        handleTagsClick(staffId, event.currentTarget);
-      }
-    },
-    watchlistIds,
-    onAddToWatchlist,
-    isLeagueView,
-    handleNotesClick,
-    staffNotes
-  ), [watchlistIds, onAddToWatchlist, isLeagueView, staffNotes]);
+  const columns = React.useMemo(() => createColumns((staffId, event) => {
+    if (event) {
+      handleTagsClick(staffId, event.currentTarget);
+    }
+  }, watchlistIds, onAddToWatchlist, isLeagueView), [watchlistIds, onAddToWatchlist, isLeagueView]);
   
   const selectedStaff = selectedStaffForTags 
     ? filteredStaffData.find(s => s.id === selectedStaffForTags)
@@ -1325,36 +1211,21 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
           sentApprovals={sentApprovals}
         />
       )}
-      
-      {/* Notes Drawer */}
-      {selectedStaffForNotes && (
-        <NotesDrawer
-          open={notesDrawerOpen}
-          onClose={() => {
-            setNotesDrawerOpen(false);
-            setSelectedStaffForNotes(null);
-          }}
-          staffMember={selectedStaffForNotes}
-          notes={staffNotes[selectedStaffForNotes.id] || []}
-          onAddNote={handleAddNote}
-          onUpdateNote={handleUpdateNote}
-          onDeleteNote={handleDeleteNote}
-        />
-      )}
 
-      {/* Toast Notification */}
-      <Snackbar
-        open={toastOpen}
-        autoHideDuration={4000}
-        onClose={() => setToastOpen(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert onClose={() => setToastOpen(false)} severity="info" sx={{ width: '100%' }}>
-          {toastMessage}
-        </Alert>
-      </Snackbar>
-      <DataGrid
-        rows={filteredStaffData}
+      <>
+      {/* Toast Notification */
+        <Snackbar
+          open={toastOpen}
+          autoHideDuration={4000}
+          onClose={() => setToastOpen(false)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+          <Alert onClose={() => setToastOpen(false)} severity="info" sx={{ width: '100%' }}>
+            {toastMessage}
+          </Alert>
+        </Snackbar>
+        <DataGrid
+          rows={filteredStaffData}
         columns={columns}
         columnGroupingModel={columnGroupingModel}
         slots={{
@@ -1462,6 +1333,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
           }
         }}
       />
+      </>
     </Box>
   );
 }

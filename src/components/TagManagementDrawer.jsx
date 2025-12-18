@@ -18,7 +18,7 @@ import {
 import { CloseOutlined, EditOutlined, DeleteOutlined, SaveOutlined, AddOutlined } from '@mui/icons-material';
 import TagChip from './TagChip';
 
-const DEFAULT_TAGS = ['Proven', 'Emerging', 'High Potential', 'Homegrown'];
+const DEFAULT_TAGS = ['Unproven', 'Emerging', 'High Potential', 'Proven'];
 
 /**
  * TagManagementDrawer - Side panel for managing all tags globally
@@ -28,8 +28,9 @@ const DEFAULT_TAGS = ['Proven', 'Emerging', 'High Potential', 'Homegrown'];
  * @param {function} onUpdateTag - Callback to update a tag name across all staff
  * @param {function} onDeleteTag - Callback to delete a tag from all staff
  * @param {function} onAddTag - Callback to create a new tag
+ * @param {boolean} isLeagueView - Whether viewing as league admin (can create tags)
  */
-const TagManagementDrawer = ({ open, onClose, staffData, onUpdateTag, onDeleteTag, onAddTag }) => {
+const TagManagementDrawer = ({ open, onClose, staffData, onUpdateTag, onDeleteTag, onAddTag, isLeagueView = false }) => {
   const [editingTag, setEditingTag] = useState(null);
   const [editValue, setEditValue] = useState('');
   const [newTagName, setNewTagName] = useState('');
@@ -130,51 +131,55 @@ const TagManagementDrawer = ({ open, onClose, staffData, onUpdateTag, onDeleteTa
         
         <Divider sx={{ mb: 2 }} />
         
-        {/* Create New Tag */}
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="subtitle2" fontWeight={600} sx={{ mb: 1 }}>
-            Create New Tag
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Autocomplete
-              freeSolo
-              size="small"
-              options={DEFAULT_TAGS.filter(tag => !tagStats.find(t => t.name === tag))}
-              value={newTagName}
-              onInputChange={(event, newValue) => setNewTagName(newValue)}
-              sx={{ flex: 1 }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  placeholder="Enter tag name..."
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleCreateTag();
-                    }
-                  }}
+        {/* Create New Tag - Only for League View */}
+        {isLeagueView && (
+          <>
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="subtitle2" fontWeight={600} sx={{ mb: 1 }}>
+                Create New Tag
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Autocomplete
+                  freeSolo
+                  size="small"
+                  options={DEFAULT_TAGS.filter(tag => !tagStats.find(t => t.name === tag))}
+                  value={newTagName}
+                  onInputChange={(event, newValue) => setNewTagName(newValue)}
+                  sx={{ flex: 1 }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      placeholder="Enter tag name..."
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleCreateTag();
+                        }
+                      }}
+                    />
+                  )}
                 />
-              )}
-            />
-            <Button
-              variant="contained"
-              size="small"
-              onClick={handleCreateTag}
-              disabled={!newTagName.trim()}
-              sx={{
-                minWidth: 'auto',
-                px: 1.5,
-              }}
-            >
-              <AddOutlined fontSize="small" />
-            </Button>
-          </Box>
-          <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
-            Create a tag that can be applied to any staff member
-          </Typography>
-        </Box>
-        
-        <Divider sx={{ mb: 2 }} />
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={handleCreateTag}
+                  disabled={!newTagName.trim()}
+                  sx={{
+                    minWidth: 'auto',
+                    px: 1.5,
+                  }}
+                >
+                  <AddOutlined fontSize="small" />
+                </Button>
+              </Box>
+              <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+                Create a tag that can be applied to any staff member
+              </Typography>
+            </Box>
+            
+            <Divider sx={{ mb: 2 }} />
+          </>
+        )}
         
         {/* Tag List */}
         {tagStats.length === 0 ? (

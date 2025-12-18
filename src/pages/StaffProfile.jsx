@@ -9,13 +9,16 @@ import {
   Tab,
   Chip,
   IconButton,
-  Divider
+  Divider,
+  TextField,
+  Button,
 } from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
+import { ArrowBack, AddOutlined, DeleteOutlined, EditOutlined } from '@mui/icons-material';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import staffTalentData from '../data/staff_talent.json';
 import currentStaffData from '../data/users_staff.json';
 import { generateInitialsImage } from '../utils/assetManager';
+import { formatDistance } from 'date-fns';
 import '../styles/design-tokens.css';
 
 /**
@@ -28,6 +31,9 @@ function StaffProfile() {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState(0);
+  
+  // Notes state management
+  const [staffNotes, setStaffNotes] = useState({});
 
   // Determine if we're viewing from league context
   const isLeagueView = location.pathname.startsWith('/league');
@@ -55,6 +61,42 @@ function StaffProfile() {
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
+  };
+  
+  // Notes handlers
+  const handleAddNote = (staffId, noteText) => {
+    const newNote = {
+      id: `note-${Date.now()}`,
+      staffId,
+      text: noteText,
+      authorName: 'Current User',
+      authorInitials: 'CU',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    
+    setStaffNotes(prev => ({
+      ...prev,
+      [staffId]: [...(prev[staffId] || []), newNote]
+    }));
+  };
+  
+  const handleUpdateNote = (staffId, noteId, newText) => {
+    setStaffNotes(prev => ({
+      ...prev,
+      [staffId]: (prev[staffId] || []).map(note =>
+        note.id === noteId
+          ? { ...note, text: newText, updatedAt: new Date().toISOString() }
+          : note
+      )
+    }));
+  };
+  
+  const handleDeleteNote = (staffId, noteId) => {
+    setStaffNotes(prev => ({
+      ...prev,
+      [staffId]: (prev[staffId] || []).filter(note => note.id !== noteId)
+    }));
   };
 
   if (!staffMember) {
@@ -234,6 +276,7 @@ function StaffProfile() {
           <Tab label="Experience" />
           <Tab label="Qualifications" />
           <Tab label="Preferences" />
+          <Tab label="Notes" />
           {staffMember.source === 'current' && <Tab label="Employment" />}
         </Tabs>
       </Paper>
@@ -244,7 +287,16 @@ function StaffProfile() {
         {activeTab === 1 && <ExperienceTab staffMember={staffMember} />}
         {activeTab === 2 && <QualificationsTab staffMember={staffMember} />}
         {activeTab === 3 && <PreferencesTab staffMember={staffMember} />}
-        {activeTab === 4 && staffMember.source === 'current' && <EmploymentTab staffMember={staffMember} />}
+        {activeTab === 4 && (
+          <NotesTab
+            staffMember={staffMember}
+            notes={staffNotes[staffMember.id] || []}
+            onAddNote={handleAddNote}
+            onUpdateNote={handleUpdateNote}
+            onDeleteNote={handleDeleteNote}
+          />
+        )}
+        {activeTab === 5 && staffMember.source === 'current' && <EmploymentTab staffMember={staffMember} />}
       </Box>
     </Box>
   );
@@ -880,6 +932,217 @@ function EmploymentTab({ staffMember }) {
         )}
       </Box>
     </Paper>
+  );
+}
+
+function NotesTab({ staffMember, notes = [], onAddNote, onUpdateNote, onDeleteNote }) {
+  const [newNoteText, setNewNoteText] = useState('');
+  const [editingNoteId, setEditingNoteId] = useState(null);
+  const [editNoteText, setEditNoteText] = useState('');
+
+  const handleAddNote = () => {
+    if (newNoteText.trim()) {
+      onAddNote(staffMember.id, newNoteText.trim());
+      setNewNoteText('');
+    }
+  };
+
+  const handleStartEdit = (note) => {
+    setEditingNoteId(note.id);
+    setEditNoteText(note.text);
+  };
+
+  const handleSaveEdit = (noteId) => {
+    if (editNoteText.trim()) {
+      onUpdateNote(staffMember.id, noteId, editNoteText.trim());
+      setEditingNoteId(null);
+      setEditNoteText('');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingNoteId(null);
+    setEditNoteText('');
+  };
+
+  const handleDelete = (noteId) => {
+    if (window.confirm('Are you sure you want to delete this note?')) {
+      onDeleteNote(staffMember.id, noteId);
+    }
+  };
+
+  // Sort notes by date, newest first
+  const sortedNotes = [...notes].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      {/* Info Banner */}
+      <Paper
+        elevation={0}
+        sx={{
+          p: 2,
+          backgroundColor: 'var(--color-info-background)',
+          border: '1px solid var(--color-border-primary)',
+        }}
+      >
+        <Typography variant="body2" sx={{ color: 'var(--color-text-primary)', fontSize: '0.875rem' }}>
+          Notes are private to your organization and will not be shared with other clubs or the staff member.
+        </Typography>
+      </Paper>
+
+      {/* New Note Input */}
+      <Paper elevation={0} sx={{ p: 3, border: '1px solid var(--color-border-primary)' }}>
+        <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+          Add New Note
+        </Typography>
+        <TextField
+          fullWidth
+          multiline
+          rows={4}
+          placeholder="Enter your note here..."
+          value={newNoteText}
+          onChange={(e) => setNewNoteText(e.target.value)}
+          variant="outlined"
+          sx={{
+            mb: 2,
+            '& .MuiOutlinedInput-root': {
+              backgroundColor: 'var(--color-background-secondary)',
+            },
+          }}
+        />
+        <Button
+          variant="contained"
+          startIcon={<AddOutlined />}
+          onClick={handleAddNote}
+          disabled={!newNoteText.trim()}
+          sx={{
+            textTransform: 'none',
+            fontWeight: 600,
+          }}
+        >
+          Add Note
+        </Button>
+      </Paper>
+
+      {/* Notes List */}
+      <Box>
+        <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+          All Notes ({sortedNotes.length})
+        </Typography>
+
+        {sortedNotes.length === 0 ? (
+          <Paper
+            elevation={0}
+            sx={{
+              p: 4,
+              border: '1px solid var(--color-border-primary)',
+              textAlign: 'center',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            <Typography variant="body2">No notes yet</Typography>
+            <Typography variant="caption">Add your first note above</Typography>
+          </Paper>
+        ) : (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {sortedNotes.map((note) => (
+              <Paper
+                key={note.id}
+                elevation={0}
+                sx={{
+                  p: 3,
+                  border: '1px solid var(--color-border-primary)',
+                }}
+              >
+                {/* Note Header */}
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
+                  <Avatar
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      fontSize: '0.875rem',
+                      bgcolor: 'var(--color-primary)',
+                    }}
+                  >
+                    {note.authorInitials || 'U'}
+                  </Avatar>
+                  <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                    <Typography variant="body1" sx={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>
+                      {note.authorName || 'Unknown User'}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: 'var(--color-text-secondary)' }}>
+                      {formatDistance(new Date(note.createdAt), new Date(), { addSuffix: true })}
+                      {note.updatedAt && note.updatedAt !== note.createdAt && ' (edited)'}
+                    </Typography>
+                  </Box>
+                  {!editingNoteId && (
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <IconButton size="small" onClick={() => handleStartEdit(note)}>
+                        <EditOutlined fontSize="small" />
+                      </IconButton>
+                      <IconButton size="small" onClick={() => handleDelete(note.id)} color="error">
+                        <DeleteOutlined fontSize="small" />
+                      </IconButton>
+                    </Box>
+                  )}
+                </Box>
+
+                {/* Note Content */}
+                {editingNoteId === note.id ? (
+                  <Box>
+                    <TextField
+                      fullWidth
+                      multiline
+                      rows={4}
+                      value={editNoteText}
+                      onChange={(e) => setEditNoteText(e.target.value)}
+                      variant="outlined"
+                      size="small"
+                      sx={{
+                        mb: 2,
+                        '& .MuiOutlinedInput-root': {
+                          backgroundColor: 'var(--color-background-secondary)',
+                        },
+                      }}
+                    />
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Button
+                        size="small"
+                        variant="contained"
+                        onClick={() => handleSaveEdit(note.id)}
+                        sx={{ textTransform: 'none' }}
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={handleCancelEdit}
+                        sx={{ textTransform: 'none' }}
+                      >
+                        Cancel
+                      </Button>
+                    </Box>
+                  </Box>
+                ) : (
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: 'var(--color-text-primary)',
+                      whiteSpace: 'pre-wrap',
+                      wordBreak: 'break-word',
+                      pl: 7, // Indent to align with author name
+                    }}
+                  >
+                    {note.text}
+                  </Typography>
+                )}
+              </Paper>
+            ))}
+          </Box>
+        )}
+      </Box>
+    </Box>
   );
 }
 

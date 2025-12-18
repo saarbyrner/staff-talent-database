@@ -4,8 +4,10 @@ import { Box, Avatar, Typography, Chip, LinearProgress, Paper } from '@mui/mater
 import { DataGridPro as DataGrid } from '@mui/x-data-grid-pro';
 import { VisibilityOutlined } from '@mui/icons-material';
 import staffData from '../data/staff_talent.json';
+import currentStaffData from '../data/users_staff.json';
 import { generateInitialsImage } from '../utils/assetManager';
 import { CustomToolbar } from './TalentDatabaseGrid';
+import { applyFilters } from './DashboardFilters';
 
 // Helper to generate random stats
 const generateStats = (id) => {
@@ -42,27 +44,31 @@ const generateStats = (id) => {
   };
 };
 
-const CoachLeaderboard = () => {
+const CoachLeaderboard = ({ dashboardFilters = null }) => {
   const navigate = useNavigate();
+  
   // Enrich data with stats and filter for coaches
   const rows = useMemo(() => {
-    return staffData
+    // Apply dashboard filters first
+    const filtered = applyFilters(staffData, currentStaffData, dashboardFilters);
+    
+    return filtered
       .filter(staff => {
         // Filter for coaches
-        const role = staff.currentEmployer?.split('-')[1]?.trim() || staff.coachingRoles?.[0] || '';
+        const role = staff.currentEmployer?.split('-')[1]?.trim() || staff.coachingRoles?.[0] || staff.role || '';
         const isCoach = role.toLowerCase().includes('coach') || 
                         role.toLowerCase().includes('manager') || 
                         (staff.coachingRoles && staff.coachingRoles.length > 0);
         return isCoach;
       })
       .map((staff) => {
-        const stats = generateStats(staff.id);
+        const stats = generateStats(staff.id || String(staff.id));
         return {
           ...staff,
           ...stats,
         };
       });
-  }, []);
+  }, [dashboardFilters]);
 
   const columns = [
     // --- Profile ---
@@ -289,18 +295,18 @@ const CoachLeaderboard = () => {
 
   return (
     <Paper 
-      elevation={0} 
-      sx={{ 
-        height: 'calc(100vh - 100px)', 
-        width: '100%', 
-        bgcolor: '#ffffff',
-        border: '1px solid var(--color-border-primary)',
-        borderRadius: 1,
-        overflow: 'hidden',
-        mb: 4
-      }}
-    >
-      <DataGrid
+        elevation={0} 
+        sx={{ 
+          height: 'calc(100vh - 100px)', 
+          width: '100%', 
+          bgcolor: '#ffffff',
+          border: '1px solid var(--color-border-primary)',
+          borderRadius: 1,
+          overflow: 'hidden',
+          mb: 4
+        }}
+      >
+        <DataGrid
         rows={rows}
         columns={columns}
         initialState={{
@@ -339,6 +345,7 @@ const CoachLeaderboard = () => {
         }}
       />
     </Paper>
+
   );
 };
 

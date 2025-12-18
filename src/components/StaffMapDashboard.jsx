@@ -23,14 +23,17 @@ import {
   People, 
   Public, 
   TrendingUp,
-  SettingsOutlined
+  SettingsOutlined,
+  FilterList
 } from '@mui/icons-material';
 import * as d3 from 'd3';
 import * as d3Geo from 'd3-geo';
 import staffTalentData from '../data/staff_talent.json';
+import currentStaffData from '../data/users_staff.json';
 import worldGeoJson from '../data/world_map.json';
 import CoachLeaderboard from './CoachLeaderboard';
 import DashboardSettingsDrawer from './DashboardSettingsDrawer';
+import DashboardFilters, { applyFilters } from './DashboardFilters';
 import '../styles/design-tokens.css';
 
 // Default dashboard visibility settings
@@ -80,8 +83,10 @@ function StaffMapDashboard() {
   const [activeTab, setActiveTab] = useState(0);
   const chartRef = useRef(null);
   const chartContainerRef = useRef(null);
+  const [dashboardFilters, setDashboardFilters] = useState(null);
   const [settingsDrawerOpen, setSettingsDrawerOpen] = useState(false);
   const [dashboardSettings, setDashboardSettings] = useState(loadDashboardSettings);
+  const [filterSidebarOpen, setFilterSidebarOpen] = useState(true);
   
   // Check if we're in league view
   const isLeagueView = location.pathname.startsWith('/league');
@@ -172,12 +177,18 @@ function StaffMapDashboard() {
 
   // Filter staff data - Auto-updates when filters change or data is modified
   const filteredStaff = useMemo(() => {
-    return staffTalentData.filter(staff => {
+    // Apply dashboard filters first
+    let data = dashboardFilters 
+      ? applyFilters(staffTalentData, currentStaffData, dashboardFilters)
+      : staffTalentData;
+    
+    // Then apply legacy filters for backward compatibility
+    return data.filter(staff => {
       const countryMatch = selectedCountry === 'all' || staff.country === selectedCountry;
       const roleMatch = selectedRole === 'all' || staff.interestArea === selectedRole;
       return countryMatch && roleMatch;
     });
-  }, [selectedCountry, selectedRole]);
+  }, [selectedCountry, selectedRole, dashboardFilters]);
 
   const locations = useMemo(() => aggregateStaffByLocation(filteredStaff), [filteredStaff]);
 
@@ -430,7 +441,25 @@ function StaffMapDashboard() {
   };
 
   return (
-    <Box sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column', gap: 3, backgroundColor: '#fafafa' }}>
+    <Box sx={{ display: 'flex', height: '100%', position: 'relative' }}>
+      {/* Dashboard Filters Sidebar */}
+      <DashboardFilters 
+        onFilterChange={setDashboardFilters}
+        open={filterSidebarOpen}
+        onToggle={() => setFilterSidebarOpen(!filterSidebarOpen)}
+      />
+      
+      {/* Main Content Area */}
+      <Box sx={{ 
+        flex: 1,
+        height: '100%', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        backgroundColor: '#fafafa',
+        transition: 'margin-right 225ms cubic-bezier(0, 0, 0.2, 1) 0ms',
+        marginRight: filterSidebarOpen ? '280px' : 0
+      }}>
+      
       {/* Tabs */}
       <Paper
         elevation={0}
@@ -438,19 +467,13 @@ function StaffMapDashboard() {
           borderBottom: '1px solid var(--color-border-primary)',
           backgroundColor: 'var(--color-background-primary)',
           borderRadius: 0,
-          mx: -3,
-          mt: -3,
-          mb: 0,
-          position: 'relative',
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 3 }}>
           <Tabs 
             value={activeTab} 
             onChange={(e, newValue) => setActiveTab(newValue)}
             sx={{
-              flex: 1,
-              px: 3,
               '& .MuiTab-root': {
                 textTransform: 'none',
                 fontWeight: 500,
@@ -462,26 +485,43 @@ function StaffMapDashboard() {
               <Tab key={dashboard.id} label={dashboard.label} />
             ))}
           </Tabs>
-          {isLeagueView && (
-            <Tooltip title="Configure club view dashboards">
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {/* Filter Toggle Button */}
+            {!filterSidebarOpen && (
               <IconButton
-                onClick={() => setSettingsDrawerOpen(true)}
+                onClick={() => setFilterSidebarOpen(true)}
                 size="small"
-                sx={{ 
-                  mr: 2,
+                sx={{
                   color: 'var(--color-text-secondary)',
                   '&:hover': {
                     color: 'var(--color-primary)',
                   }
                 }}
               >
-                <SettingsOutlined fontSize="small" />
+                <FilterList fontSize="small" />
               </IconButton>
-            </Tooltip>
-          )}
+            )}
+            {isLeagueView && (
+              <Tooltip title="Configure club view dashboards">
+                <IconButton
+                  onClick={() => setSettingsDrawerOpen(true)}
+                  size="small"
+                  sx={{ 
+                    color: 'var(--color-text-secondary)',
+                    '&:hover': {
+                      color: 'var(--color-primary)',
+                    }
+                  }}
+                >
+                  <SettingsOutlined fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            )}
+          </Box>
         </Box>
       </Paper>
 
+      <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 3, flex: 1, overflow: 'auto' }}>
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box>
@@ -733,7 +773,7 @@ function StaffMapDashboard() {
 
       {/* Coach Leaderboard Tab */}
       {visibleDashboards[activeTab]?.id === 'coachLeaderboard' && (
-        <CoachLeaderboard />
+        <CoachLeaderboard dashboardFilters={dashboardFilters} />
       )}
 
       {/* Dashboard Settings Drawer */}
@@ -743,6 +783,8 @@ function StaffMapDashboard() {
         dashboardSettings={dashboardSettings}
         onUpdateSettings={handleUpdateSettings}
       />
+      </Box>
+      </Box>
     </Box>
   );
 }

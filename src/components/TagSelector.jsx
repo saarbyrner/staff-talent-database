@@ -16,7 +16,7 @@ import TagChip from './TagChip';
 /**
  * Default tag options
  */
-const DEFAULT_TAGS = ['Proven', 'Emerging', 'High Potential', 'Homegrown'];
+const DEFAULT_TAGS = ['Unproven', 'Emerging', 'High Potential', 'Proven'];
 
 /**
  * TagSelector component - Allows selecting from default tags and creating custom ones
@@ -25,8 +25,9 @@ const DEFAULT_TAGS = ['Proven', 'Emerging', 'High Potential', 'Homegrown'];
  * @param {number} maxTags - Maximum number of tags allowed (default: 5)
  * @param {object} anchorEl - Popover anchor element
  * @param {function} onClose - Close handler
+ * @param {boolean} isLeagueView - Whether viewing as league admin (can create custom tags)
  */
-const TagSelector = ({ selectedTags = [], onChange, maxTags = 5, anchorEl, onClose }) => {
+const TagSelector = ({ selectedTags = [], onChange, maxTags = 5, anchorEl, onClose, isLeagueView = false }) => {
   const [customTagInput, setCustomTagInput] = useState('');
   const open = Boolean(anchorEl);
   
@@ -146,42 +147,44 @@ const TagSelector = ({ selectedTags = [], onChange, maxTags = 5, anchorEl, onClo
           </Stack>
         </Box>
         
-        <Divider sx={{ my: 2 }} />
+        {isLeagueView && <Divider sx={{ my: 2 }} />}
         
-        {/* Custom Tag Input */}
-        <Box>
-          <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
-            Create Custom Tag
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <TextField
-              size="small"
-              placeholder="Enter tag name..."
-              value={customTagInput}
-              onChange={(e) => setCustomTagInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              disabled={atMaxTags}
-              fullWidth
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  fontSize: '0.875rem',
-                }
-              }}
-            />
-            <Button
-              variant="contained"
-              size="small"
-              onClick={handleAddCustomTag}
-              disabled={!customTagInput.trim() || atMaxTags}
-              sx={{
-                minWidth: 'auto',
-                px: 1.5,
-              }}
-            >
-              <AddOutlined fontSize="small" />
-            </Button>
+        {/* Custom Tag Input - Only for League View */}
+        {isLeagueView && (
+          <Box>
+            <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
+              Create Custom Tag
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <TextField
+                size="small"
+                placeholder="Enter tag name..."
+                value={customTagInput}
+                onChange={(e) => setCustomTagInput(e.target.value)}
+                onKeyPress={handleKeyPress}
+                disabled={atMaxTags}
+                fullWidth
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    fontSize: '0.875rem',
+                  }
+                }}
+              />
+              <Button
+                variant="contained"
+                size="small"
+                onClick={handleAddCustomTag}
+                disabled={!customTagInput.trim() || atMaxTags}
+                sx={{
+                  minWidth: 'auto',
+                  px: 1.5,
+                }}
+              >
+                <AddOutlined fontSize="small" />
+              </Button>
+            </Box>
           </Box>
-        </Box>
+        )}
       </Box>
     </Popover>
   );

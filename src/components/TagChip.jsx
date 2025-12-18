@@ -2,13 +2,14 @@ import React from 'react';
 import { Chip } from '@mui/material';
 
 /**
- * Tag color mapping - GitHub-style labels
+ * Tag color mapping - Green gradient system
+ * Light green (Unproven) -> Dark green (Proven)
  */
 const TAG_COLORS = {
-  'Proven': { bg: '#0E8A16', color: '#ffffff' },
-  'Emerging': { bg: '#1D76DB', color: '#ffffff' },
-  'High Potential': { bg: '#8250DF', color: '#ffffff' },
-  'Homegrown': { bg: '#FBCA04', color: '#000000' },
+  'Unproven': { bg: '#A5D6A7', color: '#1B5E20' },      // Light green
+  'Emerging': { bg: '#66BB6A', color: '#ffffff' },       // Medium-light green
+  'High Potential': { bg: '#43A047', color: '#ffffff' }, // Medium-dark green
+  'Proven': { bg: '#2E7D32', color: '#ffffff' },         // Dark green
 };
 
 /**
