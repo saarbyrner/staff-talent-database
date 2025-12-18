@@ -41,6 +41,7 @@ const generateStats = (id) => {
     ppda: (6 + random(9) * 10).toFixed(1), // 6.0 - 16.0
     u23Minutes: Math.floor(random(10) * 40), // 0-40%
     academyDebuts: Math.floor(random(11) * 12), // 0-11
+    eloRating: 1200 + Math.floor(random(12) * 600), // 1200-1800
   };
 };
 
@@ -290,6 +291,13 @@ const CoachLeaderboard = ({ dashboardFilters = null }) => {
           Debuts
         </Box>
       )
+    },
+    {
+      field: 'eloRating',
+      headerName: 'Elo Rating',
+      type: 'number',
+      width: 120,
+      valueGetter: (params) => params.row.eloRating || params.value,
     },
   ];
 

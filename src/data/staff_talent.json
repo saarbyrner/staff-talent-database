@@ -97,7 +97,8 @@
     "otherLicensesList": null,
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/101_coaching.pdf",
     "otherCertsDoc": null,
-    "profilePrivacy": "Public"
+    "profilePrivacy": "Public",
+    "eloRating": 1500
   },
   {
     "id": "102",
@@ -191,7 +192,8 @@
     "profilePrivacy": "Private",
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1600
   },
   {
     "id": "103",
@@ -282,7 +284,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1450
   },
   {
     "id": "104",
@@ -374,7 +377,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1400
   },
   {
     "id": "105",
@@ -467,7 +471,8 @@
     "profilePrivacy": "Private",
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1550
   },
   {
     "id": "106",
@@ -555,7 +560,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1300
   },
   {
     "id": "107",
@@ -642,7 +648,8 @@
     "profilePrivacy": "Private",
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1200
   },
   {
     "id": "108",
@@ -729,7 +736,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1250
   },
   {
     "id": "109",
@@ -810,7 +818,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1350
   },
   {
     "id": "110",
@@ -898,7 +907,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1650
   },
   {
     "id": "111",
@@ -990,7 +1000,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "112",
@@ -1078,7 +1089,8 @@
     "otherCertsDoc": "https://fake-s3.mls.com/certs/112_other.pdf",
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1750
   },
   {
     "id": "113",
@@ -1160,7 +1172,8 @@
     "otherCertsDoc": "https://fake-s3.mls.com/certs/113_other.pdf",
     "tags": [
       "High Potential"
-    ]
+    ],
+    "eloRating": 1200
   },
   {
     "id": "114",
@@ -1247,7 +1260,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "115",
@@ -1335,7 +1349,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1650
   },
   {
     "id": "116",
@@ -1429,7 +1444,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "117",
@@ -1521,7 +1537,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1550
   },
   {
     "id": "118",
@@ -1608,7 +1625,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1750
   },
   {
     "id": "119",
@@ -1698,7 +1716,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "120",
@@ -1779,7 +1798,7 @@
     "prevMlsSportingExp": true,
     "currentlyEmployed": true,
     "prevEmployer3": null,
-    "prevEmployer4": null,
+    "prevEmployer4": "FC Barcelona Academy - Technical Director (2016-2017)",
     "highestDegree": [
       "Bachelors Degree"
     ],
@@ -1793,7 +1812,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1650
   },
   {
     "id": "121",
@@ -1882,7 +1902,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "122",
@@ -1971,7 +1992,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1400
   },
   {
     "id": "123",
@@ -2065,7 +2087,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "124",
@@ -2165,7 +2188,8 @@
     "otherCertsDoc": "https://fake-s3.mls.com/certs/124_other.pdf",
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1750
   },
   {
     "id": "125",
@@ -2257,7 +2281,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "126",
@@ -2349,7 +2374,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1400
   },
   {
     "id": "127",
@@ -2385,10 +2411,7 @@
     "proCoachExp": true,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
-    "mlsClubsCoached": [
-      "Minnesota United FC",
-      "LAFC"
-    ],
+    "mlsClubsCoached": [],
     "nonMlsCoachExp": [
       "Argentine Primera head coach"
     ],
@@ -2436,7 +2459,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "128",
@@ -2508,7 +2532,7 @@
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
     "proSportingExpUpdate": true,
-    "prevMlsSportingExp": true,
+    "prevMlsSportingExp": false,
     "currentlyEmployed": true,
     "prevEmployer3": "Bayern Munich - Scout (2019-2021)",
     "prevEmployer4": null,
@@ -2525,7 +2549,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1300
   },
   {
     "id": "129",
@@ -2617,7 +2642,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1550
   },
   {
     "id": "130",
@@ -2653,9 +2679,7 @@
     "proCoachExp": true,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
-    "mlsClubsCoached": [
-      "Philadelphia Union"
-    ],
+    "mlsClubsCoached": [],
     "nonMlsCoachExp": [
       "Bundesliga youth coach"
     ],
@@ -2714,7 +2738,8 @@
     "otherCertsDoc": "https://fake-s3.mls.com/certs/130_other.pdf",
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1750
   },
   {
     "id": "131",
@@ -2804,7 +2829,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "132",
@@ -2890,7 +2916,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1200
   },
   {
     "id": "133",
@@ -2983,7 +3010,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "134",
@@ -3073,7 +3101,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "135",
@@ -3152,16 +3181,15 @@
       "PhD"
     ],
     "mlsProgramming": [],
-    "sportingDirectorCerts": [
-      "MIT Sports Analytics"
-    ],
+    "sportingDirectorCerts": [],
     "otherLicenses": false,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1750
   },
   {
     "id": "136",
@@ -3249,7 +3277,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1300
   },
   {
     "id": "137",
@@ -3335,7 +3364,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "138",
@@ -3426,7 +3456,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "139",
@@ -3509,7 +3540,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "140",
@@ -3599,7 +3631,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "141",
@@ -3691,7 +3724,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "142",
@@ -3727,9 +3761,7 @@
     "proCoachExp": true,
     "mlsCoachExp": false,
     "mlsCoachRoles": [],
-    "mlsClubsCoached": [
-      "Austin FC"
-    ],
+    "mlsClubsCoached": [],
     "nonMlsCoachExp": [
       "Bundesliga assistant coach"
     ],
@@ -3779,7 +3811,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "143",
@@ -3867,7 +3900,8 @@
     "otherCertsDoc": "https://fake-s3.mls.com/certs/143_other.pdf",
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "144",
@@ -3958,7 +3992,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "145",
@@ -4058,7 +4093,8 @@
     "otherCertsDoc": null,
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "146",
@@ -4143,7 +4179,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "High Potential"
-    ]
+    ],
+    "eloRating": 1750
   },
   {
     "id": "147",
@@ -4233,7 +4270,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "148",
@@ -4311,7 +4349,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Unproven"
-    ]
+    ],
+    "eloRating": 1200
   },
   {
     "id": "149",
@@ -4402,7 +4441,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "150",
@@ -4481,7 +4521,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Unproven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "151",
@@ -4569,7 +4610,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "152",
@@ -4647,7 +4689,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Unproven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "153",
@@ -4725,7 +4768,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "High Potential"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "154",
@@ -4808,7 +4852,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "High Potential"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "155",
@@ -4904,7 +4949,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "156",
@@ -4989,7 +5035,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "High Potential"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "157",
@@ -5065,7 +5112,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Unproven"
-    ]
+    ],
+    "eloRating": 1250
   },
   {
     "id": "158",
@@ -5148,7 +5196,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Unproven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "159",
@@ -5230,7 +5279,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Unproven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "160",
@@ -5312,7 +5362,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "161",
@@ -5395,7 +5446,8 @@
     "profilePrivacy": "Private",
     "tags": [
       "High Potential"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "162",
@@ -5478,7 +5530,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Unproven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "163",
@@ -5639,7 +5692,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "High Potential"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "165",
@@ -5733,7 +5787,8 @@
     "profilePrivacy": "Private",
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "166",
@@ -5764,7 +5819,7 @@
     "techRoles": [],
     "relocation": [
       "South",
-      "Northeast"
+      "Midwest"
     ],
     "proCoachExp": true,
     "mlsCoachExp": true,
@@ -5824,7 +5879,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Proven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "167",
@@ -5840,7 +5896,7 @@
     "gender": "Male",
     "ethnicity": "White / Caucasian",
     "hasAgent": true,
-    "agentName": "Michael Roberts",
+    "agentName": "Maria Rodriguez",
     "agencyName": "Premier Sports Agency",
     "proPlayerExp": true,
     "mlsPlayerExp": true,
@@ -5892,7 +5948,7 @@
     "prevMlsCoachExp": false,
     "mlsCoachingExpList": [],
     "proSportingExpUpdate": true,
-    "prevMlsSportingExp": false,
+    "prevMlsSportingExp": true,
     "currentlyEmployed": false,
     "highestDegree": [
       "Masters Degree"
@@ -5906,7 +5962,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "168",
@@ -5997,7 +6054,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "169",
@@ -6084,7 +6142,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Emerging"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "170",
@@ -6127,7 +6186,7 @@
     "mlsClubsSporting": [],
     "nonMlsSportingExp": [],
     "sportingVertical": [],
-    "currentEmployer": "Atlanta United FC - Academy Director (2024-Present)",
+    "currentEmployer": null,
     "prevEmployer1": "Houston Dynamo FC - Senior Scout (2018-2023)",
     "prevEmployer2": "Duke University - Senior Scout (2014-2017)",
     "prevEmployer3": "Borussia Dortmund - Youth Development Coach (2010-2013)",
@@ -6162,7 +6221,8 @@
     "profilePrivacy": "Private",
     "tags": [
       "Unproven"
-    ]
+    ],
+    "eloRating": 1250
   },
   {
     "id": "171",
@@ -6327,7 +6387,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Unproven"
-    ]
+    ],
+    "eloRating": 1500
   },
   {
     "id": "173",
@@ -6364,9 +6425,13 @@
       "Midwest"
     ],
     "proCoachExp": true,
-    "mlsCoachExp": false,
-    "mlsCoachRoles": [],
-    "mlsClubsCoached": [],
+    "mlsCoachExp": true,
+    "mlsCoachRoles": [
+      "MLS NEXT Academy Coaching Experience"
+    ],
+    "mlsClubsCoached": [
+      "Vancouver Whitecaps FC"
+    ],
     "nonMlsCoachExp": [
       "National Team Coaching Experience"
     ],

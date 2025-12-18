@@ -10,7 +10,10 @@ import {
   Drawer,
   IconButton,
   Typography,
-  Divider
+  Divider,
+  Autocomplete,
+  TextField,
+  Chip
 } from '@mui/material';
 import { Clear, FilterList, ChevronLeft } from '@mui/icons-material';
 import staffTalentData from '../data/staff_talent.json';
@@ -51,6 +54,7 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
   const [selectedCountry, setSelectedCountry] = useState('all');
   const [employmentStatus, setEmploymentStatus] = useState('all');
   const [trophiesRange, setTrophiesRange] = useState('all');
+  const [selectedStaff, setSelectedStaff] = useState([]);
 
   // Extract unique values from data for filter options
   const filterOptions = useMemo(() => {
@@ -106,11 +110,18 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
       if (staff.country) countries.add(staff.country);
     });
 
+    // Prepare staff list for selector
+    const staffList = staffTalentData.map(staff => ({
+      ...staff,
+      fullName: `${staff.firstName} ${staff.lastName}`
+    })).sort((a, b) => a.fullName.localeCompare(b.fullName));
+
     return {
       tags: Array.from(tags).sort(),
       roles: Array.from(roles).sort(),
       uefaBadges: Array.from(uefaBadges).sort(),
-      countries: Array.from(countries).sort()
+      countries: Array.from(countries).sort(),
+      staffList
     };
   }, []);
 
@@ -126,7 +137,8 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
       experienceRange: parseExperienceRange(experienceRange),
       countries: selectedCountry === 'all' ? [] : [selectedCountry],
       employmentStatus,
-      trophiesRange: parseTrophiesRange(trophiesRange)
+      trophiesRange: parseTrophiesRange(trophiesRange),
+      selectedStaff
     };
   };
 
@@ -156,7 +168,7 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
     if (onFilterChange) {
       onFilterChange(buildFilters());
     }
-  }, [staffType, location, watchlistStatus, selectedTag, selectedRole, selectedUEFABadge, experienceRange, selectedCountry, employmentStatus, trophiesRange, onFilterChange]);
+  }, [staffType, location, watchlistStatus, selectedTag, selectedRole, selectedUEFABadge, experienceRange, selectedCountry, employmentStatus, trophiesRange, selectedStaff, onFilterChange]);
 
   // Handle reset all filters
   const handleResetFilters = () => {
@@ -170,12 +182,14 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
     setSelectedCountry('all');
     setEmploymentStatus('all');
     setTrophiesRange('all');
+    setSelectedStaff([]);
   };
 
   // Check if any filters are active
   const hasActiveFilters = staffType !== 'all' || location !== 'all' || watchlistStatus !== 'all' ||
     selectedTag !== 'all' || selectedRole !== 'all' || selectedUEFABadge !== 'all' ||
-    experienceRange !== 'all' || selectedCountry !== 'all' || employmentStatus !== 'all' || trophiesRange !== 'all';
+    experienceRange !== 'all' || selectedCountry !== 'all' || employmentStatus !== 'all' || trophiesRange !== 'all' ||
+    selectedStaff.length > 0;
 
   return (
     <>
@@ -292,6 +306,39 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
                   <MenuItem value="unemployed">Free Agent</MenuItem>
                 </Select>
               </FormControl>
+
+              {/* Staff Selector */}
+              <Autocomplete
+                multiple
+                size="small"
+                options={filterOptions.staffList || []}
+                getOptionLabel={(option) => option.fullName}
+                value={selectedStaff}
+                onChange={(event, newValue) => setSelectedStaff(newValue)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Specific Staff"
+                    variant="outlined"
+                    placeholder="Select staff..."
+                    size="small"
+                  />
+                )}
+                renderTags={(value, getTagProps) =>
+                  value.slice(0, 2).map((option, index) => (
+                    <Chip
+                      label={option.fullName}
+                      size="small"
+                      {...getTagProps({ index })}
+                    />
+                  ))
+                }
+              />
+              {selectedStaff.length > 2 && (
+                <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, ml: 1.5 }}>
+                  +{selectedStaff.length - 2} more
+                </Typography>
+              )}
 
               <Divider />
 
@@ -606,6 +653,12 @@ export function applyFilters(staffData, currentStaffData, filters) {
         return true;
       });
     }
+  }
+
+  // Apply selected staff filter
+  if (filters.selectedStaff && filters.selectedStaff.length > 0) {
+    const selectedIds = filters.selectedStaff.map(s => s.id);
+    filtered = filtered.filter(staff => selectedIds.includes(staff.id));
   }
 
   return filtered;

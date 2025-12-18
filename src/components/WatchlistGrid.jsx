@@ -673,6 +673,21 @@ const createColumns = (onTagsClick, onRemoveFromWatchlist, onNotesClick, staffNo
       );
     }
   },
+  {
+    field: 'eloRating',
+    headerName: 'Elo Rating',
+    type: 'number',
+    width: 120,
+    valueGetter: (params) => params.row.eloRating || 1200, // Default Elo Rating
+  },
+  // Add spacing after the last column
+  {
+    field: 'spacer',
+    headerName: '',
+    width: 50,
+    sortable: false,
+    filterable: false,
+  },
 ];
 
 function WatchlistGrid({ watchlistIds, onRemoveFromWatchlist }) {
@@ -816,6 +831,7 @@ function WatchlistGrid({ watchlistIds, onRemoveFromWatchlist }) {
     );
   };
 
+  // Ensure only one Elo Rating column
   const columns = React.useMemo(() => createColumns(
     (staffId, event) => {
       if (event) {
@@ -923,6 +939,8 @@ function WatchlistGrid({ watchlistIds, onRemoveFromWatchlist }) {
               ppda: true,
               u23Minutes: true,
               academyDebuts: true,
+              eloRating: true,
+              spacer: false,
               location: false,
               state: false,
               workAuthUS: false,

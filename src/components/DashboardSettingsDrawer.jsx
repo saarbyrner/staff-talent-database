@@ -28,7 +28,7 @@ const DashboardSettingsDrawer = ({ open, onClose, dashboardSettings, onUpdateSet
     { id: 'originBreakdown', label: 'Origin Breakdown', description: 'Domestic vs. international talent comparison' },
     { id: 'qualificationStandards', label: 'Qualification Standards', description: 'Coaching license and credential trends' },
     { id: 'talentPipeline', label: 'Talent Pipeline', description: 'Tag progression and talent development pipeline' },
-    { id: 'coachLeaderboard', label: 'Coach Leaderboard', description: 'Performance metrics and staff rankings' },
+    { id: 'eloGraph', label: 'Elo Ratings', description: 'Top 20 staff by Elo rating' },
   ];
 
   const handleToggle = (dashboardId) => {

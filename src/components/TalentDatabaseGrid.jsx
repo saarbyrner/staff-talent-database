@@ -1005,6 +1005,21 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
       );
     }
   },
+  {
+    field: 'eloRating',
+    headerName: 'Elo Rating',
+    type: 'number',
+    width: 120,
+    valueGetter: (params) => params.row.eloRating || 1200,
+  },
+  {
+    field: 'spacer',
+    headerName: '',
+    width: 100,
+    sortable: false,
+    filterable: false,
+    disableColumnMenu: true,
+  },
 ];
 };
 
@@ -1250,6 +1265,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
       id: 'sent-4',
       staffId: '112',
       staffName: 'Daniel Chen',
+      clubName: 'LA Galaxy',
       oldTags: ['Proven'],
       newTags: ['High Potential'],
       timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(), // 12 hours ago
@@ -1259,6 +1275,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
       id: 'sent-5',
       staffId: '114',
       staffName: 'Anthony Lee',
+      clubName: 'Seattle Sounders FC',
       oldTags: ['High Potential'],
       newTags: ['Proven'],
       timestamp: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(), // 2 days ago
@@ -1531,6 +1548,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
     setSelectedRows([]);
   };
   
+  // Ensure only one Elo Rating column
   const columns = React.useMemo(() => createColumns(
     (staffId, event) => {
       if (event) {
@@ -1733,6 +1751,8 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
               ppda: false,
               u23Minutes: false,
               academyDebuts: false,
+              eloRating: true,
+              spacer: true,
             },
           },
         }}

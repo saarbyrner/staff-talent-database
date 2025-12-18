@@ -31,7 +31,7 @@ import * as d3Geo from 'd3-geo';
 import staffTalentData from '../data/staff_talent.json';
 import currentStaffData from '../data/users_staff.json';
 import worldGeoJson from '../data/world_map.json';
-import CoachLeaderboard from './CoachLeaderboard';
+import EloGraph from './EloGraph';
 import DashboardSettingsDrawer from './DashboardSettingsDrawer';
 import DashboardFilters, { applyFilters } from './DashboardFilters';
 import '../styles/design-tokens.css';
@@ -43,14 +43,15 @@ const DEFAULT_DASHBOARD_SETTINGS = {
   originBreakdown: true,
   qualificationStandards: true,
   talentPipeline: true,
-  coachLeaderboard: true,
+  eloGraph: true,
 };
 
 // Load dashboard settings from localStorage
 const loadDashboardSettings = () => {
   try {
     const saved = localStorage.getItem('dashboardSettings');
-    return saved ? JSON.parse(saved) : DEFAULT_DASHBOARD_SETTINGS;
+    // Merge saved settings with defaults to include any new dashboards
+    return saved ? { ...DEFAULT_DASHBOARD_SETTINGS, ...JSON.parse(saved) } : DEFAULT_DASHBOARD_SETTINGS;
   } catch (e) {
     return DEFAULT_DASHBOARD_SETTINGS;
   }
@@ -413,7 +414,7 @@ function StaffMapDashboard() {
     { id: 'originBreakdown', label: 'Origin Breakdown', description: 'Domestic vs. international talent comparison' },
     { id: 'qualificationStandards', label: 'Qualification Standards', description: 'Coaching license and credential trends' },
     { id: 'talentPipeline', label: 'Talent Pipeline', description: 'Tag progression and talent development pipeline' },
-    { id: 'coachLeaderboard', label: 'Coach Leaderboard', description: 'Performance metrics and staff rankings' },
+    { id: 'eloGraph', label: 'Elo Ratings', description: 'Top 20 staff by Elo rating' },
   ];
 
   // Filter visible dashboards based on settings (only in club view)
@@ -766,9 +767,9 @@ function StaffMapDashboard() {
         <TalentPipelineChart staffData={filteredStaff} />
       )}
 
-      {/* Coach Leaderboard Tab */}
-      {visibleDashboards[activeTab]?.id === 'coachLeaderboard' && (
-        <CoachLeaderboard dashboardFilters={dashboardFilters} />
+      {/* Elo Graph Tab */}
+      {visibleDashboards[activeTab]?.id === 'eloGraph' && (
+        <EloGraph dashboardFilters={dashboardFilters} />
       )}
 
       {/* Dashboard Settings Drawer */}
