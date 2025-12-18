@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { 
-  Box, 
-  Paper, 
-  Typography, 
-  Grid, 
-  Card, 
+import {
+  Box,
+  Paper,
+  Typography,
+  Grid,
+  Card,
   CardContent,
   Chip,
   Avatar,
@@ -18,10 +18,10 @@ import {
   Tab,
   IconButton
 } from '@mui/material';
-import { 
-  LocationOn, 
-  People, 
-  Public, 
+import {
+  LocationOn,
+  People,
+  Public,
   TrendingUp,
   SettingsOutlined,
   FilterList
@@ -36,6 +36,8 @@ import StaffSankeyDiagram, { StaffSankeySelectors } from './StaffSankeyDiagram';
 import StaffTimelineView from './StaffTimelineView';
 import DashboardSettingsDrawer from './DashboardSettingsDrawer';
 import DashboardFilters, { applyFilters } from './DashboardFilters';
+import EmploymentStabilityBarChart from './EmploymentStabilityBarChart';
+import { getEmploymentStabilityMatrix } from '../utils/employmentStabilityByTeam';
 import '../styles/design-tokens.css';
 
 // Default dashboard visibility settings
@@ -92,11 +94,11 @@ function StaffMapDashboard() {
   const [settingsDrawerOpen, setSettingsDrawerOpen] = useState(false);
   const [dashboardSettings, setDashboardSettings] = useState(loadDashboardSettings);
   const [filterSidebarOpen, setFilterSidebarOpen] = useState(true);
-  
+
   // Sankey diagram state
   const [sankeySourceField, setSankeySourceField] = useState('tags');
   const [sankeyTargetField, setSankeyTargetField] = useState('role');
-  
+
   // Sankey field options
   const sankeyFieldOptions = [
     { value: 'tags', label: 'Tags' },
@@ -111,7 +113,7 @@ function StaffMapDashboard() {
     { value: 'employmentStatus', label: 'Employment Status' },
     { value: 'trophies', label: 'Trophy Count' }
   ];
-  
+
   // Check if we're in league view
   const isLeagueView = location.pathname.startsWith('/league');
 
@@ -177,42 +179,49 @@ function StaffMapDashboard() {
 
     data.forEach(staff => {
       const city = staff.city;
+      if (!city) return;
+
       const coords = cityCoordinates[city];
-      
+
       if (coords) {
-        const key = `${city}-${staff.country}`;
-        if (!locationMap.has(key)) {
-          locationMap.set(key, {
+        if (!locationMap.has(city)) {
+          locationMap.set(city, {
+            ...coords,
             city,
-            country: staff.country,
-            lat: coords.lat,
-            lon: coords.lon,
-            staff: [],
-            count: 0
+            count: 0,
+            staff: []
           });
         }
-        locationMap.get(key).staff.push(staff);
-        locationMap.get(key).count++;
+
+        const loc = locationMap.get(city);
+        loc.count += 1;
+        loc.staff.push(staff);
       }
     });
 
     return Array.from(locationMap.values());
   };
 
-  // Filter staff data - Auto-updates when filters change or data is modified
+  // Filter staff based on active filters
   const filteredStaff = useMemo(() => {
-    // Apply dashboard filters first
-    let data = dashboardFilters 
-      ? applyFilters(staffTalentData, currentStaffData, dashboardFilters)
-      : staffTalentData;
-    
-    // Then apply legacy filters for backward compatibility
-    return data.filter(staff => {
-      const countryMatch = selectedCountry === 'all' || staff.country === selectedCountry;
-      const roleMatch = selectedRole === 'all' || staff.interestArea === selectedRole;
-      return countryMatch && roleMatch;
-    });
-  }, [selectedCountry, selectedRole, dashboardFilters]);
+    let data = staffTalentData;
+
+    // Apply dashboard filters
+    if (dashboardFilters) {
+      data = applyFilters(data, dashboardFilters);
+    }
+
+    // Apply local filters
+    if (selectedCountry !== 'all') {
+      data = data.filter(staff => staff.country === selectedCountry);
+    }
+
+    if (selectedRole !== 'all') {
+      data = data.filter(staff => staff.interestArea === selectedRole);
+    }
+
+    return data;
+  }, [dashboardFilters, selectedCountry, selectedRole]);
 
   const locations = useMemo(() => aggregateStaffByLocation(filteredStaff), [filteredStaff]);
 
@@ -231,25 +240,25 @@ function StaffMapDashboard() {
     {
       label: 'Total Staff',
       value: stats.totalStaff,
-      icon: <People />, 
+      icon: <People />,
       iconColor: 'var(--color-chart-2)'
     },
     {
       label: 'Locations',
       value: stats.totalLocations,
-      icon: <LocationOn />, 
+      icon: <LocationOn />,
       iconColor: 'var(--color-chart-3)'
     },
     {
       label: 'Countries',
       value: stats.countries,
-      icon: <Public />, 
+      icon: <Public />,
       iconColor: 'var(--color-chart-4)'
     },
     {
       label: 'Top Location',
       value: stats.topLocation?.city || 'N/A',
-      icon: <TrendingUp />, 
+      icon: <TrendingUp />,
       iconColor: 'var(--color-primary)'
     }
   ];
@@ -261,19 +270,19 @@ function StaffMapDashboard() {
   // Handle resize
   useEffect(() => {
     if (!containerRef.current) return;
-    
+
     const updateDimensions = () => {
       if (containerRef.current) {
         const width = containerRef.current.clientWidth - 32; // Account for padding
         setDimensions({ width: width > 0 ? width : 1000, height: 500 });
       }
     };
-    
+
     updateDimensions();
-    
+
     const resizeObserver = new ResizeObserver(updateDimensions);
     resizeObserver.observe(containerRef.current);
-    
+
     return () => resizeObserver.disconnect();
   }, []);
 
@@ -290,13 +299,13 @@ function StaffMapDashboard() {
 
     // Get or create SVG
     let svg = d3.select(svgRef.current);
-    
+
     // Store current transform before clearing
     const currentTransform = zoomRef.current || d3.zoomIdentity;
-    
+
     // Clear previous content
     svg.selectAll('*').remove();
-    
+
     svg
       .attr('width', width)
       .attr('height', height)
@@ -325,7 +334,7 @@ function StaffMapDashboard() {
 
     // Draw countries from GeoJSON
     const pathGenerator = d3Geo.geoPath().projection(projection);
-    
+
     g.selectAll('path')
       .data(worldGeoJson.features)
       .enter()
@@ -400,26 +409,26 @@ function StaffMapDashboard() {
       .on('zoom', (event) => {
         const transform = event.transform;
         g.attr('transform', transform);
-        
+
         // Scale circles and stroke inversely to maintain consistent visual size
         const scale = transform.k;
         markers.selectAll('circle')
           .attr('r', d => sizeScale(d.count) / scale)
           .attr('stroke-width', 2 / scale);
-        
+
         markers.selectAll('text')
           .attr('font-size', d => Math.max(10, Math.min(16, sizeScale(d.count) / 2)) / scale);
-        
+
         zoomRef.current = event.transform;
       });
 
     svg.call(zoom);
-    
+
     // Restore previous zoom state if it exists
     if (currentTransform && (currentTransform.k !== 1 || currentTransform.x !== 0 || currentTransform.y !== 0)) {
       svg.call(zoom.transform, currentTransform);
     }
-    
+
     // Add double-click to reset zoom
     svg.on('dblclick.zoom', () => {
       svg.transition()
@@ -444,8 +453,8 @@ function StaffMapDashboard() {
 
   // Filter visible dashboards based on settings (only in club view)
   // League view always shows all dashboards
-  const visibleDashboards = isLeagueView 
-    ? allDashboards 
+  const visibleDashboards = isLeagueView
+    ? allDashboards
     : allDashboards.filter(dashboard => dashboardSettings[dashboard.id]);
 
   // Ensure activeTab is within bounds of visible dashboards
@@ -464,371 +473,369 @@ function StaffMapDashboard() {
   return (
     <Box sx={{ display: 'flex', height: '100%', position: 'relative' }}>
       {/* Dashboard Filters Sidebar */}
-      <DashboardFilters 
+      <DashboardFilters
         onFilterChange={setDashboardFilters}
         open={filterSidebarOpen}
         onToggle={() => setFilterSidebarOpen(!filterSidebarOpen)}
       />
-      
+
       {/* Main Content Area */}
-      <Box sx={{ 
+      <Box sx={{
         flex: 1,
-        height: '100%', 
-        display: 'flex', 
-        flexDirection: 'column', 
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
         backgroundColor: '#fafafa',
         transition: 'margin-right 225ms cubic-bezier(0, 0, 0.2, 1) 0ms',
         marginRight: filterSidebarOpen ? '280px' : 0
       }}>
-      
-      {/* Tabs */}
-      <Paper
-        elevation={0}
-        sx={{
-          borderBottom: '1px solid var(--color-border-primary)',
-          backgroundColor: 'var(--color-background-primary)',
-          borderRadius: 0,
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 3 }}>
-          <Tabs 
-            value={activeTab} 
-            onChange={(e, newValue) => setActiveTab(newValue)}
-            sx={{
-              '& .MuiTab-root': {
-                textTransform: 'none',
-                fontWeight: 500,
-                fontSize: '0.875rem',
-              }
-            }}
-          >
-            {visibleDashboards.map(dashboard => (
-              <Tab key={dashboard.id} label={dashboard.label} />
-            ))}
-          </Tabs>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            {/* Filter Toggle Button */}
-            {!filterSidebarOpen && (
-              <IconButton
-                onClick={() => setFilterSidebarOpen(true)}
-                size="small"
-                sx={{
-                  color: 'var(--color-text-secondary)',
-                  '&:hover': {
-                    color: 'var(--color-primary)',
-                  }
-                }}
-              >
-                <FilterList fontSize="small" />
-              </IconButton>
-            )}
-            {isLeagueView && (
-              <Tooltip title="Configure club view dashboards">
+
+        {/* Tabs */}
+        <Paper
+          elevation={0}
+          sx={{
+            borderBottom: '1px solid var(--color-border-primary)',
+            backgroundColor: 'var(--color-background-primary)',
+            borderRadius: 0,
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 3 }}>
+            <Tabs
+              value={activeTab}
+              onChange={(e, newValue) => setActiveTab(newValue)}
+              sx={{
+                '& .MuiTab-root': {
+                  textTransform: 'none',
+                  fontWeight: 500,
+                  fontSize: '0.875rem',
+                }
+              }}
+            >
+              {visibleDashboards.map(dashboard => (
+                <Tab key={dashboard.id} label={dashboard.label} />
+              ))}
+            </Tabs>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              {/* Filter Toggle Button */}
+              {!filterSidebarOpen && (
                 <IconButton
-                  onClick={() => setSettingsDrawerOpen(true)}
+                  onClick={() => setFilterSidebarOpen(true)}
                   size="small"
-                  sx={{ 
+                  sx={{
                     color: 'var(--color-text-secondary)',
                     '&:hover': {
                       color: 'var(--color-primary)',
                     }
                   }}
                 >
-                  <SettingsOutlined fontSize="small" />
+                  <FilterList fontSize="small" />
                 </IconButton>
-              </Tooltip>
-            )}
-          </Box>
-        </Box>
-      </Paper>
-
-      <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 3, flex: 1, overflow: 'auto' }}>
-      {/* Header */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Box>
-          <Typography 
-            variant="h5" 
-            sx={{ 
-              fontWeight: 700, 
-              color: 'var(--color-primary)',
-              mb: 0.5
-            }}
-          >
-            {visibleDashboards[activeTab]?.label || 'Dashboard'}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {visibleDashboards[activeTab]?.description || ''}
-          </Typography>
-        </Box>
-
-        {/* Filters/Selectors based on active tab */}
-        {visibleDashboards[activeTab]?.id === 'locationAnalysis' && (
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <FormControl size="small" sx={{ minWidth: 150 }}>
-              <InputLabel>Country</InputLabel>
-              <Select
-                value={selectedCountry}
-                onChange={(e) => setSelectedCountry(e.target.value)}
-                label="Country"
-              >
-                <MenuItem value="all">All Countries</MenuItem>
-                {countries.slice(1).map(country => (
-                  <MenuItem key={country} value={country}>{country}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <FormControl size="small" sx={{ minWidth: 180 }}>
-              <InputLabel>Role</InputLabel>
-              <Select
-                value={selectedRole}
-                onChange={(e) => setSelectedRole(e.target.value)}
-                label="Role"
-              >
-                <MenuItem value="all">All Roles</MenuItem>
-                {roles.slice(1).map(role => (
-                  <MenuItem key={role} value={role}>{role}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-        )}
-
-        {/* Sankey Selectors - Only show on Data Flow tab */}
-        {visibleDashboards[activeTab]?.id === 'dataFlow' && (
-          <StaffSankeySelectors 
-            sourceField={sankeySourceField}
-            setSourceField={setSankeySourceField}
-            targetField={sankeyTargetField}
-            setTargetField={setSankeyTargetField}
-            fieldOptions={sankeyFieldOptions}
-          />
-        )}
-      </Box>
-
-      {/* Location Analysis Tab */}
-      {visibleDashboards[activeTab]?.id === 'locationAnalysis' && (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          {/* Stats Cards */}
-          <Grid container spacing={2}>
-        {statCards.map(({ label, value, icon, iconColor }) => (
-          <Grid item xs={12} sm={6} md={3} key={label}>
-            <Card
-              elevation={0}
-              sx={{
-                border: '1px solid var(--color-border-primary)',
-                minHeight: 84,
-                display: 'flex',
-                flexDirection: 'column'
-              }}
-            >
-              <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
-                <Avatar sx={{ bgcolor: iconColor, width: 40, height: 40 }}>
-                  {icon}
-                </Avatar>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
-                    {value}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {label}
-                  </Typography>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-
-      {/* Map */}
-      <Paper 
-        ref={containerRef}
-        elevation={0} 
-        sx={{ 
-          flex: 1,
-          border: '1px solid var(--color-border-primary)',
-          borderRadius: 1,
-          p: 2,
-          position: 'relative',
-          overflow: 'hidden',
-          backgroundColor: '#ffffff',
-          minHeight: 500
-        }}
-      >
-        <svg 
-          ref={svgRef} 
-          style={{ 
-            width: '100%', 
-            height: '500px',
-            display: 'block'
-          }}
-        />
-        {locations.length === 0 && (
-          <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-            <Typography color="text.secondary" variant="body2">No staff locations match current filters</Typography>
-          </Box>
-        )}
-
-        {/* Hover Tooltip */}
-        {hoveredLocation && (
-          <Paper
-            elevation={3}
-            sx={{
-              position: 'absolute',
-              top: 20,
-              right: 20,
-              p: 2,
-              maxWidth: 300,
-              zIndex: 1000,
-              border: '1px solid var(--color-border-primary)'
-            }}
-          >
-            <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-              {hoveredLocation.city}, {hoveredLocation.country}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-              {hoveredLocation.count} staff member{hoveredLocation.count !== 1 ? 's' : ''}
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              {hoveredLocation.staff.slice(0, 5).map((staff, idx) => (
-                <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Avatar
-                    src={staff.picUrl}
+              )}
+              {isLeagueView && (
+                <Tooltip title="Configure club view dashboards">
+                  <IconButton
+                    onClick={() => setSettingsDrawerOpen(true)}
+                    size="small"
                     sx={{
-                      width: 24,
-                      height: 24,
-                      fontSize: '0.7rem',
-                      bgcolor: 'var(--color-primary)',
-                      color: '#ffffff'
+                      color: 'var(--color-text-secondary)',
+                      '&:hover': {
+                        color: 'var(--color-primary)',
+                      }
                     }}
                   >
-                    {staff.firstName?.[0]}{staff.lastName?.[0]}
-                  </Avatar>
-                  <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
-                    {staff.firstName} {staff.lastName}
-                  </Typography>
-                  <Chip
-                    label={staff.interestArea}
-                    size="small"
-                    sx={{ 
-                      ml: 'auto',
-                      height: 20,
-                      fontSize: '0.7rem',
-                      bgcolor: 'var(--color-background-secondary)',
-                      color: 'var(--color-text-secondary)'
-                    }}
-                  />
-                </Box>
-              ))}
-              {hoveredLocation.staff.length > 5 && (
-                <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
-                  +{hoveredLocation.staff.length - 5} more
-                </Typography>
+                    <SettingsOutlined fontSize="small" />
+                  </IconButton>
+                </Tooltip>
               )}
-            </Box>
-          </Paper>
-        )}
-
-        {/* Legend */}
-        <Paper
-          elevation={0}
-          sx={{
-            position: 'absolute',
-            bottom: 20,
-            left: 20,
-            p: 2,
-            bgcolor: 'rgba(255, 255, 255, 0.95)',
-            border: '1px solid var(--color-border-primary)'
-          }}
-        >
-          <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-            Staff Count
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Box
-                sx={{
-                  width: 12,
-                  height: 12,
-                  borderRadius: '50%',
-                  bgcolor: 'var(--color-chart-2)',
-                  border: '1px solid #ffffff'
-                }}
-              />
-              <Typography variant="caption">Low</Typography>
-            </Box>
-            <Box
-              sx={{
-                width: 60,
-                height: 6,
-                background: 'linear-gradient(to right, var(--color-chart-2), var(--color-primary))',
-                borderRadius: 1
-              }}
-            />
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Box
-                sx={{
-                  width: 20,
-                  height: 20,
-                  borderRadius: '50%',
-                  bgcolor: 'var(--color-primary)',
-                  border: '1px solid #ffffff'
-                }}
-              />
-              <Typography variant="caption">High</Typography>
             </Box>
           </Box>
         </Paper>
-      </Paper>
+
+        <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 3, flex: 1, overflow: 'auto' }}>
+          {/* Header */}
+          <Box sx={{ mb: 2 }}>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 700,
+                color: 'var(--color-primary)',
+                mb: 0.5
+              }}
+            >
+              {visibleDashboards[activeTab]?.label || 'Dashboard'}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {visibleDashboards[activeTab]?.description || ''}
+            </Typography>
+          </Box>
+
+          {/* Filters/Selectors based on active tab */}
+          {visibleDashboards[activeTab]?.id === 'locationAnalysis' && (
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <FormControl size="small" sx={{ minWidth: 150 }}>
+                <InputLabel>Country</InputLabel>
+                <Select
+                  value={selectedCountry}
+                  onChange={(e) => setSelectedCountry(e.target.value)}
+                  label="Country"
+                >
+                  <MenuItem value="all">All Countries</MenuItem>
+                  {countries.slice(1).map(country => (
+                    <MenuItem key={country} value={country}>{country}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <FormControl size="small" sx={{ minWidth: 180 }}>
+                <InputLabel>Role</InputLabel>
+                <Select
+                  value={selectedRole}
+                  onChange={(e) => setSelectedRole(e.target.value)}
+                  label="Role"
+                >
+                  <MenuItem value="all">All Roles</MenuItem>
+                  {roles.slice(1).map(role => (
+                    <MenuItem key={role} value={role}>{role}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+          )}
+
+          {/* Sankey Selectors - Only show on Data Flow tab */}
+          {visibleDashboards[activeTab]?.id === 'dataFlow' && (
+            <StaffSankeySelectors
+              sourceField={sankeySourceField}
+              setSourceField={setSankeySourceField}
+              targetField={sankeyTargetField}
+              setTargetField={setSankeyTargetField}
+              fieldOptions={sankeyFieldOptions}
+            />
+          )}
+
+          {/* Location Analysis Tab */}
+          {visibleDashboards[activeTab]?.id === 'locationAnalysis' && (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              {/* Stats Cards */}
+              <Grid container spacing={2}>
+                {statCards.map(({ label, value, icon, iconColor }) => (
+                  <Grid item xs={12} sm={6} md={3} key={label}>
+                    <Card
+                      elevation={0}
+                      sx={{
+                        border: '1px solid var(--color-border-primary)',
+                        minHeight: 84,
+                        display: 'flex',
+                        flexDirection: 'column'
+                      }}
+                    >
+                      <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+                        <Avatar sx={{ bgcolor: iconColor, width: 40, height: 40 }}>
+                          {icon}
+                        </Avatar>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                          <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                            {value}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {label}
+                          </Typography>
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+
+              {/* Map */}
+              <Paper
+                ref={containerRef}
+                elevation={0}
+                sx={{
+                  flex: 1,
+                  border: '1px solid var(--color-border-primary)',
+                  borderRadius: 1,
+                  p: 2,
+                  position: 'relative',
+                  overflow: 'hidden',
+                  backgroundColor: '#ffffff',
+                  minHeight: 500
+                }}
+              >
+                <svg
+                  ref={svgRef}
+                  style={{
+                    width: '100%',
+                    height: '500px',
+                    display: 'block'
+                  }}
+                />
+                {locations.length === 0 && (
+                  <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+                    <Typography color="text.secondary" variant="body2">No staff locations match current filters</Typography>
+                  </Box>
+                )}
+
+                {/* Hover Tooltip */}
+                {hoveredLocation && (
+                  <Paper
+                    elevation={3}
+                    sx={{
+                      position: 'absolute',
+                      top: 20,
+                      right: 20,
+                      p: 2,
+                      maxWidth: 300,
+                      zIndex: 1000,
+                      border: '1px solid var(--color-border-primary)'
+                    }}
+                  >
+                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+                      {hoveredLocation.city}, {hoveredLocation.country}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+                      {hoveredLocation.count} staff member{hoveredLocation.count !== 1 ? 's' : ''}
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                      {hoveredLocation.staff.slice(0, 5).map((staff, idx) => (
+                        <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Avatar
+                            src={staff.picUrl}
+                            sx={{
+                              width: 24,
+                              height: 24,
+                              fontSize: '0.7rem',
+                              bgcolor: 'var(--color-primary)',
+                              color: '#ffffff'
+                            }}
+                          >
+                            {staff.firstName?.[0]}{staff.lastName?.[0]}
+                          </Avatar>
+                          <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
+                            {staff.firstName} {staff.lastName}
+                          </Typography>
+                          <Chip
+                            label={staff.interestArea}
+                            size="small"
+                            sx={{
+                              ml: 'auto',
+                              height: 20,
+                              fontSize: '0.7rem',
+                              bgcolor: 'var(--color-background-secondary)',
+                              color: 'var(--color-text-secondary)'
+                            }}
+                          />
+                        </Box>
+                      ))}
+                      {hoveredLocation.staff.length > 5 && (
+                        <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
+                          +{hoveredLocation.staff.length - 5} more
+                        </Typography>
+                      )}
+                    </Box>
+                  </Paper>
+                )}
+
+                {/* Legend */}
+                <Paper
+                  elevation={0}
+                  sx={{
+                    position: 'absolute',
+                    bottom: 20,
+                    left: 20,
+                    p: 2,
+                    bgcolor: 'rgba(255, 255, 255, 0.95)',
+                    border: '1px solid var(--color-border-primary)'
+                  }}
+                >
+                  <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
+                    Staff Count
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      <Box
+                        sx={{
+                          width: 12,
+                          height: 12,
+                          borderRadius: '50%',
+                          bgcolor: 'var(--color-chart-2)',
+                          border: '1px solid #ffffff'
+                        }}
+                      />
+                      <Typography variant="caption">Low</Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        width: 60,
+                        height: 6,
+                        background: 'linear-gradient(to right, var(--color-chart-2), var(--color-primary))',
+                        borderRadius: 1
+                      }}
+                    />
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      <Box
+                        sx={{
+                          width: 20,
+                          height: 20,
+                          borderRadius: '50%',
+                          bgcolor: 'var(--color-primary)',
+                          border: '1px solid #ffffff'
+                        }}
+                      />
+                      <Typography variant="caption">High</Typography>
+                    </Box>
+                  </Box>
+                </Paper>
+              </Paper>
+            </Box>
+          )}
+
+          {/* Employment Stability Tab */}
+          {visibleDashboards[activeTab]?.id === 'employmentStability' && (
+            <EmploymentStabilityChart staffData={filteredStaff} />
+          )}
+
+          {/* Origin Breakdown Tab */}
+          {visibleDashboards[activeTab]?.id === 'originBreakdown' && (
+            <OriginBreakdownChart staffData={filteredStaff} />
+          )}
+
+          {/* Qualification Standards Tab */}
+          {visibleDashboards[activeTab]?.id === 'qualificationStandards' && (
+            <QualificationStandardsChart staffData={filteredStaff} />
+          )}
+
+          {/* Talent Pipeline Tab */}
+          {visibleDashboards[activeTab]?.id === 'talentPipeline' && (
+            <TalentPipelineChart staffData={filteredStaff} />
+          )}
+
+          {/* Data Flow Tab */}
+          {visibleDashboards[activeTab]?.id === 'dataFlow' && (
+            <StaffSankeyDiagram
+              sourceField={sankeySourceField}
+              targetField={sankeyTargetField}
+            />
+          )}
+
+          {/* Timeline View Tab */}
+          {visibleDashboards[activeTab]?.id === 'timelineView' && (
+            <StaffTimelineView />
+          )}
+
+          {/* Elo Graph Tab */}
+          {visibleDashboards[activeTab]?.id === 'eloGraph' && (
+            <EloGraph dashboardFilters={dashboardFilters} />
+          )}
+
+          {/* Dashboard Settings Drawer */}
+          <DashboardSettingsDrawer
+            open={settingsDrawerOpen}
+            onClose={() => setSettingsDrawerOpen(false)}
+            dashboardSettings={dashboardSettings}
+            onUpdateSettings={handleUpdateSettings}
+          />
         </Box>
-      )}
-
-      {/* Employment Stability Tab */}
-      {visibleDashboards[activeTab]?.id === 'employmentStability' && (
-        <EmploymentStabilityChart staffData={filteredStaff} />
-      )}
-
-      {/* Origin Breakdown Tab */}
-      {visibleDashboards[activeTab]?.id === 'originBreakdown' && (
-        <OriginBreakdownChart staffData={filteredStaff} />
-      )}
-
-      {/* Qualification Standards Tab */}
-      {visibleDashboards[activeTab]?.id === 'qualificationStandards' && (
-        <QualificationStandardsChart staffData={filteredStaff} />
-      )}
-
-      {/* Talent Pipeline Tab */}
-      {visibleDashboards[activeTab]?.id === 'talentPipeline' && (
-        <TalentPipelineChart staffData={filteredStaff} />
-      )}
-
-      {/* Data Flow Tab */}
-      {visibleDashboards[activeTab]?.id === 'dataFlow' && (
-        <StaffSankeyDiagram 
-          sourceField={sankeySourceField}
-          targetField={sankeyTargetField}
-        />
-      )}
-
-      {/* Timeline View Tab */}
-      {visibleDashboards[activeTab]?.id === 'timelineView' && (
-        <StaffTimelineView />
-      )}
-
-      {/* Elo Graph Tab */}
-      {visibleDashboards[activeTab]?.id === 'eloGraph' && (
-        <EloGraph dashboardFilters={dashboardFilters} />
-      )}
-
-      {/* Dashboard Settings Drawer */}
-      <DashboardSettingsDrawer
-        open={settingsDrawerOpen}
-        onClose={() => setSettingsDrawerOpen(false)}
-        dashboardSettings={dashboardSettings}
-        onUpdateSettings={handleUpdateSettings}
-      />
-      </Box>
       </Box>
     </Box>
   );
@@ -838,56 +845,22 @@ function StaffMapDashboard() {
  * Employment Stability Chart Component
  * Displays employment rate trends over time with quarterly data
  */
+/**
+ * Employment Stability Chart Component
+ * Displays employment trends and breakdown by team
+ */
 function EmploymentStabilityChart({ staffData }) {
-  const chartRef = useRef(null);
-  const containerRef = useRef(null);
-  const [dimensions, setDimensions] = useState({ width: 1000, height: 400 });
+  // Use the new matrix aggregation
+  const { matrix, seasons } = useMemo(() =>
+    getEmploymentStabilityMatrix(staffData),
+    [staffData]);
 
-  // Generate seasonal employment data based on filtered population
-  const employmentData = useMemo(() => {
-    // Calculate current employment rate from filtered data
-    const employed = staffData.filter(s => s.currentlyEmployed === true || s.currentEmployer).length;
-    const total = staffData.length;
-    const currentRate = total > 0 ? Number(((employed / total) * 100).toFixed(1)) : 0;
-    
-    // Generate data for the last 5 MLS seasons based on current filtered population
-    const seasons = [];
-    const currentYear = new Date().getFullYear();
-    
-    for (let i = 4; i >= 0; i--) {
-      const seasonYear = currentYear - i;
-      const seasonLabel = `${seasonYear} Season`;
-      
-      // Create historical trend that converges to current rate
-      const progress = (4 - i) / 4; // 0 to 1 over time
-      const variance = Math.sin(i * 0.5) * 5;
-      const employmentRate = Math.min(100, Math.max(0, 
-        currentRate * (0.85 + progress * 0.15) + variance
-      ));
-      
-      seasons.push({
-        season: seasonLabel,
-        seasonYear,
-        employmentRate: Number(employmentRate.toFixed(1)),
-        index: 4 - i
-      });
-    }
-    
-    return seasons;
-  }, [staffData]);
-
-  // Calculate average employment rate
-  const averageRate = useMemo(() => {
-    const sum = employmentData.reduce((acc, d) => acc + d.employmentRate, 0);
-    return Number((sum / employmentData.length).toFixed(1));
-  }, [employmentData]);
-
-  // Calculate current employment stats
+  // Calculate stats for the cards
   const currentStats = useMemo(() => {
     const employed = staffData.filter(s => s.currentlyEmployed === true || s.currentEmployer).length;
     const total = staffData.length;
     const percentage = total > 0 ? Number(((employed / total) * 100).toFixed(1)) : 0;
-    
+
     return {
       employed,
       total,
@@ -895,205 +868,17 @@ function EmploymentStabilityChart({ staffData }) {
     };
   }, [staffData]);
 
-  // Handle resize
-  useEffect(() => {
-    if (!containerRef.current) return;
-    
-    const updateDimensions = () => {
-      if (containerRef.current) {
-        const width = containerRef.current.clientWidth - 64;
-        setDimensions({ width: width > 0 ? width : 1000, height: 400 });
-      }
-    };
-    
-    updateDimensions();
-    const resizeObserver = new ResizeObserver(updateDimensions);
-    resizeObserver.observe(containerRef.current);
-    
-    return () => resizeObserver.disconnect();
-  }, []);
-
-  // Draw chart
-  useEffect(() => {
-    if (!chartRef.current || employmentData.length === 0) return;
-
-    const { width, height } = dimensions;
-    const margin = { top: 20, right: 30, bottom: 70, left: 60 };
-    const innerWidth = width - margin.left - margin.right;
-    const innerHeight = height - margin.top - margin.bottom;
-
-    // Clear previous content
-    d3.select(chartRef.current).selectAll('*').remove();
-
-    const svg = d3.select(chartRef.current)
-      .attr('width', width)
-      .attr('height', height);
-
-    const g = svg.append('g')
-      .attr('transform', `translate(${margin.left},${margin.top})`);
-
-    // Scales
-    const xScale = d3.scaleLinear()
-      .domain([0, employmentData.length - 1])
-      .range([0, innerWidth]);
-
-    const yScale = d3.scaleLinear()
-      .domain([0, 100])
-      .range([innerHeight, 0]);
-
-    // Line generator
-    const line = d3.line()
-      .x((d, i) => xScale(i))
-      .y(d => yScale(d.employmentRate))
-      .curve(d3.curveMonotoneX);
-
-    // Area generator for gradient fill
-    const area = d3.area()
-      .x((d, i) => xScale(i))
-      .y0(innerHeight)
-      .y1(d => yScale(d.employmentRate))
-      .curve(d3.curveMonotoneX);
-
-    // Add gradient definition
-    const gradient = svg.append('defs')
-      .append('linearGradient')
-      .attr('id', 'area-gradient')
-      .attr('x1', '0%')
-      .attr('y1', '0%')
-      .attr('x2', '0%')
-      .attr('y2', '100%');
-
-    gradient.append('stop')
-      .attr('offset', '0%')
-      .attr('stop-color', '#29AE61')
-      .attr('stop-opacity', 0.3);
-
-    gradient.append('stop')
-      .attr('offset', '100%')
-      .attr('stop-color', '#29AE61')
-      .attr('stop-opacity', 0.05);
-
-    // Grid lines
-    g.append('g')
-      .attr('class', 'grid')
-      .selectAll('line')
-      .data(yScale.ticks(5))
-      .enter()
-      .append('line')
-      .attr('x1', 0)
-      .attr('x2', innerWidth)
-      .attr('y1', d => yScale(d))
-      .attr('y2', d => yScale(d))
-      .attr('stroke', '#e2e8f0')
-      .attr('stroke-width', 1)
-      .attr('stroke-dasharray', '2,2');
-
-    // Draw area
-    g.append('path')
-      .datum(employmentData)
-      .attr('fill', 'url(#area-gradient)')
-      .attr('d', area);
-
-    // Draw employment rate line
-    g.append('path')
-      .datum(employmentData)
-      .attr('fill', 'none')
-      .attr('stroke', '#29AE61')
-      .attr('stroke-width', 3)
-      .attr('d', line);
-
-    // Draw average line
-    g.append('line')
-      .attr('x1', 0)
-      .attr('x2', innerWidth)
-      .attr('y1', yScale(averageRate))
-      .attr('y2', yScale(averageRate))
-      .attr('stroke', '#3B4960')
-      .attr('stroke-width', 2)
-      .attr('stroke-dasharray', '5,5')
-      .attr('opacity', 0.7);
-
-    // Average line label
-    g.append('text')
-      .attr('x', innerWidth - 5)
-      .attr('y', yScale(averageRate) - 5)
-      .attr('text-anchor', 'end')
-      .attr('fill', '#3B4960')
-      .attr('font-size', '12px')
-      .attr('font-weight', 600)
-      .text(`Avg: ${averageRate}%`);
-
-    // Add data points
-    g.selectAll('.dot')
-      .data(employmentData)
-      .enter()
-      .append('circle')
-      .attr('class', 'dot')
-      .attr('cx', (d, i) => xScale(i))
-      .attr('cy', d => yScale(d.employmentRate))
-      .attr('r', 5)
-      .attr('fill', '#29AE61')
-      .attr('stroke', '#ffffff')
-      .attr('stroke-width', 2)
-      .style('cursor', 'pointer')
-      .on('mouseenter', function(event, d) {
-        d3.select(this)
-          .transition()
-          .duration(200)
-          .attr('r', 7);
-      })
-      .on('mouseleave', function() {
-        d3.select(this)
-          .transition()
-          .duration(200)
-          .attr('r', 5);
-      })
-      .append('title')
-      .text(d => `${d.season}: ${d.employmentRate}%`);
-
-    // X-axis
-    const xAxis = d3.axisBottom(xScale)
-      .tickValues(d3.range(employmentData.length))
-      .tickFormat((d, i) => employmentData[i]?.season || '');
-
-    g.append('g')
-      .attr('transform', `translate(0,${innerHeight})`)
-      .call(xAxis)
-      .selectAll('text')
-      .attr('transform', 'rotate(-45)')
-      .style('text-anchor', 'end')
-      .attr('dx', '-0.5em')
-      .attr('dy', '0.5em')
-      .style('font-size', '11px');
-
-    // Y-axis
-    const yAxis = d3.axisLeft(yScale)
-      .ticks(5)
-      .tickFormat(d => `${d}%`);
-
-    g.append('g')
-      .call(yAxis)
-      .selectAll('text')
-      .style('font-size', '11px');
-
-    // Y-axis label
-    g.append('text')
-      .attr('transform', 'rotate(-90)')
-      .attr('x', -innerHeight / 2)
-      .attr('y', -45)
-      .attr('text-anchor', 'middle')
-      .attr('fill', 'var(--color-text-secondary)')
-      .attr('font-size', '12px')
-      .attr('font-weight', 600)
-      .text('Employment Rate (%)');
-
-  }, [employmentData, dimensions, averageRate]);
+  // Calculate average employment across the matrix seasons (total placements / years)
+  const averageEmploymentLevel = useMemo(() => {
+    const grandTotal = matrix.reduce((sum, row) => sum + row.total, 0);
+    return Math.round(grandTotal / seasons.length);
+  }, [matrix, seasons]);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       {/* Stats Cards */}
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} md={4}>
           <Card
             elevation={0}
             sx={{
@@ -1117,7 +902,7 @@ function EmploymentStabilityChart({ staffData }) {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} md={4}>
           <Card
             elevation={0}
             sx={{
@@ -1131,17 +916,17 @@ function EmploymentStabilityChart({ staffData }) {
               </Avatar>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
                 <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
-                  {currentStats.employed}
+                  {currentStats.employed} / {currentStats.total}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  Currently Employed
+                  Currently Employed Staff
                 </Typography>
               </Box>
             </CardContent>
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} md={4}>
           <Card
             elevation={0}
             sx={{
@@ -1155,34 +940,10 @@ function EmploymentStabilityChart({ staffData }) {
               </Avatar>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
                 <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
-                  {averageRate}%
+                  {averageEmploymentLevel}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  Average Rate (5 Seasons)
-                </Typography>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={6} md={3}>
-          <Card
-            elevation={0}
-            sx={{
-              border: '1px solid var(--color-border-primary)',
-              minHeight: 84,
-            }}
-          >
-            <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
-              <Avatar sx={{ bgcolor: 'var(--color-chart-4)', width: 40, height: 40 }}>
-                <LocationOn />
-              </Avatar>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
-                <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
-                  {currentStats.total}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  Total in Database
+                  Avg. Annual Placements (MLS)
                 </Typography>
               </Box>
             </CardContent>
@@ -1190,65 +951,8 @@ function EmploymentStabilityChart({ staffData }) {
         </Grid>
       </Grid>
 
-      {/* Chart */}
-      <Paper
-        ref={containerRef}
-        elevation={0}
-        sx={{
-          flex: 1,
-          border: '1px solid var(--color-border-primary)',
-          borderRadius: 1,
-          p: 3,
-          backgroundColor: '#ffffff',
-          minHeight: 450
-        }}
-      >
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, color: 'var(--color-primary)', mb: 0.5 }}>
-            Employment Rate Trend
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Historical employment trends across 5 MLS seasons. Current stats above reflect active filters.
-          </Typography>
-        </Box>
-        
-        {/* Legend */}
-        <Box sx={{ display: 'flex', gap: 3, mb: 2, justifyContent: 'flex-start' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Box
-              sx={{
-                width: 20,
-                height: 3,
-                bgcolor: '#29AE61',
-                borderRadius: 1
-              }}
-            />
-            <Typography variant="caption" sx={{ fontWeight: 500 }}>
-              Active Employment Rate
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Box
-              sx={{
-                width: 20,
-                height: 2,
-                bgcolor: '#3B4960',
-                borderRadius: 1,
-                opacity: 0.7,
-                borderTop: '2px dashed #3B4960'
-              }}
-            />
-            <Typography variant="caption" sx={{ fontWeight: 500 }}>
-              Average Rate
-            </Typography>
-          </Box>
-        </Box>
-
-        <svg 
-          ref={chartRef}
-          style={{ width: '100%', display: 'block' }}
-        />
-      </Paper>
+      {/* Merged Breakdown Chart */}
+      <EmploymentStabilityBarChart matrix={matrix} seasons={seasons} />
     </Box>
   );
 }
@@ -1269,22 +973,22 @@ function OriginBreakdownChart({ staffData }) {
     const currentInternational = staffData.filter(s => s.country && s.country !== 'USA').length;
     const currentTotal = staffData.length;
     const currentIntlRatio = currentTotal > 0 ? currentInternational / currentTotal : 0.3;
-    
+
     // Generate data for the last 5 MLS seasons
     const seasons = [];
     const currentYear = new Date().getFullYear();
-    
+
     for (let i = 4; i >= 0; i--) {
       const seasonYear = currentYear - i;
       const seasonLabel = `${seasonYear} Season`;
-      
+
       // Create historical trend that converges to current split
       const progress = (4 - i) / 4; // 0 to 1 over time
       const scaleFactor = 0.7 + progress * 0.3; // Scale from 70% to 100% of current
       const total = Math.max(1, Math.round(currentTotal * scaleFactor));
       const international = Math.round(total * (currentIntlRatio * (0.8 + progress * 0.2)));
       const domestic = total - international;
-      
+
       seasons.push({
         season: seasonLabel,
         seasonYear,
@@ -1293,7 +997,7 @@ function OriginBreakdownChart({ staffData }) {
         total
       });
     }
-    
+
     return seasons;
   }, [staffData]);
 
@@ -1304,7 +1008,7 @@ function OriginBreakdownChart({ staffData }) {
     const international = staffData.filter(s => s.country && s.country !== 'USA').length;
     const total = staffData.length;
     const intlPercentage = total > 0 ? Number(((international / total) * 100).toFixed(1)) : 0;
-    
+
     return {
       domestic,
       international,
@@ -1316,18 +1020,18 @@ function OriginBreakdownChart({ staffData }) {
   // Handle resize
   useEffect(() => {
     if (!containerRef.current) return;
-    
+
     const updateDimensions = () => {
       if (containerRef.current) {
         const width = containerRef.current.clientWidth - 64;
         setDimensions({ width: width > 0 ? width : 1000, height: 400 });
       }
     };
-    
+
     updateDimensions();
     const resizeObserver = new ResizeObserver(updateDimensions);
     resizeObserver.observe(containerRef.current);
-    
+
     return () => resizeObserver.disconnect();
   }, []);
 
@@ -1379,7 +1083,7 @@ function OriginBreakdownChart({ staffData }) {
     // Stack the data
     const stack = d3.stack()
       .keys(['domestic', 'international']);
-    
+
     const stackedData = stack(originData);
 
     // Color scale
@@ -1405,13 +1109,13 @@ function OriginBreakdownChart({ staffData }) {
       .attr('height', d => yScale(d[0]) - yScale(d[1]))
       .attr('width', xScale.bandwidth())
       .style('cursor', 'pointer')
-      .on('mouseenter', function(event, d) {
+      .on('mouseenter', function (event, d) {
         d3.select(this)
           .transition()
           .duration(200)
           .attr('opacity', 0.8);
       })
-      .on('mouseleave', function() {
+      .on('mouseleave', function () {
         d3.select(this)
           .transition()
           .duration(200)
@@ -1419,21 +1123,21 @@ function OriginBreakdownChart({ staffData }) {
       });
 
     // Add tooltips to bars
-    bars.each(function(d, i) {
+    bars.each(function (d, i) {
       const rect = d3.select(this);
       const parentGroup = d3.select(this.parentNode);
       const key = parentGroup.datum().key;
       const data = originData[i];
-      
+
       rect.append('title')
         .text(`${data.season} - ${key === 'domestic' ? 'Domestic' : 'International'}: ${data[key]}`);
     });
 
     // Add value labels on bars
-    groups.each(function() {
+    groups.each(function () {
       const group = d3.select(this);
       const key = group.datum().key;
-      
+
       group.selectAll('text')
         .data(d => d)
         .enter()
@@ -1609,7 +1313,7 @@ function OriginBreakdownChart({ staffData }) {
             Historical trends over 5 MLS seasons. Current stats above reflect active filters.
           </Typography>
         </Box>
-        
+
         {/* Legend */}
         <Box sx={{ display: 'flex', gap: 3, mb: 2, justifyContent: 'flex-start' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -1640,7 +1344,7 @@ function OriginBreakdownChart({ staffData }) {
           </Box>
         </Box>
 
-        <svg 
+        <svg
           ref={chartRef}
           style={{ width: '100%', display: 'block' }}
         />
@@ -1664,46 +1368,46 @@ function QualificationStandardsChart({ staffData }) {
     let currentPro = 0;
     let currentA = 0;
     let currentB = 0;
-    
+
     staffData.forEach(staff => {
       if (staff.coachingLicenses) {
-        const licenses = Array.isArray(staff.coachingLicenses) 
-          ? staff.coachingLicenses 
+        const licenses = Array.isArray(staff.coachingLicenses)
+          ? staff.coachingLicenses
           : [staff.coachingLicenses];
-        
-        const hasProLicense = licenses.some(license => 
+
+        const hasProLicense = licenses.some(license =>
           license && (license.includes('Pro') || license.includes('PRO'))
         );
-        const hasALicense = licenses.some(license => 
-          license && !license.includes('Pro') && !license.includes('PRO') && 
+        const hasALicense = licenses.some(license =>
+          license && !license.includes('Pro') && !license.includes('PRO') &&
           (license.includes('A') || license.includes('UEFA A') || license.includes('USSF A'))
         );
-        const hasBLicense = licenses.some(license => 
+        const hasBLicense = licenses.some(license =>
           license && (license.includes('B') || license.includes('UEFA B') || license.includes('USSF B'))
         );
-        
+
         if (hasProLicense) currentPro++;
         else if (hasALicense) currentA++;
         else if (hasBLicense) currentB++;
       }
     });
-    
+
     // Generate data for the last 5 MLS seasons
     const seasons = [];
     const currentYear = new Date().getFullYear();
-    
+
     for (let i = 4; i >= 0; i--) {
       const seasonYear = currentYear - i;
       const seasonLabel = `${seasonYear} Season`;
-      
+
       // Create historical trend that converges to current counts
       const progress = (4 - i) / 4; // 0 to 1 over time
       const scaleFactor = 0.6 + progress * 0.4; // Scale from 60% to 100% of current
-      
+
       const proLicense = Math.max(0, Math.round(currentPro * scaleFactor));
       const aLicense = Math.max(0, Math.round(currentA * scaleFactor));
       const bLicense = Math.max(0, Math.round(currentB * scaleFactor));
-      
+
       seasons.push({
         season: seasonLabel,
         seasonYear,
@@ -1714,7 +1418,7 @@ function QualificationStandardsChart({ staffData }) {
         total: proLicense + aLicense + bLicense
       });
     }
-    
+
     return seasons;
   }, [staffData]);
 
@@ -1724,35 +1428,35 @@ function QualificationStandardsChart({ staffData }) {
     let proCount = 0;
     let aCount = 0;
     let bCount = 0;
-    
+
     staffData.forEach(staff => {
       if (staff.coachingLicenses) {
-        const licenses = Array.isArray(staff.coachingLicenses) 
-          ? staff.coachingLicenses 
+        const licenses = Array.isArray(staff.coachingLicenses)
+          ? staff.coachingLicenses
           : [staff.coachingLicenses];
-        
-        const hasProLicense = licenses.some(license => 
+
+        const hasProLicense = licenses.some(license =>
           license && (license.includes('Pro') || license.includes('PRO'))
         );
-        const hasALicense = licenses.some(license => 
-          license && !license.includes('Pro') && !license.includes('PRO') && 
+        const hasALicense = licenses.some(license =>
+          license && !license.includes('Pro') && !license.includes('PRO') &&
           (license.includes('A') || license.includes('UEFA A') || license.includes('USSF A'))
         );
-        const hasBLicense = licenses.some(license => 
+        const hasBLicense = licenses.some(license =>
           license && (license.includes('B') || license.includes('UEFA B') || license.includes('USSF B'))
         );
-        
+
         if (hasProLicense) proCount++;
         else if (hasALicense) aCount++;
         else if (hasBLicense) bCount++;
       }
     });
-    
+
     const total = proCount + aCount + bCount;
-    const avgPerSeason = qualificationData.length > 0 
+    const avgPerSeason = qualificationData.length > 0
       ? Number((qualificationData.reduce((sum, d) => sum + d.total, 0) / qualificationData.length).toFixed(0))
       : 0;
-    
+
     return {
       proCount,
       aCount,
@@ -1765,18 +1469,18 @@ function QualificationStandardsChart({ staffData }) {
   // Handle resize
   useEffect(() => {
     if (!containerRef.current) return;
-    
+
     const updateDimensions = () => {
       if (containerRef.current) {
         const width = containerRef.current.clientWidth - 64;
         setDimensions({ width: width > 0 ? width : 1000, height: 400 });
       }
     };
-    
+
     updateDimensions();
     const resizeObserver = new ResizeObserver(updateDimensions);
     resizeObserver.observe(containerRef.current);
-    
+
     return () => resizeObserver.disconnect();
   }, []);
 
@@ -1884,10 +1588,10 @@ function QualificationStandardsChart({ staffData }) {
       .attr('stroke', '#ffffff')
       .attr('stroke-width', 2)
       .style('cursor', 'pointer')
-      .on('mouseenter', function() {
+      .on('mouseenter', function () {
         d3.select(this).transition().duration(200).attr('r', 7);
       })
-      .on('mouseleave', function() {
+      .on('mouseleave', function () {
         d3.select(this).transition().duration(200).attr('r', 5);
       })
       .append('title')
@@ -1906,10 +1610,10 @@ function QualificationStandardsChart({ staffData }) {
       .attr('stroke', '#ffffff')
       .attr('stroke-width', 2)
       .style('cursor', 'pointer')
-      .on('mouseenter', function() {
+      .on('mouseenter', function () {
         d3.select(this).transition().duration(200).attr('r', 7);
       })
-      .on('mouseleave', function() {
+      .on('mouseleave', function () {
         d3.select(this).transition().duration(200).attr('r', 5);
       })
       .append('title')
@@ -1928,10 +1632,10 @@ function QualificationStandardsChart({ staffData }) {
       .attr('stroke', '#ffffff')
       .attr('stroke-width', 2)
       .style('cursor', 'pointer')
-      .on('mouseenter', function() {
+      .on('mouseenter', function () {
         d3.select(this).transition().duration(200).attr('r', 7);
       })
-      .on('mouseleave', function() {
+      .on('mouseleave', function () {
         d3.select(this).transition().duration(200).attr('r', 5);
       })
       .append('title')
@@ -2097,7 +1801,7 @@ function QualificationStandardsChart({ staffData }) {
             Historical license acquisition trends. Current stats above reflect active filters.
           </Typography>
         </Box>
-        
+
         {/* Legend */}
         <Box sx={{ display: 'flex', gap: 3, mb: 2, justifyContent: 'flex-start', flexWrap: 'wrap' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -2141,7 +1845,7 @@ function QualificationStandardsChart({ staffData }) {
           </Box>
         </Box>
 
-        <svg 
+        <svg
           ref={chartRef}
           style={{ width: '100%', display: 'block' }}
         />
@@ -2165,11 +1869,11 @@ function TalentPipelineChart({ staffData }) {
     let emergingCount = 0;
     let provenCount = 0;
     let unprovenCount = 0;
-    
+
     staffData.forEach(staff => {
       if (staff.tags && Array.isArray(staff.tags)) {
         const tags = staff.tags.map(t => t.toLowerCase());
-        
+
         if (tags.some(tag => tag === 'proven')) {
           provenCount++;
         } else if (tags.some(tag => tag === 'emerging')) {
@@ -2183,7 +1887,7 @@ function TalentPipelineChart({ staffData }) {
     });
 
     const total = highPotentialCount + emergingCount + provenCount + unprovenCount;
-    
+
     // Order: Unproven -> Emerging -> High Potential -> Proven (left to right)
     // Colors from TagChip.jsx green gradient system
     return [
@@ -2220,16 +1924,16 @@ function TalentPipelineChart({ staffData }) {
 
   // Calculate conversion rates between stages
   const conversionRates = useMemo(() => {
-    const hpToEmerging = pipelineData[0].count > 0 
+    const hpToEmerging = pipelineData[0].count > 0
       ? Number(((pipelineData[1].count / pipelineData[0].count) * 100).toFixed(1))
       : 0;
-    const emergingToProven = pipelineData[1].count > 0 
+    const emergingToProven = pipelineData[1].count > 0
       ? Number(((pipelineData[2].count / pipelineData[2].count) * 100).toFixed(1))
       : 0;
-    const provenToUnproven = pipelineData[2].count > 0 
+    const provenToUnproven = pipelineData[2].count > 0
       ? Number(((pipelineData[3].count / pipelineData[2].count) * 100).toFixed(1))
       : 0;
-    
+
     return {
       hpToEmerging,
       emergingToProven,
@@ -2240,18 +1944,18 @@ function TalentPipelineChart({ staffData }) {
   // Handle resize
   useEffect(() => {
     if (!containerRef.current) return;
-    
+
     const updateDimensions = () => {
       if (containerRef.current) {
         const width = containerRef.current.clientWidth - 64;
         setDimensions({ width: width > 0 ? width : 1000, height: 450 });
       }
     };
-    
+
     updateDimensions();
     const resizeObserver = new ResizeObserver(updateDimensions);
     resizeObserver.observe(containerRef.current);
-    
+
     return () => resizeObserver.disconnect();
   }, []);
 
@@ -2281,7 +1985,7 @@ function TalentPipelineChart({ staffData }) {
 
     // Create gradients for each section
     const defs = svg.append('defs');
-    
+
     pipelineData.forEach((stage, i) => {
       const gradient = defs.append('linearGradient')
         .attr('id', `funnel-gradient-${i}`)
@@ -2290,12 +1994,12 @@ function TalentPipelineChart({ staffData }) {
         .attr('y1', 0)
         .attr('x2', 0)
         .attr('y2', innerHeight);
-      
+
       gradient.append('stop')
         .attr('offset', '0%')
         .attr('stop-color', stage.color)
         .attr('stop-opacity', 0.9);
-      
+
       gradient.append('stop')
         .attr('offset', '100%')
         .attr('stop-color', stage.color)
@@ -2304,26 +2008,26 @@ function TalentPipelineChart({ staffData }) {
 
     // Calculate funnel shape - narrowing from left to right
     const maxCount = d3.max(pipelineData, d => d.count);
-    
+
     pipelineData.forEach((stage, i) => {
       const x = i * sectionWidth;
       const nextX = (i + 1) * sectionWidth;
-      
+
       // Calculate heights based on count (funnel narrows)
-      const heightRatio = maxCount > 0 && stage.count > 0 
-        ? stage.count / maxCount 
+      const heightRatio = maxCount > 0 && stage.count > 0
+        ? stage.count / maxCount
         : 0;
-      
+
       const nextStage = i < pipelineData.length - 1 ? pipelineData[i + 1] : null;
       const nextHeightRatio = nextStage && maxCount > 0 && nextStage.count > 0
-        ? nextStage.count / maxCount 
+        ? nextStage.count / maxCount
         : 0;
-      
+
       const topHeight = innerHeight * 0.4 * heightRatio;
       const bottomHeight = innerHeight * 0.4 * heightRatio;
       const nextTopHeight = innerHeight * 0.4 * nextHeightRatio;
       const nextBottomHeight = innerHeight * 0.4 * nextHeightRatio;
-      
+
       const centerY = innerHeight / 2;
 
       // Only draw funnel section if count > 0
@@ -2339,13 +2043,13 @@ function TalentPipelineChart({ staffData }) {
           .attr('fill', `url(#funnel-gradient-${i})`)
           .attr('stroke', 'none')
           .style('cursor', 'pointer')
-          .on('mouseenter', function() {
+          .on('mouseenter', function () {
             d3.select(this)
               .transition()
               .duration(200)
               .attr('opacity', 0.8);
           })
-          .on('mouseleave', function() {
+          .on('mouseleave', function () {
             d3.select(this)
               .transition()
               .duration(200)
@@ -2522,7 +2226,7 @@ function TalentPipelineChart({ staffData }) {
             Funnel showing talent distribution across 4 pipeline stages
           </Typography>
         </Box>
-        
+
         {/* Legend */}
         <Box sx={{ px: 3, pb: 2, display: 'flex', gap: 3, justifyContent: 'flex-start', flexWrap: 'wrap' }}>
           {pipelineData.map((stage, i) => (
@@ -2542,7 +2246,7 @@ function TalentPipelineChart({ staffData }) {
           ))}
         </Box>
 
-        <svg 
+        <svg
           ref={chartRef}
           style={{ width: '100%', display: 'block' }}
         />
