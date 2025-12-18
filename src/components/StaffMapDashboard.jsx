@@ -32,6 +32,7 @@ import staffTalentData from '../data/staff_talent.json';
 import currentStaffData from '../data/users_staff.json';
 import worldGeoJson from '../data/world_map.json';
 import EloGraph from './EloGraph';
+import StaffSankeyDiagram, { StaffSankeySelectors } from './StaffSankeyDiagram';
 import DashboardSettingsDrawer from './DashboardSettingsDrawer';
 import DashboardFilters, { applyFilters } from './DashboardFilters';
 import '../styles/design-tokens.css';
@@ -43,6 +44,7 @@ const DEFAULT_DASHBOARD_SETTINGS = {
   originBreakdown: true,
   qualificationStandards: true,
   talentPipeline: true,
+  dataFlow: true,
   eloGraph: true,
 };
 
@@ -88,6 +90,25 @@ function StaffMapDashboard() {
   const [settingsDrawerOpen, setSettingsDrawerOpen] = useState(false);
   const [dashboardSettings, setDashboardSettings] = useState(loadDashboardSettings);
   const [filterSidebarOpen, setFilterSidebarOpen] = useState(true);
+  
+  // Sankey diagram state
+  const [sankeySourceField, setSankeySourceField] = useState('tags');
+  const [sankeyTargetField, setSankeyTargetField] = useState('role');
+  
+  // Sankey field options
+  const sankeyFieldOptions = [
+    { value: 'tags', label: 'Tags' },
+    { value: 'role', label: 'Role Type' },
+    { value: 'country', label: 'Country' },
+    { value: 'location', label: 'Location (Domestic/International)' },
+    { value: 'workAuth', label: 'Work Authorization' },
+    { value: 'degree', label: 'Education Level' },
+    { value: 'mlsExperience', label: 'MLS Experience' },
+    { value: 'coachingLicense', label: 'Coaching License' },
+    { value: 'interestArea', label: 'Interest Area' },
+    { value: 'employmentStatus', label: 'Employment Status' },
+    { value: 'trophies', label: 'Trophy Count' }
+  ];
   
   // Check if we're in league view
   const isLeagueView = location.pathname.startsWith('/league');
@@ -414,6 +435,7 @@ function StaffMapDashboard() {
     { id: 'originBreakdown', label: 'Origin Breakdown', description: 'Domestic vs. international talent comparison' },
     { id: 'qualificationStandards', label: 'Qualification Standards', description: 'Coaching license and credential trends' },
     { id: 'talentPipeline', label: 'Talent Pipeline', description: 'Tag progression and talent development pipeline' },
+    { id: 'dataFlow', label: 'Flow Diagram', description: 'Visualize relationships between staff characteristics' },
     { id: 'eloGraph', label: 'Elo Ratings', description: 'Top 20 staff by Elo rating' },
   ];
 
@@ -536,7 +558,7 @@ function StaffMapDashboard() {
           </Typography>
         </Box>
 
-        {/* Filters - Only show on Location tab */}
+        {/* Filters/Selectors based on active tab */}
         {visibleDashboards[activeTab]?.id === 'locationAnalysis' && (
           <Box sx={{ display: 'flex', gap: 2 }}>
             <FormControl size="small" sx={{ minWidth: 150 }}>
@@ -567,6 +589,17 @@ function StaffMapDashboard() {
               </Select>
             </FormControl>
           </Box>
+        )}
+
+        {/* Sankey Selectors - Only show on Data Flow tab */}
+        {visibleDashboards[activeTab]?.id === 'dataFlow' && (
+          <StaffSankeySelectors 
+            sourceField={sankeySourceField}
+            setSourceField={setSankeySourceField}
+            targetField={sankeyTargetField}
+            setTargetField={setSankeyTargetField}
+            fieldOptions={sankeyFieldOptions}
+          />
         )}
       </Box>
 
@@ -765,6 +798,14 @@ function StaffMapDashboard() {
       {/* Talent Pipeline Tab */}
       {visibleDashboards[activeTab]?.id === 'talentPipeline' && (
         <TalentPipelineChart staffData={filteredStaff} />
+      )}
+
+      {/* Data Flow Tab */}
+      {visibleDashboards[activeTab]?.id === 'dataFlow' && (
+        <StaffSankeyDiagram 
+          sourceField={sankeySourceField}
+          targetField={sankeyTargetField}
+        />
       )}
 
       {/* Elo Graph Tab */}
@@ -2221,7 +2262,7 @@ function TalentPipelineChart({ staffData }) {
     const svg = d3.select(chartRef.current)
       .attr('width', width)
       .attr('height', height)
-      .attr('style', 'background-color: #1e3a5f'); // Dark navy background like the image
+      .attr('style', 'background-color: #ffffff'); // White background
 
     const g = svg.append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
@@ -2304,14 +2345,14 @@ function TalentPipelineChart({ staffData }) {
           });
       }
 
-      // Add vertical divider lines between sections (white lines like in the image)
+      // Add vertical divider lines between sections
       if (i < pipelineData.length - 1) {
         g.append('line')
           .attr('x1', nextX)
           .attr('y1', 0)
           .attr('x2', nextX)
           .attr('y2', innerHeight)
-          .attr('stroke', '#ffffff')
+          .attr('stroke', '#666666')
           .attr('stroke-width', 2)
           .attr('opacity', 0.3);
       }
@@ -2322,7 +2363,7 @@ function TalentPipelineChart({ staffData }) {
         .attr('x', labelX)
         .attr('y', 30)
         .attr('text-anchor', 'middle')
-        .attr('fill', '#ffffff')
+        .attr('fill', '#000000')
         .attr('font-size', '32px')
         .attr('font-weight', '700')
         .text(stage.count.toLocaleString());
@@ -2342,7 +2383,7 @@ function TalentPipelineChart({ staffData }) {
         .attr('x', labelX)
         .attr('y', 72)
         .attr('text-anchor', 'middle')
-        .attr('fill', '#ffffff')
+        .attr('fill', '#000000')
         .attr('font-size', '16px')
         .attr('font-weight', '600')
         .text(`${stage.percentage}%`);
@@ -2460,16 +2501,16 @@ function TalentPipelineChart({ staffData }) {
           border: '1px solid var(--color-border-primary)',
           borderRadius: 1,
           p: 0,
-          backgroundColor: '#1e3a5f', // Dark navy background like the image
+          backgroundColor: '#ffffff', // White background
           minHeight: 500,
           overflow: 'hidden'
         }}
       >
         <Box sx={{ p: 3, pb: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, color: '#ffffff', mb: 0.5 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600, color: '#000000', mb: 0.5 }}>
             Talent Development Pipeline
           </Typography>
-          <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+          <Typography variant="body2" sx={{ color: '#424242' }}>
             Funnel showing talent distribution across 4 pipeline stages
           </Typography>
         </Box>
@@ -2486,7 +2527,7 @@ function TalentPipelineChart({ staffData }) {
                   borderRadius: 0.5
                 }}
               />
-              <Typography variant="caption" sx={{ fontWeight: 500, color: '#ffffff' }}>
+              <Typography variant="caption" sx={{ fontWeight: 500, color: '#000000' }}>
                 {stage.label}
               </Typography>
             </Box>
