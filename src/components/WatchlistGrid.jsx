@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Box, Chip, Avatar, Link, Stack, Typography, Tooltip, IconButton } from '@mui/material';
+import { Box, Chip, Avatar, Link, Stack, Typography, Tooltip, IconButton, LinearProgress, Badge } from '@mui/material';
 import {
   DataGridPro as DataGrid,
   GridToolbarContainer,
@@ -21,6 +21,7 @@ import {
   LocalOfferOutlined,
   LabelOutlined,
   Visibility,
+  NotesOutlined,
 } from '@mui/icons-material';
 import staffData from '../data/staff_talent.json';
 import { generateInitialsImage } from '../utils/assetManager';
@@ -28,7 +29,39 @@ import BulkEditBar from './BulkEditBar';
 import TagChip from './TagChip';
 import TagSelector from './TagSelector';
 import TagManagementDrawer from './TagManagementDrawer';
+import NotesDrawer from './NotesDrawer';
 import '../styles/design-tokens.css';
+
+// Helper to generate consistent random stats based on staff ID
+const generateStats = (id) => {
+  const seed = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const random = (offset = 0) => {
+    const x = Math.sin(seed + offset) * 10000;
+    return x - Math.floor(x);
+  };
+
+  const winRate = 35 + Math.floor(random(1) * 40); // 35-75%
+  const draws = Math.floor(random(2) * 20); // 0-20%
+  const ppm = ((winRate * 3) + draws) / 100;
+  
+  const age = 32 + Math.floor(random(3) * 25); // 32-57
+  const maxExp = age - 21;
+  const yearsExp = Math.min(3 + Math.floor(random(4) * 25), maxExp);
+
+  return {
+    age,
+    yearsExp,
+    winRate: winRate,
+    ppm: ppm.toFixed(2),
+    trophies: Math.floor(random(5) * 8), // 0-7
+    xgDiff: (random(6) * 1.5 - 0.5).toFixed(2), // -0.5 to +1.0
+    squadValuePerf: (random(7) * 40 - 10).toFixed(1), // -10% to +30%
+    possession: 40 + Math.floor(random(8) * 30), // 40-70%
+    ppda: (6 + random(9) * 10).toFixed(1), // 6.0 - 16.0
+    u23Minutes: Math.floor(random(10) * 40), // 0-40%
+    academyDebuts: Math.floor(random(11) * 12), // 0-11
+  };
+};
 
 export const WatchlistToolbar = React.forwardRef((props, ref) => {
   const navigate = useNavigate();
@@ -177,7 +210,7 @@ const LinkCell = ({ value, type, name = '' }) => {
   );
 };
 
-const createColumns = (onTagsClick, onRemoveFromWatchlist) => [
+const createColumns = (onTagsClick, onRemoveFromWatchlist, onNotesClick, staffNotes = {}) => [
   {
     field: 'watchlistActions',
     headerName: '',
@@ -203,6 +236,41 @@ const createColumns = (onTagsClick, onRemoveFromWatchlist) => [
         </IconButton>
       </Tooltip>
     )
+  },
+  {
+    field: 'notes',
+    headerName: '',
+    width: 60,
+    sortable: false,
+    filterable: false,
+    renderCell: (params) => {
+      const noteCount = staffNotes[params.row.id]?.length || 0;
+      return (
+        <Tooltip title={noteCount > 0 ? `${noteCount} private note${noteCount > 1 ? 's' : ''}` : "Add private note"}>
+          <IconButton
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              onNotesClick(params.row.id);
+            }}
+            sx={{
+              color: noteCount > 0 ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+              '&:hover': {
+                backgroundColor: 'var(--color-background-tertiary)',
+              }
+            }}
+          >
+            {noteCount > 0 ? (
+              <Badge badgeContent={noteCount} color="primary" max={99}>
+                <NotesOutlined fontSize="small" />
+              </Badge>
+            ) : (
+              <NotesOutlined fontSize="small" />
+            )}
+          </IconButton>
+        </Tooltip>
+      );
+    }
   },
   {
     field: 'picUrl',
@@ -387,6 +455,224 @@ const createColumns = (onTagsClick, onRemoveFromWatchlist) => [
     width: 150, 
     renderCell: (params) => <LinkCell value={params.value} />
   },
+  
+  // --- COACHING STATISTICS (from CoachLeaderboard) ---
+  {
+    field: 'age',
+    headerName: 'Age',
+    type: 'number',
+    width: 70,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.age;
+      return null;
+    }
+  },
+  {
+    field: 'yearsExp',
+    headerName: 'Exp (Yrs)',
+    type: 'number',
+    width: 100,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.yearsExp;
+      return null;
+    }
+  },
+  {
+    field: 'license',
+    headerName: 'License',
+    width: 160,
+    valueGetter: (params) => params.row.coachingLicenses?.[0] || 'None',
+    renderCell: (params) => (
+      <Chip 
+        label={params.value} 
+        size="small" 
+        variant="outlined" 
+        sx={{ height: 24, fontSize: '0.75rem', maxWidth: '100%' }} 
+      />
+    )
+  },
+  {
+    field: 'winRate',
+    headerName: 'Win %',
+    type: 'number',
+    width: 110,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.winRate;
+      return null;
+    },
+    renderCell: (params) => {
+      if (!params.value) return null;
+      return (
+        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography variant="body2" sx={{ minWidth: 35 }}>{params.value}%</Typography>
+          <LinearProgress 
+            variant="determinate" 
+            value={params.value} 
+            sx={{ 
+              flexGrow: 1, 
+              height: 6, 
+              borderRadius: 3,
+              bgcolor: 'grey.200',
+              '& .MuiLinearProgress-bar': {
+                bgcolor: params.value > 55 ? 'success.main' : params.value > 40 ? 'warning.main' : 'error.main'
+              }
+            }} 
+          />
+        </Box>
+      );
+    }
+  },
+  {
+    field: 'ppm',
+    headerName: 'PPM',
+    type: 'number',
+    width: 80,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.ppm;
+      return null;
+    },
+    renderCell: (params) => {
+      if (!params.value) return null;
+      return (
+        <Typography variant="body2" fontWeight={params.value > 1.8 ? 700 : 400}>
+          {params.value}
+        </Typography>
+      );
+    }
+  },
+  {
+    field: 'trophies',
+    headerName: 'Trophies',
+    type: 'number',
+    width: 110,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.trophies;
+      return null;
+    },
+    renderCell: (params) => {
+      if (params.value === null || params.value === undefined) return null;
+      return params.value > 0 ? (
+        <Chip 
+          label={params.value} 
+          size="small" 
+          color="warning" 
+          variant="outlined"
+          sx={{ height: 24 }}
+        />
+      ) : <Typography variant="body2" color="text.secondary">-</Typography>;
+    }
+  },
+  {
+    field: 'xgDiff',
+    headerName: 'xG Diff',
+    type: 'number',
+    width: 90,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.xgDiff;
+      return null;
+    },
+    renderCell: (params) => {
+      if (!params.value) return null;
+      return (
+        <Typography 
+          variant="body2" 
+          color={params.value > 0 ? 'success.main' : 'error.main'}
+          fontWeight={600}
+        >
+          {params.value > 0 ? '+' : ''}{params.value}
+        </Typography>
+      );
+    }
+  },
+  {
+    field: 'squadValuePerf',
+    headerName: 'Squad Val %',
+    type: 'number',
+    width: 110,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.squadValuePerf;
+      return null;
+    },
+    renderCell: (params) => {
+      if (!params.value) return null;
+      return (
+        <Typography 
+          variant="body2" 
+          color={params.value > 0 ? 'success.main' : 'error.main'}
+        >
+          {params.value > 0 ? '+' : ''}{params.value}%
+        </Typography>
+      );
+    }
+  },
+  {
+    field: 'possession',
+    headerName: 'Possession',
+    type: 'number',
+    width: 110,
+    align: 'right',
+    headerAlign: 'right',
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.possession;
+      return null;
+    },
+    renderCell: (params) => {
+      if (!params.value) return null;
+      return (
+        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
+          <Typography variant="body2">{params.value}%</Typography>
+        </Box>
+      );
+    }
+  },
+  {
+    field: 'ppda',
+    headerName: 'PPDA',
+    description: 'Passes Allowed Per Defensive Action (Lower is more intense pressing)',
+    type: 'number',
+    width: 80,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.ppda;
+      return null;
+    }
+  },
+  {
+    field: 'u23Minutes',
+    headerName: 'U23 Mins',
+    type: 'number',
+    width: 100,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.u23Minutes;
+      return null;
+    },
+    renderCell: (params) => {
+      if (params.value === null || params.value === undefined) return null;
+      return `${params.value}%`;
+    }
+  },
+  {
+    field: 'academyDebuts',
+    headerName: 'Debuts',
+    type: 'number',
+    width: 120,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.academyDebuts;
+      return null;
+    },
+    renderHeader: () => (
+      <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', pr: 4 }}>
+        Debuts
+      </Box>
+    ),
+    renderCell: (params) => {
+      if (params.value === null || params.value === undefined) return null;
+      return (
+        <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', pr: 4 }}>
+          {params.value}
+        </Box>
+      );
+    }
+  },
 ];
 
 function WatchlistGrid({ watchlistIds, onRemoveFromWatchlist }) {
@@ -399,10 +685,17 @@ function WatchlistGrid({ watchlistIds, onRemoveFromWatchlist }) {
   const [tagSelectorAnchor, setTagSelectorAnchor] = useState(null);
   const [selectedStaffForTags, setSelectedStaffForTags] = useState(null);
   const [tagManagementOpen, setTagManagementOpen] = useState(false);
+  
+  // Notes management state
+  const [notesDrawerOpen, setNotesDrawerOpen] = useState(false);
+  const [selectedStaffForNotes, setSelectedStaffForNotes] = useState(null);
+  const [staffNotes, setStaffNotes] = useState({});
 
-  // Filter staff data to only show watchlisted items
+  // Filter staff data to only show watchlisted items and enrich with coaching stats
   useEffect(() => {
-    const watchlistedStaff = staffData.filter(staff => watchlistIds.includes(staff.id));
+    const watchlistedStaff = staffData
+      .filter(staff => watchlistIds.includes(staff.id))
+      .map(enrichStaffWithCoachingStats);
     setLocalStaffData(watchlistedStaff);
   }, [watchlistIds]);
 
@@ -431,10 +724,78 @@ function WatchlistGrid({ watchlistIds, onRemoveFromWatchlist }) {
       )
     );
   };
+  
+  // Helper to check if staff member has coaching stats
+  const enrichStaffWithCoachingStats = (staff) => {
+    // Check multiple indicators that someone is a coach
+    const currentRole = staff.currentEmployer?.split('-')[1]?.trim() || '';
+    const interestArea = staff.interestArea || '';
+    const hasCoachingRoles = staff.coachingRoles && staff.coachingRoles.length > 0;
+    const hasCoachingExp = staff.proCoachExp || staff.mlsCoachExp;
+    const hasCoachingLicenses = staff.coachingLicenses && staff.coachingLicenses.length > 0;
+    
+    // Consider someone a coach if they have ANY coaching-related data
+    const isCoach = currentRole.toLowerCase().includes('coach') || 
+                    currentRole.toLowerCase().includes('manager') || 
+                    interestArea.toLowerCase().includes('coach') ||
+                    hasCoachingRoles ||
+                    hasCoachingExp ||
+                    hasCoachingLicenses;
+    
+    if (isCoach && !staff.coachingStats) {
+      return {
+        ...staff,
+        coachingStats: generateStats(staff.id)
+      };
+    }
+    return staff;
+  };
 
   const handleTagSelectorClose = () => {
     setTagSelectorAnchor(null);
     setSelectedStaffForTags(null);
+  };
+  
+  // Notes handlers
+  const handleNotesClick = (staffId) => {
+    const staff = localStaffData.find(s => s.id === staffId);
+    setSelectedStaffForNotes(staff);
+    setNotesDrawerOpen(true);
+  };
+  
+  const handleAddNote = (staffId, noteText) => {
+    const newNote = {
+      id: `note-${Date.now()}`,
+      staffId,
+      text: noteText,
+      authorName: 'Current User',
+      authorInitials: 'CU',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    
+    setStaffNotes(prev => ({
+      ...prev,
+      [staffId]: [...(prev[staffId] || []), newNote]
+    }));
+  };
+  
+  const handleUpdateNote = (staffId, noteId, newText) => {
+    setStaffNotes(prev => ({
+      ...prev,
+      [staffId]: (prev[staffId] || []).map(note =>
+        note.id === noteId
+          ? { ...note, text: newText, updatedAt: new Date().toISOString() }
+          : note
+      )
+    }));
+  };
+  
+  const handleDeleteNote = (staffId, noteId) => {
+    setStaffNotes(prev => ({
+      ...prev,
+      [staffId]: (prev[staffId] || []).filter(note => note.id !== noteId)
+    }));
   };
 
   const handleUpdateTag = (oldTag, newTag) => {
@@ -461,8 +822,10 @@ function WatchlistGrid({ watchlistIds, onRemoveFromWatchlist }) {
         handleTagsClick(staffId, event.currentTarget);
       }
     },
-    onRemoveFromWatchlist
-  ), [onRemoveFromWatchlist]);
+    onRemoveFromWatchlist,
+    handleNotesClick,
+    staffNotes
+  ), [onRemoveFromWatchlist, staffNotes]);
 
   const selectedStaff = selectedStaffForTags 
     ? localStaffData.find(s => s.id === selectedStaffForTags)
@@ -538,6 +901,7 @@ function WatchlistGrid({ watchlistIds, onRemoveFromWatchlist }) {
           columns: {
             columnVisibilityModel: {
               watchlistActions: true,
+              notes: true,
               picUrl: true,
               firstName: true,
               lastName: true,
@@ -546,6 +910,19 @@ function WatchlistGrid({ watchlistIds, onRemoveFromWatchlist }) {
               tags: true,
               profilePrivacy: isLeagueView,
               roles: true,
+              // Coaching stats - visible by default
+              age: true,
+              yearsExp: true,
+              license: true,
+              winRate: true,
+              ppm: true,
+              trophies: true,
+              xgDiff: true,
+              squadValuePerf: true,
+              possession: true,
+              ppda: true,
+              u23Minutes: true,
+              academyDebuts: true,
               location: false,
               state: false,
               workAuthUS: false,
@@ -613,6 +990,22 @@ function WatchlistGrid({ watchlistIds, onRemoveFromWatchlist }) {
           }
         }}
       />
+      
+      {/* Notes Drawer */}
+      {selectedStaffForNotes && (
+        <NotesDrawer
+          open={notesDrawerOpen}
+          onClose={() => {
+            setNotesDrawerOpen(false);
+            setSelectedStaffForNotes(null);
+          }}
+          staffMember={selectedStaffForNotes}
+          notes={staffNotes[selectedStaffForNotes.id] || []}
+          onAddNote={handleAddNote}
+          onUpdateNote={handleUpdateNote}
+          onDeleteNote={handleDeleteNote}
+        />
+      )}
     </Box>
   );
 }

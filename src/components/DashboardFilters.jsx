@@ -26,6 +26,15 @@ const EXPERIENCE_TIMEFRAMES = [
   { value: '20+', label: '20+ years' }
 ];
 
+// Predefined trophy ranges
+const TROPHY_RANGES = [
+  { value: 'all', label: 'All Trophy Counts' },
+  { value: '0', label: 'No Trophies' },
+  { value: '1-2', label: '1-2 trophies' },
+  { value: '3-5', label: '3-5 trophies' },
+  { value: '6+', label: '6+ trophies' }
+];
+
 /**
  * Comprehensive Dashboard Filters Component - Sidebar Interface
  * Provides filtering across multiple dimensions for staff analysis dashboards
@@ -41,6 +50,7 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
   const [experienceRange, setExperienceRange] = useState('all');
   const [selectedCountry, setSelectedCountry] = useState('all');
   const [employmentStatus, setEmploymentStatus] = useState('all');
+  const [trophiesRange, setTrophiesRange] = useState('all');
 
   // Extract unique values from data for filter options
   const filterOptions = useMemo(() => {
@@ -115,7 +125,8 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
       uefaBadges: selectedUEFABadge === 'all' ? [] : [selectedUEFABadge],
       experienceRange: parseExperienceRange(experienceRange),
       countries: selectedCountry === 'all' ? [] : [selectedCountry],
-      employmentStatus
+      employmentStatus,
+      trophiesRange: parseTrophiesRange(trophiesRange)
     };
   };
 
@@ -130,12 +141,22 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
     return { min: null, max: null };
   };
 
+  // Parse trophies range from predefined ranges
+  const parseTrophiesRange = (range) => {
+    if (range === 'all') return { min: null, max: null };
+    if (range === '0') return { min: 0, max: 0 };
+    if (range === '1-2') return { min: 1, max: 2 };
+    if (range === '3-5') return { min: 3, max: 5 };
+    if (range === '6+') return { min: 6, max: null };
+    return { min: null, max: null };
+  };
+
   // Notify parent of filter changes
   React.useEffect(() => {
     if (onFilterChange) {
       onFilterChange(buildFilters());
     }
-  }, [staffType, location, watchlistStatus, selectedTag, selectedRole, selectedUEFABadge, experienceRange, selectedCountry, employmentStatus, onFilterChange]);
+  }, [staffType, location, watchlistStatus, selectedTag, selectedRole, selectedUEFABadge, experienceRange, selectedCountry, employmentStatus, trophiesRange, onFilterChange]);
 
   // Handle reset all filters
   const handleResetFilters = () => {
@@ -148,12 +169,13 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
     setExperienceRange('all');
     setSelectedCountry('all');
     setEmploymentStatus('all');
+    setTrophiesRange('all');
   };
 
   // Check if any filters are active
   const hasActiveFilters = staffType !== 'all' || location !== 'all' || watchlistStatus !== 'all' ||
     selectedTag !== 'all' || selectedRole !== 'all' || selectedUEFABadge !== 'all' ||
-    experienceRange !== 'all' || selectedCountry !== 'all' || employmentStatus !== 'all';
+    experienceRange !== 'all' || selectedCountry !== 'all' || employmentStatus !== 'all' || trophiesRange !== 'all';
 
   return (
     <>
@@ -203,7 +225,7 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
                     fontWeight: 600
                   }}
                 >
-                  {[staffType, location, watchlistStatus, selectedTag, selectedRole, selectedUEFABadge, experienceRange, selectedCountry, employmentStatus].filter(v => v !== 'all').length}
+                  {[staffType, location, watchlistStatus, selectedTag, selectedRole, selectedUEFABadge, experienceRange, selectedCountry, employmentStatus, trophiesRange].filter(v => v !== 'all').length}
                 </Box>
               )}
             </Box>
@@ -338,6 +360,20 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
                 </Select>
               </FormControl>
 
+              {/* Trophies Won */}
+              <FormControl size="small" fullWidth>
+                <InputLabel>Trophies Won</InputLabel>
+                <Select
+                  value={trophiesRange}
+                  label="Trophies Won"
+                  onChange={(e) => setTrophiesRange(e.target.value)}
+                >
+                  {TROPHY_RANGES.map((tf) => (
+                    <MenuItem key={tf.value} value={tf.value}>{tf.label}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
               {/* Countries */}
               {filterOptions.countries.length > 0 && (
                 <FormControl size="small" fullWidth>
@@ -380,6 +416,38 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
     </>
   );
 }
+
+/**
+ * Helper to generate consistent coaching statistics based on staff ID
+ */
+const generateStats = (id) => {
+  const seed = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const random = (offset = 0) => {
+    const x = Math.sin(seed + offset) * 10000;
+    return x - Math.floor(x);
+  };
+
+  const winRate = 35 + Math.floor(random(1) * 40); // 35-75%
+  const draws = Math.floor(random(2) * 20); // 0-20%
+  const ppm = ((winRate * 3) + draws) / 100;
+  
+  const age = 32 + Math.floor(random(3) * 25); // 32-57
+  const maxExp = age - 21;
+  const yearsExp = Math.min(3 + Math.floor(random(4) * 25), maxExp);
+
+  return {
+    age,
+    yearsExp,
+    winRate: winRate,
+    ppm: ppm.toFixed(2),
+    trophies: Math.floor(random(5) * 8), // 0-7
+    xgDiff: (random(6) * 1.5 - 0.5).toFixed(2),
+    squadValuePerf: (random(7) * 40 - 10).toFixed(1),
+    possession: 40 + Math.floor(random(8) * 30),
+    ppda: (6 + random(9) * 10).toFixed(1),
+    u23Minutes: Math.floor(random(10) * 40),
+  };
+};
 
 /**
  * Helper function to apply filters to staff data
@@ -502,6 +570,42 @@ export function applyFilters(staffData, currentStaffData, filters) {
       
       return filters.employmentStatus === 'employed' ? isEmployed : !isEmployed;
     });
+  }
+
+  // Apply trophies range filter
+  if (filters.trophiesRange) {
+    const { min, max } = filters.trophiesRange;
+    if (min !== null || max !== null) {
+      filtered = filtered.filter(staff => {
+        // Check if staff member has coaching experience to generate stats
+        const currentRole = staff.currentEmployer?.split('-')[1]?.trim() || '';
+        const interestArea = staff.interestArea || '';
+        const hasCoachingRoles = staff.coachingRoles && staff.coachingRoles.length > 0;
+        const hasCoachingExp = staff.proCoachExp || staff.mlsCoachExp;
+        const hasCoachingLicenses = staff.coachingLicenses && staff.coachingLicenses.length > 0;
+        
+        // Consider someone a coach if they have ANY coaching-related data
+        const isCoach = currentRole.toLowerCase().includes('coach') || 
+                        currentRole.toLowerCase().includes('manager') || 
+                        interestArea.toLowerCase().includes('coach') ||
+                        hasCoachingRoles ||
+                        hasCoachingExp ||
+                        hasCoachingLicenses;
+        
+        if (!isCoach) {
+          // Non-coaches have 0 trophies
+          return min === 0 && (max === null || max >= 0);
+        }
+        
+        // Generate trophies count from coaching stats
+        const stats = generateStats(staff.id);
+        const trophies = stats.trophies;
+        
+        if (min !== null && trophies < min) return false;
+        if (max !== null && trophies > max) return false;
+        return true;
+      });
+    }
   }
 
   return filtered;

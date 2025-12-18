@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Box, Chip, Avatar, Link, Stack, Typography, Tooltip, Button, IconButton, Snackbar, Alert, Badge } from '@mui/material';
+import { Box, Chip, Avatar, Link, Stack, Typography, Tooltip, Button, IconButton, Snackbar, Alert, Badge, LinearProgress } from '@mui/material';
 import {
   DataGridPro as DataGrid,
   GridToolbarContainer,
@@ -35,6 +35,37 @@ import TagApprovalDrawer from './TagApprovalDrawer';
 import ClubApprovalInbox from './ClubApprovalInbox';
 import NotesDrawer from './NotesDrawer';
 import '../styles/design-tokens.css';
+
+// Helper to generate consistent random stats based on staff ID
+const generateStats = (id) => {
+  const seed = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const random = (offset = 0) => {
+    const x = Math.sin(seed + offset) * 10000;
+    return x - Math.floor(x);
+  };
+
+  const winRate = 35 + Math.floor(random(1) * 40); // 35-75%
+  const draws = Math.floor(random(2) * 20); // 0-20%
+  const ppm = ((winRate * 3) + draws) / 100;
+  
+  const age = 32 + Math.floor(random(3) * 25); // 32-57
+  const maxExp = age - 21;
+  const yearsExp = Math.min(3 + Math.floor(random(4) * 25), maxExp);
+
+  return {
+    age,
+    yearsExp,
+    winRate: winRate,
+    ppm: ppm.toFixed(2),
+    trophies: Math.floor(random(5) * 8), // 0-7
+    xgDiff: (random(6) * 1.5 - 0.5).toFixed(2), // -0.5 to +1.0
+    squadValuePerf: (random(7) * 40 - 10).toFixed(1), // -10% to +30%
+    possession: 40 + Math.floor(random(8) * 30), // 40-70%
+    ppda: (6 + random(9) * 10).toFixed(1), // 6.0 - 16.0
+    u23Minutes: Math.floor(random(10) * 40), // 0-40%
+    academyDebuts: Math.floor(random(11) * 12), // 0-11
+  };
+};
 
 export const CustomToolbar = React.forwardRef((props, ref) => {
   const navigate = useNavigate();
@@ -752,6 +783,228 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     renderCell: (params) => <LinkCell value={params.value} type="link" /> 
   },
   // picUrl moved to front as a headerless avatar column
+  
+  // --- COACHING STATISTICS (from CoachLeaderboard) ---
+  {
+    field: 'age',
+    headerName: 'Age',
+    type: 'number',
+    width: 70,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.age;
+      return null;
+    }
+  },
+  {
+    field: 'yearsExp',
+    headerName: 'Exp (Yrs)',
+    type: 'number',
+    width: 100,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.yearsExp;
+      return null;
+    }
+  },
+  {
+    field: 'license',
+    headerName: 'License',
+    width: 160,
+    valueGetter: (params) => {
+      const licenses = params.row.coachingLicenses;
+      if (Array.isArray(licenses) && licenses.length > 0) return licenses[0];
+      return 'None';
+    },
+    renderCell: (params) => (
+      <Chip 
+        label={params.value} 
+        size="small" 
+        variant="outlined" 
+        sx={{ height: 24, fontSize: '0.75rem', maxWidth: '100%' }} 
+      />
+    )
+  },
+  {
+    field: 'winRate',
+    headerName: 'Win %',
+    type: 'number',
+    width: 110,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.winRate;
+      return null;
+    },
+    renderCell: (params) => {
+      if (!params.value) return null;
+      return (
+        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography variant="body2" sx={{ minWidth: 35 }}>{params.value}%</Typography>
+          <LinearProgress 
+            variant="determinate" 
+            value={params.value} 
+            sx={{ 
+              flexGrow: 1, 
+              height: 6, 
+              borderRadius: 3,
+              bgcolor: 'grey.200',
+              '& .MuiLinearProgress-bar': {
+                bgcolor: params.value > 55 ? 'success.main' : params.value > 40 ? 'warning.main' : 'error.main'
+              }
+            }} 
+          />
+        </Box>
+      );
+    }
+  },
+  {
+    field: 'ppm',
+    headerName: 'PPM',
+    type: 'number',
+    width: 80,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.ppm;
+      return null;
+    },
+    renderCell: (params) => {
+      if (!params.value) return null;
+      return (
+        <Typography variant="body2" fontWeight={params.value > 1.8 ? 700 : 400}>
+          {params.value}
+        </Typography>
+      );
+    }
+  },
+  {
+    field: 'trophies',
+    headerName: 'Trophies',
+    type: 'number',
+    width: 110,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.trophies;
+      return null;
+    },
+    renderCell: (params) => {
+      if (params.value === null || params.value === undefined) return null;
+      return params.value > 0 ? (
+        <Chip 
+          label={params.value} 
+          size="small" 
+          color="warning" 
+          variant="outlined"
+          sx={{ height: 24 }}
+        />
+      ) : <Typography variant="body2" color="text.secondary">-</Typography>;
+    }
+  },
+  {
+    field: 'xgDiff',
+    headerName: 'xG Diff',
+    type: 'number',
+    width: 90,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.xgDiff;
+      return null;
+    },
+    renderCell: (params) => {
+      if (!params.value) return null;
+      return (
+        <Typography 
+          variant="body2" 
+          color={params.value > 0 ? 'success.main' : 'error.main'}
+          fontWeight={600}
+        >
+          {params.value > 0 ? '+' : ''}{params.value}
+        </Typography>
+      );
+    }
+  },
+  {
+    field: 'squadValuePerf',
+    headerName: 'Squad Val %',
+    type: 'number',
+    width: 110,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.squadValuePerf;
+      return null;
+    },
+    renderCell: (params) => {
+      if (!params.value) return null;
+      return (
+        <Typography 
+          variant="body2" 
+          color={params.value > 0 ? 'success.main' : 'error.main'}
+        >
+          {params.value > 0 ? '+' : ''}{params.value}%
+        </Typography>
+      );
+    }
+  },
+  {
+    field: 'possession',
+    headerName: 'Possession',
+    type: 'number',
+    width: 110,
+    align: 'right',
+    headerAlign: 'right',
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.possession;
+      return null;
+    },
+    renderCell: (params) => {
+      if (!params.value) return null;
+      return (
+        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
+          <Typography variant="body2">{params.value}%</Typography>
+        </Box>
+      );
+    }
+  },
+  {
+    field: 'ppda',
+    headerName: 'PPDA',
+    description: 'Passes Allowed Per Defensive Action (Lower is more intense pressing)',
+    type: 'number',
+    width: 80,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.ppda;
+      return null;
+    }
+  },
+  {
+    field: 'u23Minutes',
+    headerName: 'U23 Mins',
+    type: 'number',
+    width: 100,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.u23Minutes;
+      return null;
+    },
+    renderCell: (params) => {
+      if (params.value === null || params.value === undefined) return null;
+      return `${params.value}%`;
+    }
+  },
+  {
+    field: 'academyDebuts',
+    headerName: 'Debuts',
+    type: 'number',
+    width: 120,
+    valueGetter: (params) => {
+      if (params.row.coachingStats) return params.row.coachingStats.academyDebuts;
+      return null;
+    },
+    renderHeader: () => (
+      <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', pr: 4 }}>
+        Debuts
+      </Box>
+    ),
+    renderCell: (params) => {
+      if (params.value === null || params.value === undefined) return null;
+      return (
+        <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', pr: 4 }}>
+          {params.value}
+        </Box>
+      );
+    }
+  },
 ];
 };
 
@@ -873,7 +1126,35 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
   const location = useLocation();
   const [selectedRows, setSelectedRows] = React.useState([]);
   const [bulkEditOpen, setBulkEditOpen] = React.useState(false);
-  const [localStaffData, setLocalStaffData] = React.useState(staffData);
+  
+  // Enrich staff data with coaching statistics
+  const [localStaffData, setLocalStaffData] = React.useState(() => {
+    return staffData.map(staff => {
+      // Check multiple indicators that someone is a coach
+      const currentRole = staff.currentEmployer?.split('-')[1]?.trim() || '';
+      const interestArea = staff.interestArea || '';
+      const hasCoachingRoles = staff.coachingRoles && staff.coachingRoles.length > 0;
+      const hasCoachingExp = staff.proCoachExp || staff.mlsCoachExp;
+      const hasCoachingLicenses = staff.coachingLicenses && staff.coachingLicenses.length > 0;
+      
+      // Consider someone a coach if they have ANY coaching-related data
+      const isCoach = currentRole.toLowerCase().includes('coach') || 
+                      currentRole.toLowerCase().includes('manager') || 
+                      interestArea.toLowerCase().includes('coach') ||
+                      hasCoachingRoles ||
+                      hasCoachingExp ||
+                      hasCoachingLicenses;
+      
+      // Add coaching stats if they're a coach
+      if (isCoach) {
+        return {
+          ...staff,
+          coachingStats: generateStats(staff.id)
+        };
+      }
+      return staff;
+    });
+  });
   
   // Tag management state
   const [tagSelectorAnchor, setTagSelectorAnchor] = React.useState(null);
@@ -1439,6 +1720,19 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
               resumeUrl: false,
               coachingLicenseDoc: false,
               otherCertsDoc: false,
+              // Coaching stats - hidden by default but available
+              age: false,
+              yearsExp: false,
+              license: false,
+              winRate: false,
+              ppm: false,
+              trophies: false,
+              xgDiff: false,
+              squadValuePerf: false,
+              possession: false,
+              ppda: false,
+              u23Minutes: false,
+              academyDebuts: false,
             },
           },
         }}
