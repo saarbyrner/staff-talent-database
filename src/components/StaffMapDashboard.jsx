@@ -317,10 +317,10 @@ function StaffMapDashboard() {
       .domain([0, d3.max(locations, d => d.count)])
       .range([8, 40]);
 
-    // Color scale based on count - using actual hex values instead of CSS variables
+    // Color scale based on count - variations of red, darker for more staff
     const colorScale = d3.scaleSequential()
       .domain([0, d3.max(locations, d => d.count)])
-      .interpolator(d3.interpolateRgb('#29AE61', '#3B4960')); // chart-2 (green) to primary (navy)
+      .interpolator(d3.interpolateRgb('#ffcccc', '#8B0000')); // light red to dark red
 
     // Draw location markers
     const markers = g.selectAll('.location-marker')
