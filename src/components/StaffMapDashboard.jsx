@@ -33,6 +33,7 @@ import currentStaffData from '../data/users_staff.json';
 import worldGeoJson from '../data/world_map.json';
 import EloGraph from './EloGraph';
 import StaffSankeyDiagram, { StaffSankeySelectors } from './StaffSankeyDiagram';
+import StaffTimelineView from './StaffTimelineView';
 import DashboardSettingsDrawer from './DashboardSettingsDrawer';
 import DashboardFilters, { applyFilters } from './DashboardFilters';
 import '../styles/design-tokens.css';
@@ -45,6 +46,7 @@ const DEFAULT_DASHBOARD_SETTINGS = {
   qualificationStandards: true,
   talentPipeline: true,
   dataFlow: true,
+  timelineView: true,
   eloGraph: true,
 };
 
@@ -436,6 +438,7 @@ function StaffMapDashboard() {
     { id: 'qualificationStandards', label: 'Qualification Standards', description: 'Coaching license and credential trends' },
     { id: 'talentPipeline', label: 'Talent Pipeline', description: 'Tag progression and talent development pipeline' },
     { id: 'dataFlow', label: 'Flow Diagram', description: 'Visualize relationships between staff characteristics' },
+    { id: 'timelineView', label: 'Timeline View', description: 'Career progression timeline with demographic comparisons' },
     { id: 'eloGraph', label: 'Elo Ratings', description: 'Top 20 staff by Elo rating' },
   ];
 
@@ -806,6 +809,11 @@ function StaffMapDashboard() {
           sourceField={sankeySourceField}
           targetField={sankeyTargetField}
         />
+      )}
+
+      {/* Timeline View Tab */}
+      {visibleDashboards[activeTab]?.id === 'timelineView' && (
+        <StaffTimelineView />
       )}
 
       {/* Elo Graph Tab */}

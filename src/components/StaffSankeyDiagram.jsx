@@ -9,7 +9,7 @@ const StaffSankeyDiagram = ({ sourceField, targetField }) => {
   const containerRef = useRef()
   const [dimensions, setDimensions] = useState({ width: 1200, height: 800 })
 
-  // Handle window resize
+  // Handle container resize (including when drawers open/close)
   useEffect(() => {
     const handleResize = () => {
       if (containerRef.current) {
@@ -22,8 +22,18 @@ const StaffSankeyDiagram = ({ sourceField, targetField }) => {
     }
 
     handleResize()
+    
+    // Use ResizeObserver to detect container size changes
+    const resizeObserver = new ResizeObserver(handleResize)
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current)
+    }
+    
     window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+    return () => {
+      resizeObserver.disconnect()
+      window.removeEventListener('resize', handleResize)
+    }
   }, [])
 
   // Extract values from staff data based on field type
@@ -281,7 +291,6 @@ export const StaffSankeySelectors = ({ sourceField, setSourceField, targetField,
             <MenuItem 
               key={option.value} 
               value={option.value}
-              disabled={option.value === targetField}
             >
               {option.label}
             </MenuItem>
@@ -300,7 +309,6 @@ export const StaffSankeySelectors = ({ sourceField, setSourceField, targetField,
             <MenuItem 
               key={option.value} 
               value={option.value}
-              disabled={option.value === sourceField}
             >
               {option.label}
             </MenuItem>

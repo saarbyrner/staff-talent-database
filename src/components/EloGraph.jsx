@@ -47,7 +47,7 @@ function EloGraph({ dashboardFilters = null }) {
       .slice(0, 20);
   }, [staffWithElo, dashboardFilters]);
 
-  // Handle window resize
+  // Handle container resize (including when drawers open/close)
   useEffect(() => {
     const handleResize = () => {
       if (containerRef.current) {
@@ -59,8 +59,18 @@ function EloGraph({ dashboardFilters = null }) {
     };
 
     handleResize();
+    
+    // Use ResizeObserver to detect container size changes
+    const resizeObserver = new ResizeObserver(handleResize);
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+    
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', handleResize);
+    };
   }, [topStaff.length]);
 
   // Draw chart

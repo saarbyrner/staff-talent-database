@@ -98,7 +98,8 @@
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/101_coaching.pdf",
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
-    "eloRating": 1500
+    "eloRating": 1500,
+    "trophies": 5
   },
   {
     "id": "102",
@@ -2576,7 +2577,7 @@
     "coachingRoles": [],
     "execRoles": [],
     "techRoles": [
-      "Data Engineering",
+      "Performance Analyst",
       "Performance Director"
     ],
     "relocation": [
@@ -2856,7 +2857,7 @@
     "coachingRoles": [],
     "execRoles": [],
     "techRoles": [
-      "Chief Data Officer",
+      "Director of Analytics",
       "Insights Lead"
     ],
     "relocation": [
@@ -2878,7 +2879,7 @@
       "Analytics",
       "Technology"
     ],
-    "currentEmployer": "Warsaw Data Lab - Chief Data Officer (2021-Present)",
+    "currentEmployer": "Warsaw Data Lab - Director of Analytics (2021-Present)",
     "prevEmployer1": "Legia Warsaw - Data Analyst (2017-2021)",
     "prevEmployer2": "Canadian Soccer Association - Academy Director (2011-2012)",
     "degree": "PhD",
@@ -3128,7 +3129,7 @@
     "coachingRoles": [],
     "execRoles": [],
     "techRoles": [
-      "AI Product Manager",
+      "Technical Director",
       "Data Strategist"
     ],
     "relocation": [
@@ -3391,7 +3392,7 @@
     "coachingRoles": [],
     "execRoles": [],
     "techRoles": [
-      "Data Architect",
+      "Performance Analyst",
       "Performance Analyst"
     ],
     "relocation": [
@@ -3566,7 +3567,7 @@
     "interestArea": "Sporting Executive",
     "coachingRoles": [],
     "execRoles": [
-      "Chief Operating Officer",
+      "Director of Football Operations",
       "Football Operations"
     ],
     "techRoles": [],
@@ -3927,7 +3928,7 @@
     "coachingRoles": [],
     "execRoles": [],
     "techRoles": [
-      "Chief Platform Officer",
+      "Technical Director",
       "User Research"
     ],
     "relocation": [
