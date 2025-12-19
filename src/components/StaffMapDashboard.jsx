@@ -16,7 +16,8 @@ import {
   InputLabel,
   Tabs,
   Tab,
-  IconButton
+  IconButton,
+  Slider
 } from '@mui/material';
 import {
   LocationOn,
@@ -24,10 +25,14 @@ import {
   Public,
   TrendingUp,
   SettingsOutlined,
-  FilterList
+  FilterList,
+  CalendarMonth
 } from '@mui/icons-material';
 import * as d3 from 'd3';
 import * as d3Geo from 'd3-geo';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 import staffTalentData from '../data/staff_talent.json';
 import currentStaffData from '../data/users_staff.json';
 import worldGeoJson from '../data/world_map.json';
@@ -39,6 +44,7 @@ import DashboardFilters, { applyFilters } from './DashboardFilters';
 import EmploymentStabilityBarChart from './EmploymentStabilityBarChart';
 import { getEmploymentStabilityMatrix } from '../utils/employmentStabilityByTeam';
 import { normalizeRole, getStandardizedRoles } from '../utils/roleNormalization';
+import mlsClubs from '../data/mls-clubs.json';
 import '../styles/design-tokens.css';
 
 // Default dashboard visibility settings
@@ -94,7 +100,13 @@ function StaffMapDashboard() {
   const [dashboardFilters, setDashboardFilters] = useState(null);
   const [settingsDrawerOpen, setSettingsDrawerOpen] = useState(false);
   const [dashboardSettings, setDashboardSettings] = useState(loadDashboardSettings);
-  const [filterSidebarOpen, setFilterSidebarOpen] = useState(true);
+  const [filterSidebarOpen, setFilterSidebarOpen] = useState(false);
+
+  // Employment Trends state
+  const currentYear = new Date().getFullYear();
+  const [startYear, setStartYear] = useState(currentYear - 4);
+  const [endYear, setEndYear] = useState(currentYear);
+  const [selectedTeams, setSelectedTeams] = useState([]);
 
   // Sankey diagram state
   const [sankeySourceField, setSankeySourceField] = useState('tags');
@@ -460,7 +472,7 @@ function StaffMapDashboard() {
   // Define all dashboards with their settings keys
   const allDashboards = [
     { id: 'locationAnalysis', label: 'Location Analysis', description: 'Geographic distribution and insights' },
-    { id: 'employmentStability', label: 'Employment Stability', description: 'Employment trends and stability metrics' },
+    { id: 'employmentStability', label: 'Employment Trends', description: 'Employment trends and stability metrics' },
     { id: 'originBreakdown', label: 'Origin Breakdown', description: 'Domestic vs. international talent comparison' },
     { id: 'qualificationStandards', label: 'Qualification Standards', description: 'Coaching license and credential trends' },
     { id: 'talentPipeline', label: 'Talent Pipeline', description: 'Tag progression and talent development pipeline' },
@@ -489,70 +501,56 @@ function StaffMapDashboard() {
   };
 
   return (
-    <Box sx={{ display: 'flex', height: '100%', position: 'relative' }}>
-      {/* Dashboard Filters Sidebar */}
-      <DashboardFilters
-        onFilterChange={setDashboardFilters}
-        open={filterSidebarOpen}
-        onToggle={() => setFilterSidebarOpen(!filterSidebarOpen)}
-      />
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Box sx={{ display: 'flex', height: '100%', position: 'relative' }}>
+        {/* Dashboard Filters Sidebar */}
+        <DashboardFilters
+          onFilterChange={setDashboardFilters}
+          open={filterSidebarOpen}
+          onToggle={() => setFilterSidebarOpen(!filterSidebarOpen)}
+        />
 
-      {/* Main Content Area */}
-      <Box sx={{
-        flex: 1,
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: '#fafafa',
-        transition: 'margin-right 225ms cubic-bezier(0, 0, 0.2, 1) 0ms',
-        marginRight: filterSidebarOpen ? '280px' : 0
-      }}>
+        {/* Main Content Area */}
+        <Box sx={{
+          flex: 1,
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundColor: '#fafafa',
+          transition: 'margin-right 225ms cubic-bezier(0, 0, 0.2, 1) 0ms',
+          marginRight: filterSidebarOpen ? '280px' : 0
+        }}>
 
-        {/* Tabs */}
-        <Paper
-          elevation={0}
-          sx={{
-            borderBottom: '1px solid var(--color-border-primary)',
-            backgroundColor: 'var(--color-background-primary)',
-            borderRadius: 0,
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 3 }}>
-            <Tabs
-              value={activeTab}
-              onChange={(e, newValue) => setActiveTab(newValue)}
-              sx={{
-                '& .MuiTab-root': {
-                  textTransform: 'none',
-                  fontWeight: 500,
-                  fontSize: '0.875rem',
-                }
-              }}
-            >
-              {visibleDashboards.map(dashboard => (
-                <Tab key={dashboard.id} label={dashboard.label} />
-              ))}
-            </Tabs>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              {/* Filter Toggle Button */}
-              {!filterSidebarOpen && (
-                <IconButton
-                  onClick={() => setFilterSidebarOpen(true)}
-                  size="small"
-                  sx={{
-                    color: 'var(--color-text-secondary)',
-                    '&:hover': {
-                      color: 'var(--color-primary)',
-                    }
-                  }}
-                >
-                  <FilterList fontSize="small" />
-                </IconButton>
-              )}
-              {isLeagueView && (
-                <Tooltip title="Configure club view dashboards">
+          {/* Tabs */}
+          <Paper
+            elevation={0}
+            sx={{
+              borderBottom: '1px solid var(--color-border-primary)',
+              backgroundColor: 'var(--color-background-primary)',
+              borderRadius: 0,
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 3 }}>
+              <Tabs
+                value={activeTab}
+                onChange={(e, newValue) => setActiveTab(newValue)}
+                sx={{
+                  '& .MuiTab-root': {
+                    textTransform: 'none',
+                    fontWeight: 500,
+                    fontSize: '0.875rem',
+                  }
+                }}
+              >
+                {visibleDashboards.map(dashboard => (
+                  <Tab key={dashboard.id} label={dashboard.label} />
+                ))}
+              </Tabs>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                {/* Filter Toggle Button */}
+                {!filterSidebarOpen && (
                   <IconButton
-                    onClick={() => setSettingsDrawerOpen(true)}
+                    onClick={() => setFilterSidebarOpen(true)}
                     size="small"
                     sx={{
                       color: 'var(--color-text-secondary)',
@@ -561,332 +559,409 @@ function StaffMapDashboard() {
                       }
                     }}
                   >
-                    <SettingsOutlined fontSize="small" />
+                    <FilterList fontSize="small" />
                   </IconButton>
-                </Tooltip>
-              )}
-            </Box>
-          </Box>
-        </Paper>
-
-        <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 3, flex: 1, overflow: 'auto' }}>
-          {/* Header Row: Title/Description + Filters */}
-          <Box sx={{
-            mb: 3,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            flexWrap: 'wrap',
-            gap: 2
-          }}>
-            {/* Title Section */}
-            <Box sx={{ flex: '1 1 300px' }}>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 700,
-                  color: 'var(--color-primary)',
-                  mb: 0.5
-                }}
-              >
-                {visibleDashboards[activeTab]?.label || 'Dashboard'}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {visibleDashboards[activeTab]?.description || ''}
-              </Typography>
-            </Box>
-
-            {/* Filters Section (Country, Role, Sankey) */}
-            <Box sx={{
-              display: 'flex',
-              gap: 2,
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              justifyContent: 'flex-end'
-            }}>
-              {/* Country Filter */}
-              {(visibleDashboards[activeTab]?.id === 'locationAnalysis' || visibleDashboards[activeTab]?.id === 'dataFlow') && (
-                <FormControl size="small" sx={{ minWidth: 150 }}>
-                  <InputLabel>Country</InputLabel>
-                  <Select
-                    value={selectedCountry}
-                    onChange={(e) => setSelectedCountry(e.target.value)}
-                    label="Country"
-                  >
-                    <MenuItem value="all">All Countries</MenuItem>
-                    {countries.slice(1).map(country => (
-                      <MenuItem key={country} value={country}>{country}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
-
-              {/* Sankey Selectors - Only show on Data Flow tab */}
-              {visibleDashboards[activeTab]?.id === 'dataFlow' && (
-                <StaffSankeySelectors
-                  sourceField={sankeySourceField}
-                  setSourceField={setSankeySourceField}
-                  targetField={sankeyTargetField}
-                  setTargetField={setSankeyTargetField}
-                  fieldOptions={sankeyFieldOptions}
-                />
-              )}
-
-              {/* Roles Multiselect - Conditional and at the end */}
-              {(visibleDashboards[activeTab]?.id === 'locationAnalysis' || visibleDashboards[activeTab]?.id === 'dataFlow') &&
-                (visibleDashboards[activeTab]?.id !== 'dataFlow' ||
-                  (sankeySourceField === 'role' || sankeyTargetField === 'role')) && (
-                  <FormControl size="small" sx={{ minWidth: 220 }}>
-                    <InputLabel>Roles</InputLabel>
-                    <Select
-                      multiple
-                      value={selectedRoles}
-                      onChange={(e) => setSelectedRoles(typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value)}
-                      label="Roles"
-                      renderValue={(selected) => (
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                          {selected.length === 0 ? 'All Roles' : selected.map((value) => (
-                            <Chip key={value} label={value} size="small" />
-                          ))}
-                        </Box>
-                      )}
+                )}
+                {isLeagueView && (
+                  <Tooltip title="Configure club view dashboards">
+                    <IconButton
+                      onClick={() => setSettingsDrawerOpen(true)}
+                      size="small"
+                      sx={{
+                        color: 'var(--color-text-secondary)',
+                        '&:hover': {
+                          color: 'var(--color-primary)',
+                        }
+                      }}
                     >
-                      {roles.slice(1).map(role => (
-                        <MenuItem key={role} value={role}>{role}</MenuItem>
+                      <SettingsOutlined fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </Box>
+            </Box>
+          </Paper>
+
+          <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 3, flex: 1, overflow: 'auto' }}>
+            {/* Header Row: Title/Description + Filters */}
+            <Box sx={{
+              mb: 3,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              flexWrap: 'wrap',
+              gap: 2
+            }}>
+              {/* Title Section */}
+              <Box sx={{ flex: '1 1 300px' }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 700,
+                    color: 'var(--color-primary)',
+                    mb: 0.5
+                  }}
+                >
+                  {visibleDashboards[activeTab]?.label || 'Dashboard'}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {visibleDashboards[activeTab]?.description || ''}
+                </Typography>
+              </Box>
+
+              {/* Filters Section (Country, Role, Sankey) */}
+              <Box sx={{
+                display: 'flex',
+                gap: 2,
+                flexWrap: 'wrap',
+                alignItems: 'center',
+                justifyContent: 'flex-end'
+              }}>
+                {/* Employment Trends Filters (Date Range + Population) */}
+                {visibleDashboards[activeTab]?.id === 'employmentStability' && (
+                  <>
+                    <Box sx={{ width: 200, px: 2, display: 'flex', flexDirection: 'column' }}>
+                      <Typography variant="caption" color="text.secondary" sx={{ mb: -0.5, fontSize: '0.7rem' }}>
+                        Period: {Math.min(startYear, endYear)} - {Math.max(startYear, endYear)}
+                      </Typography>
+                      <Slider
+                        value={[startYear, endYear]}
+                        onChange={(e, newValue) => {
+                          setStartYear(newValue[0]);
+                          setEndYear(newValue[1]);
+                        }}
+                        valueLabelDisplay="auto"
+                        min={currentYear - 10}
+                        max={currentYear}
+                        step={1}
+                        size="small"
+                        sx={{
+                          color: 'var(--color-primary)',
+                          '& .MuiSlider-thumb': {
+                            width: 12,
+                            height: 12,
+                          }
+                        }}
+                      />
+                    </Box>
+
+                    <FormControl size="small" sx={{ width: 180 }}>
+                      <InputLabel>Teams</InputLabel>
+                      <Select
+                        multiple
+                        value={selectedTeams}
+                        onChange={(e) => setSelectedTeams(typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value)}
+                        label="Teams"
+                        renderValue={(selected) => {
+                          if (selected.length === 0) return 'All Teams';
+                          if (selected.length === 1) return selected[0];
+                          return `${selected.length} Teams selected`;
+                        }}
+                        sx={{
+                          '& .MuiSelect-select': {
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }
+                        }}
+                      >
+                        {mlsClubs.slice(0, 29).map(team => (
+                          <MenuItem key={team} value={team}>{team}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </>
+                )}
+
+                {/* Country Filter */}
+                {(visibleDashboards[activeTab]?.id === 'locationAnalysis' || visibleDashboards[activeTab]?.id === 'dataFlow') && (
+                  <FormControl size="small" sx={{ minWidth: 150 }}>
+                    <InputLabel>Country</InputLabel>
+                    <Select
+                      value={selectedCountry}
+                      onChange={(e) => setSelectedCountry(e.target.value)}
+                      label="Country"
+                    >
+                      <MenuItem value="all">All Countries</MenuItem>
+                      {countries.slice(1).map(country => (
+                        <MenuItem key={country} value={country}>{country}</MenuItem>
                       ))}
                     </Select>
                   </FormControl>
                 )}
-            </Box>
-          </Box>
 
-          {/* Location Analysis Tab */}
-          {visibleDashboards[activeTab]?.id === 'locationAnalysis' && (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-              {/* Stats Cards */}
-              <Grid container spacing={2}>
-                {statCards.map(({ label, value, icon, iconColor }) => (
-                  <Grid item xs={12} sm={6} md={3} key={label}>
-                    <Card
-                      elevation={0}
-                      sx={{
-                        border: '1px solid var(--color-border-primary)',
-                        minHeight: 84,
-                        display: 'flex',
-                        flexDirection: 'column'
-                      }}
-                    >
-                      <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
-                        <Avatar sx={{ bgcolor: iconColor, width: 40, height: 40 }}>
-                          {icon}
-                        </Avatar>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
-                          <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
-                            {value}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {label}
-                          </Typography>
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
-
-              {/* Map */}
-              <Paper
-                ref={containerRef}
-                elevation={0}
-                sx={{
-                  flex: 1,
-                  border: '1px solid var(--color-border-primary)',
-                  borderRadius: 1,
-                  p: 2,
-                  position: 'relative',
-                  overflow: 'hidden',
-                  backgroundColor: '#ffffff',
-                  minHeight: 500
-                }}
-              >
-                <svg
-                  ref={svgRef}
-                  style={{
-                    width: '100%',
-                    height: '500px',
-                    display: 'block'
-                  }}
-                />
-                {locations.length === 0 && (
-                  <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-                    <Typography color="text.secondary" variant="body2">No staff locations match current filters</Typography>
-                  </Box>
+                {/* Sankey Selectors - Only show on Data Flow tab */}
+                {visibleDashboards[activeTab]?.id === 'dataFlow' && (
+                  <StaffSankeySelectors
+                    sourceField={sankeySourceField}
+                    setSourceField={setSankeySourceField}
+                    targetField={sankeyTargetField}
+                    setTargetField={setSankeyTargetField}
+                    fieldOptions={sankeyFieldOptions}
+                  />
                 )}
 
-                {/* Hover Tooltip */}
-                {hoveredLocation && (
+                {/* Roles Multiselect - Conditional and at the end */}
+                {(visibleDashboards[activeTab]?.id === 'locationAnalysis' || visibleDashboards[activeTab]?.id === 'dataFlow') &&
+                  (visibleDashboards[activeTab]?.id !== 'dataFlow' ||
+                    (sankeySourceField === 'role' || sankeyTargetField === 'role')) && (
+                    <FormControl size="small" sx={{ minWidth: 220 }}>
+                      <InputLabel>Roles</InputLabel>
+                      <Select
+                        multiple
+                        value={selectedRoles}
+                        onChange={(e) => setSelectedRoles(typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value)}
+                        label="Roles"
+                        renderValue={(selected) => (
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                            {selected.length === 0 ? 'All Roles' : selected.map((value) => (
+                              <Chip key={value} label={value} size="small" />
+                            ))}
+                          </Box>
+                        )}
+                      >
+                        {roles.slice(1).map(role => (
+                          <MenuItem key={role} value={role}>{role}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+              </Box>
+            </Box>
+
+            {/* Location Analysis Tab */}
+            {visibleDashboards[activeTab]?.id === 'locationAnalysis' && (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {/* Stats Cards */}
+                <Grid container spacing={2}>
+                  {statCards.map(({ label, value, icon, iconColor }) => (
+                    <Grid item xs={12} sm={6} md={3} key={label}>
+                      <Card
+                        elevation={0}
+                        sx={{
+                          border: '1px solid var(--color-border-primary)',
+                          minHeight: 84,
+                          display: 'flex',
+                          flexDirection: 'column'
+                        }}
+                      >
+                        <CardContent sx={{ py: 1, px: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+                          <Avatar sx={{ bgcolor: iconColor, width: 40, height: 40 }}>
+                            {icon}
+                          </Avatar>
+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                            <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                              {value}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {label}
+                            </Typography>
+                          </Box>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
+
+                {/* Map */}
+                <Paper
+                  ref={containerRef}
+                  elevation={0}
+                  sx={{
+                    flex: 1,
+                    border: '1px solid var(--color-border-primary)',
+                    borderRadius: 1,
+                    p: 2,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    backgroundColor: '#ffffff',
+                    minHeight: 500
+                  }}
+                >
+                  <svg
+                    ref={svgRef}
+                    style={{
+                      width: '100%',
+                      height: '500px',
+                      display: 'block'
+                    }}
+                  />
+                  {locations.length === 0 && (
+                    <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+                      <Typography color="text.secondary" variant="body2">No staff locations match current filters</Typography>
+                    </Box>
+                  )}
+
+                  {/* Hover Tooltip */}
+                  {hoveredLocation && (
+                    <Paper
+                      elevation={3}
+                      sx={{
+                        position: 'absolute',
+                        top: 20,
+                        right: 20,
+                        p: 2,
+                        maxWidth: 300,
+                        zIndex: 1000,
+                        border: '1px solid var(--color-border-primary)'
+                      }}
+                    >
+                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+                        {hoveredLocation.city}, {hoveredLocation.country}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+                        {hoveredLocation.count} staff member{hoveredLocation.count !== 1 ? 's' : ''}
+                      </Typography>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                        {hoveredLocation.staff.slice(0, 5).map((staff, idx) => (
+                          <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Avatar
+                              src={staff.picUrl}
+                              sx={{
+                                width: 24,
+                                height: 24,
+                                fontSize: '0.7rem',
+                                bgcolor: 'var(--color-primary)',
+                                color: '#ffffff'
+                              }}
+                            >
+                              {staff.firstName?.[0]}{staff.lastName?.[0]}
+                            </Avatar>
+                            <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
+                              {staff.firstName} {staff.lastName}
+                            </Typography>
+                            <Chip
+                              label={staff.interestArea}
+                              size="small"
+                              sx={{
+                                ml: 'auto',
+                                height: 20,
+                                fontSize: '0.7rem',
+                                bgcolor: 'var(--color-background-secondary)',
+                                color: 'var(--color-text-secondary)'
+                              }}
+                            />
+                          </Box>
+                        ))}
+                        {hoveredLocation.staff.length > 5 && (
+                          <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
+                            +{hoveredLocation.staff.length - 5} more
+                          </Typography>
+                        )}
+                      </Box>
+                    </Paper>
+                  )}
+
+                  {/* Legend */}
                   <Paper
-                    elevation={3}
+                    elevation={0}
                     sx={{
                       position: 'absolute',
-                      top: 20,
-                      right: 20,
+                      bottom: 20,
+                      left: 20,
                       p: 2,
-                      maxWidth: 300,
-                      zIndex: 1000,
+                      bgcolor: 'rgba(255, 255, 255, 0.95)',
                       border: '1px solid var(--color-border-primary)'
                     }}
                   >
-                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-                      {hoveredLocation.city}, {hoveredLocation.country}
+                    <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
+                      Staff Count
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-                      {hoveredLocation.count} staff member{hoveredLocation.count !== 1 ? 's' : ''}
-                    </Typography>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                      {hoveredLocation.staff.slice(0, 5).map((staff, idx) => (
-                        <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Avatar
-                            src={staff.picUrl}
-                            sx={{
-                              width: 24,
-                              height: 24,
-                              fontSize: '0.7rem',
-                              bgcolor: 'var(--color-primary)',
-                              color: '#ffffff'
-                            }}
-                          >
-                            {staff.firstName?.[0]}{staff.lastName?.[0]}
-                          </Avatar>
-                          <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
-                            {staff.firstName} {staff.lastName}
-                          </Typography>
-                          <Chip
-                            label={staff.interestArea}
-                            size="small"
-                            sx={{
-                              ml: 'auto',
-                              height: 20,
-                              fontSize: '0.7rem',
-                              bgcolor: 'var(--color-background-secondary)',
-                              color: 'var(--color-text-secondary)'
-                            }}
-                          />
-                        </Box>
-                      ))}
-                      {hoveredLocation.staff.length > 5 && (
-                        <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
-                          +{hoveredLocation.staff.length - 5} more
-                        </Typography>
-                      )}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <Box
+                          sx={{
+                            width: 12,
+                            height: 12,
+                            borderRadius: '50%',
+                            bgcolor: 'var(--color-chart-2)',
+                            border: '1px solid #ffffff'
+                          }}
+                        />
+                        <Typography variant="caption">Low</Typography>
+                      </Box>
+                      <Box
+                        sx={{
+                          width: 60,
+                          height: 6,
+                          background: 'linear-gradient(to right, var(--color-chart-2), var(--color-primary))',
+                          borderRadius: 1
+                        }}
+                      />
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <Box
+                          sx={{
+                            width: 20,
+                            height: 20,
+                            borderRadius: '50%',
+                            bgcolor: 'var(--color-primary)',
+                            border: '1px solid #ffffff'
+                          }}
+                        />
+                        <Typography variant="caption">High</Typography>
+                      </Box>
                     </Box>
                   </Paper>
-                )}
-
-                {/* Legend */}
-                <Paper
-                  elevation={0}
-                  sx={{
-                    position: 'absolute',
-                    bottom: 20,
-                    left: 20,
-                    p: 2,
-                    bgcolor: 'rgba(255, 255, 255, 0.95)',
-                    border: '1px solid var(--color-border-primary)'
-                  }}
-                >
-                  <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-                    Staff Count
-                  </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <Box
-                        sx={{
-                          width: 12,
-                          height: 12,
-                          borderRadius: '50%',
-                          bgcolor: 'var(--color-chart-2)',
-                          border: '1px solid #ffffff'
-                        }}
-                      />
-                      <Typography variant="caption">Low</Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        width: 60,
-                        height: 6,
-                        background: 'linear-gradient(to right, var(--color-chart-2), var(--color-primary))',
-                        borderRadius: 1
-                      }}
-                    />
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <Box
-                        sx={{
-                          width: 20,
-                          height: 20,
-                          borderRadius: '50%',
-                          bgcolor: 'var(--color-primary)',
-                          border: '1px solid #ffffff'
-                        }}
-                      />
-                      <Typography variant="caption">High</Typography>
-                    </Box>
-                  </Box>
                 </Paper>
-              </Paper>
-            </Box>
-          )}
+              </Box>
+            )}
 
-          {/* Employment Stability Tab */}
-          {visibleDashboards[activeTab]?.id === 'employmentStability' && (
-            <EmploymentStabilityChart staffData={filteredStaff} />
-          )}
+            {/* Employment Stability Tab */}
+            {visibleDashboards[activeTab]?.id === 'employmentStability' && (
+              <EmploymentStabilityChart
+                staffData={filteredStaff}
+                startYear={startYear}
+                endYear={endYear}
+                selectedTeams={selectedTeams}
+              />
+            )}
 
-          {/* Origin Breakdown Tab */}
-          {visibleDashboards[activeTab]?.id === 'originBreakdown' && (
-            <OriginBreakdownChart staffData={filteredStaff} />
-          )}
+            {/* Origin Breakdown Tab */}
+            {visibleDashboards[activeTab]?.id === 'originBreakdown' && (
+              <OriginBreakdownChart staffData={filteredStaff} />
+            )}
 
-          {/* Qualification Standards Tab */}
-          {visibleDashboards[activeTab]?.id === 'qualificationStandards' && (
-            <QualificationStandardsChart staffData={filteredStaff} />
-          )}
+            {/* Qualification Standards Tab */}
+            {visibleDashboards[activeTab]?.id === 'qualificationStandards' && (
+              <QualificationStandardsChart staffData={filteredStaff} />
+            )}
 
-          {/* Talent Pipeline Tab */}
-          {visibleDashboards[activeTab]?.id === 'talentPipeline' && (
-            <TalentPipelineChart staffData={filteredStaff} />
-          )}
+            {/* Talent Pipeline Tab */}
+            {visibleDashboards[activeTab]?.id === 'talentPipeline' && (
+              <TalentPipelineChart staffData={filteredStaff} />
+            )}
 
-          {/* Data Flow Tab */}
-          {visibleDashboards[activeTab]?.id === 'dataFlow' && (
-            <StaffSankeyDiagram
-              staffData={filteredStaff}
-              sourceField={sankeySourceField}
-              targetField={sankeyTargetField}
-              selectedRoles={combinedSelectedRoles}
+            {/* Data Flow Tab */}
+            {visibleDashboards[activeTab]?.id === 'dataFlow' && (
+              <StaffSankeyDiagram
+                staffData={filteredStaff}
+                sourceField={sankeySourceField}
+                targetField={sankeyTargetField}
+                selectedRoles={combinedSelectedRoles}
+              />
+            )}
+
+            {/* Timeline View Tab */}
+            {visibleDashboards[activeTab]?.id === 'timelineView' && (
+              <StaffTimelineView />
+            )}
+
+            {/* Elo Graph Tab */}
+            {visibleDashboards[activeTab]?.id === 'eloGraph' && (
+              <EloGraph dashboardFilters={dashboardFilters} />
+            )}
+
+            {/* Dashboard Settings Drawer */}
+            <DashboardSettingsDrawer
+              open={settingsDrawerOpen}
+              onClose={() => setSettingsDrawerOpen(false)}
+              dashboardSettings={dashboardSettings}
+              onUpdateSettings={handleUpdateSettings}
             />
-          )}
-
-          {/* Timeline View Tab */}
-          {visibleDashboards[activeTab]?.id === 'timelineView' && (
-            <StaffTimelineView />
-          )}
-
-          {/* Elo Graph Tab */}
-          {visibleDashboards[activeTab]?.id === 'eloGraph' && (
-            <EloGraph dashboardFilters={dashboardFilters} />
-          )}
-
-          {/* Dashboard Settings Drawer */}
-          <DashboardSettingsDrawer
-            open={settingsDrawerOpen}
-            onClose={() => setSettingsDrawerOpen(false)}
-            dashboardSettings={dashboardSettings}
-            onUpdateSettings={handleUpdateSettings}
-          />
+          </Box>
         </Box>
       </Box>
-    </Box>
+    </LocalizationProvider>
   );
 }
 
@@ -898,11 +973,11 @@ function StaffMapDashboard() {
  * Employment Stability Chart Component
  * Displays employment trends and breakdown by team
  */
-function EmploymentStabilityChart({ staffData }) {
+function EmploymentStabilityChart({ staffData, startYear, endYear, selectedTeams }) {
   // Use the new matrix aggregation
   const { matrix, seasons } = useMemo(() =>
-    getEmploymentStabilityMatrix(staffData),
-    [staffData]);
+    getEmploymentStabilityMatrix(staffData, { startYear, endYear, selectedTeams }),
+    [staffData, startYear, endYear, selectedTeams]);
 
   // Calculate stats for the cards
   const currentStats = useMemo(() => {

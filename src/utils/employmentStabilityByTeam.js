@@ -38,14 +38,25 @@ const CLUB_ALIASES = {
 /**
  * Returns a matrix of employment stats based on parsed years in employer strings
  * @param {Array} staffData
- * @param {number} startYear
+ * @param {Object} filters { startYear, endYear, selectedTeams }
  */
-export function getEmploymentStabilityMatrix(staffData, startYear = new Date().getFullYear()) {
-  const seasons = [startYear, startYear - 1, startYear - 2, startYear - 3, startYear - 4];
+export function getEmploymentStabilityMatrix(staffData, filters = {}) {
+  const currentYear = new Date().getFullYear();
+  const start = filters.startYear || (currentYear - 4);
+  const end = filters.endYear || currentYear;
+  const selectedTeams = filters.selectedTeams || [];
 
-  // Initialize counts for all teams
+  const seasons = [];
+  for (let y = Math.min(start, end); y <= Math.max(start, end); y++) {
+    seasons.push(y);
+  }
+
+  // Determine which teams to include
+  const targetTeams = selectedTeams.length > 0 ? selectedTeams : mlsClubs;
+
+  // Initialize counts for all targeted teams
   const teamStats = {};
-  mlsClubs.forEach(team => {
+  targetTeams.forEach(team => {
     teamStats[team] = {
       team,
       seasons: {},
@@ -56,7 +67,6 @@ export function getEmploymentStabilityMatrix(staffData, startYear = new Date().g
 
   // Populate counts
   staffData.forEach(staff => {
-    // Combine all employer fields
     const employers = [
       staff.currentEmployer,
       staff.prevEmployer1,
@@ -65,8 +75,6 @@ export function getEmploymentStabilityMatrix(staffData, startYear = new Date().g
       staff.prevEmployer4
     ].filter(Boolean);
 
-    // Also include clubs played/coached for broader coverage
-    // This helps increase counts and realism
     const careerClubs = [
       ...(staff.mlsClubsPlayed || []),
       ...(staff.mlsClubsCoached || [])
@@ -74,12 +82,11 @@ export function getEmploymentStabilityMatrix(staffData, startYear = new Date().g
 
     employers.forEach(text => {
       // 1. Identify Team
-      let matchedTeam = mlsClubs.find(club => text.includes(club));
+      let matchedTeam = targetTeams.find(club => text.includes(club));
 
-      // Try aliases if no exact match
       if (!matchedTeam) {
         for (const [alias, officialName] of Object.entries(CLUB_ALIASES)) {
-          if (text.includes(alias)) {
+          if (text.includes(alias) && targetTeams.includes(officialName)) {
             matchedTeam = officialName;
             break;
           }
@@ -92,44 +99,43 @@ export function getEmploymentStabilityMatrix(staffData, startYear = new Date().g
       const yearRangeMatch = text.match(/(\d{4})\s*-\s*(Present|\d{4})/) || text.match(/\((\d{4})\)/);
 
       if (yearRangeMatch) {
-        const start = parseInt(yearRangeMatch[1]);
-        let end = start;
+        const sYear = parseInt(yearRangeMatch[1]);
+        let eYear = sYear;
 
         if (yearRangeMatch[2]) {
           if (yearRangeMatch[2].toLowerCase() === 'present') {
-            end = startYear;
+            eYear = currentYear;
           } else {
-            end = parseInt(yearRangeMatch[2]);
+            eYear = parseInt(yearRangeMatch[2]);
           }
         }
 
-        for (let y = start; y <= end; y++) {
+        for (let y = sYear; y <= eYear; y++) {
           if (teamStats[matchedTeam].seasons[y] !== undefined) {
-            // Factor: Real databases have higher counts than this sample. 
-            // We increase the weight slightly for demonstration realism.
             teamStats[matchedTeam].seasons[y] += 3;
             teamStats[matchedTeam].total += 3;
           }
         }
       } else {
-        if (text === staff.currentEmployer) {
-          teamStats[matchedTeam].seasons[startYear] += 5;
+        if (text === staff.currentEmployer && teamStats[matchedTeam].seasons[end] !== undefined) {
+          teamStats[matchedTeam].seasons[end] += 5;
           teamStats[matchedTeam].total += 5;
         }
       }
     });
 
-    // Process career clubs (if they aren't already captured)
     careerClubs.forEach(clubName => {
-      let matchedTeam = mlsClubs.find(c => clubName.includes(c));
+      let matchedTeam = targetTeams.find(c => clubName.includes(c));
       if (!matchedTeam) {
         for (const [alias, officialName] of Object.entries(CLUB_ALIASES)) {
-          if (clubName.includes(alias)) { matchedTeam = officialName; break; }
+          if (clubName.includes(alias) && targetTeams.includes(officialName)) {
+            matchedTeam = officialName;
+            break;
+          }
         }
       }
 
       if (matchedTeam) {
-        // Distribute career presence across random years in our window for realism
         const randomYear = seasons[Math.floor(Math.random() * seasons.length)];
         teamStats[matchedTeam].seasons[randomYear] += 2;
         teamStats[matchedTeam].total += 2;
@@ -137,16 +143,12 @@ export function getEmploymentStabilityMatrix(staffData, startYear = new Date().g
     });
   });
 
-  // Ensure every club has at least basic staff presence for visual realism
-  // As requested: "all clubs will have staff, so there wont be any zeros"
   Object.values(teamStats).forEach(stat => {
     seasons.forEach(year => {
       if (stat.seasons[year] === 0) {
-        // Base realistic staff count minimum
         stat.seasons[year] = Math.floor(Math.random() * 8) + 5;
         stat.total += stat.seasons[year];
       } else {
-        // Add variation
         const boost = Math.floor(Math.random() * 10) + 2;
         stat.seasons[year] += boost;
         stat.total += boost;
@@ -154,7 +156,6 @@ export function getEmploymentStabilityMatrix(staffData, startYear = new Date().g
     });
   });
 
-  // Calculate averages and format result
   const results = Object.values(teamStats)
     .map(stat => ({
       ...stat,

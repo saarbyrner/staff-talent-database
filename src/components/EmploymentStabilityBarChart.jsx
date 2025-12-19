@@ -8,10 +8,9 @@ import * as d3 from 'd3';
  * grouped by Team side-by-side within each season.
  * 
  * Logic:
- * - X-axis: Seasons (Time Trend)
- * - Group: Teams
- * - Y-axis: Staff Count
- * - Line: Average staff count per season
+ * - X-axis: Teams (Population)
+ * - Y-axis: Staff Count (Aggregated over period)
+ * - Line: Average staff count across all teams
  * 
  * Props:
  *   matrix: Array<{ team, seasons: { [year]: count }, total, average }>
@@ -30,30 +29,12 @@ const EmploymentStabilityBarChart = ({ matrix, seasons }) => {
     // We can just use the matrix ordering (which is sorted by total count desc)
     const teams = matrix.map(d => d.team);
 
-    // Group data by season
-    const groupedData = sortedSeasons.map(season => {
-        const values = matrix.map(d => ({
-            team: d.team,
-            count: d.seasons[season] || 0
-        }));
+    // Data is already aggregated per team in 'matrix'
+    // We'll use 'matrix' directly for the bars
+    const data = matrix;
 
-        // Calculate season average
-        const totalCount = values.reduce((sum, d) => sum + d.count, 0);
-        const avg = values.length > 0 ? totalCount / values.length : 0;
-
-        return {
-            season,
-            values, // Array of {team, count}
-            avg
-        };
-    });
-
-    // Dynamic width calculation
-    // 5 Seasons * (30 Teams * 14px bar + padding)
-    const barWidth = 14;
-    const groupPadding = 60;
-    const seasonGroupWidth = (teams.length * barWidth) + groupPadding;
-    const chartWidth = Math.max(dimensions.width, sortedSeasons.length * seasonGroupWidth + 100);
+    // Use container width directly so the graph doesn't grow in size
+    const chartWidth = dimensions.width || 1000;
 
     // Resize handler
     useEffect(() => {
@@ -84,22 +65,16 @@ const EmploymentStabilityBarChart = ({ matrix, seasons }) => {
         const g = svg.append('g')
             .attr('transform', `translate(${margin.left},${margin.top})`);
 
-        // X0 Scale: Seasons
-        const x0 = d3.scaleBand()
-            .domain(sortedSeasons)
+        // X Scale: Teams
+        const xScale = d3.scaleBand()
+            .domain(data.map(d => d.team))
             .rangeRound([0, width])
-            .paddingInner(0.1);
-
-        // X1 Scale: Teams within Season
-        const x1 = d3.scaleBand()
-            .domain(teams)
-            .rangeRound([0, x0.bandwidth()])
-            .padding(0.05);
+            .padding(0.2);
 
         // Y Scale
-        const maxCount = d3.max(groupedData, s => d3.max(s.values, v => v.count)) || 5;
+        const maxCount = d3.max(data, d => d.total) || 5;
         const yScale = d3.scaleLinear()
-            .domain([0, maxCount * 1.2])
+            .domain([0, maxCount * 1.1])
             .range([height, 0]);
 
         const color = '#3B4960';
@@ -116,113 +91,67 @@ const EmploymentStabilityBarChart = ({ matrix, seasons }) => {
             .attr('stroke', '#e0e0e0')
             .attr('stroke-dasharray', '3,3');
 
-        // Draw Groups (Seasons)
-        const seasonGroups = g.selectAll('.season-group')
-            .data(groupedData)
-            .enter().append('g')
-            .attr('class', 'season-group')
-            .attr('transform', d => `translate(${x0(d.season)},0)`);
-
-        // Draw Bars (Teams)
-        seasonGroups.selectAll('rect')
-            .data(d => d.values)
+        // Draw Bars
+        g.selectAll('rect')
+            .data(data)
             .enter().append('rect')
-            .attr('x', d => x1(d.team))
-            .attr('y', d => yScale(d.count))
-            .attr('width', x1.bandwidth())
-            .attr('height', d => height - yScale(d.count))
+            .attr('x', d => xScale(d.team))
+            .attr('y', d => yScale(d.total))
+            .attr('width', xScale.bandwidth())
+            .attr('height', d => height - yScale(d.total))
             .attr('fill', color)
             .attr('opacity', 0.9)
             .on('mouseenter', function (event, d) {
                 d3.select(this).attr('opacity', 1).attr('fill', '#29AE61');
 
-                const group = d3.select(this.parentNode);
-                group.append('text')
+                g.append('text')
                     .attr('class', 'temp-label')
-                    .attr('x', x1(d.team) + x1.bandwidth() / 2)
-                    .attr('y', yScale(d.count) - 5)
+                    .attr('x', xScale(d.team) + xScale.bandwidth() / 2)
+                    .attr('y', yScale(d.total) - 5)
                     .attr('text-anchor', 'middle')
-                    .style('font-size', '10px')
+                    .style('font-size', '11px')
                     .style('font-weight', 'bold')
-                    .text(`${d.team}: ${d.count}`);
+                    .text(d.total);
             })
             .on('mouseleave', function () {
                 d3.select(this).attr('opacity', 0.9).attr('fill', color);
                 d3.selectAll('.temp-label').remove();
             })
             .append('title')
-            .text(d => `${d.team}: ${d.count}`);
+            .text(d => `${d.team}: ${d.total} placements`);
 
-        // Add Individual Team Labels (Vertical)
-        seasonGroups.selectAll('.team-label')
-            .data(d => d.values)
-            .enter().append('text')
-            .attr('transform', d => `translate(${x1(d.team) + x1.bandwidth() / 2}, ${height + 10}) rotate(-90)`)
+        // X Axis Labels
+        g.append('g')
+            .attr('transform', `translate(0,${height})`)
+            .call(d3.axisBottom(xScale))
+            .selectAll('text')
+            .attr('transform', 'rotate(-45)')
             .attr('text-anchor', 'end')
-            .attr('alignment-baseline', 'middle')
-            .style('font-size', '10px')
-            .style('fill', '#666')
-            .text(d => d.team);
+            .attr('dx', '-.8em')
+            .attr('dy', '.15em')
+            .style('font-size', '11px')
+            .style('fill', '#666');
 
-        // Draw Average Line
-        const lineGenerator = d3.line()
-            .x(d => x0(d.season) + x0.bandwidth() / 2)
-            .y(d => yScale(d.avg))
-            .curve(d3.curveMonotoneX);
+        // Draw Average Line (Global Average)
+        const globalAvg = d3.mean(data, d => d.total);
 
-        g.append('path')
-            .datum(groupedData)
-            .attr('fill', 'none')
+        g.append('line')
+            .attr('x1', 0)
+            .attr('x2', width)
+            .attr('y1', yScale(globalAvg))
+            .attr('y2', yScale(globalAvg))
             .attr('stroke', '#ff9800')
-            .attr('stroke-width', 3)
-            .attr('d', lineGenerator)
-            .style('filter', 'drop-shadow(0px 2px 2px rgba(0,0,0,0.1))');
+            .attr('stroke-width', 2)
+            .attr('stroke-dasharray', '5,5');
 
-        // Add dots for average
-        g.selectAll('.avg-dot')
-            .data(groupedData)
-            .enter().append('circle')
-            .attr('cx', d => x0(d.season) + x0.bandwidth() / 2)
-            .attr('cy', d => yScale(d.avg))
-            .attr('r', 5)
-            .attr('fill', '#ff9800')
-            .attr('stroke', '#fff')
-            .attr('stroke-width', 2);
-
-        // Add Average Labels
-        g.selectAll('.avg-label')
-            .data(groupedData)
-            .enter().append('text')
-            .attr('x', d => x0(d.season) + x0.bandwidth() / 2)
-            .attr('y', d => yScale(d.avg) - 15)
-            .attr('text-anchor', 'middle')
+        g.append('text')
+            .attr('x', width - 5)
+            .attr('y', yScale(globalAvg) - 5)
+            .attr('text-anchor', 'end')
             .style('font-size', '12px')
             .style('font-weight', 'bold')
             .style('fill', '#e65100')
-            .text(d => d.avg.toFixed(1));
-
-        // X Axis (Seasons)
-        g.append('g')
-            .attr('transform', `translate(0,${height + 170})`) // Push season labels below team labels
-            .call(d3.axisBottom(x0))
-            .selectAll('text')
-            .style('font-size', '16px')
-            .style('font-weight', '700')
-            .style('fill', '#333');
-
-        // Add separators
-        if (sortedSeasons.length > 1) {
-            g.append('g')
-                .selectAll('line')
-                .data(sortedSeasons.slice(0, -1))
-                .enter().append('line')
-                .attr('x1', d => x0(d) + x0.bandwidth() + (x0.paddingInner() * x0.bandwidth() / 2))
-                .attr('x2', d => x0(d) + x0.bandwidth() + (x0.paddingInner() * x0.bandwidth() / 2))
-                .attr('y1', 0)
-                .attr('y2', height + 150)
-                .attr('stroke', '#e0e0e0')
-                .attr('stroke-width', 1);
-        }
+            .text(`Avg: ${globalAvg.toFixed(1)}`);
 
         // Y Axis
         g.append('g')
@@ -273,7 +202,7 @@ const EmploymentStabilityBarChart = ({ matrix, seasons }) => {
             .text('Season Average')
             .style('font-size', '12px');
 
-    }, [groupedData, dimensions, chartWidth, teams, sortedSeasons]);
+    }, [data, dimensions, chartWidth]);
 
     return (
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', width: '100%' }}>
@@ -288,14 +217,7 @@ const EmploymentStabilityBarChart = ({ matrix, seasons }) => {
                     overflow: 'hidden' // Ensure card doesn't expand
                 }}
             >
-                <Box sx={{ mb: 2 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 600, color: 'var(--color-primary)' }}>
-                        Employment Stability Trends
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        Staff count per team across seasons. The orange line indicates the league average.
-                    </Typography>
-                </Box>
+                <Box sx={{ mb: 2 }} />
 
                 {/* Scrollable container with fixed viewport behavior */}
                 <Box
