@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Box, Paper, FormControl, InputLabel, Select, MenuItem, Button, ButtonGroup, Chip } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Box, Paper, FormControl, InputLabel, Select, MenuItem, Button, ButtonGroup, Chip, Avatar, Typography } from '@mui/material';
 import * as d3 from 'd3';
 import staffData from '../data/staff_talent.json';
 
@@ -15,8 +16,11 @@ const StaffTimelineView = () => {
   // State for controls
   const [primaryDimension, setPrimaryDimension] = useState('tags'); // Y-axis grouping
   const [secondaryDimension, setSecondaryDimension] = useState('uefaBadges'); // State changes over time
-  const [timeScale, setTimeScale] = useState('25y');
-  
+  const [timeScale, setTimeScale] = useState('7y');
+  const [hoveredBubble, setHoveredBubble] = useState(null);
+  const [selectedBubble, setSelectedBubble] = useState(null);
+  const navigate = useNavigate();
+
   // Available dimensions
   const dimensionOptions = [
     { value: 'tags', label: 'Tags' },
@@ -40,13 +44,13 @@ const StaffTimelineView = () => {
     };
 
     handleResize();
-    
+
     // Use ResizeObserver to detect container size changes
     const resizeObserver = new ResizeObserver(handleResize);
     if (containerRef.current) {
       resizeObserver.observe(containerRef.current);
     }
-    
+
     window.addEventListener('resize', handleResize);
     return () => {
       resizeObserver.disconnect();
@@ -60,7 +64,7 @@ const StaffTimelineView = () => {
     if (person.yearsOfExperience !== undefined) {
       return person.yearsOfExperience;
     }
-    
+
     // Estimate based on age (assuming career starts at 22)
     if (person.age) {
       const years = Math.max(0, person.age - 22);
@@ -151,11 +155,13 @@ const StaffTimelineView = () => {
   // Get max years based on time scale
   const getMaxYears = () => {
     switch (timeScale) {
+      case '2y': return 2;
+      case '5y': return 5;
+      case '7y': return 7;
       case '10y': return 10;
       case '15y': return 15;
-      case '25y': return 25;
       case 'full': return 30;
-      default: return 25;
+      default: return 7;
     }
   };
 
@@ -213,13 +219,19 @@ const StaffTimelineView = () => {
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
-    const margin = { top: 60, right: 100, bottom: 60, left: 150 };
+    const margin = { top: 40, right: 150, bottom: 60, left: 150 };
     const width = dimensions.width - margin.left - margin.right;
     const height = dimensions.height - margin.top - margin.bottom;
 
     const g = svg
       .attr('width', dimensions.width)
       .attr('height', dimensions.height)
+      .on('click', (event) => {
+        // Clear selection when clicking on background
+        if (event.target.tagName === 'svg' || event.target.tagName === 'rect' || event.target.className.baseVal === 'grid') {
+          setSelectedBubble(null);
+        }
+      })
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
@@ -252,7 +264,7 @@ const StaffTimelineView = () => {
     g.append('g')
       .attr('class', 'grid')
       .selectAll('line')
-      .data(xScale.ticks(maxYears / 5))
+      .data(xScale.ticks(maxYears <= 7 ? maxYears : 5))
       .enter()
       .append('line')
       .attr('x1', d => xScale(d))
@@ -280,12 +292,12 @@ const StaffTimelineView = () => {
 
     // Draw aggregated data points
     const jitterRange = yScale.bandwidth() * 0.25;
-    
+
     const circleGroup = g.append('g');
-    
+
     // Store y positions to avoid overlap
     const yPositions = new Map();
-    
+
     aggregatedData.forEach(d => {
       const key = `${d.group}_${d.year}`;
       if (!yPositions.has(key)) {
@@ -293,13 +305,13 @@ const StaffTimelineView = () => {
       }
       yPositions.get(key).push(d);
     });
-    
+
     // Adjust y positions for multiple states at same year
     aggregatedData.forEach(d => {
       const key = `${d.group}_${d.year}`;
       const siblings = yPositions.get(key);
       const yCenter = yScale(d.group) + yScale.bandwidth() / 2;
-      
+
       if (siblings.length > 1) {
         const index = siblings.indexOf(d);
         const spacing = Math.min(30, yScale.bandwidth() / siblings.length);
@@ -308,7 +320,7 @@ const StaffTimelineView = () => {
         d.adjustedY = yCenter;
       }
     });
-    
+
     circleGroup
       .selectAll('circle')
       .data(aggregatedData)
@@ -321,8 +333,7 @@ const StaffTimelineView = () => {
       .attr('opacity', 0.7)
       .attr('stroke', '#fff')
       .attr('stroke-width', 1.5)
-      .style('cursor', 'pointer')
-      .on('mouseover', function(event, d) {
+      .on('mouseover', function (event, d) {
         d3.select(this)
           .transition()
           .duration(200)
@@ -335,8 +346,14 @@ const StaffTimelineView = () => {
           .filter(label => label === d)
           .style('font-weight', '700')
           .style('font-size', '11px');
+
+        setHoveredBubble({
+          ...d,
+          x: event.pageX,
+          y: event.pageY
+        });
       })
-      .on('mouseout', function(event, d) {
+      .on('mouseout', function (event, d) {
         d3.select(this)
           .transition()
           .duration(200)
@@ -349,8 +366,29 @@ const StaffTimelineView = () => {
           .filter(label => label === d)
           .style('font-weight', '500')
           .style('font-size', '10px');
+
+        setHoveredBubble(null);
+      })
+      .on('mousemove', function (event) {
+        if (hoveredBubble) {
+          setHoveredBubble(prev => ({
+            ...prev,
+            x: event.pageX,
+            y: event.pageY
+          }));
+        }
+      })
+      .on('click', function (event, d) {
+        event.stopPropagation();
+        setSelectedBubble({
+          ...d,
+          x: event.pageX,
+          y: event.pageY
+        });
+        // Clear hover when selecting to avoid double tooltips
+        setHoveredBubble(null);
       });
-    
+
     // Add labels to circles showing secondary dimension states
     circleGroup
       .selectAll('text')
@@ -369,7 +407,7 @@ const StaffTimelineView = () => {
 
     // X-axis
     const xAxis = d3.axisBottom(xScale)
-      .ticks(maxYears / 5)
+      .ticks(maxYears <= 7 ? maxYears : 5)
       .tickFormat(d => `${d}y`);
 
     g.append('g')
@@ -461,7 +499,7 @@ const StaffTimelineView = () => {
                   variant={primaryDimension === dim.value ? 'contained' : 'outlined'}
                   onClick={() => setPrimaryDimension(dim.value)}
                   disabled={secondaryDimension === dim.value}
-                  sx={{ 
+                  sx={{
                     bgcolor: primaryDimension === dim.value ? '#3B4960' : 'transparent',
                     color: primaryDimension === dim.value ? '#fff' : '#3B4960',
                     borderColor: '#3B4960',
@@ -493,7 +531,7 @@ const StaffTimelineView = () => {
                   variant={secondaryDimension === dim.value ? 'contained' : 'outlined'}
                   onClick={() => setSecondaryDimension(dim.value)}
                   disabled={primaryDimension === dim.value}
-                  sx={{ 
+                  sx={{
                     bgcolor: secondaryDimension === dim.value ? '#3B4960' : 'transparent',
                     color: secondaryDimension === dim.value ? '#fff' : '#3B4960',
                     borderColor: '#3B4960',
@@ -519,66 +557,25 @@ const StaffTimelineView = () => {
               Time Scale:
             </Box>
             <ButtonGroup size="small" variant="outlined">
-              <Button
-                variant={timeScale === '10y' ? 'contained' : 'outlined'}
-                onClick={() => setTimeScale('10y')}
-                sx={{ 
-                  bgcolor: timeScale === '10y' ? '#3B4960' : 'transparent',
-                  color: timeScale === '10y' ? '#fff' : '#3B4960',
-                  borderColor: '#3B4960',
-                  textTransform: 'none',
-                  '&:hover': {
-                    bgcolor: timeScale === '10y' ? '#2d3a4d' : 'rgba(59, 73, 96, 0.04)',
-                  }
-                }}
-              >
-                10y
-              </Button>
-              <Button
-                variant={timeScale === '15y' ? 'contained' : 'outlined'}
-                onClick={() => setTimeScale('15y')}
-                sx={{ 
-                  bgcolor: timeScale === '15y' ? '#3B4960' : 'transparent',
-                  color: timeScale === '15y' ? '#fff' : '#3B4960',
-                  borderColor: '#3B4960',
-                  textTransform: 'none',
-                  '&:hover': {
-                    bgcolor: timeScale === '15y' ? '#2d3a4d' : 'rgba(59, 73, 96, 0.04)',
-                  }
-                }}
-              >
-                15y
-              </Button>
-              <Button
-                variant={timeScale === '25y' ? 'contained' : 'outlined'}
-                onClick={() => setTimeScale('25y')}
-                sx={{ 
-                  bgcolor: timeScale === '25y' ? '#3B4960' : 'transparent',
-                  color: timeScale === '25y' ? '#fff' : '#3B4960',
-                  borderColor: '#3B4960',
-                  textTransform: 'none',
-                  '&:hover': {
-                    bgcolor: timeScale === '25y' ? '#2d3a4d' : 'rgba(59, 73, 96, 0.04)',
-                  }
-                }}
-              >
-                25y
-              </Button>
-              <Button
-                variant={timeScale === 'full' ? 'contained' : 'outlined'}
-                onClick={() => setTimeScale('full')}
-                sx={{ 
-                  bgcolor: timeScale === 'full' ? '#3B4960' : 'transparent',
-                  color: timeScale === 'full' ? '#fff' : '#3B4960',
-                  borderColor: '#3B4960',
-                  textTransform: 'none',
-                  '&:hover': {
-                    bgcolor: timeScale === 'full' ? '#2d3a4d' : 'rgba(59, 73, 96, 0.04)',
-                  }
-                }}
-              >
-                Full
-              </Button>
+              {['2y', '5y', '7y', '10y', '15y', 'full'].map((scale) => (
+                <Button
+                  key={scale}
+                  variant={timeScale === scale ? 'contained' : 'outlined'}
+                  onClick={() => setTimeScale(scale)}
+                  sx={{
+                    bgcolor: timeScale === scale ? '#3B4960' : 'transparent',
+                    color: timeScale === scale ? '#fff' : '#3B4960',
+                    borderColor: '#3B4960',
+                    textTransform: 'none',
+                    minWidth: '40px',
+                    '&:hover': {
+                      bgcolor: timeScale === scale ? '#2d3a4d' : 'rgba(59, 73, 96, 0.04)',
+                    }
+                  }}
+                >
+                  {scale === 'full' ? 'Full Career' : scale}
+                </Button>
+              ))}
             </ButtonGroup>
           </Box>
         </Box>
@@ -588,7 +585,128 @@ const StaffTimelineView = () => {
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
         <svg ref={svgRef} style={{ display: 'block', maxWidth: '100%' }} />
       </Box>
-    </Paper>
+
+      {/* Selection/Hover Tooltip */}
+      {
+        (hoveredBubble || selectedBubble) && (
+          <Paper
+            elevation={4}
+            sx={{
+              position: 'fixed',
+              top: (selectedBubble || hoveredBubble).y + 15,
+              left: (selectedBubble || hoveredBubble).x + 15,
+              p: 2,
+              width: 300,
+              zIndex: 9999,
+              border: selectedBubble ? '2px solid var(--color-primary)' : '1px solid var(--color-border-primary)',
+              backgroundColor: 'rgba(255, 255, 255, 0.98)',
+              pointerEvents: selectedBubble ? 'auto' : 'none',
+              boxShadow: selectedBubble ? '0 12px 48px rgba(0,0,0,0.2)' : '0 8px 32px rgba(0,0,0,0.12)',
+              transition: 'box-shadow 0.2s ease-in-out'
+            }}
+          >
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 0.5 }}>
+              <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '1rem', color: 'var(--color-primary)' }}>
+                {(selectedBubble || hoveredBubble).state}
+              </Typography>
+              {selectedBubble && (
+                <Button
+                  size="small"
+                  onClick={() => setSelectedBubble(null)}
+                  sx={{ minWidth: 'auto', p: 0, color: 'text.secondary', '&:hover': { color: 'error.main' } }}
+                >
+                  ✕
+                </Button>
+              )}
+            </Box>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5, fontSize: '0.85rem' }}>
+              {(selectedBubble || hoveredBubble).group} • {(selectedBubble || hoveredBubble).count} staff members
+              <br />
+              Avg. {Math.round((selectedBubble || hoveredBubble).year)} years in career
+            </Typography>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              {(selectedBubble || hoveredBubble).staff.slice(0, 8).map((staff, idx) => (
+                <Box
+                  key={idx}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1.5,
+                    p: 0.5,
+                    borderRadius: 1,
+                    cursor: selectedBubble ? 'pointer' : 'default',
+                    '&:hover': selectedBubble ? {
+                      bgcolor: 'rgba(59, 73, 96, 0.04)',
+                      '& .staff-name': { color: 'var(--color-primary)' }
+                    } : {}
+                  }}
+                  onClick={() => {
+                    if (selectedBubble) {
+                      navigate(`/staff/${staff.id || staff.recordId}`);
+                    }
+                  }}
+                >
+                  <Avatar
+                    src={staff.picUrl}
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      fontSize: '0.85rem',
+                      bgcolor: '#3B4960',
+                      color: '#ffffff'
+                    }}
+                  >
+                    {staff.firstName?.[0]}{staff.lastName?.[0]}
+                  </Avatar>
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Typography
+                      variant="body2"
+                      className="staff-name"
+                      sx={{
+                        fontSize: '0.85rem',
+                        fontWeight: 500,
+                        lineHeight: 1.2,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}
+                    >
+                      {staff.firstName} {staff.lastName}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: '0.7rem' }}>
+                      {staff.country}
+                    </Typography>
+                  </Box>
+                  {staff.tags && staff.tags.length > 0 && (
+                    <Chip
+                      label={staff.tags[0]}
+                      size="small"
+                      sx={{
+                        height: 18,
+                        fontSize: '0.65rem',
+                        bgcolor: 'var(--color-background-secondary)',
+                        color: 'var(--color-text-secondary)'
+                      }}
+                    />
+                  )}
+                </Box>
+              ))}
+              {(selectedBubble || hoveredBubble).staff.length > 8 && (
+                <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, fontStyle: 'italic', textAlign: 'center' }}>
+                  + {(selectedBubble || hoveredBubble).staff.length - 8} more
+                </Typography>
+              )}
+              {selectedBubble && (
+                <Typography variant="caption" sx={{ mt: 1, color: 'var(--color-primary)', textAlign: 'center', fontWeight: 500, fontSize: '0.7rem', opacity: 0.7 }}>
+                  Click a name to view profile
+                </Typography>
+              )}
+            </Box>
+          </Paper>
+        )
+      }
+    </Paper >
   );
 };
 

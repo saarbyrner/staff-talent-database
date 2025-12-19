@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Box,
   Paper,
@@ -92,6 +92,8 @@ function StaffMapDashboard() {
   const [selectedCountry, setSelectedCountry] = useState('all');
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [hoveredLocation, setHoveredLocation] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const navigate = useNavigate();
   const [dimensions, setDimensions] = useState({ width: 1000, height: 500 });
   const [mapKey, setMapKey] = useState(0); // Force re-render only when needed
   const [activeTab, setActiveTab] = useState(0);
@@ -413,6 +415,12 @@ function StaffMapDashboard() {
           .duration(200)
           .attr('r', sizeScale(d.count))
           .attr('opacity', 0.7);
+      })
+      .on('click', (event, d) => {
+        event.stopPropagation();
+        setSelectedLocation(d);
+        // Clear hover to avoid double visuals if any
+        setHoveredLocation(null);
       });
 
     // Add circles for locations
@@ -465,6 +473,13 @@ function StaffMapDashboard() {
         .duration(750)
         .call(zoom.transform, d3.zoomIdentity);
       zoomRef.current = d3.zoomIdentity;
+    });
+
+    // Clear selection when clicking on the map background
+    svg.on('click', (event) => {
+      if (event.target.tagName === 'svg' || event.target.tagName === 'rect' || event.target.className.baseVal === 'map-container') {
+        setSelectedLocation(null);
+      }
     });
 
   }, [locations, dimensions, activeTab]);
@@ -792,60 +807,114 @@ function StaffMapDashboard() {
                     </Box>
                   )}
 
-                  {/* Hover Tooltip */}
-                  {hoveredLocation && (
+                  {/* Hover/Selection Tooltip */}
+                  {(hoveredLocation || selectedLocation) && (
                     <Paper
-                      elevation={3}
+                      elevation={selectedLocation ? 6 : 3}
                       sx={{
                         position: 'absolute',
                         top: 20,
                         right: 20,
                         p: 2,
-                        maxWidth: 300,
+                        width: 320,
                         zIndex: 1000,
-                        border: '1px solid var(--color-border-primary)'
+                        border: selectedLocation ? '2px solid var(--color-primary)' : '1px solid var(--color-border-primary)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                        pointerEvents: selectedLocation ? 'auto' : 'none',
+                        boxShadow: selectedLocation ? '0 12px 48px rgba(0,0,0,0.2)' : '0 8px 32px rgba(0,0,0,0.12)',
+                        transition: 'all 0.2s ease-in-out'
                       }}
                     >
-                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-                        {hoveredLocation.city}, {hoveredLocation.country}
-                      </Typography>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 600, color: 'var(--color-primary)', lineHeight: 1.2 }}>
+                          {(selectedLocation || hoveredLocation).city}, {(selectedLocation || hoveredLocation).country}
+                        </Typography>
+                        {selectedLocation && (
+                          <IconButton
+                            size="small"
+                            onClick={() => setSelectedLocation(null)}
+                            sx={{ p: 0.5, mt: -0.5, mr: -0.5 }}
+                          >
+                            <Box component="span" sx={{ fontSize: '18px' }}>✕</Box>
+                          </IconButton>
+                        )}
+                      </Box>
                       <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-                        {hoveredLocation.count} staff member{hoveredLocation.count !== 1 ? 's' : ''}
+                        {(selectedLocation || hoveredLocation).count} staff member{(selectedLocation || hoveredLocation).count !== 1 ? 's' : ''}
                       </Typography>
                       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                        {hoveredLocation.staff.slice(0, 5).map((staff, idx) => (
-                          <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        {(selectedLocation || hoveredLocation).staff.slice(0, 10).map((staff, idx) => (
+                          <Box
+                            key={idx}
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 1.5,
+                              p: 0.5,
+                              borderRadius: 1,
+                              cursor: selectedLocation ? 'pointer' : 'default',
+                              '&:hover': selectedLocation ? {
+                                bgcolor: 'rgba(59, 73, 96, 0.04)',
+                                '& .staff-name': { color: 'var(--color-primary)' }
+                              } : {}
+                            }}
+                            onClick={() => {
+                              if (selectedLocation) {
+                                navigate(`/staff/${staff.id || staff.recordId}`);
+                              }
+                            }}
+                          >
                             <Avatar
                               src={staff.picUrl}
                               sx={{
-                                width: 24,
-                                height: 24,
-                                fontSize: '0.7rem',
-                                bgcolor: 'var(--color-primary)',
+                                width: 32,
+                                height: 32,
+                                fontSize: '0.85rem',
+                                bgcolor: '#3B4960',
                                 color: '#ffffff'
                               }}
                             >
                               {staff.firstName?.[0]}{staff.lastName?.[0]}
                             </Avatar>
-                            <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
-                              {staff.firstName} {staff.lastName}
-                            </Typography>
+                            <Box sx={{ flex: 1, minWidth: 0 }}>
+                              <Typography
+                                variant="body2"
+                                className="staff-name"
+                                sx={{
+                                  fontSize: '0.875rem',
+                                  fontWeight: 500,
+                                  lineHeight: 1.2,
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis'
+                                }}
+                              >
+                                {staff.firstName} {staff.lastName}
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: '0.7rem' }}>
+                                {staff.role || staff.interestArea}
+                              </Typography>
+                            </Box>
                             <Chip
-                              label={staff.interestArea}
+                              label={staff.country}
                               size="small"
                               sx={{
-                                ml: 'auto',
-                                height: 20,
-                                fontSize: '0.7rem',
+                                height: 18,
+                                fontSize: '0.65rem',
                                 bgcolor: 'var(--color-background-secondary)',
                                 color: 'var(--color-text-secondary)'
                               }}
                             />
                           </Box>
                         ))}
-                        {hoveredLocation.staff.length > 5 && (
-                          <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
-                            +{hoveredLocation.staff.length - 5} more
+                        {(selectedLocation || hoveredLocation).staff.length > 10 && (
+                          <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, textAlign: 'center', fontStyle: 'italic' }}>
+                            +{(selectedLocation || hoveredLocation).staff.length - 10} more
+                          </Typography>
+                        )}
+                        {selectedLocation && (
+                          <Typography variant="caption" sx={{ mt: 1, color: 'var(--color-primary)', textAlign: 'center', fontWeight: 500, fontSize: '0.7rem', opacity: 0.7 }}>
+                            Click a name to view profile
                           </Typography>
                         )}
                       </Box>
