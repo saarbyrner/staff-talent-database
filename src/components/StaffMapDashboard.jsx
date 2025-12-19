@@ -38,6 +38,7 @@ import DashboardSettingsDrawer from './DashboardSettingsDrawer';
 import DashboardFilters, { applyFilters } from './DashboardFilters';
 import EmploymentStabilityBarChart from './EmploymentStabilityBarChart';
 import { getEmploymentStabilityMatrix } from '../utils/employmentStabilityByTeam';
+import { normalizeRole, getStandardizedRoles } from '../utils/roleNormalization';
 import '../styles/design-tokens.css';
 
 // Default dashboard visibility settings
@@ -83,7 +84,7 @@ function StaffMapDashboard() {
   const zoomRef = useRef(null);
   const gRef = useRef(null); // Store reference to the g element
   const [selectedCountry, setSelectedCountry] = useState('all');
-  const [selectedRole, setSelectedRole] = useState('all');
+  const [selectedRoles, setSelectedRoles] = useState([]);
   const [hoveredLocation, setHoveredLocation] = useState(null);
   const [dimensions, setDimensions] = useState({ width: 1000, height: 500 });
   const [mapKey, setMapKey] = useState(0); // Force re-render only when needed
@@ -208,7 +209,7 @@ function StaffMapDashboard() {
 
     // Apply dashboard filters
     if (dashboardFilters) {
-      data = applyFilters(data, dashboardFilters);
+      data = applyFilters(data, currentStaffData, dashboardFilters);
     }
 
     // Apply local filters
@@ -216,12 +217,28 @@ function StaffMapDashboard() {
       data = data.filter(staff => staff.country === selectedCountry);
     }
 
-    if (selectedRole !== 'all') {
-      data = data.filter(staff => staff.interestArea === selectedRole);
+    if (selectedRoles.length > 0) {
+      data = data.filter(staff => {
+        const staffRoles = [
+          staff.interestArea,
+          ...(staff.coachingRoles || []),
+          ...(staff.execRoles || []),
+          ...(staff.techRoles || [])
+        ].filter(Boolean).map(normalizeRole);
+        return selectedRoles.some(role => staffRoles.includes(role));
+      });
     }
 
     return data;
-  }, [dashboardFilters, selectedCountry, selectedRole]);
+  }, [dashboardFilters, selectedCountry, selectedRoles]);
+
+  const combinedSelectedRoles = useMemo(() => {
+    const combined = new Set(selectedRoles);
+    if (dashboardFilters?.roles) {
+      dashboardFilters.roles.forEach(r => combined.add(r));
+    }
+    return Array.from(combined);
+  }, [selectedRoles, dashboardFilters?.roles]);
 
   const locations = useMemo(() => aggregateStaffByLocation(filteredStaff), [filteredStaff]);
 
@@ -265,7 +282,8 @@ function StaffMapDashboard() {
 
   // Get unique countries and roles for filters
   const countries = ['all', ...[...new Set(staffTalentData.map(s => s.country))].sort()];
-  const roles = ['all', ...[...new Set(staffTalentData.map(s => s.interestArea).filter(Boolean))].sort()];
+
+  const roles = useMemo(() => ['all', ...getStandardizedRoles()], []);
 
   // Handle resize
   useEffect(() => {
@@ -552,66 +570,95 @@ function StaffMapDashboard() {
         </Paper>
 
         <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 3, flex: 1, overflow: 'auto' }}>
-          {/* Header */}
-          <Box sx={{ mb: 2 }}>
-            <Typography
-              variant="h6"
-              sx={{
-                fontWeight: 700,
-                color: 'var(--color-primary)',
-                mb: 0.5
-              }}
-            >
-              {visibleDashboards[activeTab]?.label || 'Dashboard'}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {visibleDashboards[activeTab]?.description || ''}
-            </Typography>
-          </Box>
-
-          {/* Filters/Selectors based on active tab */}
-          {visibleDashboards[activeTab]?.id === 'locationAnalysis' && (
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <FormControl size="small" sx={{ minWidth: 150 }}>
-                <InputLabel>Country</InputLabel>
-                <Select
-                  value={selectedCountry}
-                  onChange={(e) => setSelectedCountry(e.target.value)}
-                  label="Country"
-                >
-                  <MenuItem value="all">All Countries</MenuItem>
-                  {countries.slice(1).map(country => (
-                    <MenuItem key={country} value={country}>{country}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <FormControl size="small" sx={{ minWidth: 180 }}>
-                <InputLabel>Role</InputLabel>
-                <Select
-                  value={selectedRole}
-                  onChange={(e) => setSelectedRole(e.target.value)}
-                  label="Role"
-                >
-                  <MenuItem value="all">All Roles</MenuItem>
-                  {roles.slice(1).map(role => (
-                    <MenuItem key={role} value={role}>{role}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+          {/* Header Row: Title/Description + Filters */}
+          <Box sx={{
+            mb: 3,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            flexWrap: 'wrap',
+            gap: 2
+          }}>
+            {/* Title Section */}
+            <Box sx={{ flex: '1 1 300px' }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 700,
+                  color: 'var(--color-primary)',
+                  mb: 0.5
+                }}
+              >
+                {visibleDashboards[activeTab]?.label || 'Dashboard'}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {visibleDashboards[activeTab]?.description || ''}
+              </Typography>
             </Box>
-          )}
 
-          {/* Sankey Selectors - Only show on Data Flow tab */}
-          {visibleDashboards[activeTab]?.id === 'dataFlow' && (
-            <StaffSankeySelectors
-              sourceField={sankeySourceField}
-              setSourceField={setSankeySourceField}
-              targetField={sankeyTargetField}
-              setTargetField={setSankeyTargetField}
-              fieldOptions={sankeyFieldOptions}
-            />
-          )}
+            {/* Filters Section (Country, Role, Sankey) */}
+            <Box sx={{
+              display: 'flex',
+              gap: 2,
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'flex-end'
+            }}>
+              {/* Country Filter */}
+              {(visibleDashboards[activeTab]?.id === 'locationAnalysis' || visibleDashboards[activeTab]?.id === 'dataFlow') && (
+                <FormControl size="small" sx={{ minWidth: 150 }}>
+                  <InputLabel>Country</InputLabel>
+                  <Select
+                    value={selectedCountry}
+                    onChange={(e) => setSelectedCountry(e.target.value)}
+                    label="Country"
+                  >
+                    <MenuItem value="all">All Countries</MenuItem>
+                    {countries.slice(1).map(country => (
+                      <MenuItem key={country} value={country}>{country}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+
+              {/* Sankey Selectors - Only show on Data Flow tab */}
+              {visibleDashboards[activeTab]?.id === 'dataFlow' && (
+                <StaffSankeySelectors
+                  sourceField={sankeySourceField}
+                  setSourceField={setSankeySourceField}
+                  targetField={sankeyTargetField}
+                  setTargetField={setSankeyTargetField}
+                  fieldOptions={sankeyFieldOptions}
+                />
+              )}
+
+              {/* Roles Multiselect - Conditional and at the end */}
+              {(visibleDashboards[activeTab]?.id === 'locationAnalysis' || visibleDashboards[activeTab]?.id === 'dataFlow') &&
+                (visibleDashboards[activeTab]?.id !== 'dataFlow' ||
+                  (sankeySourceField === 'role' || sankeyTargetField === 'role')) && (
+                  <FormControl size="small" sx={{ minWidth: 220 }}>
+                    <InputLabel>Roles</InputLabel>
+                    <Select
+                      multiple
+                      value={selectedRoles}
+                      onChange={(e) => setSelectedRoles(typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value)}
+                      label="Roles"
+                      renderValue={(selected) => (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {selected.length === 0 ? 'All Roles' : selected.map((value) => (
+                            <Chip key={value} label={value} size="small" />
+                          ))}
+                        </Box>
+                      )}
+                    >
+                      {roles.slice(1).map(role => (
+                        <MenuItem key={role} value={role}>{role}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
+            </Box>
+          </Box>
 
           {/* Location Analysis Tab */}
           {visibleDashboards[activeTab]?.id === 'locationAnalysis' && (
@@ -813,8 +860,10 @@ function StaffMapDashboard() {
           {/* Data Flow Tab */}
           {visibleDashboards[activeTab]?.id === 'dataFlow' && (
             <StaffSankeyDiagram
+              staffData={filteredStaff}
               sourceField={sankeySourceField}
               targetField={sankeyTargetField}
+              selectedRoles={combinedSelectedRoles}
             />
           )}
 

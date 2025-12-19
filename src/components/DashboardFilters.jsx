@@ -18,6 +18,7 @@ import {
 import { Clear, FilterList, ChevronLeft } from '@mui/icons-material';
 import staffTalentData from '../data/staff_talent.json';
 import currentStaffData from '../data/users_staff.json';
+import { normalizeRole } from '../utils/roleNormalization';
 
 // Predefined experience timeframes
 const EXPERIENCE_TIMEFRAMES = [
@@ -48,7 +49,7 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
   const [location, setLocation] = useState('all');
   const [watchlistStatus, setWatchlistStatus] = useState('all');
   const [selectedTag, setSelectedTag] = useState('all');
-  const [selectedRole, setSelectedRole] = useState('all');
+  const [selectedRoles, setSelectedRoles] = useState([]);
   const [selectedUEFABadge, setSelectedUEFABadge] = useState('all');
   const [experienceRange, setExperienceRange] = useState('all');
   const [selectedCountry, setSelectedCountry] = useState('all');
@@ -69,18 +70,19 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
     // Get all unique roles
     const roles = new Set();
     staffTalentData.forEach(staff => {
+      if (staff.interestArea) roles.add(normalizeRole(staff.interestArea));
       if (staff.coachingRoles && Array.isArray(staff.coachingRoles)) {
-        staff.coachingRoles.forEach(role => roles.add(role));
+        staff.coachingRoles.forEach(role => roles.add(normalizeRole(role)));
       }
       if (staff.execRoles && Array.isArray(staff.execRoles)) {
-        staff.execRoles.forEach(role => roles.add(role));
+        staff.execRoles.forEach(role => roles.add(normalizeRole(role)));
       }
       if (staff.techRoles && Array.isArray(staff.techRoles)) {
-        staff.techRoles.forEach(role => roles.add(role));
+        staff.techRoles.forEach(role => roles.add(normalizeRole(role)));
       }
     });
     currentStaffData.forEach(staff => {
-      if (staff.role) roles.add(staff.role);
+      if (staff.role) roles.add(normalizeRole(staff.role));
     });
 
     // Get UEFA badges from coaching licenses
@@ -132,7 +134,7 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
       location,
       watchlistStatus,
       tags: selectedTag === 'all' ? [] : [selectedTag],
-      roles: selectedRole === 'all' ? [] : [selectedRole],
+      roles: selectedRoles,
       uefaBadges: selectedUEFABadge === 'all' ? [] : [selectedUEFABadge],
       experienceRange: parseExperienceRange(experienceRange),
       countries: selectedCountry === 'all' ? [] : [selectedCountry],
@@ -168,7 +170,7 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
     if (onFilterChange) {
       onFilterChange(buildFilters());
     }
-  }, [staffType, location, watchlistStatus, selectedTag, selectedRole, selectedUEFABadge, experienceRange, selectedCountry, employmentStatus, trophiesRange, selectedStaff, onFilterChange]);
+  }, [staffType, location, watchlistStatus, selectedTag, selectedRoles, selectedUEFABadge, experienceRange, selectedCountry, employmentStatus, trophiesRange, selectedStaff, onFilterChange]);
 
   // Handle reset all filters
   const handleResetFilters = () => {
@@ -176,7 +178,7 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
     setLocation('all');
     setWatchlistStatus('all');
     setSelectedTag('all');
-    setSelectedRole('all');
+    setSelectedRoles([]);
     setSelectedUEFABadge('all');
     setExperienceRange('all');
     setSelectedCountry('all');
@@ -187,7 +189,7 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
 
   // Check if any filters are active
   const hasActiveFilters = staffType !== 'all' || location !== 'all' || watchlistStatus !== 'all' ||
-    selectedTag !== 'all' || selectedRole !== 'all' || selectedUEFABadge !== 'all' ||
+    selectedTag !== 'all' || selectedRoles.length > 0 || selectedUEFABadge !== 'all' ||
     experienceRange !== 'all' || selectedCountry !== 'all' || employmentStatus !== 'all' || trophiesRange !== 'all' ||
     selectedStaff.length > 0;
 
@@ -214,9 +216,9 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
       >
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
           {/* Header */}
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
             justifyContent: 'space-between',
             p: 2,
             borderBottom: '1px solid var(--color-border-primary)',
@@ -239,7 +241,7 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
                     fontWeight: 600
                   }}
                 >
-                  {[staffType, location, watchlistStatus, selectedTag, selectedRole, selectedUEFABadge, experienceRange, selectedCountry, employmentStatus, trophiesRange].filter(v => v !== 'all').length}
+                  {[staffType, location, watchlistStatus, selectedTag, selectedRoles.length > 0 ? 'active' : 'all', selectedUEFABadge, experienceRange, selectedCountry, employmentStatus, trophiesRange].filter(v => v !== 'all').length}
                 </Box>
               )}
             </Box>
@@ -362,14 +364,21 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
               {/* Roles */}
               {filterOptions.roles.length > 0 && (
                 <FormControl size="small" fullWidth>
-                  <InputLabel>Role</InputLabel>
+                  <InputLabel>Roles</InputLabel>
                   <Select
-                    value={selectedRole}
-                    label="Role"
-                    onChange={(e) => setSelectedRole(e.target.value)}
+                    multiple
+                    value={selectedRoles}
+                    label="Roles"
+                    onChange={(e) => setSelectedRoles(typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value)}
+                    renderValue={(selected) => (
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        {selected.map((value) => (
+                          <Chip key={value} label={value} size="small" />
+                        ))}
+                      </Box>
+                    )}
                   >
-                    <MenuItem value="all">All Roles</MenuItem>
-                    {filterOptions.roles.slice(0, 15).map((role) => (
+                    {filterOptions.roles.map((role) => (
                       <MenuItem key={role} value={role}>{role}</MenuItem>
                     ))}
                   </Select>
@@ -442,8 +451,8 @@ export default function DashboardFilters({ onFilterChange, open, onToggle }) {
 
           {/* Footer with Reset Button */}
           {hasActiveFilters && (
-            <Box sx={{ 
-              p: 2, 
+            <Box sx={{
+              p: 2,
               borderTop: '1px solid var(--color-border-primary)',
               bgcolor: 'white'
             }}>
@@ -477,7 +486,7 @@ const generateStats = (id) => {
   const winRate = 35 + Math.floor(random(1) * 40); // 35-75%
   const draws = Math.floor(random(2) * 20); // 0-20%
   const ppm = ((winRate * 3) + draws) / 100;
-  
+
   const age = 32 + Math.floor(random(3) * 25); // 32-57
   const maxExp = age - 21;
   const yearsExp = Math.min(3 + Math.floor(random(4) * 25), maxExp);
@@ -554,11 +563,12 @@ export function applyFilters(staffData, currentStaffData, filters) {
   if (filters.roles && filters.roles.length > 0) {
     filtered = filtered.filter(staff => {
       const staffRoles = [
+        staff.interestArea,
         ...(staff.coachingRoles || []),
         ...(staff.execRoles || []),
         ...(staff.techRoles || []),
         staff.role
-      ].filter(Boolean);
+      ].filter(Boolean).map(normalizeRole);
       return filters.roles.some(role => staffRoles.includes(role));
     });
   }
@@ -570,7 +580,7 @@ export function applyFilters(staffData, currentStaffData, filters) {
         ...(staff.coachingLicenses || []),
         ...(staff.qualifications || [])
       ];
-      return filters.uefaBadges.some(badge => 
+      return filters.uefaBadges.some(badge =>
         licenses.some(license => license === badge)
       );
     });
@@ -583,7 +593,7 @@ export function applyFilters(staffData, currentStaffData, filters) {
       filtered = filtered.filter(staff => {
         // Calculate years of experience
         let yearsExp = staff.yearsExp || staff.yearsOfExperience;
-        
+
         // If not directly available, try to calculate from employment history
         if (!yearsExp && staff.currentEmployer) {
           const match = staff.currentEmployer.match(/\((\d{4})-/);
@@ -593,7 +603,7 @@ export function applyFilters(staffData, currentStaffData, filters) {
         }
 
         if (!yearsExp) return min === null && max === null;
-        
+
         if (min !== null && yearsExp < min) return false;
         if (max !== null && yearsExp > max) return false;
         return true;
@@ -603,7 +613,7 @@ export function applyFilters(staffData, currentStaffData, filters) {
 
   // Apply countries filter
   if (filters.countries && filters.countries.length > 0) {
-    filtered = filtered.filter(staff => 
+    filtered = filtered.filter(staff =>
       filters.countries.includes(staff.country)
     );
   }
@@ -611,10 +621,10 @@ export function applyFilters(staffData, currentStaffData, filters) {
   // Apply employment status filter
   if (filters.employmentStatus !== 'all') {
     filtered = filtered.filter(staff => {
-      const isEmployed = staff.currentEmployer && 
+      const isEmployed = staff.currentEmployer &&
         !staff.currentEmployer.toLowerCase().includes('free agent') &&
         staff.currentEmployer !== 'Unemployed';
-      
+
       return filters.employmentStatus === 'employed' ? isEmployed : !isEmployed;
     });
   }
@@ -630,24 +640,24 @@ export function applyFilters(staffData, currentStaffData, filters) {
         const hasCoachingRoles = staff.coachingRoles && staff.coachingRoles.length > 0;
         const hasCoachingExp = staff.proCoachExp || staff.mlsCoachExp;
         const hasCoachingLicenses = staff.coachingLicenses && staff.coachingLicenses.length > 0;
-        
+
         // Consider someone a coach if they have ANY coaching-related data
-        const isCoach = currentRole.toLowerCase().includes('coach') || 
-                        currentRole.toLowerCase().includes('manager') || 
-                        interestArea.toLowerCase().includes('coach') ||
-                        hasCoachingRoles ||
-                        hasCoachingExp ||
-                        hasCoachingLicenses;
-        
+        const isCoach = currentRole.toLowerCase().includes('coach') ||
+          currentRole.toLowerCase().includes('manager') ||
+          interestArea.toLowerCase().includes('coach') ||
+          hasCoachingRoles ||
+          hasCoachingExp ||
+          hasCoachingLicenses;
+
         if (!isCoach) {
           // Non-coaches have 0 trophies
           return min === 0 && (max === null || max >= 0);
         }
-        
+
         // Generate trophies count from coaching stats
         const stats = generateStats(staff.id);
         const trophies = stats.trophies;
-        
+
         if (min !== null && trophies < min) return false;
         if (max !== null && trophies > max) return false;
         return true;

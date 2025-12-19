@@ -34,6 +34,7 @@ import TagManagementDrawer from './TagManagementDrawer';
 import TagApprovalDrawer from './TagApprovalDrawer';
 import ClubApprovalInbox from './ClubApprovalInbox';
 import NotesDrawer from './NotesDrawer';
+import { normalizeRole } from '../utils/roleNormalization';
 import '../styles/design-tokens.css';
 
 // Helper to generate consistent random stats based on staff ID
@@ -47,7 +48,7 @@ const generateStats = (id) => {
   const winRate = 35 + Math.floor(random(1) * 40); // 35-75%
   const draws = Math.floor(random(2) * 20); // 0-20%
   const ppm = ((winRate * 3) + draws) / 100;
-  
+
   const age = 32 + Math.floor(random(3) * 25); // 32-57
   const maxExp = age - 21;
   const yearsExp = Math.min(3 + Math.floor(random(4) * 25), maxExp);
@@ -71,12 +72,12 @@ export const CustomToolbar = React.forwardRef((props, ref) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { onInviteClick, onManageTags, hideAddButton, onApprovals, pendingApprovalsCount = 0 } = props;
-  
+
   const handleAddClick = () => {
     const basePath = location.pathname.startsWith('/league') ? '/league/staff' : '/staff';
     navigate(`${basePath}/new`);
   };
-  
+
   return (
     <Box
       ref={ref}
@@ -91,8 +92,8 @@ export const CustomToolbar = React.forwardRef((props, ref) => {
         justifyContent: 'space-between',
       }}
     >
-      <Box sx={{ 
-        display: 'flex', 
+      <Box sx={{
+        display: 'flex',
         gap: 2,
         '& .MuiButtonBase-root': {
           textTransform: 'none',
@@ -112,7 +113,7 @@ export const CustomToolbar = React.forwardRef((props, ref) => {
         <GridToolbarExport />
       </Box>
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-        <GridToolbarQuickFilter 
+        <GridToolbarQuickFilter
           sx={{
             '& .MuiInputBase-root': {
               backgroundColor: 'var(--color-background-primary)',
@@ -291,8 +292,8 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     width: 100,
     type: 'number',
     valueGetter: (params) => {
-       const seed = params.row.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-       return (seed % 15) + 1;
+      const seed = params.row.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      return (seed % 15) + 1;
     },
     renderCell: (params) => (
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -371,656 +372,662 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
   };
 
   return [
-  watchlistColumn,
-  notesColumn,
-  {
-    field: 'picUrl',
-    headerName: '',
-    width: 72,
-    sortable: false,
-    filterable: false,
-    renderCell: (params) => (
-      <LinkCell
-        value={params.value}
-        type="avatar"
-        name={`${params.row.firstName || ''} ${params.row.lastName || ''}`.trim()}
-      />
-    )
-  },
-  // CONTACT INFO
-  { field: 'firstName', headerName: 'First Name', width: 150 },
-  { field: 'lastName', headerName: 'Last Name', width: 150 },
-  { field: 'phone', headerName: 'Phone', width: 150 },
-  { field: 'email', headerName: 'Email', width: 200 },
-  {
-    field: 'tags',
-    headerName: 'Tags',
-    width: 250,
-    sortable: false,
-    renderCell: (params) => {
-      const tags = params.value || [];
-      return (
-        <Stack 
-          direction="row" 
-          spacing={0.5} 
-          alignItems="center"
-          sx={{ 
-            py: 1,
-            width: '100%',
-            overflow: 'hidden'
-          }}
-        >
-          {tags.slice(0, 3).map((tag) => (
-            <TagChip key={tag} label={tag} size="small" />
-          ))}
-          {tags.length > 3 && (
-            <Typography variant="caption" color="text.secondary" sx={{ ml: 0.5 }}>
-              +{tags.length - 3}
-            </Typography>
-          )}
-          <IconButton
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              onTagsClick(params.row.id, e);
-            }}
+    watchlistColumn,
+    notesColumn,
+    {
+      field: 'picUrl',
+      headerName: '',
+      width: 72,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => (
+        <LinkCell
+          value={params.value}
+          type="avatar"
+          name={`${params.row.firstName || ''} ${params.row.lastName || ''}`.trim()}
+        />
+      )
+    },
+    // CONTACT INFO
+    { field: 'firstName', headerName: 'First Name', width: 150 },
+    { field: 'lastName', headerName: 'Last Name', width: 150 },
+    { field: 'phone', headerName: 'Phone', width: 150 },
+    { field: 'email', headerName: 'Email', width: 200 },
+    {
+      field: 'tags',
+      headerName: 'Tags',
+      width: 250,
+      sortable: false,
+      renderCell: (params) => {
+        const tags = params.value || [];
+        return (
+          <Stack
+            direction="row"
+            spacing={0.5}
+            alignItems="center"
             sx={{
-              ml: 'auto',
-              color: 'var(--color-text-secondary)',
-              '&:hover': {
-                color: 'var(--color-primary)',
-              }
+              py: 1,
+              width: '100%',
+              overflow: 'hidden'
             }}
           >
-            <LocalOfferOutlined fontSize="small" />
-          </IconButton>
-        </Stack>
-      );
-    }
-  },
-  { 
-    field: 'profilePrivacy', 
-    headerName: 'Profile Privacy', 
-    width: 140,
-    renderCell: (params) => {
-      const value = params.value || 'Public';
-      const isPrivate = value === 'Private';
-      return (
-        <Chip 
-          label={value} 
-          size="small" 
-          color={isPrivate ? 'default' : 'success'} 
-          variant="outlined"
-          sx={{
-            fontWeight: 500,
-            ...(isPrivate && {
-              borderColor: 'var(--color-border-primary)',
-              color: 'var(--color-text-secondary)'
-            })
-          }}
-        />
-      );
-    }
-  },
-  { 
-    field: 'location', 
-    headerName: 'Location (City, State, Country)', 
-    width: 200,
-    valueGetter: (params) => {
-      const { city, state, country } = params.row;
-      return [city, state, country].filter(Boolean).join(', ');
-    }
-  },
-  { field: 'state', headerName: 'State', width: 120 },
-  { 
-    field: 'workAuthUS', 
-    headerName: 'US Sponsorship?', 
-    width: 150, 
-    renderCell: (params) => <BooleanCell value={params.value} /> 
-  },
-  { 
-    field: 'workAuthCA', 
-    headerName: 'CA Sponsorship?', 
-    width: 150, 
-    renderCell: (params) => <BooleanCell value={params.value} /> 
-  },
-
-  // VOLUNTARY ID
-  { field: 'gender', headerName: 'Gender', width: 120 },
-  { field: 'ethnicity', headerName: 'Ethnicity', width: 180 },
-
-  // AGENT
-  { 
-    field: 'hasAgent', 
-    headerName: 'Has Agent?', 
-    width: 120, 
-    renderCell: (params) => <BooleanCell value={params.value} /> 
-  },
-  { field: 'agentName', headerName: 'Agent Name', width: 150 },
-  { field: 'agencyName', headerName: 'Agency Name', width: 150 },
-
-  // EXPERIENCE
-  { 
-    field: 'proPlayerExp', 
-    headerName: 'Pro Player Exp?', 
-    width: 150, 
-    renderCell: (params) => <BooleanCell value={params.value} /> 
-  },
-  { 
-    field: 'mlsPlayerExp', 
-    headerName: 'MLS Player Exp?', 
-    width: 150, 
-    renderCell: (params) => <BooleanCell value={params.value} /> 
-  },
-  { 
-    field: 'mlsClubsPlayed', 
-    headerName: 'MLS Clubs (Played)', 
-    width: 200, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-  { field: 'otherPlayerExp', headerName: 'Other Exp', width: 250 },
-
-  // INTERESTS
-  { field: 'interestArea', headerName: 'Area of Interest', width: 180 },
-  { 
-    field: 'roles', 
-    headerName: 'Roles', 
-    width: 300, 
-    valueGetter: (params) => {
-      const { coachingRoles = [], execRoles = [], techRoles = [] } = params.row;
-      return [...coachingRoles, ...execRoles, ...techRoles];
+            {tags.slice(0, 3).map((tag) => (
+              <TagChip key={tag} label={tag} size="small" />
+            ))}
+            {tags.length > 3 && (
+              <Typography variant="caption" color="text.secondary" sx={{ ml: 0.5 }}>
+                +{tags.length - 3}
+              </Typography>
+            )}
+            <IconButton
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                onTagsClick(params.row.id, e);
+              }}
+              sx={{
+                ml: 'auto',
+                color: 'var(--color-text-secondary)',
+                '&:hover': {
+                  color: 'var(--color-primary)',
+                }
+              }}
+            >
+              <LocalOfferOutlined fontSize="small" />
+            </IconButton>
+          </Stack>
+        );
+      }
     },
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-  { 
-    field: 'relocation', 
-    headerName: 'Willing to Relocate', 
-    width: 180, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-
-  // COACHING HIST
-  { 
-    field: 'proCoachExp', 
-    headerName: 'Pro Coach Exp?', 
-    width: 150, 
-    renderCell: (params) => <BooleanCell value={params.value} /> 
-  },
-  { 
-    field: 'mlsCoachExp', 
-    headerName: 'MLS Coach Exp?', 
-    width: 150, 
-    renderCell: (params) => <BooleanCell value={params.value} /> 
-  },
-  { 
-    field: 'mlsCoachRoles', 
-    headerName: 'MLS Roles Held', 
-    width: 200, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-  { 
-    field: 'mlsClubsCoached', 
-    headerName: 'MLS Clubs (Coached)', 
-    width: 200, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-  { 
-    field: 'nonMlsCoachExp', 
-    headerName: 'Non-MLS Exp', 
-    width: 200, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-
-  // SPORTING HIST
-  { 
-    field: 'sportingExp', 
-    headerName: 'Sporting Exp?', 
-    width: 150, 
-    renderCell: (params) => <BooleanCell value={params.value} /> 
-  },
-  { 
-    field: 'mlsSportingExp', 
-    headerName: 'MLS Sporting Exp?', 
-    width: 150, 
-    renderCell: (params) => <BooleanCell value={params.value} /> 
-  },
-  { 
-    field: 'mlsClubsSporting', 
-    headerName: 'MLS Clubs (Sporting)', 
-    width: 200, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-  { 
-    field: 'nonMlsSportingExp', 
-    headerName: 'Non-MLS Exp', 
-    width: 200, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-  { 
-    field: 'sportingVertical', 
-    headerName: 'Vertical', 
-    width: 150, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-
-  // EMPLOYMENT
-  { field: 'currentEmployer', headerName: 'Current Employer', width: 200 },
-  { field: 'prevEmployer1', headerName: 'Previous Employer 1', width: 200 },
-  { field: 'prevEmployer2', headerName: 'Previous Employer 2', width: 200 },
-
-  // EDUCATION
-  { field: 'degree', headerName: 'Degree', width: 150 },
-  { 
-    field: 'mlsPrograms', 
-    headerName: 'MLS Programs', 
-    width: 200, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-  { 
-    field: 'coachingLicenses', 
-    headerName: 'Coaching Licenses', 
-    width: 250, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-  { 
-    field: 'sportingCerts', 
-    headerName: 'Sporting Certs', 
-    width: 150, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-  { 
-    field: 'languages', 
-    headerName: 'Languages', 
-    width: 150, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-
-  // PROFESSIONAL COACHING
-  { 
-    field: 'proCoachExpUpdate', 
-    headerName: 'Has Coaching Experience Update', 
-    width: 150, 
-    renderCell: (params) => <BooleanCell value={params.value} /> 
-  },
-  { 
-    field: 'prevMlsCoachExp', 
-    headerName: 'Previous MLS Coaching Experience', 
-    width: 150, 
-    renderCell: (params) => <BooleanCell value={params.value} /> 
-  },
-  { 
-    field: 'mlsCoachingExpList', 
-    headerName: 'MLS Coaching Experience Types', 
-    width: 250, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-  { 
-    field: 'mlsClubsCoached', 
-    headerName: 'MLS Clubs Coached', 
-    width: 200, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-  { 
-    field: 'nonMlsCoachExp', 
-    headerName: 'Non-MLS Coaching Experience', 
-    width: 200, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-
-  // PROFESSIONAL SPORTING
-  { 
-    field: 'proSportingExpUpdate', 
-    headerName: 'Has Sporting Experience Update', 
-    width: 150, 
-    renderCell: (params) => <BooleanCell value={params.value} /> 
-  },
-  { 
-    field: 'prevMlsSportingExp', 
-    headerName: 'Previous MLS Sporting Experience', 
-    width: 150, 
-    renderCell: (params) => <BooleanCell value={params.value} /> 
-  },
-  { 
-    field: 'mlsClubsSporting', 
-    headerName: 'MLS Clubs (Sporting)', 
-    width: 200, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-  { 
-    field: 'nonMlsSportingExp', 
-    headerName: 'Non-MLS Sporting Experience', 
-    width: 200, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-  { 
-    field: 'sportingVertical', 
-    headerName: 'Sporting Vertical', 
-    width: 180, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-
-  // EMPLOYMENT HISTORY
-  { 
-    field: 'currentlyEmployed', 
-    headerName: 'Currently Employed', 
-    width: 120, 
-    renderCell: (params) => <BooleanCell value={params.value} /> 
-  },
-  { 
-    field: 'currentEmployer', 
-    headerName: 'Current Employer', 
-    width: 250 
-  },
-  { 
-    field: 'prevEmployer1', 
-    headerName: 'Previous Employer 1', 
-    width: 250 
-  },
-  { 
-    field: 'prevEmployer2', 
-    headerName: 'Previous Employer 2', 
-    width: 250 
-  },
-  { 
-    field: 'prevEmployer3', 
-    headerName: 'Previous Employer 3', 
-    width: 250 
-  },
-  { 
-    field: 'prevEmployer4', 
-    headerName: 'Previous Employer 4', 
-    width: 250 
-  },
-
-  // EDUCATION EXPANDED
-  { 
-    field: 'highestDegree', 
-    headerName: 'Highest Degree', 
-    width: 180, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-  { 
-    field: 'mlsProgramming', 
-    headerName: 'MLS Programming Experience', 
-    width: 200, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-  { 
-    field: 'sportingDirectorCerts', 
-    headerName: 'Sporting Director Certifications', 
-    width: 180, 
-    renderCell: (params) => <ArrayCell value={params.value} /> 
-  },
-  { 
-    field: 'otherLicenses', 
-    headerName: 'Has Other Licenses', 
-    width: 120, 
-    renderCell: (params) => <BooleanCell value={params.value} /> 
-  },
-  { 
-    field: 'otherLicensesList', 
-    headerName: 'Other Licenses List', 
-    width: 200 
-  },
-
-  // DOCS
-  { 
-    field: 'coachingLicenseDoc', 
-    headerName: 'Coaching License Document', 
-    width: 150, 
-    renderCell: (params) => params.value ? <LinkCell value={params.value} type="link" /> : null 
-  },
-  { 
-    field: 'otherCertsDoc', 
-    headerName: 'Other Certifications Document', 
-    width: 150, 
-    renderCell: (params) => params.value ? <LinkCell value={params.value} type="link" /> : null 
-  },
-  { 
-    field: 'resumeUrl', 
-    headerName: 'Resume', 
-    width: 100, 
-    renderCell: (params) => <LinkCell value={params.value} type="link" /> 
-  },
-  // picUrl moved to front as a headerless avatar column
-  
-  // --- COACHING STATISTICS (from CoachLeaderboard) ---
-  {
-    field: 'age',
-    headerName: 'Age',
-    type: 'number',
-    width: 70,
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.age;
-      return null;
-    }
-  },
-  {
-    field: 'yearsExp',
-    headerName: 'Exp (Yrs)',
-    type: 'number',
-    width: 100,
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.yearsExp;
-      return null;
-    }
-  },
-  {
-    field: 'license',
-    headerName: 'License',
-    width: 160,
-    valueGetter: (params) => {
-      const licenses = params.row.coachingLicenses;
-      if (Array.isArray(licenses) && licenses.length > 0) return licenses[0];
-      return 'None';
-    },
-    renderCell: (params) => (
-      <Chip 
-        label={params.value} 
-        size="small" 
-        variant="outlined" 
-        sx={{ height: 24, fontSize: '0.75rem', maxWidth: '100%' }} 
-      />
-    )
-  },
-  {
-    field: 'winRate',
-    headerName: 'Win %',
-    type: 'number',
-    width: 110,
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.winRate;
-      return null;
-    },
-    renderCell: (params) => {
-      if (!params.value) return null;
-      return (
-        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="body2" sx={{ minWidth: 35 }}>{params.value}%</Typography>
-          <LinearProgress 
-            variant="determinate" 
-            value={params.value} 
-            sx={{ 
-              flexGrow: 1, 
-              height: 6, 
-              borderRadius: 3,
-              bgcolor: 'grey.200',
-              '& .MuiLinearProgress-bar': {
-                bgcolor: params.value > 55 ? 'success.main' : params.value > 40 ? 'warning.main' : 'error.main'
-              }
-            }} 
+    {
+      field: 'profilePrivacy',
+      headerName: 'Profile Privacy',
+      width: 140,
+      renderCell: (params) => {
+        const value = params.value || 'Public';
+        const isPrivate = value === 'Private';
+        return (
+          <Chip
+            label={value}
+            size="small"
+            color={isPrivate ? 'default' : 'success'}
+            variant="outlined"
+            sx={{
+              fontWeight: 500,
+              ...(isPrivate && {
+                borderColor: 'var(--color-border-primary)',
+                color: 'var(--color-text-secondary)'
+              })
+            }}
           />
-        </Box>
-      );
-    }
-  },
-  {
-    field: 'ppm',
-    headerName: 'PPM',
-    type: 'number',
-    width: 80,
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.ppm;
-      return null;
+        );
+      }
     },
-    renderCell: (params) => {
-      if (!params.value) return null;
-      return (
-        <Typography variant="body2" fontWeight={params.value > 1.8 ? 700 : 400}>
-          {params.value}
-        </Typography>
-      );
-    }
-  },
-  {
-    field: 'trophies',
-    headerName: 'Trophies',
-    type: 'number',
-    width: 110,
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.trophies;
-      return null;
+    {
+      field: 'location',
+      headerName: 'Location (City, State, Country)',
+      width: 200,
+      valueGetter: (params) => {
+        const { city, state, country } = params.row;
+        return [city, state, country].filter(Boolean).join(', ');
+      }
     },
-    renderCell: (params) => {
-      if (params.value === null || params.value === undefined) return null;
-      return params.value > 0 ? (
-        <Chip 
-          label={params.value} 
-          size="small" 
-          color="warning" 
+    { field: 'state', headerName: 'State', width: 120 },
+    {
+      field: 'workAuthUS',
+      headerName: 'US Sponsorship?',
+      width: 150,
+      renderCell: (params) => <BooleanCell value={params.value} />
+    },
+    {
+      field: 'workAuthCA',
+      headerName: 'CA Sponsorship?',
+      width: 150,
+      renderCell: (params) => <BooleanCell value={params.value} />
+    },
+
+    // VOLUNTARY ID
+    { field: 'gender', headerName: 'Gender', width: 120 },
+    { field: 'ethnicity', headerName: 'Ethnicity', width: 180 },
+
+    // AGENT
+    {
+      field: 'hasAgent',
+      headerName: 'Has Agent?',
+      width: 120,
+      renderCell: (params) => <BooleanCell value={params.value} />
+    },
+    { field: 'agentName', headerName: 'Agent Name', width: 150 },
+    { field: 'agencyName', headerName: 'Agency Name', width: 150 },
+
+    // EXPERIENCE
+    {
+      field: 'proPlayerExp',
+      headerName: 'Pro Player Exp?',
+      width: 150,
+      renderCell: (params) => <BooleanCell value={params.value} />
+    },
+    {
+      field: 'mlsPlayerExp',
+      headerName: 'MLS Player Exp?',
+      width: 150,
+      renderCell: (params) => <BooleanCell value={params.value} />
+    },
+    {
+      field: 'mlsClubsPlayed',
+      headerName: 'MLS Clubs (Played)',
+      width: 200,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+    { field: 'otherPlayerExp', headerName: 'Other Exp', width: 250 },
+
+    // INTERESTS
+    {
+      field: 'interestArea',
+      headerName: 'Area of Interest',
+      width: 180,
+      valueGetter: (params) => normalizeRole(params.value)
+    },
+    {
+      field: 'roles',
+      headerName: 'Roles',
+      width: 300,
+      valueGetter: (params) => {
+        const { coachingRoles = [], execRoles = [], techRoles = [], role = '' } = params.row;
+        const combined = [role, ...coachingRoles, ...execRoles, ...techRoles].filter(Boolean).map(normalizeRole);
+        return [...new Set(combined)];
+      },
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+    {
+      field: 'relocation',
+      headerName: 'Willing to Relocate',
+      width: 180,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+
+    // COACHING HIST
+    {
+      field: 'proCoachExp',
+      headerName: 'Pro Coach Exp?',
+      width: 150,
+      renderCell: (params) => <BooleanCell value={params.value} />
+    },
+    {
+      field: 'mlsCoachExp',
+      headerName: 'MLS Coach Exp?',
+      width: 150,
+      renderCell: (params) => <BooleanCell value={params.value} />
+    },
+    {
+      field: 'mlsCoachRoles',
+      headerName: 'MLS Roles Held',
+      width: 200,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+    {
+      field: 'mlsClubsCoached',
+      headerName: 'MLS Clubs (Coached)',
+      width: 200,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+    {
+      field: 'nonMlsCoachExp',
+      headerName: 'Non-MLS Exp',
+      width: 200,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+
+    // SPORTING HIST
+    {
+      field: 'sportingExp',
+      headerName: 'Sporting Exp?',
+      width: 150,
+      renderCell: (params) => <BooleanCell value={params.value} />
+    },
+    {
+      field: 'mlsSportingExp',
+      headerName: 'MLS Sporting Exp?',
+      width: 150,
+      renderCell: (params) => <BooleanCell value={params.value} />
+    },
+    {
+      field: 'mlsClubsSporting',
+      headerName: 'MLS Clubs (Sporting)',
+      width: 200,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+    {
+      field: 'nonMlsSportingExp',
+      headerName: 'Non-MLS Exp',
+      width: 200,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+    {
+      field: 'sportingVertical',
+      headerName: 'Vertical',
+      width: 150,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+
+    // EMPLOYMENT
+    { field: 'currentEmployer', headerName: 'Current Employer', width: 200 },
+    { field: 'prevEmployer1', headerName: 'Previous Employer 1', width: 200 },
+    { field: 'prevEmployer2', headerName: 'Previous Employer 2', width: 200 },
+
+    // EDUCATION
+    { field: 'degree', headerName: 'Degree', width: 150 },
+    {
+      field: 'mlsPrograms',
+      headerName: 'MLS Programs',
+      width: 200,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+    {
+      field: 'coachingLicenses',
+      headerName: 'Coaching Licenses',
+      width: 250,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+    {
+      field: 'sportingCerts',
+      headerName: 'Sporting Certs',
+      width: 150,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+    {
+      field: 'languages',
+      headerName: 'Languages',
+      width: 150,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+
+    // PROFESSIONAL COACHING
+    {
+      field: 'proCoachExpUpdate',
+      headerName: 'Has Coaching Experience Update',
+      width: 150,
+      renderCell: (params) => <BooleanCell value={params.value} />
+    },
+    {
+      field: 'prevMlsCoachExp',
+      headerName: 'Previous MLS Coaching Experience',
+      width: 150,
+      renderCell: (params) => <BooleanCell value={params.value} />
+    },
+    {
+      field: 'mlsCoachingExpList',
+      headerName: 'MLS Coaching Experience Types',
+      width: 250,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+    {
+      field: 'mlsClubsCoached',
+      headerName: 'MLS Clubs Coached',
+      width: 200,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+    {
+      field: 'nonMlsCoachExp',
+      headerName: 'Non-MLS Coaching Experience',
+      width: 200,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+
+    // PROFESSIONAL SPORTING
+    {
+      field: 'proSportingExpUpdate',
+      headerName: 'Has Sporting Experience Update',
+      width: 150,
+      renderCell: (params) => <BooleanCell value={params.value} />
+    },
+    {
+      field: 'prevMlsSportingExp',
+      headerName: 'Previous MLS Sporting Experience',
+      width: 150,
+      renderCell: (params) => <BooleanCell value={params.value} />
+    },
+    {
+      field: 'mlsClubsSporting',
+      headerName: 'MLS Clubs (Sporting)',
+      width: 200,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+    {
+      field: 'nonMlsSportingExp',
+      headerName: 'Non-MLS Sporting Experience',
+      width: 200,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+    {
+      field: 'sportingVertical',
+      headerName: 'Sporting Vertical',
+      width: 180,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+
+    // EMPLOYMENT HISTORY
+    {
+      field: 'currentlyEmployed',
+      headerName: 'Currently Employed',
+      width: 120,
+      renderCell: (params) => <BooleanCell value={params.value} />
+    },
+    {
+      field: 'currentEmployer',
+      headerName: 'Current Employer',
+      width: 250
+    },
+    {
+      field: 'prevEmployer1',
+      headerName: 'Previous Employer 1',
+      width: 250
+    },
+    {
+      field: 'prevEmployer2',
+      headerName: 'Previous Employer 2',
+      width: 250
+    },
+    {
+      field: 'prevEmployer3',
+      headerName: 'Previous Employer 3',
+      width: 250
+    },
+    {
+      field: 'prevEmployer4',
+      headerName: 'Previous Employer 4',
+      width: 250
+    },
+
+    // EDUCATION EXPANDED
+    {
+      field: 'highestDegree',
+      headerName: 'Highest Degree',
+      width: 180,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+    {
+      field: 'mlsProgramming',
+      headerName: 'MLS Programming Experience',
+      width: 200,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+    {
+      field: 'sportingDirectorCerts',
+      headerName: 'Sporting Director Certifications',
+      width: 180,
+      renderCell: (params) => <ArrayCell value={params.value} />
+    },
+    {
+      field: 'otherLicenses',
+      headerName: 'Has Other Licenses',
+      width: 120,
+      renderCell: (params) => <BooleanCell value={params.value} />
+    },
+    {
+      field: 'otherLicensesList',
+      headerName: 'Other Licenses List',
+      width: 200
+    },
+
+    // DOCS
+    {
+      field: 'coachingLicenseDoc',
+      headerName: 'Coaching License Document',
+      width: 150,
+      renderCell: (params) => params.value ? <LinkCell value={params.value} type="link" /> : null
+    },
+    {
+      field: 'otherCertsDoc',
+      headerName: 'Other Certifications Document',
+      width: 150,
+      renderCell: (params) => params.value ? <LinkCell value={params.value} type="link" /> : null
+    },
+    {
+      field: 'resumeUrl',
+      headerName: 'Resume',
+      width: 100,
+      renderCell: (params) => <LinkCell value={params.value} type="link" />
+    },
+    // picUrl moved to front as a headerless avatar column
+
+    // --- COACHING STATISTICS (from CoachLeaderboard) ---
+    {
+      field: 'age',
+      headerName: 'Age',
+      type: 'number',
+      width: 70,
+      valueGetter: (params) => {
+        if (params.row.coachingStats) return params.row.coachingStats.age;
+        return null;
+      }
+    },
+    {
+      field: 'yearsExp',
+      headerName: 'Exp (Yrs)',
+      type: 'number',
+      width: 100,
+      valueGetter: (params) => {
+        if (params.row.coachingStats) return params.row.coachingStats.yearsExp;
+        return null;
+      }
+    },
+    {
+      field: 'license',
+      headerName: 'License',
+      width: 160,
+      valueGetter: (params) => {
+        const licenses = params.row.coachingLicenses;
+        if (Array.isArray(licenses) && licenses.length > 0) return licenses[0];
+        return 'None';
+      },
+      renderCell: (params) => (
+        <Chip
+          label={params.value}
+          size="small"
           variant="outlined"
-          sx={{ height: 24 }}
+          sx={{ height: 24, fontSize: '0.75rem', maxWidth: '100%' }}
         />
-      ) : <Typography variant="body2" color="text.secondary">-</Typography>;
-    }
-  },
-  {
-    field: 'xgDiff',
-    headerName: 'xG Diff',
-    type: 'number',
-    width: 90,
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.xgDiff;
-      return null;
+      )
     },
-    renderCell: (params) => {
-      if (!params.value) return null;
-      return (
-        <Typography 
-          variant="body2" 
-          color={params.value > 0 ? 'success.main' : 'error.main'}
-          fontWeight={600}
-        >
-          {params.value > 0 ? '+' : ''}{params.value}
-        </Typography>
-      );
-    }
-  },
-  {
-    field: 'squadValuePerf',
-    headerName: 'Squad Val %',
-    type: 'number',
-    width: 110,
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.squadValuePerf;
-      return null;
+    {
+      field: 'winRate',
+      headerName: 'Win %',
+      type: 'number',
+      width: 110,
+      valueGetter: (params) => {
+        if (params.row.coachingStats) return params.row.coachingStats.winRate;
+        return null;
+      },
+      renderCell: (params) => {
+        if (!params.value) return null;
+        return (
+          <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography variant="body2" sx={{ minWidth: 35 }}>{params.value}%</Typography>
+            <LinearProgress
+              variant="determinate"
+              value={params.value}
+              sx={{
+                flexGrow: 1,
+                height: 6,
+                borderRadius: 3,
+                bgcolor: 'grey.200',
+                '& .MuiLinearProgress-bar': {
+                  bgcolor: params.value > 55 ? 'success.main' : params.value > 40 ? 'warning.main' : 'error.main'
+                }
+              }}
+            />
+          </Box>
+        );
+      }
     },
-    renderCell: (params) => {
-      if (!params.value) return null;
-      return (
-        <Typography 
-          variant="body2" 
-          color={params.value > 0 ? 'success.main' : 'error.main'}
-        >
-          {params.value > 0 ? '+' : ''}{params.value}%
-        </Typography>
-      );
-    }
-  },
-  {
-    field: 'possession',
-    headerName: 'Possession',
-    type: 'number',
-    width: 110,
-    align: 'right',
-    headerAlign: 'right',
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.possession;
-      return null;
+    {
+      field: 'ppm',
+      headerName: 'PPM',
+      type: 'number',
+      width: 80,
+      valueGetter: (params) => {
+        if (params.row.coachingStats) return params.row.coachingStats.ppm;
+        return null;
+      },
+      renderCell: (params) => {
+        if (!params.value) return null;
+        return (
+          <Typography variant="body2" fontWeight={params.value > 1.8 ? 700 : 400}>
+            {params.value}
+          </Typography>
+        );
+      }
     },
-    renderCell: (params) => {
-      if (!params.value) return null;
-      return (
-        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
-          <Typography variant="body2">{params.value}%</Typography>
-        </Box>
-      );
-    }
-  },
-  {
-    field: 'ppda',
-    headerName: 'PPDA',
-    description: 'Passes Allowed Per Defensive Action (Lower is more intense pressing)',
-    type: 'number',
-    width: 80,
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.ppda;
-      return null;
-    }
-  },
-  {
-    field: 'u23Minutes',
-    headerName: 'U23 Mins',
-    type: 'number',
-    width: 100,
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.u23Minutes;
-      return null;
+    {
+      field: 'trophies',
+      headerName: 'Trophies',
+      type: 'number',
+      width: 110,
+      valueGetter: (params) => {
+        if (params.row.coachingStats) return params.row.coachingStats.trophies;
+        return null;
+      },
+      renderCell: (params) => {
+        if (params.value === null || params.value === undefined) return null;
+        return params.value > 0 ? (
+          <Chip
+            label={params.value}
+            size="small"
+            color="warning"
+            variant="outlined"
+            sx={{ height: 24 }}
+          />
+        ) : <Typography variant="body2" color="text.secondary">-</Typography>;
+      }
     },
-    renderCell: (params) => {
-      if (params.value === null || params.value === undefined) return null;
-      return `${params.value}%`;
-    }
-  },
-  {
-    field: 'academyDebuts',
-    headerName: 'Debuts',
-    type: 'number',
-    width: 120,
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.academyDebuts;
-      return null;
+    {
+      field: 'xgDiff',
+      headerName: 'xG Diff',
+      type: 'number',
+      width: 90,
+      valueGetter: (params) => {
+        if (params.row.coachingStats) return params.row.coachingStats.xgDiff;
+        return null;
+      },
+      renderCell: (params) => {
+        if (!params.value) return null;
+        return (
+          <Typography
+            variant="body2"
+            color={params.value > 0 ? 'success.main' : 'error.main'}
+            fontWeight={600}
+          >
+            {params.value > 0 ? '+' : ''}{params.value}
+          </Typography>
+        );
+      }
     },
-    renderHeader: () => (
-      <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', pr: 4 }}>
-        Debuts
-      </Box>
-    ),
-    renderCell: (params) => {
-      if (params.value === null || params.value === undefined) return null;
-      return (
+    {
+      field: 'squadValuePerf',
+      headerName: 'Squad Val %',
+      type: 'number',
+      width: 110,
+      valueGetter: (params) => {
+        if (params.row.coachingStats) return params.row.coachingStats.squadValuePerf;
+        return null;
+      },
+      renderCell: (params) => {
+        if (!params.value) return null;
+        return (
+          <Typography
+            variant="body2"
+            color={params.value > 0 ? 'success.main' : 'error.main'}
+          >
+            {params.value > 0 ? '+' : ''}{params.value}%
+          </Typography>
+        );
+      }
+    },
+    {
+      field: 'possession',
+      headerName: 'Possession',
+      type: 'number',
+      width: 110,
+      align: 'right',
+      headerAlign: 'right',
+      valueGetter: (params) => {
+        if (params.row.coachingStats) return params.row.coachingStats.possession;
+        return null;
+      },
+      renderCell: (params) => {
+        if (!params.value) return null;
+        return (
+          <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
+            <Typography variant="body2">{params.value}%</Typography>
+          </Box>
+        );
+      }
+    },
+    {
+      field: 'ppda',
+      headerName: 'PPDA',
+      description: 'Passes Allowed Per Defensive Action (Lower is more intense pressing)',
+      type: 'number',
+      width: 80,
+      valueGetter: (params) => {
+        if (params.row.coachingStats) return params.row.coachingStats.ppda;
+        return null;
+      }
+    },
+    {
+      field: 'u23Minutes',
+      headerName: 'U23 Mins',
+      type: 'number',
+      width: 100,
+      valueGetter: (params) => {
+        if (params.row.coachingStats) return params.row.coachingStats.u23Minutes;
+        return null;
+      },
+      renderCell: (params) => {
+        if (params.value === null || params.value === undefined) return null;
+        return `${params.value}%`;
+      }
+    },
+    {
+      field: 'academyDebuts',
+      headerName: 'Debuts',
+      type: 'number',
+      width: 120,
+      valueGetter: (params) => {
+        if (params.row.coachingStats) return params.row.coachingStats.academyDebuts;
+        return null;
+      },
+      renderHeader: () => (
         <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', pr: 4 }}>
-          {params.value}
+          Debuts
         </Box>
-      );
-    }
-  },
-  {
-    field: 'eloRating',
-    headerName: 'Elo Rating',
-    type: 'number',
-    width: 120,
-    valueGetter: (params) => params.row.eloRating || 1200,
-  },
-  {
-    field: 'spacer',
-    headerName: '',
-    width: 100,
-    sortable: false,
-    filterable: false,
-    disableColumnMenu: true,
-  },
-];
+      ),
+      renderCell: (params) => {
+        if (params.value === null || params.value === undefined) return null;
+        return (
+          <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', pr: 4 }}>
+            {params.value}
+          </Box>
+        );
+      }
+    },
+    {
+      field: 'eloRating',
+      headerName: 'Elo Rating',
+      type: 'number',
+      width: 120,
+      valueGetter: (params) => params.row.eloRating || 1200,
+    },
+    {
+      field: 'spacer',
+      headerName: '',
+      width: 100,
+      sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+    },
+  ];
 };
 
 const columnGroupingModel = [
@@ -1141,7 +1148,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
   const location = useLocation();
   const [selectedRows, setSelectedRows] = React.useState([]);
   const [bulkEditOpen, setBulkEditOpen] = React.useState(false);
-  
+
   // Enrich staff data with coaching statistics
   const [localStaffData, setLocalStaffData] = React.useState(() => {
     return staffData.map(staff => {
@@ -1151,15 +1158,15 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
       const hasCoachingRoles = staff.coachingRoles && staff.coachingRoles.length > 0;
       const hasCoachingExp = staff.proCoachExp || staff.mlsCoachExp;
       const hasCoachingLicenses = staff.coachingLicenses && staff.coachingLicenses.length > 0;
-      
+
       // Consider someone a coach if they have ANY coaching-related data
-      const isCoach = currentRole.toLowerCase().includes('coach') || 
-                      currentRole.toLowerCase().includes('manager') || 
-                      interestArea.toLowerCase().includes('coach') ||
-                      hasCoachingRoles ||
-                      hasCoachingExp ||
-                      hasCoachingLicenses;
-      
+      const isCoach = currentRole.toLowerCase().includes('coach') ||
+        currentRole.toLowerCase().includes('manager') ||
+        interestArea.toLowerCase().includes('coach') ||
+        hasCoachingRoles ||
+        hasCoachingExp ||
+        hasCoachingLicenses;
+
       // Add coaching stats if they're a coach
       if (isCoach) {
         return {
@@ -1170,17 +1177,17 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
       return staff;
     });
   });
-  
+
   // Tag management state
   const [tagSelectorAnchor, setTagSelectorAnchor] = React.useState(null);
   const [selectedStaffForTags, setSelectedStaffForTags] = React.useState(null);
   const [tagManagementOpen, setTagManagementOpen] = React.useState(false);
-  
+
   // Notes management state
   const [notesDrawerOpen, setNotesDrawerOpen] = React.useState(false);
   const [selectedStaffForNotes, setSelectedStaffForNotes] = React.useState(null);
   const [staffNotes, setStaffNotes] = React.useState({});
-  
+
   // Approval system state
   const [pendingApprovals, setPendingApprovals] = React.useState([
     {
@@ -1230,7 +1237,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
     },
   ]);
   const [approvalDrawerOpen, setApprovalDrawerOpen] = React.useState(false);
-  
+
   // Club sent approvals state (for club view)
   const [sentApprovals, setSentApprovals] = React.useState([
     {
@@ -1283,13 +1290,13 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
     },
   ]);
   const [clubInboxOpen, setClubInboxOpen] = React.useState(false);
-  
+
   const [toastOpen, setToastOpen] = React.useState(false);
   const [toastMessage, setToastMessage] = React.useState('');
-  
+
   // Check if viewing from league admin context
   const isLeagueView = location.pathname.startsWith('/league');
-  
+
   // Filter data based on view context
   const filteredStaffData = React.useMemo(() => {
     if (isLeagueView) {
@@ -1312,17 +1319,17 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
     const basePath = location.pathname.startsWith('/league') ? '/league/staff' : '/staff';
     navigate(`${basePath}/${params.row.id}`);
   };
-  
+
   // Tag handlers
   const handleTagsClick = (staffId, anchorEl) => {
     setSelectedStaffForTags(staffId);
     setTagSelectorAnchor(anchorEl || document.activeElement);
   };
-  
+
   const handleTagsChange = (staffId, newTags) => {
     const staff = localStaffData.find(s => s.id === staffId);
     const oldTags = staff?.tags || [];
-    
+
     // For club users, create a pending approval instead of directly changing
     if (!isLeagueView) {
       const approval = {
@@ -1334,7 +1341,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
         newTags,
         timestamp: new Date().toISOString(),
       };
-      
+
       setPendingApprovals(prev => [...prev, approval]);
       setToastMessage('Tag change sent for approval');
       setToastOpen(true);
@@ -1348,19 +1355,19 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
       );
     }
   };
-  
+
   const handleTagSelectorClose = () => {
     setTagSelectorAnchor(null);
     setSelectedStaffForTags(null);
   };
-  
+
   // Notes handlers
   const handleNotesClick = (staffId) => {
     const staff = filteredStaffData.find(s => s.id === staffId);
     setSelectedStaffForNotes(staff);
     setNotesDrawerOpen(true);
   };
-  
+
   const handleAddNote = (staffId, noteText) => {
     const newNote = {
       id: `note-${Date.now()}`,
@@ -1371,16 +1378,16 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    
+
     setStaffNotes(prev => ({
       ...prev,
       [staffId]: [...(prev[staffId] || []), newNote]
     }));
-    
+
     setToastMessage('Note added successfully');
     setToastOpen(true);
   };
-  
+
   const handleUpdateNote = (staffId, noteId, newText) => {
     setStaffNotes(prev => ({
       ...prev,
@@ -1390,21 +1397,21 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
           : note
       )
     }));
-    
+
     setToastMessage('Note updated successfully');
     setToastOpen(true);
   };
-  
+
   const handleDeleteNote = (staffId, noteId) => {
     setStaffNotes(prev => ({
       ...prev,
       [staffId]: (prev[staffId] || []).filter(note => note.id !== noteId)
     }));
-    
+
     setToastMessage('Note deleted successfully');
     setToastOpen(true);
   };
-  
+
   const handleUpdateTag = (oldTag, newTag) => {
     setLocalStaffData(prevData =>
       prevData.map(staff => ({
@@ -1413,7 +1420,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
       }))
     );
   };
-  
+
   const handleDeleteTag = (tagToDelete) => {
     setLocalStaffData(prevData =>
       prevData.map(staff => ({
@@ -1422,7 +1429,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
       }))
     );
   };
-  
+
   // Approval handlers
   const handleApproveTagChange = (approvalId, note = '') => {
     const approval = pendingApprovals.find(a => a.id === approvalId);
@@ -1433,32 +1440,32 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
           staff.id === approval.staffId ? { ...staff, tags: approval.newTags } : staff
         )
       );
-      
+
       // Update the sent approvals for the club (if we track those globally)
       // For now, just remove from pending
       setPendingApprovals(prev => prev.filter(a => a.id !== approvalId));
-      
+
       // In a real app, you'd also update the approval in the club's sent list with the response
       // setSentApprovals(prev => prev.map(a => 
       //   a.id === approvalId ? { ...a, status: 'approved', responseMessage: note } : a
       // ));
-      
+
       setToastMessage(`Approved tag change for ${approval.staffName}${note ? ' with note' : ''}`);
       setToastOpen(true);
     }
   };
-  
+
   const handleRejectTagChange = (approvalId, note = '') => {
     const approval = pendingApprovals.find(a => a.id === approvalId);
     if (approval) {
       // Remove from pending without applying
       setPendingApprovals(prev => prev.filter(a => a.id !== approvalId));
-      
+
       // In a real app, you'd update the approval in the club's sent list with the response
       // setSentApprovals(prev => prev.map(a => 
       //   a.id === approvalId ? { ...a, status: 'rejected', responseMessage: note } : a
       // ));
-      
+
       setToastMessage(`Rejected tag change for ${approval.staffName}${note ? ' with note' : ''}`);
       setToastOpen(true);
     }
@@ -1467,11 +1474,11 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
   const handleBulkEditSave = (updates) => {
     console.log('Bulk editing fields:', Object.keys(updates), 'for', selectedRows.length, 'staff members');
     console.log('Updates:', updates);
-    
+
     // Process tags if present
     if (updates.tags) {
       const { action, values } = updates.tags;
-      
+
       // For club users, create pending approvals for each selected staff
       if (!isLeagueView) {
         selectedRows.forEach(staffId => {
@@ -1484,7 +1491,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
             } else if (action === 'remove') {
               newTags = newTags.filter(tag => !values.includes(tag));
             }
-            
+
             const approval = {
               id: `approval-${Date.now()}-${staffId}`,
               staffId,
@@ -1494,11 +1501,11 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
               newTags,
               timestamp: new Date().toISOString(),
             };
-            
+
             setPendingApprovals(prev => [...prev, approval]);
           }
         });
-        
+
         setToastMessage(`${selectedRows.length} tag change${selectedRows.length > 1 ? 's' : ''} sent for approval`);
         setToastOpen(true);
       } else {
@@ -1506,7 +1513,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
         setLocalStaffData(prevData =>
           prevData.map(staff => {
             if (!selectedRows.includes(staff.id)) return staff;
-            
+
             let newTags = staff.tags || [];
             if (action === 'add') {
               const tagsToAdd = values.filter(tag => !newTags.includes(tag));
@@ -1514,25 +1521,25 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
             } else if (action === 'remove') {
               newTags = newTags.filter(tag => !values.includes(tag));
             }
-            
+
             return { ...staff, tags: newTags };
           })
         );
       }
     }
-    
+
     // In a real application, other updates would also be applied here
     const selectedStaff = filteredStaffData.filter(staff => selectedRows.includes(staff.id));
     console.log('Selected staff:', selectedStaff.map(s => `${s.firstName} ${s.lastName}`));
-    
+
     if (isLeagueView) {
       const updateSummary = Object.entries(updates)
         .map(([field, value]) => `${field}: ${JSON.stringify(value)}`)
         .join(', ');
-      
+
       alert(`Updated ${updateSummary} for ${selectedRows.length} staff members`);
     }
-    
+
     // Clear selection and close bulk edit bar
     setSelectedRows([]);
     setBulkEditOpen(false);
@@ -1547,7 +1554,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
     alert(`Added ${selectedRows.length} staff member${selectedRows.length > 1 ? 's' : ''} to watchlist`);
     setSelectedRows([]);
   };
-  
+
   // Ensure only one Elo Rating column
   const columns = React.useMemo(() => createColumns(
     (staffId, event) => {
@@ -1561,8 +1568,8 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
     handleNotesClick,
     staffNotes
   ), [watchlistIds, onAddToWatchlist, isLeagueView, staffNotes]);
-  
-  const selectedStaff = selectedStaffForTags 
+
+  const selectedStaff = selectedStaffForTags
     ? filteredStaffData.find(s => s.id === selectedStaffForTags)
     : null;
 
@@ -1577,7 +1584,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
           isLeagueView={isLeagueView}
         />
       )}
-      
+
       {/* Tag Selector Popover */}
       {selectedStaff && (
         <TagSelector
@@ -1589,7 +1596,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
           isLeagueView={isLeagueView}
         />
       )}
-      
+
       {/* Tag Management Drawer */}
       <TagManagementDrawer
         open={tagManagementOpen}
@@ -1604,7 +1611,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
         }}
         isLeagueView={isLeagueView}
       />
-      
+
       {/* Tag Approval Drawer - Only for League View */}
       {isLeagueView && (
         <TagApprovalDrawer
@@ -1615,7 +1622,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
           onReject={handleRejectTagChange}
         />
       )}
-      
+
       {/* Club Approval Inbox - Only for Club View */}
       {!isLeagueView && (
         <ClubApprovalInbox
@@ -1624,7 +1631,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
           sentApprovals={sentApprovals}
         />
       )}
-      
+
       {/* Notes Drawer */}
       {selectedStaffForNotes && (
         <NotesDrawer

@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Box, Paper, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
+import { Box, Paper, FormControl, InputLabel, Select, MenuItem, Typography, Chip } from '@mui/material'
 import * as d3 from 'd3'
 import { sankey, sankeyLinkHorizontal } from 'd3-sankey'
-import staffData from '../data/staff_talent.json'
-
-const StaffSankeyDiagram = ({ sourceField, targetField }) => {
+import { normalizeRole } from '../utils/roleNormalization'
+const StaffSankeyDiagram = ({ staffData, sourceField, targetField, selectedRoles = [] }) => {
   const svgRef = useRef()
   const containerRef = useRef()
   const [dimensions, setDimensions] = useState({ width: 1200, height: 800 })
@@ -14,21 +13,22 @@ const StaffSankeyDiagram = ({ sourceField, targetField }) => {
     const handleResize = () => {
       if (containerRef.current) {
         const containerWidth = containerRef.current.offsetWidth
+        const containerHeight = Math.max(containerRef.current.offsetHeight - 48, 500) // Ensure a minimum height
         setDimensions({
           width: containerWidth - 48, // Account for padding
-          height: 800
+          height: containerHeight
         })
       }
     }
 
     handleResize()
-    
+
     // Use ResizeObserver to detect container size changes
     const resizeObserver = new ResizeObserver(handleResize)
     if (containerRef.current) {
       resizeObserver.observe(containerRef.current)
     }
-    
+
     window.addEventListener('resize', handleResize)
     return () => {
       resizeObserver.disconnect()
@@ -41,73 +41,77 @@ const StaffSankeyDiagram = ({ sourceField, targetField }) => {
     switch (field) {
       case 'tags':
         return person.tags && person.tags.length > 0 ? person.tags : ['No Tags']
-      
+
       case 'role':
-        // Use interestArea for high-level role categorization
-        if (person.interestArea) {
-          return [person.interestArea]
+        // Return normalized roles for clean flow analysis
+        const personRoles = [
+          person.role, // from users_staff
+          person.interestArea, // from staff_talent
+          ...(person.coachingRoles || []),
+          ...(person.execRoles || []),
+          ...(person.techRoles || [])
+        ].filter(Boolean).map(normalizeRole);
+
+        // Return unique normalized roles
+        let uniqueRoles = [...new Set(personRoles)];
+
+        // If specific roles are selected in the dashboard filter, only show those roles 
+        // to avoid "unrelated" roles appearing in the flow analysis
+        if (selectedRoles && selectedRoles.length > 0) {
+          const filtered = uniqueRoles.filter(r => selectedRoles.includes(r));
+          // If the person has roles but none match the filter (shouldn't happen with correct filtering),
+          // fallback to 'Other' or the original list.
+          if (filtered.length > 0) uniqueRoles = filtered;
         }
-        // Fallback to categorizing based on which role arrays are populated
-        if (person.coachingRoles && person.coachingRoles.length > 0) {
-          return ['Coaching']
-        }
-        if (person.execRoles && person.execRoles.length > 0) {
-          return ['Executive']
-        }
-        if (person.sportingVertical && person.sportingVertical.length > 0) {
-          return ['Sporting Executive']
-        }
-        if (person.techRoles && person.techRoles.length > 0) {
-          return ['Technical']
-        }
-        return ['No Role Specified']
-      
+
+        return uniqueRoles.length > 0 ? uniqueRoles : ['Other']
+
       case 'country':
         return [person.country]
-      
+
       case 'location':
         // Domestic (US/CA) vs International
         if (person.country === 'USA' || person.country === 'Canada') {
           return ['Domestic (US/CA)']
         }
         return ['International']
-      
+
       case 'workAuth':
         const auths = []
         if (person.workAuthUS) auths.push('US')
         if (person.workAuthCA) auths.push('Canada')
         return auths.length > 0 ? auths : ['No Work Auth']
-      
+
       case 'degree':
         return person.highestDegree || [person.degree || 'Not Specified']
-      
+
       case 'mlsExperience':
         const exp = []
         if (person.mlsPlayerExp) exp.push('MLS Player')
         if (person.mlsCoachExp) exp.push('MLS Coach')
         if (person.mlsSportingExp) exp.push('MLS Sporting')
         return exp.length > 0 ? exp : ['No MLS Experience']
-      
+
       case 'coachingLicense':
         if (person.coachingLicenses && person.coachingLicenses.length > 0) {
           // Get the highest level license
           return [person.coachingLicenses[0]]
         }
         return ['No License']
-      
+
       case 'interestArea':
         return [person.interestArea || 'Not Specified']
-      
+
       case 'employmentStatus':
         return [person.currentlyEmployed ? 'Employed' : 'Available']
-      
+
       case 'trophies':
         const trophies = person.trophies || 0
         if (trophies === 0) return ['No Trophies']
         if (trophies <= 2) return ['1-2 Trophies']
         if (trophies <= 5) return ['3-5 Trophies']
         return ['6+ Trophies']
-      
+
       default:
         return ['Unknown']
     }
@@ -156,7 +160,7 @@ const StaffSankeyDiagram = ({ sourceField, targetField }) => {
 
   // Draw Sankey diagram
   useEffect(() => {
-    if (!svgRef.current) return
+    if (!svgRef.current || staffData.length === 0) return
 
     const svg = d3.select(svgRef.current)
     svg.selectAll('*').remove()
@@ -169,6 +173,9 @@ const StaffSankeyDiagram = ({ sourceField, targetField }) => {
     const g = svg
       .attr('width', width)
       .attr('height', height)
+      .attr('viewBox', `0 0 ${width} ${height}`)
+      .style('width', '100%')
+      .style('height', 'auto')
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`)
 
@@ -242,7 +249,7 @@ const StaffSankeyDiagram = ({ sourceField, targetField }) => {
       .text(d => {
         const name = d.id.replace('source_', '').replace('target_', '')
         const count = d.value
-        const percentage = ((count / staffData.length) * 100).toFixed(0)
+        const percentage = staffData.length > 0 ? ((count / staffData.length) * 100).toFixed(0) : 0
         return `${name} ${count} (${percentage}%)`
       })
 
@@ -265,12 +272,34 @@ const StaffSankeyDiagram = ({ sourceField, targetField }) => {
       .attr('fill', '#1A1A1A')
       .text(targetField.charAt(0).toUpperCase() + targetField.slice(1))
 
-  }, [sourceField, targetField, dimensions])
+  }, [sourceField, targetField, dimensions, staffData])
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Paper sx={{ p: 3, overflow: 'auto', flex: 1 }} ref={containerRef}>
-        <svg ref={svgRef}></svg>
+      <Paper sx={{
+        p: 3,
+        overflow: 'auto',
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative',
+        minHeight: 400
+      }} ref={containerRef}>
+        {staffData.length === 0 ? (
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            opacity: 0.5
+          }}>
+            <Typography variant="h6">No staff members match selected filters</Typography>
+            <Typography variant="body2">Try adjusting your filters to see the data flow</Typography>
+          </Box>
+        ) : (
+          <svg ref={svgRef} style={{ width: '100%', height: '100%' }}></svg>
+        )}
       </Paper>
     </Box>
   )
@@ -288,8 +317,8 @@ export const StaffSankeySelectors = ({ sourceField, setSourceField, targetField,
           label="Source Data"
         >
           {fieldOptions.map(option => (
-            <MenuItem 
-              key={option.value} 
+            <MenuItem
+              key={option.value}
               value={option.value}
             >
               {option.label}
@@ -306,8 +335,8 @@ export const StaffSankeySelectors = ({ sourceField, setSourceField, targetField,
           label="Target Data"
         >
           {fieldOptions.map(option => (
-            <MenuItem 
-              key={option.value} 
+            <MenuItem
+              key={option.value}
               value={option.value}
             >
               {option.label}
