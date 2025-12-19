@@ -59,6 +59,40 @@ const DEFAULT_DASHBOARD_SETTINGS = {
   eloGraph: true,
 };
 
+// Common aliases for better matching
+const CLUB_ALIASES = {
+  'NY Red Bulls': 'New York Red Bulls',
+  'Red Bulls': 'New York Red Bulls',
+  'NYCFC': 'New York City FC',
+  'Sporting KC': 'Sporting Kansas City',
+  'Inter Miami': 'Inter Miami CF',
+  'Miami': 'Inter Miami CF',
+  'Atlanta United': 'Atlanta United FC',
+  'Minnesota United': 'Minnesota United FC',
+  'D.C. United': 'DC United',
+  'RSL': 'Real Salt Lake',
+  'Whitecaps': 'Vancouver Whitecaps FC',
+  'Sounders': 'Seattle Sounders FC',
+  'Timbers': 'Portland Timbers',
+  'Galaxy': 'LA Galaxy',
+  'Quakes': 'San Jose Earthquakes',
+  'Earthquakes': 'San Jose Earthquakes',
+  'Dynamo': 'Houston Dynamo FC',
+  'Crew': 'Columbus Crew',
+  'Rapids': 'Colorado Rapids',
+  'Nashville': 'Nashville SC',
+  'Charlotte': 'Charlotte FC',
+  'Austin': 'Austin FC',
+  'Montreal': 'CF Montreal',
+  'Toronto': 'Toronto FC',
+  'Revolution': 'New England Revolution',
+  'Fire': 'Chicago Fire FC',
+  'FC Dallas': 'FC Dallas',
+  'Orlando City': 'Orlando City SC',
+  'Union': 'Philadelphia Union',
+  'St. Louis': 'St. Louis City SC'
+};
+
 // Load dashboard settings from localStorage
 const loadDashboardSettings = () => {
   try {
@@ -632,8 +666,8 @@ function StaffMapDashboard() {
                 alignItems: 'center',
                 justifyContent: 'flex-end'
               }}>
-                {/* Employment Trends Filters (Date Range + Population) */}
-                {visibleDashboards[activeTab]?.id === 'employmentStability' && (
+                {/* Employment Trends & Origin Breakdown Header Filters */}
+                {(visibleDashboards[activeTab]?.id === 'employmentStability' || visibleDashboards[activeTab]?.id === 'originBreakdown') && (
                   <>
                     <Box sx={{ width: 200, px: 2, display: 'flex', flexDirection: 'column' }}>
                       <Typography variant="caption" color="text.secondary" sx={{ mb: -0.5, fontSize: '0.7rem' }}>
@@ -717,23 +751,30 @@ function StaffMapDashboard() {
                 )}
 
                 {/* Roles Multiselect - Conditional and at the end */}
-                {(visibleDashboards[activeTab]?.id === 'locationAnalysis' || visibleDashboards[activeTab]?.id === 'dataFlow') &&
+                {(visibleDashboards[activeTab]?.id === 'locationAnalysis' ||
+                  visibleDashboards[activeTab]?.id === 'dataFlow' ||
+                  visibleDashboards[activeTab]?.id === 'originBreakdown') &&
                   (visibleDashboards[activeTab]?.id !== 'dataFlow' ||
                     (sankeySourceField === 'role' || sankeyTargetField === 'role')) && (
-                    <FormControl size="small" sx={{ minWidth: 220 }}>
+                    <FormControl size="small" sx={{ minWidth: 200 }}>
                       <InputLabel>Roles</InputLabel>
                       <Select
                         multiple
                         value={selectedRoles}
                         onChange={(e) => setSelectedRoles(typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value)}
                         label="Roles"
-                        renderValue={(selected) => (
-                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                            {selected.length === 0 ? 'All Roles' : selected.map((value) => (
-                              <Chip key={value} label={value} size="small" />
-                            ))}
-                          </Box>
-                        )}
+                        renderValue={(selected) => {
+                          if (selected.length === 0) return 'All Roles';
+                          if (selected.length === 1) return selected[0];
+                          return `${selected.length} Roles selected`;
+                        }}
+                        sx={{
+                          '& .MuiSelect-select': {
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }
+                        }}
                       >
                         {roles.slice(1).map(role => (
                           <MenuItem key={role} value={role}>{role}</MenuItem>
@@ -987,7 +1028,12 @@ function StaffMapDashboard() {
 
             {/* Origin Breakdown Tab */}
             {visibleDashboards[activeTab]?.id === 'originBreakdown' && (
-              <OriginBreakdownChart staffData={filteredStaff} />
+              <OriginBreakdownChart
+                staffData={filteredStaff}
+                selectedTeams={selectedTeams}
+                startYear={startYear}
+                endYear={endYear}
+              />
             )}
 
             {/* Qualification Standards Tab */}
@@ -1154,49 +1200,107 @@ function EmploymentStabilityChart({ staffData, startYear, endYear, selectedTeams
  * Origin Breakdown Chart Component
  * Displays domestic vs international staff over time with stacked bars
  */
-function OriginBreakdownChart({ staffData }) {
+function OriginBreakdownChart({ staffData, selectedTeams, startYear, endYear }) {
   const chartRef = useRef(null);
   const containerRef = useRef(null);
-  const [dimensions, setDimensions] = useState({ width: 1000, height: 400 });
+  const [dimensions, setDimensions] = useState({ width: 1000, height: 450 });
 
-  // Generate yearly origin data based on filtered population
-  const originData = useMemo(() => {
-    // Calculate current domestic/international split from filtered data
-    const currentDomestic = staffData.filter(s => s.country === 'USA').length;
-    const currentInternational = staffData.filter(s => s.country && s.country !== 'USA').length;
-    const currentTotal = staffData.length;
-    const currentIntlRatio = currentTotal > 0 ? currentInternational / currentTotal : 0.3;
+  // Generate team-based origin data based on filtered population and year range
+  const teamOriginData = useMemo(() => {
+    // Determine which teams to include
+    const targetTeams = selectedTeams && selectedTeams.length > 0 ? selectedTeams : mlsClubs.slice(0, 29);
 
-    // Generate data for the last 5 MLS seasons
-    const seasons = [];
+    // Initialize counts for all targeted teams
+    const teamStats = {};
+    targetTeams.forEach(team => {
+      teamStats[team] = {
+        team,
+        domestic: 0,
+        international: 0,
+        total: 0
+      };
+    });
+
     const currentYear = new Date().getFullYear();
+    const rangeStart = Math.min(startYear, endYear);
+    const rangeEnd = Math.max(startYear, endYear);
 
-    for (let i = 4; i >= 0; i--) {
-      const seasonYear = currentYear - i;
-      const seasonLabel = `${seasonYear} Season`;
+    // Populate counts
+    staffData.forEach(staff => {
+      const isDomestic = staff.country === 'USA';
+      const employers = [
+        staff.currentEmployer,
+        staff.prevEmployer1,
+        staff.prevEmployer2,
+        staff.prevEmployer3,
+        staff.prevEmployer4
+      ].filter(Boolean);
 
-      // Create historical trend that converges to current split
-      const progress = (4 - i) / 4; // 0 to 1 over time
-      const scaleFactor = 0.7 + progress * 0.3; // Scale from 70% to 100% of current
-      const total = Math.max(1, Math.round(currentTotal * scaleFactor));
-      const international = Math.round(total * (currentIntlRatio * (0.8 + progress * 0.2)));
-      const domestic = total - international;
+      // Use a Set to avoid double-counting the same person for the same team
+      const identifiedTeams = new Set();
 
-      seasons.push({
-        season: seasonLabel,
-        seasonYear,
-        domestic,
-        international,
-        total
+      // Check employers (which have year parsing)
+      employers.forEach(text => {
+        if (!text) return;
+
+        let matchedTeam = targetTeams.find(club => text.includes(club));
+        if (!matchedTeam) {
+          for (const [alias, officialName] of Object.entries(CLUB_ALIASES)) {
+            if (text.includes(alias) && targetTeams.includes(officialName)) {
+              matchedTeam = officialName;
+              break;
+            }
+          }
+        }
+
+        if (matchedTeam) {
+          // Identify Years
+          const yearRangeMatch = text.match(/(\d{4})\s*-\s*(Present|\d{4})/) || text.match(/\((\d{4})\)/);
+          let itemStart = 0;
+          let itemEnd = 0;
+
+          if (yearRangeMatch) {
+            itemStart = parseInt(yearRangeMatch[1]);
+            if (yearRangeMatch[2]) {
+              itemEnd = yearRangeMatch[2].toLowerCase() === 'present' ? currentYear : parseInt(yearRangeMatch[2]);
+            } else {
+              itemEnd = itemStart;
+            }
+          } else if (text === staff.currentEmployer) {
+            itemStart = itemEnd = currentYear;
+          }
+
+          // Check for overlap between [itemStart, itemEnd] and [rangeStart, rangeEnd]
+          const yearsOverlap = itemStart !== 0 && (Math.max(itemStart, rangeStart) <= Math.min(itemEnd, rangeEnd));
+
+          if (yearsOverlap) {
+            identifiedTeams.add(matchedTeam);
+          }
+        }
       });
-    }
 
-    return seasons;
-  }, [staffData]);
+      // For careerClubs without specific date ranges, we'll assume they were there at some point.
+      // To be conservative, we only add them if we're looking at a broad range or if they match employer logic.
+      // (This matches the logic in employmentStabilityByTeam.js where random years/current end are used)
 
-  // Calculate current stats
+      identifiedTeams.forEach(team => {
+        if (teamStats[team]) {
+          if (isDomestic) {
+            teamStats[team].domestic++;
+          } else {
+            teamStats[team].international++;
+          }
+          teamStats[team].total++;
+        }
+      });
+    });
+
+    return Object.values(teamStats)
+      .sort((a, b) => b.total - a.total);
+  }, [staffData, selectedTeams, startYear, endYear]);
+
+  // Calculate current stats for cards
   const currentStats = useMemo(() => {
-    // Count based on country (USA = domestic, others = international)
     const domestic = staffData.filter(s => s.country === 'USA').length;
     const international = staffData.filter(s => s.country && s.country !== 'USA').length;
     const total = staffData.length;
@@ -1216,8 +1320,10 @@ function OriginBreakdownChart({ staffData }) {
 
     const updateDimensions = () => {
       if (containerRef.current) {
-        const width = containerRef.current.clientWidth - 64;
-        setDimensions({ width: width > 0 ? width : 1000, height: 400 });
+        // Use a minimum width to ensure the x-axis doesn't get too cramped
+        const availableWidth = containerRef.current.clientWidth - 40;
+        const requiredWidth = Math.max(availableWidth, teamOriginData.length * 60 + 100);
+        setDimensions({ width: requiredWidth, height: 450 });
       }
     };
 
@@ -1226,14 +1332,14 @@ function OriginBreakdownChart({ staffData }) {
     resizeObserver.observe(containerRef.current);
 
     return () => resizeObserver.disconnect();
-  }, []);
+  }, [teamOriginData.length]);
 
   // Draw chart
   useEffect(() => {
-    if (!chartRef.current || originData.length === 0) return;
+    if (!chartRef.current || teamOriginData.length === 0) return;
 
     const { width, height } = dimensions;
-    const margin = { top: 20, right: 30, bottom: 60, left: 60 };
+    const margin = { top: 40, right: 40, bottom: 140, left: 60 };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
@@ -1249,11 +1355,11 @@ function OriginBreakdownChart({ staffData }) {
 
     // Scales
     const xScale = d3.scaleBand()
-      .domain(originData.map(d => d.season))
+      .domain(teamOriginData.map(d => d.team))
       .range([0, innerWidth])
       .padding(0.3);
 
-    const maxTotal = d3.max(originData, d => d.total);
+    const maxTotal = d3.max(teamOriginData, d => d.total) || 1;
     const yScale = d3.scaleLinear()
       .domain([0, maxTotal * 1.1])
       .range([innerHeight, 0]);
@@ -1277,7 +1383,7 @@ function OriginBreakdownChart({ staffData }) {
     const stack = d3.stack()
       .keys(['domestic', 'international']);
 
-    const stackedData = stack(originData);
+    const stackedData = stack(teamOriginData);
 
     // Color scale
     const colors = {
@@ -1297,7 +1403,7 @@ function OriginBreakdownChart({ staffData }) {
       .data(d => d)
       .enter()
       .append('rect')
-      .attr('x', (d, i) => xScale(originData[i].season))
+      .attr('x', d => xScale(d.data.team))
       .attr('y', d => yScale(d[1]))
       .attr('height', d => yScale(d[0]) - yScale(d[1]))
       .attr('width', xScale.bandwidth())
@@ -1307,49 +1413,38 @@ function OriginBreakdownChart({ staffData }) {
           .transition()
           .duration(200)
           .attr('opacity', 0.8);
+
+        const key = d3.select(this.parentNode).datum().key;
+        const val = d.data[key];
+
+        g.append('text')
+          .attr('class', 'hover-label')
+          .attr('x', xScale(d.data.team) + xScale.bandwidth() / 2)
+          .attr('y', yScale(d[1]) - 5)
+          .attr('text-anchor', 'middle')
+          .attr('font-size', '11px')
+          .attr('font-weight', 'bold')
+          .attr('fill', colors[key])
+          .text(`${key === 'domestic' ? 'Dom' : 'Intl'}: ${val}`);
       })
       .on('mouseleave', function () {
         d3.select(this)
           .transition()
           .duration(200)
           .attr('opacity', 1);
+
+        g.selectAll('.hover-label').remove();
       });
 
     // Add tooltips to bars
-    bars.each(function (d, i) {
+    bars.each(function (d) {
       const rect = d3.select(this);
       const parentGroup = d3.select(this.parentNode);
       const key = parentGroup.datum().key;
-      const data = originData[i];
+      const data = d.data;
 
       rect.append('title')
-        .text(`${data.season} - ${key === 'domestic' ? 'Domestic' : 'International'}: ${data[key]}`);
-    });
-
-    // Add value labels on bars
-    groups.each(function () {
-      const group = d3.select(this);
-      const key = group.datum().key;
-
-      group.selectAll('text')
-        .data(d => d)
-        .enter()
-        .append('text')
-        .attr('x', (d, i) => xScale(originData[i].season) + xScale.bandwidth() / 2)
-        .attr('y', d => {
-          const barHeight = yScale(d[0]) - yScale(d[1]);
-          return yScale(d[1]) + barHeight / 2;
-        })
-        .attr('text-anchor', 'middle')
-        .attr('dominant-baseline', 'middle')
-        .attr('fill', '#ffffff')
-        .attr('font-size', '12px')
-        .attr('font-weight', 600)
-        .attr('pointer-events', 'none')
-        .text((d, i) => {
-          const value = originData[i][key];
-          return value > 0 ? value : '';
-        });
+        .text(`${data.team}\n${key === 'domestic' ? 'Domestic' : 'International'}: ${data[key]}\nTotal: ${data.total}`);
     });
 
     // X-axis
@@ -1359,19 +1454,23 @@ function OriginBreakdownChart({ staffData }) {
       .attr('transform', `translate(0,${innerHeight})`)
       .call(xAxis)
       .selectAll('text')
-      .style('font-size', '12px');
+      .attr('transform', 'rotate(-45)')
+      .attr('text-anchor', 'end')
+      .attr('dx', '-.8em')
+      .attr('dy', '.15em')
+      .style('font-size', '11px');
 
     // Y-axis
     const yAxis = d3.axisLeft(yScale)
-      .ticks(5)
-      .tickFormat(d => d);
+      .ticks(Math.min(maxTotal, 10))
+      .tickFormat(d3.format('d'));
 
     g.append('g')
       .call(yAxis)
       .selectAll('text')
       .style('font-size', '11px');
 
-    // Y-axis label
+    // Labels
     g.append('text')
       .attr('transform', 'rotate(-90)')
       .attr('x', -innerHeight / 2)
@@ -1380,9 +1479,30 @@ function OriginBreakdownChart({ staffData }) {
       .attr('fill', 'var(--color-text-secondary)')
       .attr('font-size', '12px')
       .attr('font-weight', 600)
-      .text('Total Hired Staff');
+      .text('Count of Placements');
 
-  }, [originData, dimensions]);
+    // Legend
+    const legend = svg.append('g')
+      .attr('transform', `translate(${width - 200}, 20)`);
+
+    [['domestic', 'Domestic'], ['international', 'International']].forEach(([key, label], i) => {
+      const entry = legend.append('g')
+        .attr('transform', `translate(0, ${i * 20})`);
+
+      entry.append('rect')
+        .attr('width', 14)
+        .attr('height', 14)
+        .attr('fill', colors[key])
+        .attr('rx', 2);
+
+      entry.append('text')
+        .attr('x', 20)
+        .attr('y', 12)
+        .attr('font-size', '12px')
+        .text(label);
+    });
+
+  }, [teamOriginData, dimensions]);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -1503,7 +1623,7 @@ function OriginBreakdownChart({ staffData }) {
             Domestic vs. International Talent
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Historical trends over 5 MLS seasons. Current stats above reflect active filters.
+            Distribution across MLS teams. Domestic staff (USA) are compared with international talent. Current stats above reflect active filters.
           </Typography>
         </Box>
 
