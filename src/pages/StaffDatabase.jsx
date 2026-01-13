@@ -10,8 +10,14 @@ import staffList from '../data/users_staff.json';
 import { generateInitialsImage } from '../utils/assetManager';
 import '../styles/design-tokens.css';
 
-// Initialize watchlist with some pre-populated staff IDs
-const INITIAL_WATCHLIST = ['101', '102', '105', '110', '115'];
+// Initialize watchlist with some pre-populated staff objects
+const INITIAL_WATCHLIST = [
+  { id: '101', priority: 'High', targetRole: 'Head Coach' },
+  { id: '102', priority: 'Medium', targetRole: 'Assistant Coach' },
+  { id: '105', priority: 'Low', targetRole: 'Goalkeeper Coach' },
+  { id: '110', priority: 'High', targetRole: 'Sporting Director' },
+  { id: '115', priority: 'Medium', targetRole: 'Video Analyst' },
+];
 
 /**
  * Staff Database page
@@ -22,7 +28,7 @@ function StaffDatabase() {
   const location = useLocation();
   const [tab, setTab] = useState(location.state?.activeTab ?? 2); // 0 = Staff, 1 = Watchlist, 2 = Talent Database (default)
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
-  const [watchlistIds, setWatchlistIds] = useState(INITIAL_WATCHLIST);
+  const [watchlist, setWatchlist] = useState(INITIAL_WATCHLIST);
   const navigate = useNavigate();
   
   // Check if we're in league view
@@ -33,13 +39,22 @@ function StaffDatabase() {
   };
 
   const handleAddToWatchlist = (staffId) => {
-    if (!watchlistIds.includes(staffId)) {
-      setWatchlistIds([...watchlistIds, staffId]);
+    if (!watchlist.find(item => item.id === staffId)) {
+      setWatchlist([...watchlist, { id: staffId, priority: 'Medium', targetRole: '' }]);
     }
   };
 
   const handleRemoveFromWatchlist = (staffId) => {
-    setWatchlistIds(watchlistIds.filter(id => id !== staffId));
+    setWatchlist(watchlist.filter(item => item.id !== staffId));
+  };
+
+  const handleWatchlistUpdate = (updatedItem) => {
+    setWatchlist(currentWatchlist => {
+      const newWatchlist = currentWatchlist.map(item => 
+        item.id === updatedItem.id ? { ...item, ...updatedItem } : item
+      );
+      return newWatchlist;
+    });
   };
 
   const handleRowClick = (params, event) => {
@@ -88,13 +103,14 @@ function StaffDatabase() {
         {tab === 2 && (
           <TalentDatabaseGrid 
             onInviteClick={() => setInviteModalOpen(true)} 
-            watchlistIds={watchlistIds}
+            watchlistIds={watchlist.map(i => i.id)}
             onAddToWatchlist={handleAddToWatchlist}
           />
         )}
         {tab === 1 && (
           <WatchlistGrid 
-            watchlistIds={watchlistIds}
+            watchlist={watchlist}
+            onWatchlistUpdate={handleWatchlistUpdate}
             onRemoveFromWatchlist={handleRemoveFromWatchlist}
           />
         )}

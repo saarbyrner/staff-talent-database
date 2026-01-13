@@ -286,6 +286,36 @@ const createColumns = (onTagsClick, onRemoveFromWatchlist, onNotesClick, staffNo
       />
     )
   },
+  {
+    field: 'priority',
+    headerName: 'Priority',
+    width: 120,
+    editable: true,
+    type: 'singleSelect',
+    valueOptions: ['High', 'Medium', 'Low'],
+    renderCell: (params) => {
+      const priority = params.value;
+      const priorityColors = {
+        High: 'error',
+        Medium: 'warning',
+        Low: 'info',
+      };
+      return (
+        <Chip 
+          label={priority} 
+          size="small" 
+          color={priorityColors[priority] || 'default'} 
+          variant="outlined" 
+        />
+      );
+    }
+  },
+  {
+    field: 'targetRole',
+    headerName: 'Target Role',
+    width: 180,
+    editable: true,
+  },
   // CONTACT INFO
   { field: 'firstName', headerName: 'First Name', width: 150 },
   { field: 'lastName', headerName: 'Last Name', width: 150 },
@@ -690,7 +720,7 @@ const createColumns = (onTagsClick, onRemoveFromWatchlist, onNotesClick, staffNo
   },
 ];
 
-function WatchlistGrid({ watchlistIds, onRemoveFromWatchlist }) {
+function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) {
   const navigate = useNavigate();
   const location = useLocation();
   const isLeagueView = location.pathname.startsWith('/league');
@@ -708,11 +738,19 @@ function WatchlistGrid({ watchlistIds, onRemoveFromWatchlist }) {
 
   // Filter staff data to only show watchlisted items and enrich with coaching stats
   useEffect(() => {
+    const watchlistIds = watchlist.map(item => item.id);
     const watchlistedStaff = staffData
       .filter(staff => watchlistIds.includes(staff.id))
-      .map(enrichStaffWithCoachingStats);
+      .map(staff => {
+        const watchlistItem = watchlist.find(item => item.id === staff.id);
+        return {
+          ...enrichStaffWithCoachingStats(staff),
+          priority: watchlistItem.priority,
+          targetRole: watchlistItem.targetRole,
+        };
+      });
     setLocalStaffData(watchlistedStaff);
-  }, [watchlistIds]);
+  }, [watchlist]);
 
   const handleRowClick = (params, event) => {
     if (
@@ -764,6 +802,14 @@ function WatchlistGrid({ watchlistIds, onRemoveFromWatchlist }) {
       };
     }
     return staff;
+  };
+
+  const handleProcessRowUpdate = (newRow) => {
+    onWatchlistUpdate(newRow);
+    setLocalStaffData((prev) =>
+      prev.map((row) => (row.id === newRow.id ? newRow : row))
+    );
+    return newRow;
   };
 
   const handleTagSelectorClose = () => {
@@ -897,6 +943,7 @@ function WatchlistGrid({ watchlistIds, onRemoveFromWatchlist }) {
       <DataGrid
         rows={localStaffData}
         columns={columns}
+        processRowUpdate={handleProcessRowUpdate}
         columnGroupingModel={columnGroupingModel}
         slots={{
           toolbar: WatchlistToolbar,
@@ -919,6 +966,8 @@ function WatchlistGrid({ watchlistIds, onRemoveFromWatchlist }) {
               watchlistActions: true,
               notes: true,
               picUrl: true,
+              priority: true,
+              targetRole: true,
               firstName: true,
               lastName: true,
               phone: true,
