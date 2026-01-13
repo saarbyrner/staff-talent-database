@@ -5,6 +5,7 @@ import { DataGridPro } from '@mui/x-data-grid-pro';
 import { CustomToolbar } from '../components/TalentDatabaseGrid';
 import TalentDatabaseGrid from '../components/TalentDatabaseGrid';
 import WatchlistGrid from '../components/WatchlistGrid';
+import SuccessionPlanning from '../pages/SuccessionPlanning';
 import InviteModal from '../components/InviteModal';
 import staffList from '../data/users_staff.json';
 import { generateInitialsImage } from '../utils/assetManager';
@@ -88,6 +89,7 @@ function StaffDatabase() {
           <Tab label="Staff" value={0} />
           {!isLeagueView && <Tab label="Watchlist" value={1} />}
           <Tab label="Talent Database" value={2} />
+          {!isLeagueView && <Tab label="Succession Planning" value={3} />}
         </Tabs>
       </Paper>
 
@@ -97,100 +99,120 @@ function StaffDatabase() {
           flexGrow: 1, 
           border: '1px solid var(--color-border-primary)',
           borderRadius: 1,
-          overflow: 'hidden'
+          overflow: 'hidden',
+          display: tab !== 2 ? 'none' : 'block'
         }}
       >
-        {tab === 2 && (
-          <TalentDatabaseGrid 
-            onInviteClick={() => setInviteModalOpen(true)} 
-            watchlistIds={watchlist.map(i => i.id)}
-            onAddToWatchlist={handleAddToWatchlist}
-          />
-        )}
-        {tab === 1 && (
-          <WatchlistGrid 
-            watchlist={watchlist}
-            onWatchlistUpdate={handleWatchlistUpdate}
-            onRemoveFromWatchlist={handleRemoveFromWatchlist}
-          />
-        )}
-        {tab === 0 && (
-          <Box sx={{ height: '100%', width: '100%' }}>
-            <DataGridPro
-              rows={staffList}
-              columns={[
-                {
-                  field: 'avatar',
-                  headerName: '',
-                  width: 72,
-                  sortable: false,
-                  filterable: false,
-                  renderCell: (params) => {
-                    const name = `${params.row.firstname || ''} ${params.row.lastname || ''}`.trim();
-                    const initials = name
-                      .split(' ')
-                      .filter(Boolean)
-                      .map(part => part.charAt(0).toUpperCase())
-                      .slice(0, 2)
-                      .join('') || 'U';
-                    const fallbackSrc = generateInitialsImage(name || 'Staff Member', 128, '#040037', '#ffffff');
-                    const hasRemoteImage = params.row.profilePic && params.row.profilePic.length > 0;
-                    
-                    return (
-                      <Avatar
-                        src={hasRemoteImage ? params.row.profilePic : undefined}
-                        sx={{ 
-                          width: 32, 
-                          height: 32, 
-                          fontSize: '0.75rem', 
-                          fontWeight: 600, 
-                          bgcolor: 'var(--color-background-secondary)', 
-                          color: 'var(--color-text-primary)' 
-                        }}
-                        imgProps={{
-                          onError: (event) => {
-                            event.currentTarget.onerror = null;
-                            event.currentTarget.src = fallbackSrc;
-                          }
-                        }}
-                      >
-                        {initials}
-                      </Avatar>
-                    );
-                  }
-                },
-                { field: 'firstname', headerName: 'First Name', width: 150 },
-                { field: 'lastname', headerName: 'Last Name', width: 150 },
-                { field: 'phone', headerName: 'Phone', width: 160 },
-                { field: 'email', headerName: 'Email', width: 240 },
-                { field: 'role', headerName: 'Role', width: 180 }
-              ]}
-              slots={{ toolbar: CustomToolbar }}
-              onRowClick={handleRowClick}
-              checkboxSelection
-              pageSizeOptions={[25, 50]}
-              initialState={{
-                pagination: { paginationModel: { pageSize: 25 } }
-              }}
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  borderBottom: '1px solid var(--color-border-secondary)'
-                },
-                '& .MuiDataGrid-columnHeaders': {
-                  borderBottom: '1px solid var(--color-border-primary)',
-                  backgroundColor: 'var(--color-background-secondary)'
-                },
-                '& .MuiDataGrid-footerContainer': {
-                  borderTop: '1px solid var(--color-border-primary)'
-                },
-                '& .MuiDataGrid-row': {
-                  cursor: 'pointer'
+        <TalentDatabaseGrid 
+          onInviteClick={() => setInviteModalOpen(true)} 
+          watchlistIds={watchlist.map(i => i.id)}
+          onAddToWatchlist={handleAddToWatchlist}
+        />
+      </Paper>
+      <Paper 
+        elevation={0} 
+        sx={{ 
+          flexGrow: 1, 
+          border: '1px solid var(--color-border-primary)',
+          borderRadius: 1,
+          overflow: 'hidden',
+          display: tab !== 1 ? 'none' : 'block'
+        }}
+      >
+        <WatchlistGrid 
+          watchlist={watchlist}
+          onWatchlistUpdate={handleWatchlistUpdate}
+          onRemoveFromWatchlist={handleRemoveFromWatchlist}
+        />
+      </Paper>
+      
+      {tab === 3 && <SuccessionPlanning />}
+
+      <Paper 
+        elevation={0} 
+        sx={{ 
+          flexGrow: 1, 
+          border: '1px solid var(--color-border-primary)',
+          borderRadius: 1,
+          overflow: 'hidden',
+          display: tab !== 0 ? 'none' : 'block'
+        }}
+      >
+        <Box sx={{ height: '100%', width: '100%' }}>
+          <DataGridPro
+            rows={staffList}
+            columns={[
+              {
+                field: 'avatar',
+                headerName: '',
+                width: 72,
+                sortable: false,
+                filterable: false,
+                renderCell: (params) => {
+                  const name = `${params.row.firstname || ''} ${params.row.lastname || ''}`.trim();
+                  const initials = name
+                    .split(' ')
+                    .filter(Boolean)
+                    .map(part => part.charAt(0).toUpperCase())
+                    .slice(0, 2)
+                    .join('') || 'U';
+                  const fallbackSrc = generateInitialsImage(name || 'Staff Member', 128, '#040037', '#ffffff');
+                  const hasRemoteImage = params.row.profilePic && params.row.profilePic.length > 0;
+                  
+                  return (
+                    <Avatar
+                      src={hasRemoteImage ? params.row.profilePic : undefined}
+                      sx={{ 
+                        width: 32, 
+                        height: 32, 
+                        fontSize: '0.75rem', 
+                        fontWeight: 600, 
+                        bgcolor: 'var(--color-background-secondary)', 
+                        color: 'var(--color-text-primary)' 
+                      }}
+                      imgProps={{
+                        onError: (event) => {
+                          event.currentTarget.onerror = null;
+                          event.currentTarget.src = fallbackSrc;
+                        }
+                      }}
+                    >
+                      {initials}
+                    </Avatar>
+                  );
                 }
-              }}
-            />
-          </Box>
-        )}
+              },
+              { field: 'firstname', headerName: 'First Name', width: 150 },
+              { field: 'lastname', headerName: 'Last Name', width: 150 },
+              { field: 'phone', headerName: 'Phone', width: 160 },
+              { field: 'email', headerName: 'Email', width: 240 },
+              { field: 'role', headerName: 'Role', width: 180 }
+            ]}
+            slots={{ toolbar: CustomToolbar }}
+            onRowClick={handleRowClick}
+            checkboxSelection
+            pageSizeOptions={[25, 50]}
+            initialState={{
+              pagination: { paginationModel: { pageSize: 25 } }
+            }}
+            sx={{
+              border: 'none',
+              '& .MuiDataGrid-cell': {
+                borderBottom: '1px solid var(--color-border-secondary)'
+              },
+              '& .MuiDataGrid-columnHeaders': {
+                borderBottom: '1px solid var(--color-border-primary)',
+                backgroundColor: 'var(--color-background-secondary)'
+              },
+              '& .MuiDataGrid-footerContainer': {
+                borderTop: '1px solid var(--color-border-primary)'
+              },
+              '& .MuiDataGrid-row': {
+                cursor: 'pointer'
+              }
+            }}
+          />
+        </Box>
       </Paper>
 
       <InviteModal 

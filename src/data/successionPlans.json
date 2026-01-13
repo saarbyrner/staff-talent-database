@@ -1,0 +1,242 @@
+[
+  {
+    "id": "sp-1",
+    "role": "Head Coach",
+    "incumbent": {
+      "id": "101",
+      "name": "James Rivera",
+      "picUrl": "/assets/headshots/204_639.png"
+    },
+    "candidates": [
+      {
+        "id": "106",
+        "name": "William Martinez",
+        "picUrl": "/assets/headshots/225_100.png",
+        "priority": 1
+      },
+      {
+        "id": "109",
+        "name": "Thomas Mendes",
+        "picUrl": "/assets/headshots/227_796.png",
+        "priority": 2
+      },
+      {
+        "id": "112",
+        "name": "Matthew Brown",
+        "picUrl": "/assets/headshots/230_869.png",
+        "priority": 3
+      }
+    ],
+    "lastUpdated": "2025-11-15T10:00:00Z"
+  },
+  {
+    "id": "sp-2",
+    "role": "Sporting Director",
+    "incumbent": {
+      "id": "102",
+      "name": "Michael Okoro",
+      "picUrl": "/assets/headshots/208_421.png"
+    },
+    "candidates": [
+      {
+        "id": "105",
+        "name": "David Smith",
+        "picUrl": "/assets/headshots/216_549.png",
+        "priority": 1
+      },
+      {
+        "id": "111",
+        "name": "Daniel Chen",
+        "picUrl": "/assets/headshots/229_261.png",
+        "priority": 2
+      },
+      {
+        "id": "117",
+        "name": "Andrew Patel",
+        "picUrl": "/assets/headshots/233_049.png",
+        "priority": 3
+      }
+    ],
+    "lastUpdated": "2025-10-20T14:30:00Z"
+  },
+  {
+    "id": "sp-3",
+    "role": "Technical Director",
+    "incumbent": {
+      "id": "103",
+      "name": "Robert Vasiliev",
+      "picUrl": "/assets/headshots/210_035.png"
+    },
+    "candidates": [
+      {
+        "id": "108",
+        "name": "Joseph Khan",
+        "picUrl": "/assets/headshots/227_236.png",
+        "priority": 1
+      },
+      {
+        "id": "113",
+        "name": "Anthony Lee",
+        "picUrl": "/assets/headshots/231_281.png",
+        "priority": 2
+      },
+      {
+        "id": "122",
+        "name": "Brian Price",
+        "picUrl": "/assets/headshots/234_906.png",
+        "priority": 3
+      }
+    ],
+    "lastUpdated": "2025-05-10T09:00:00Z" 
+  },
+  {
+    "id": "sp-4",
+    "role": "Head of Recruitment",
+    "incumbent": {
+      "id": "107",
+      "name": "Richard O'Connor",
+      "picUrl": "/assets/headshots/226_537.png"
+    },
+    "candidates": [
+      {
+        "id": "115",
+        "name": "Donald Thompson",
+        "picUrl": "/assets/headshots/232_363.png",
+        "priority": 1
+      },
+      {
+        "id": "121",
+        "name": "Kevin Osei",
+        "picUrl": "/assets/headshots/234_642.png",
+        "priority": 2
+      },
+      {
+        "id": "102",
+        "name": "Michael Okoro",
+        "picUrl": "/assets/headshots/208_421.png",
+        "priority": 3
+      }
+    ],
+    "lastUpdated": "2026-01-10T11:00:00Z"
+  },
+  {
+    "id": "sp-5",
+    "role": "Academy Director",
+    "incumbent": {
+      "id": "112",
+      "name": "Matthew Brown",
+      "picUrl": "/assets/headshots/230_869.png"
+    },
+    "candidates": [
+      {
+        "id": "104",
+        "name": "John Sato",
+        "picUrl": "/assets/headshots/215_914.png",
+        "priority": 1
+      },
+      {
+        "id": "106",
+        "name": "William Martinez",
+        "picUrl": "/assets/headshots/225_100.png",
+        "priority": 2
+      },
+      {
+        "id": "116",
+        "name": "Steven Collins",
+        "picUrl": "/assets/headshots/232_432.png",
+        "priority": 3
+      }
+    ],
+    "lastUpdated": "2025-12-01T16:00:00Z"
+  },
+  {
+    "id": "sp-6",
+    "role": "Head of Sports Science",
+    "incumbent": {
+      "id": "110",
+      "name": "Christopher Nair",
+      "picUrl": "/assets/headshots/228_618.png"
+    },
+    "candidates": [
+      {
+        "id": "119",
+        "name": "Joshua Ruiz",
+        "picUrl": "/assets/headshots/233_419.png",
+        "priority": 1
+      },
+      {
+        "id": "108",
+        "name": "Joseph Khan",
+        "picUrl": "/assets/headshots/227_236.png",
+        "priority": 2
+      },
+      {
+        "id": "118",
+        "name": "Paul Nakamura",
+        "picUrl": "/assets/headshots/233_064.png",
+        "priority": 3
+      }
+    ],
+    "lastUpdated": "2025-09-22T13:20:00Z"
+  },
+  {
+    "id": "sp-7",
+    "role": "Director of Football Operations",
+    "incumbent": {
+      "id": "111",
+      "name": "Daniel Chen",
+      "picUrl": "/assets/headshots/229_261.png"
+    },
+    "candidates": [
+      {
+        "id": "105",
+        "name": "David Smith",
+        "picUrl": "/assets/headshots/216_549.png",
+        "priority": 1
+      },
+      {
+        "id": "117",
+        "name": "Andrew Patel",
+        "picUrl": "/assets/headshots/233_049.png",
+        "priority": 2
+      },
+      {
+        "id": "102",
+        "name": "Michael Okoro",
+        "picUrl": "/assets/headshots/208_421.png",
+        "priority": 3
+      }
+    ],
+    "lastUpdated": "2025-11-05T18:00:00Z"
+  },
+  {
+    "id": "sp-8",
+    "role": "Set Piece Specialist",
+    "incumbent": {
+      "id": "120",
+      "name": "Kenneth Stone",
+      "picUrl": "/assets/headshots/234_378.png"
+    },
+    "candidates": [
+      {
+        "id": "109",
+        "name": "Thomas Mendes",
+        "picUrl": "/assets/headshots/227_796.png",
+        "priority": 1
+      },
+      {
+        "id": "118",
+        "name": "Paul Nakamura",
+        "picUrl": "/assets/headshots/233_064.png",
+        "priority": 2
+      },
+      {
+        "id": "116",
+        "name": "Steven Collins",
+        "picUrl": "/assets/headshots/232_432.png",
+        "priority": 3
+      }
+    ],
+    "lastUpdated": "2026-01-02T12:00:00Z"
+  }
+]

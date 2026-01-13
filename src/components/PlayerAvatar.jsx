@@ -15,6 +15,7 @@ function PlayerAvatar({
   size = 'medium', 
   className = '',
   showTooltip = false,
+  src,
   ...props 
 }) {
   const [imageError, setImageError] = useState(false)
@@ -31,7 +32,7 @@ function PlayerAvatar({
   const config = sizeConfig[size] || sizeConfig.medium
   
   // Get image source
-  const imageSrc = getPlayerImage(playerId, playerName)
+  const imageSrc = src || getPlayerImage(playerId, playerName)
   const fallbackSrc = generateInitialsImage(
     playerName, 
     config.size * 2, // Higher resolution for sharp display
@@ -71,7 +72,7 @@ function PlayerAvatar({
   }
 
   // Show initials if no player ID or image failed to load
-  if (!playerId || imageError) {
+  if ((!playerId && !src) || imageError) {
     const initials = playerName
       .split(' ')
       .map(part => part.charAt(0))
@@ -137,7 +138,8 @@ PlayerAvatar.propTypes = {
   playerName: PropTypes.string,
   size: PropTypes.oneOf(['small', 'medium', 'large', 'xlarge']),
   className: PropTypes.string,
-  showTooltip: PropTypes.bool
+  showTooltip: PropTypes.bool,
+  src: PropTypes.string
 }
 
-export default PlayerAvatar
+export default PlayerAvatar;
