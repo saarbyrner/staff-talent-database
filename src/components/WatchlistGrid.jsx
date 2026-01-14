@@ -33,7 +33,7 @@ import NotesDrawer from './NotesDrawer';
 import '../styles/design-tokens.css';
 
 // Helper to generate consistent random stats based on staff ID
-const generateStats = (id) => {
+export const generateStats = (id) => {
   const seed = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const random = (offset = 0) => {
     const x = Math.sin(seed + offset) * 10000;
@@ -210,68 +210,96 @@ const LinkCell = ({ value, type, name = '' }) => {
   );
 };
 
-const createColumns = (onTagsClick, onRemoveFromWatchlist, onNotesClick, staffNotes = {}) => [
-  {
-    field: 'watchlistActions',
-    headerName: '',
-    width: 60,
-    sortable: false,
-    filterable: false,
-    renderCell: (params) => (
-      <Tooltip title="Remove from Watchlist">
-        <IconButton
-          size="small"
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemoveFromWatchlist(params.row.id);
-          }}
-          sx={{
-            color: 'var(--color-primary)',
-            '&:hover': {
-              backgroundColor: 'var(--color-background-tertiary)',
-            }
-          }}
-        >
-          <Visibility fontSize="small" />
-        </IconButton>
-      </Tooltip>
-    )
-  },
-  {
-    field: 'notes',
-    headerName: '',
-    width: 60,
-    sortable: false,
-    filterable: false,
-    renderCell: (params) => {
-      const noteCount = staffNotes[params.row.id]?.length || 0;
-      return (
-        <Tooltip title={noteCount > 0 ? `${noteCount} private note${noteCount > 1 ? 's' : ''}` : "Add private note"}>
-          <IconButton
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              onNotesClick(params.row.id);
-            }}
-            sx={{
-              color: noteCount > 0 ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-              '&:hover': {
-                backgroundColor: 'var(--color-background-tertiary)',
+export const createWatchlistColumns = (
+  onTagsClick,
+  onRemoveFromWatchlist,
+  onNotesClick,
+  staffNotes = {},
+  options = {},
+) => {
+  const {
+    includeActions = true,
+    includeNotes = true,
+    enableTagEditing = true,
+  } = options;
+
+  const columns = [
+    ...(includeActions
+      ? [
+          {
+            field: 'watchlistActions',
+            headerName: '',
+            width: 60,
+            sortable: false,
+            filterable: false,
+            renderCell: (params) => (
+              <Tooltip title="Remove from Watchlist">
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (typeof onRemoveFromWatchlist === 'function') {
+                      onRemoveFromWatchlist(params.row.id);
+                    }
+                  }}
+                  sx={{
+                    color: 'var(--color-primary)',
+                    '&:hover': {
+                      backgroundColor: 'var(--color-background-tertiary)',
+                    }
+                  }}
+                >
+                  <Visibility fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            )
+          },
+        ]
+      : []),
+    ...(includeNotes
+      ? [
+          {
+            field: 'notes',
+            headerName: '',
+            width: 60,
+            sortable: false,
+            filterable: false,
+            renderCell: (params) => {
+              const noteCount = staffNotes[params.row.id]?.length || 0;
+              if (typeof onNotesClick !== 'function') {
+                return noteCount > 0 ? (
+                  <Chip label={`${noteCount} note${noteCount > 1 ? 's' : ''}`} size="small" />
+                ) : null;
               }
-            }}
-          >
-            {noteCount > 0 ? (
-              <Badge badgeContent={noteCount} color="primary" max={99}>
-                <NotesOutlined fontSize="small" />
-              </Badge>
-            ) : (
-              <NotesOutlined fontSize="small" />
-            )}
-          </IconButton>
-        </Tooltip>
-      );
-    }
-  },
+              return (
+                <Tooltip title={noteCount > 0 ? `${noteCount} private note${noteCount > 1 ? 's' : ''}` : "Add private note"}>
+                  <IconButton
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onNotesClick(params.row.id);
+                    }}
+                    sx={{
+                      color: noteCount > 0 ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+                      '&:hover': {
+                        backgroundColor: 'var(--color-background-tertiary)',
+                      }
+                    }}
+                  >
+                    {noteCount > 0 ? (
+                      <Badge badgeContent={noteCount} color="primary" max={99}>
+                        <NotesOutlined fontSize="small" />
+                      </Badge>
+                    ) : (
+                      <NotesOutlined fontSize="small" />
+                    )}
+                  </IconButton>
+                </Tooltip>
+              );
+            }
+          },
+        ]
+      : []),
   {
     field: 'picUrl',
     headerName: '',
@@ -347,22 +375,24 @@ const createColumns = (onTagsClick, onRemoveFromWatchlist, onNotesClick, staffNo
               +{tags.length - 3}
             </Typography>
           )}
-          <IconButton
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              onTagsClick(params.row.id, e);
-            }}
-            sx={{
-              ml: 'auto',
-              color: 'var(--color-text-secondary)',
-              '&:hover': {
-                color: 'var(--color-primary)',
-              }
-            }}
-          >
-            <LocalOfferOutlined fontSize="small" />
-          </IconButton>
+          {enableTagEditing && typeof onTagsClick === 'function' && (
+            <IconButton
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                onTagsClick(params.row.id, e);
+              }}
+              sx={{
+                ml: 'auto',
+                color: 'var(--color-text-secondary)',
+                '&:hover': {
+                  color: 'var(--color-primary)',
+                }
+              }}
+            >
+              <LocalOfferOutlined fontSize="small" />
+            </IconButton>
+          )}
         </Stack>
       );
     }
@@ -718,7 +748,10 @@ const createColumns = (onTagsClick, onRemoveFromWatchlist, onNotesClick, staffNo
     sortable: false,
     filterable: false,
   },
-];
+  ];
+
+  return columns;
+};
 
 function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) {
   const navigate = useNavigate();
@@ -878,7 +911,7 @@ function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) 
   };
 
   // Ensure only one Elo Rating column
-  const columns = React.useMemo(() => createColumns(
+  const columns = React.useMemo(() => createWatchlistColumns(
     (staffId, event) => {
       if (event) {
         handleTagsClick(staffId, event.currentTarget);
@@ -886,7 +919,12 @@ function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) 
     },
     onRemoveFromWatchlist,
     handleNotesClick,
-    staffNotes
+    staffNotes,
+    {
+      includeActions: true,
+      includeNotes: true,
+      enableTagEditing: true,
+    }
   ), [onRemoveFromWatchlist, staffNotes]);
 
   const selectedStaff = selectedStaffForTags 

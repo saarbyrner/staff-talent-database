@@ -34,6 +34,7 @@ import worldGeoJson from '../data/world_map.json';
 import EloGraph from './EloGraph';
 import DashboardSettingsDrawer from './DashboardSettingsDrawer';
 import DashboardFilters, { applyFilters } from './DashboardFilters';
+import SuccessionPlanningAnalysis from './SuccessionPlanningAnalysis';
 import '../styles/design-tokens.css';
 
 // Default dashboard visibility settings
@@ -44,6 +45,7 @@ const DEFAULT_DASHBOARD_SETTINGS = {
   qualificationStandards: true,
   talentPipeline: true,
   eloGraph: true,
+  successionPlanning: true,
 };
 
 // Load dashboard settings from localStorage
@@ -415,6 +417,7 @@ function StaffMapDashboard() {
     { id: 'qualificationStandards', label: 'Qualification Standards', description: 'Coaching license and credential trends' },
     { id: 'talentPipeline', label: 'Talent Pipeline', description: 'Tag progression and talent development pipeline' },
     { id: 'eloGraph', label: 'Elo Ratings', description: 'Top 20 staff by Elo rating' },
+    { id: 'successionPlanning', label: 'Succession Planning', description: 'Role readiness benchmarking and pipeline health' },
   ];
 
   // Filter visible dashboards based on settings (only in club view)
@@ -430,6 +433,14 @@ function StaffMapDashboard() {
     }
   }, [activeTab, visibleDashboards.length]);
 
+  useEffect(() => {
+    if (!location.state || !location.state.analysisTab) return;
+    const targetIndex = visibleDashboards.findIndex(d => d.id === location.state.analysisTab);
+    if (targetIndex !== -1 && targetIndex !== activeTab) {
+      setActiveTab(targetIndex);
+    }
+  }, [location.state, visibleDashboards, activeTab]);
+
   // Handle settings update
   const handleUpdateSettings = (newSettings) => {
     setDashboardSettings(newSettings);
@@ -437,7 +448,7 @@ function StaffMapDashboard() {
   };
 
   return (
-    <Box sx={{ display: 'flex', height: '100%', position: 'relative' }}>
+    <Box sx={{ display: 'flex', height: '100%', position: 'relative', overflow: 'hidden', maxWidth: '100%' }}>
       {/* Dashboard Filters Sidebar */}
       <DashboardFilters 
         onFilterChange={setDashboardFilters}
@@ -453,7 +464,9 @@ function StaffMapDashboard() {
         flexDirection: 'column', 
         backgroundColor: '#fafafa',
         transition: 'margin-right 225ms cubic-bezier(0, 0, 0.2, 1) 0ms',
-        marginRight: filterSidebarOpen ? '280px' : 0
+        marginRight: filterSidebarOpen ? '280px' : 0,
+        minWidth: 0,
+        overflowX: 'hidden'
       }}>
       
       {/* Tabs */}
@@ -517,7 +530,7 @@ function StaffMapDashboard() {
         </Box>
       </Paper>
 
-      <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 3, flex: 1, overflow: 'auto' }}>
+      <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 3, flex: 1, overflowY: 'auto', overflowX: 'hidden', maxWidth: '100%', minWidth: 0 }}>
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box>
@@ -770,6 +783,14 @@ function StaffMapDashboard() {
       {/* Elo Graph Tab */}
       {visibleDashboards[activeTab]?.id === 'eloGraph' && (
         <EloGraph dashboardFilters={dashboardFilters} />
+      )}
+
+      {/* Succession Planning Tab */}
+      {visibleDashboards[activeTab]?.id === 'successionPlanning' && (
+        <SuccessionPlanningAnalysis
+          filteredStaff={filteredStaff}
+          successionContext={location.state?.successionContext}
+        />
       )}
 
       {/* Dashboard Settings Drawer */}

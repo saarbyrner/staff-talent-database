@@ -29,6 +29,7 @@ const DashboardSettingsDrawer = ({ open, onClose, dashboardSettings, onUpdateSet
     { id: 'qualificationStandards', label: 'Qualification Standards', description: 'Coaching license and credential trends' },
     { id: 'talentPipeline', label: 'Talent Pipeline', description: 'Tag progression and talent development pipeline' },
     { id: 'eloGraph', label: 'Elo Ratings', description: 'Top 20 staff by Elo rating' },
+    { id: 'successionPlanning', label: 'Succession Planning', description: 'Role readiness, benchmarking, and pipeline health' },
   ];
 
   const handleToggle = (dashboardId) => {

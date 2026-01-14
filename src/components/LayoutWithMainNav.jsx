@@ -237,7 +237,8 @@ function MedinahLayoutWithMainNav({ children }) {
           flexGrow: 1, 
           display: 'flex', 
           flexDirection: 'column',
-          overflow: 'hidden'
+          overflowY: 'auto',
+          overflowX: 'hidden'
         }}
       >
         {/* Top App Bar */}

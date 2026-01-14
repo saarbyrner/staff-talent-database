@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import clubStaffData from '../data/users_staff.json';
 import staffData from '../data/staff_talent.json';
 import SuccessionPlanCard from '../components/SuccessionPlanCard';
@@ -28,6 +29,8 @@ const getRandomCandidates = (incumbentId, count) => {
 const drawerWidth = '60%'; // Define a width for the drawer (60% of screen)
 
 const SuccessionPlanning = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const oneYearAgo = new Date();
   oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
@@ -49,6 +52,7 @@ const SuccessionPlanning = () => {
   const [selectedPlanId, setSelectedPlanId] = useState(initialPlans && initialPlans.length ? initialPlans[0].id : null); // Default to first plan for comparison
   const [openAddDrawerPlanId, setOpenAddDrawerPlanId] = useState(null); // plan id for add-drawer
   const [addDrawerSelection, setAddDrawerSelection] = useState([]); // selected staff ids in add drawer
+  const isLeagueView = location.pathname.startsWith('/league');
 
   // Drag and Drop state
   const [draggedItem, setDraggedItem] = useState(null);
@@ -151,6 +155,7 @@ const SuccessionPlanning = () => {
 
   const handleDrawerClose = () => {
     setIsComparisonDrawerOpen(false);
+    setSelectedPlanId(null);
   };
 
   const handleCardClick = (planId) => {
@@ -182,6 +187,24 @@ const SuccessionPlanning = () => {
     if (!openAddDrawerPlanId) return;
     addDrawerSelection.forEach(staffId => handleAddCandidate(openAddDrawerPlanId, staffId));
     handleCloseAddDrawer();
+  };
+
+  const handleSeeMoreDetails = () => {
+    if (!selectedPlan) return;
+    const targetPath = isLeagueView ? '/league/analysis' : '/analysis';
+    navigate(targetPath, {
+      state: {
+        analysisTab: 'successionPlanning',
+        successionContext: {
+          planId: selectedPlan.id,
+          role: selectedPlan.role,
+          plan: selectedPlan,
+          incumbent: selectedPlan.incumbent,
+          candidates: selectedPlan.candidates,
+          lastUpdated: selectedPlan.lastUpdated,
+        },
+      },
+    });
   };
 
   const watchlistCandidates = React.useMemo(() => {
@@ -283,6 +306,13 @@ const SuccessionPlanning = () => {
                   plan={selectedPlan} 
                   staffData={staffData}
                 />
+                <MedinahButton
+                  variant="primary"
+                  onClick={handleSeeMoreDetails}
+                  sx={{ mt: 2, width: '100%' }}
+                >
+                  See more details
+                </MedinahButton>
               </>
             ) : (
               <Box sx={{ 
