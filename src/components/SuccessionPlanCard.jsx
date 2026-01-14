@@ -62,13 +62,6 @@ const SuccessionPlanCard = ({ plan, onAddCandidate, onRemoveCandidate, watchlist
             >
               Compare
             </MedinahButton>
-            <MedinahButton
-              size="small"
-              variant="primary"
-              onClick={(e) => { e.stopPropagation(); if (typeof onOpenAddDrawer === 'function') onOpenAddDrawer(plan.id); }}
-            >
-              Add
-            </MedinahButton>
           </div>
         </Box>
         <div 
@@ -82,7 +75,16 @@ const SuccessionPlanCard = ({ plan, onAddCandidate, onRemoveCandidate, watchlist
           </div>
         </div>
         
-        <Typography variant="h6" style={{ marginTop: '20px' }}>Future Candidates</Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 2, mb: 1 }}>
+          <Typography variant="h6">Candidates</Typography>
+          <MedinahButton
+            size="small"
+            variant="secondary"
+            onClick={(e) => { e.stopPropagation(); if (typeof onOpenAddDrawer === 'function') onOpenAddDrawer(plan.id); }}
+          >
+            Edit
+          </MedinahButton>
+        </Box>
         <Paper 
           style={{ padding: '10px', minHeight: '150px' }}
           onDragOver={(e) => { e.preventDefault(); }}
