@@ -1,9 +1,10 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, Typography, Paper, Select, MenuItem, FormControl, InputLabel, IconButton } from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Card, CardContent, Typography, Paper, Select, MenuItem, FormControl, InputLabel, IconButton, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import PlayerAvatar from './PlayerAvatar';
 import WarningIcon from '@mui/icons-material/Warning';
+import MedinahButton from './Button';
 
 const isOutdated = (lastUpdated) => {
     const sixMonthsAgo = new Date();
@@ -11,31 +12,65 @@ const isOutdated = (lastUpdated) => {
     return new Date(lastUpdated) < sixMonthsAgo;
 };
 
-const SuccessionPlanCard = ({ plan, onAddCandidate, onRemoveCandidate, watchlistCandidates, talentDBCandidates, onDragStart, onDragEnter }) => {
+const SuccessionPlanCard = ({ plan, onAddCandidate, onRemoveCandidate, watchlistCandidates, talentDBCandidates, onDragStart, onDragEnter, onCardClick, isSelected, onOpenAddDrawer, originTab }) => {
   const outdated = isOutdated(plan.lastUpdated);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleProfileClick = (id) => {
-    navigate(`/staff/${id}`);
+  const handleProfileClick = (e, id) => {
+    e.stopPropagation(); // Prevent card click
+    const from = { pathname: location.pathname, search: location.search };
+    if (Number.isInteger(originTab)) {
+      from.state = { activeTab: originTab };
+    }
+    if (process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.debug('[SuccessionPlanCard] navigating to profile with from:', from);
+    }
+    navigate(`/staff/${id}`, { state: { from } });
   };
 
   return (
-    <Card style={{ 
-        border: outdated ? '2px solid orange' : 'none' 
-    }}>
+    <Card 
+      style={{ 
+        border: isSelected ? '3px solid #1976d2' : (outdated ? '2px solid orange' : '1px solid #e0e0e0'),
+        transition: 'all 0.2s ease',
+        boxShadow: isSelected ? '0 4px 20px rgba(25, 118, 210, 0.3)' : undefined,
+        height: '100%',
+      }}
+      sx={{}}
+    >
       <CardContent>
-        <Typography variant="h6" component="div">
-          {plan.role}
-          {outdated && <WarningIcon style={{ color: 'orange', marginLeft: '10px' }}/>}
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <Typography variant="h6" component="div">
+            {plan.role}
+            {outdated && <WarningIcon style={{ color: 'orange', marginLeft: '10px' }}/>} 
+          </Typography>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <MedinahButton
+              size="small"
+              variant="secondary"
+              onClick={(e) => { e.stopPropagation(); onCardClick(plan.id); }}
+            >
+              Compare
+            </MedinahButton>
+            <MedinahButton
+              size="small"
+              variant="primary"
+              onClick={(e) => { e.stopPropagation(); if (typeof onOpenAddDrawer === 'function') onOpenAddDrawer(plan.id); }}
+            >
+              Add
+            </MedinahButton>
+          </div>
+        </Box>
         <div 
           style={{ display: 'flex', alignItems: 'center', margin: '10px 0', cursor: 'pointer' }}
-          onClick={() => handleProfileClick(plan.incumbent.id)}
+          onClick={(e) => handleProfileClick(e, plan.incumbent.id)}
         >
           <PlayerAvatar src={plan.incumbent.picUrl} playerId={plan.incumbent.id} playerName={plan.incumbent.name} />
           <div style={{ marginLeft: '10px' }}>
             <Typography variant="body1">{plan.incumbent.name}</Typography>
-            <Typography variant="caption">Incumbent</Typography>
+            <Typography variant="caption">Current</Typography>
           </div>
         </div>
         
@@ -44,47 +79,64 @@ const SuccessionPlanCard = ({ plan, onAddCandidate, onRemoveCandidate, watchlist
             style={{ padding: '10px', minHeight: '150px' }}
             onDragEnter={(e) => onDragEnter(e, plan.id, plan.candidates.length)}
         >
-          {plan.candidates.map((candidate, index) => (
-            <div
+              {plan.candidates.map((candidate, index) => (
+            <Box
               key={candidate.id}
               draggable
               onDragStart={(e) => onDragStart(e, plan.id, index)}
               onDragEnter={(e) => onDragEnter(e, plan.id, index)}
-              style={{
+              sx={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                marginBottom: '10px',
-                padding: '5px',
+                mb: '10px',
+                p: '5px',
                 backgroundColor: 'white',
+                borderRadius: '6px',
+                transition: 'background-color 150ms ease, transform 150ms ease',
+                '&:hover': {
+                  backgroundColor: '#f5f7fa',
+                  transform: 'translateY(-1px)'
+                },
+                cursor: 'grab'
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', cursor: 'grab' }} onClick={() => handleProfileClick(candidate.id)}>
-                <Typography style={{marginRight: "10px"}}>{index + 1}.</Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center' }} onClick={(e) => handleProfileClick(e, candidate.id)}>
+                <Typography sx={{ mr: '10px' }}>{index + 1}.</Typography>
                 <PlayerAvatar src={candidate.picUrl} playerId={candidate.id} playerName={candidate.name} />
-                <Typography style={{ marginLeft: '10px' }}>{candidate.name}</Typography>
-              </div>
-              <IconButton size="small" onClick={() => onRemoveCandidate(plan.id, candidate.id)}>
+                <Box sx={{ ml: '10px', display: 'flex', flexDirection: 'column' }}>
+                  <Typography>{candidate.name}</Typography>
+                  {
+                    (() => {
+                      const findIn = (arr) => (Array.isArray(arr) ? arr.find(s => String(s.id) === String(candidate.id)) : undefined);
+                      const found = findIn(watchlistCandidates) || findIn(talentDBCandidates);
+                      const rawEmployer = found?.currentEmployer || found?.current_employer || '';
+                      // Try to extract the club/organization name before the first ' - '
+                      let employer = rawEmployer;
+                      if (typeof rawEmployer === 'string' && rawEmployer.length) {
+                        if (rawEmployer.includes(' - ')) {
+                          employer = rawEmployer.split(' - ')[0].trim();
+                        } else {
+                          // Fallback: remove trailing parenthetical dates like (2021-Present)
+                          employer = rawEmployer.replace(/\s*\([^)]*\)\s*$/, '').trim();
+                        }
+                      }
+                      return employer ? <Typography variant="caption" color="text.secondary">{employer}</Typography> : null;
+                    })()
+                  }
+                </Box>
+              </Box>
+              <IconButton size="small" style={{ cursor: 'pointer' }} onClick={(e) => {
+                e.stopPropagation();
+                onRemoveCandidate(plan.id, candidate.id);
+              }}>
                 <CloseIcon fontSize="small" />
               </IconButton>
-            </div>
+            </Box>
           ))}
         </Paper>
 
-        <FormControl fullWidth style={{ marginTop: '20px' }} disabled={plan.candidates.length >= 3}>
-          <InputLabel>Add Candidate</InputLabel>
-          <Select
-            label="Add Candidate"
-            onChange={(e) => onAddCandidate(plan.id, e.target.value)}
-            value=""
-          >
-            <MenuItem value="" disabled><em>Select a person...</em></MenuItem>
-            <Typography variant="caption" style={{paddingLeft: "15px"}}>Watchlist</Typography>
-            {watchlistCandidates.map(c => <MenuItem key={c.id} value={c.id}>{c.firstName} {c.lastName}</MenuItem>)}
-            <Typography variant="caption" style={{paddingLeft: "15px"}}>Talent Database</Typography>
-            {talentDBCandidates.map(c => <MenuItem key={c.id} value={c.id}>{c.firstName} {c.lastName}</MenuItem>)}
-          </Select>
-        </FormControl>
+        {/* Add drawer is used instead of dropdown select for adding candidates */}
 
       </CardContent>
     </Card>

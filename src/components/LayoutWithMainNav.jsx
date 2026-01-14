@@ -61,10 +61,30 @@ const pageTitles = {
 function MedinahLayoutWithMainNav({ children }) {
   const location = useLocation()
   const navigate = useNavigate()
-  const [isNavOpen, setIsNavOpen] = useState(true)
+  // Read persisted nav state from localStorage; default closed (false)
+  const persistedNav = (() => {
+    try {
+      const raw = localStorage.getItem('mainNav:isOpen')
+      if (raw === null) return false
+      return raw === 'true'
+    } catch (e) {
+      return false
+    }
+  })()
+  const [isNavOpen, setIsNavOpen] = useState(persistedNav)
   const [currentSquad, setCurrentSquad] = useState(availableSquads[0])
   const [userMenuAnchor, setUserMenuAnchor] = useState(null)
-  const [isFormsMenuOpen, setIsFormsMenuOpen] = useState(false)
+  // Read persisted forms flyout state; default closed
+  const persistedForms = (() => {
+    try {
+      const raw = localStorage.getItem('mainNav:formsOpen')
+      if (raw === null) return false
+      return raw === 'true'
+    } catch (e) {
+      return false
+    }
+  })()
+  const [isFormsMenuOpen, setIsFormsMenuOpen] = useState(persistedForms)
 
   // Determine if we're in league view mode based on path prefix
   const isLeagueView = location.pathname.startsWith('/league')
@@ -83,15 +103,24 @@ function MedinahLayoutWithMainNav({ children }) {
   }
 
   const handleNavToggle = () => {
-    setIsNavOpen(!isNavOpen)
+    setIsNavOpen((prev) => {
+      const next = !prev
+      try { localStorage.setItem('mainNav:isOpen', String(next)) } catch (e) {}
+      return next
+    })
   }
 
   const handleFormsToggle = () => {
-    setIsFormsMenuOpen((prev) => !prev)
+    setIsFormsMenuOpen((prev) => {
+      const next = !prev
+      try { localStorage.setItem('mainNav:formsOpen', String(next)) } catch (e) {}
+      return next
+    })
   }
 
   const handleFormsMenuClose = () => {
     setIsFormsMenuOpen(false)
+    try { localStorage.setItem('mainNav:formsOpen', 'false') } catch (e) {}
   }
 
   const handleFormsSecondaryClick = (path) => {

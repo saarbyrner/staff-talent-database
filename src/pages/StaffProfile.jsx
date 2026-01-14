@@ -115,6 +115,41 @@ function StaffProfile() {
   }, [id]);
 
   const handleBack = () => {
+    // Prefer explicit navigation hints when available.
+    // 1) `location.state.from` may be a string or a location-like object (preserve pathname/search and nested state)
+    // 2) `location.state.returnTab` or `location.state.activeTab` may be provided by `StaffDatabase` to restore the selected tab
+    const state = location.state || {};
+
+    // Handle explicit `from` provided as string or location-like object
+    const from = state.from;
+    if (from) {
+      if (typeof from === 'string') {
+        navigate(from);
+        return;
+      }
+
+      if (typeof from === 'object' && (from.pathname || from.search)) {
+        const pathname = from.pathname || '';
+        const search = from.search || '';
+        const nestedActive = from.state && (from.state.activeTab ?? from.state.returnTab);
+        if (Number.isInteger(nestedActive)) {
+          navigate(`${pathname}${search}`, { state: { activeTab: nestedActive } });
+        } else {
+          navigate(`${pathname}${search}`);
+        }
+        return;
+      }
+    }
+
+    // Handle legacy/alternate property used by StaffDatabase
+    const returnTab = state.returnTab ?? state.activeTab;
+    if (Number.isInteger(returnTab)) {
+      const base = isLeagueView ? '/league/staff' : '/staff';
+      navigate(base, { state: { activeTab: returnTab } });
+      return;
+    }
+
+    // Fallback to history back
     navigate(-1);
   };
 

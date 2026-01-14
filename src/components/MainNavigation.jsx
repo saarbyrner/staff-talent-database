@@ -113,7 +113,7 @@ const DRAWER_WIDTH = 240
 const DRAWER_WIDTH_COLLAPSED = 60
 
 function MainNavigation({ 
-  isOpen = true, 
+  isOpen = false, 
   onToggle, 
   variant = 'permanent',
   onFormsToggle = () => {},

@@ -27,7 +27,22 @@ const INITIAL_WATCHLIST = [
 function StaffDatabase() {
   // Check if we're returning from a staff profile with a specific tab to show
   const location = useLocation();
-  const [tab, setTab] = useState(location.state?.activeTab ?? 2); // 0 = Staff, 1 = Watchlist, 2 = Talent Database (default)
+  const [tab, setTab] = useState(3); // 0 = Staff, 1 = Succession, 2 = Watchlist, 3 = Talent Database (default)
+
+  // If navigated to this page with a desired active tab in location state, apply it.
+  React.useEffect(() => {
+    const incoming = location.state && (location.state.activeTab ?? location.state.returnTab);
+    // Only accept valid numeric tab indices (avoid null or unexpected types)
+    if (Number.isInteger(incoming) && incoming !== tab) {
+      setTab(incoming);
+    }
+    // We want this to run when location changes
+    // Debugging: log incoming state to help diagnose tab routing issues
+    if (process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.debug('[StaffDatabase] location.state:', location.state, 'resolved incoming:', incoming, 'current tab:', tab);
+    }
+  }, [location]);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [watchlist, setWatchlist] = useState(INITIAL_WATCHLIST);
   const navigate = useNavigate();
@@ -66,9 +81,11 @@ function StaffDatabase() {
     ) {
       return;
     }
-    const basePath = location.pathname.startsWith('/league') ? '/league/staff' : '/staff';
-    // Pass the current tab in state so StaffProfile knows which tab to return to
-    navigate(`${basePath}/${params.row.id}`, { state: { returnTab: tab } });
+    const isLeague = location.pathname.startsWith('/league');
+    const basePath = isLeague ? '/league/staff' : '/staff';
+    // Pass a `from` location-like object so StaffProfile can navigate back precisely
+    const from = { pathname: location.pathname, search: location.search, state: { activeTab: tab } };
+    navigate(`${basePath}/${params.row.id}`, { state: { from } });
   };
 
   return (
@@ -85,11 +102,11 @@ function StaffDatabase() {
           mt: -3,
         }}
       >
-        <Tabs value={tab} onChange={handleChange} aria-label="Staff Tabs" sx={{ px: 0 }}>
+        <Tabs value={Number.isInteger(tab) ? tab : 3} onChange={handleChange} aria-label="Staff Tabs" sx={{ px: 0 }}>
           <Tab label="Staff" value={0} />
-          {!isLeagueView && <Tab label="Watchlist" value={1} />}
-          <Tab label="Talent Database" value={2} />
-          {!isLeagueView && <Tab label="Succession Planning" value={3} />}
+          {!isLeagueView && <Tab label="Succession Planning" value={1} />}
+          {!isLeagueView && <Tab label="Watchlist" value={2} />}
+          <Tab label="Talent Database" value={3} />
         </Tabs>
       </Paper>
 
@@ -100,7 +117,7 @@ function StaffDatabase() {
           border: '1px solid var(--color-border-primary)',
           borderRadius: 1,
           overflow: 'hidden',
-          display: tab !== 2 ? 'none' : 'block'
+          display: tab !== 3 ? 'none' : 'block'
         }}
       >
         <TalentDatabaseGrid 
@@ -116,7 +133,7 @@ function StaffDatabase() {
           border: '1px solid var(--color-border-primary)',
           borderRadius: 1,
           overflow: 'hidden',
-          display: tab !== 1 ? 'none' : 'block'
+          display: tab !== 2 ? 'none' : 'block'
         }}
       >
         <WatchlistGrid 
@@ -126,7 +143,7 @@ function StaffDatabase() {
         />
       </Paper>
       
-      {tab === 3 && <SuccessionPlanning />}
+      {tab === 1 && <SuccessionPlanning />}
 
       <Paper 
         elevation={0} 

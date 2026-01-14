@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, Avatar, Typography, Chip, LinearProgress, Paper } from '@mui/material';
 import { DataGridPro as DataGrid } from '@mui/x-data-grid-pro';
 import { VisibilityOutlined } from '@mui/icons-material';
@@ -47,6 +47,7 @@ const generateStats = (id) => {
 
 const CoachLeaderboard = ({ dashboardFilters = null }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   
   // Enrich data with stats and filter for coaches
   const rows = useMemo(() => {
@@ -327,7 +328,7 @@ const CoachLeaderboard = ({ dashboardFilters = null }) => {
         }}
         pageSizeOptions={[10, 25, 50]}
         disableRowSelectionOnClick
-        onRowClick={(params) => navigate(`/staff/${params.id}`)}
+        onRowClick={(params) => navigate(`/staff/${params.id}`, { state: { from: { pathname: location.pathname, search: location.search } } })}
         density="comfortable"
         slots={{ toolbar: CustomToolbar }}
         slotProps={{
