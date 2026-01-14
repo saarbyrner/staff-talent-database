@@ -42,7 +42,7 @@ const SuccessionPlanCard = ({ plan, onAddCandidate, onRemoveCandidate, watchlist
     >
       <CardContent>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <Typography variant="h6" component="div">
+          <Typography variant="h6" component="div" sx={{ fontWeight: 700 }}>
             {plan.role === 'Strength & Conditioning Coach' ? 'S+C' : plan.role}
           </Typography>
           <div style={{ display: 'flex', gap: '8px' }}>
