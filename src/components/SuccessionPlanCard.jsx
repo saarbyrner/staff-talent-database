@@ -1,9 +1,8 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Card, CardContent, Typography, Paper, Select, MenuItem, FormControl, InputLabel, IconButton, Box } from '@mui/material';
+import { Card, CardContent, Typography, Paper, Select, MenuItem, FormControl, InputLabel, IconButton, Box, Chip, Snackbar, Alert } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import PlayerAvatar from './PlayerAvatar';
-import WarningIcon from '@mui/icons-material/Warning';
 import MedinahButton from './Button';
 
 const isOutdated = (lastUpdated) => {
@@ -12,10 +11,11 @@ const isOutdated = (lastUpdated) => {
     return new Date(lastUpdated) < sixMonthsAgo;
 };
 
-const SuccessionPlanCard = ({ plan, onAddCandidate, onRemoveCandidate, watchlistCandidates, talentDBCandidates, onDragStart, onDragEnter, onCardClick, isSelected, onOpenAddDrawer, originTab }) => {
-  const outdated = isOutdated(plan.lastUpdated);
+const SuccessionPlanCard = ({ plan, onAddCandidate, onRemoveCandidate, watchlistCandidates, talentDBCandidates, onDragStart, onDrop, onCardClick, isSelected, onOpenAddDrawer, originTab, highlightNeedsRefresh }) => {
+  const outdated = isOutdated(plan.lastUpdated) || !!highlightNeedsRefresh;
   const navigate = useNavigate();
   const location = useLocation();
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
 
   const handleProfileClick = (e, id) => {
     e.stopPropagation(); // Prevent card click
@@ -43,10 +43,18 @@ const SuccessionPlanCard = ({ plan, onAddCandidate, onRemoveCandidate, watchlist
       <CardContent>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <Typography variant="h6" component="div">
-            {plan.role}
-            {outdated && <WarningIcon style={{ color: 'orange', marginLeft: '10px' }}/>} 
+            {plan.role === 'Strength & Conditioning Coach' ? 'S+C' : plan.role}
           </Typography>
           <div style={{ display: 'flex', gap: '8px' }}>
+            {outdated && (
+              <Chip
+                label="Needs Refresh"
+                color="warning"
+                size="small"
+                onClick={(e) => { e.stopPropagation(); setSnackbarOpen(true); }}
+                sx={{ alignSelf: 'center' }}
+              />
+            )}
             <MedinahButton
               size="small"
               variant="secondary"
@@ -76,15 +84,17 @@ const SuccessionPlanCard = ({ plan, onAddCandidate, onRemoveCandidate, watchlist
         
         <Typography variant="h6" style={{ marginTop: '20px' }}>Future Candidates</Typography>
         <Paper 
-            style={{ padding: '10px', minHeight: '150px' }}
-            onDragEnter={(e) => onDragEnter(e, plan.id, plan.candidates.length)}
+          style={{ padding: '10px', minHeight: '150px' }}
+          onDragOver={(e) => { e.preventDefault(); }}
+          onDrop={(e) => { e.stopPropagation(); if (typeof onDrop === 'function') onDrop(e, plan.id, plan.candidates.length); }}
         >
               {plan.candidates.map((candidate, index) => (
-            <Box
+              <Box
               key={candidate.id}
               draggable
               onDragStart={(e) => onDragStart(e, plan.id, index)}
-              onDragEnter={(e) => onDragEnter(e, plan.id, index)}
+              onDragOver={(e) => { e.preventDefault(); }}
+              onDrop={(e) => { e.stopPropagation(); if (typeof onDrop === 'function') onDrop(e, plan.id, index); }}
               sx={{
                 display: 'flex',
                 alignItems: 'center',
@@ -139,6 +149,11 @@ const SuccessionPlanCard = ({ plan, onAddCandidate, onRemoveCandidate, watchlist
         {/* Add drawer is used instead of dropdown select for adding candidates */}
 
       </CardContent>
+      <Snackbar open={snackbarOpen} autoHideDuration={4000} onClose={() => setSnackbarOpen(false)}>
+        <Alert onClose={() => setSnackbarOpen(false)} severity="warning" sx={{ width: '100%' }}>
+          Some of your succession plans are more than 6 months old. Please review and update them.
+        </Alert>
+      </Snackbar>
     </Card>
   );
 };

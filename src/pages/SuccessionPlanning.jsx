@@ -3,7 +3,6 @@ import clubStaffData from '../data/users_staff.json';
 import staffData from '../data/staff_talent.json';
 import SuccessionPlanCard from '../components/SuccessionPlanCard';
 import PlayerAvatar from '../components/PlayerAvatar';
-import OutdatedNotification from '../components/OutdatedNotification';
 import { Typography, Grid, Drawer, Box, IconButton, Checkbox } from '@mui/material'; // Added Button
 import MedinahButton from '../components/Button';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'; // Added for close button
@@ -29,6 +28,9 @@ const getRandomCandidates = (incumbentId, count) => {
 const drawerWidth = '60%'; // Define a width for the drawer (60% of screen)
 
 const SuccessionPlanning = () => {
+  const oneYearAgo = new Date();
+  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
   const initialPlans = clubStaffData.map(staff => ({
     id: `sp-${staff.id}`,
     role: staff.role,
@@ -38,11 +40,11 @@ const SuccessionPlanning = () => {
       picUrl: staff.profilePic,
     },
     candidates: getRandomCandidates(staff.id, 3),
-    lastUpdated: new Date().toISOString(),
+    lastUpdated: staff.role === 'Strength & Conditioning Coach' ? oneYearAgo.toISOString() : new Date().toISOString(),
   }));
 
   const [plans, setPlans] = useState(initialPlans);
-  const [showNotification, setShowNotification] = useState(false);
+  
   const [isComparisonDrawerOpen, setIsComparisonDrawerOpen] = useState(true); // Drawer open by default
   const [selectedPlanId, setSelectedPlanId] = useState(initialPlans && initialPlans.length ? initialPlans[0].id : null); // Default to first plan for comparison
   const [openAddDrawerPlanId, setOpenAddDrawerPlanId] = useState(null); // plan id for add-drawer
@@ -53,45 +55,47 @@ const SuccessionPlanning = () => {
   const [sourcePlanId, setSourcePlanId] = useState(null);
   const dragItemNode = useRef();
 
-  useEffect(() => {
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-    const hasOutdated = plans.some(plan => new Date(plan.lastUpdated) < sixMonthsAgo);
-    if (hasOutdated) {
-      setShowNotification(true);
-    }
-  }, [plans]);
+  // we rely on per-card chips and snackbars for outdated notifications
 
   const handleDragStart = (e, planId, candidateIndex) => {
+    // Store source info in dataTransfer for reliable cross-element drops
+    const payload = JSON.stringify({ planId, candidateIndex });
+    try { e.dataTransfer.setData('application/json', payload); } catch (err) { /* some browsers may restrict */ }
     setDraggedItem(plans.find(p => p.id === planId).candidates[candidateIndex]);
     setSourcePlanId(planId);
     dragItemNode.current = e.target;
     dragItemNode.current.addEventListener('dragend', handleDragEnd);
-    setTimeout(() => {
-      // Make the dragged item invisible
-      e.target.style.opacity = 0.5;
-    }, 0);
+    setTimeout(() => { e.target.style.opacity = 0.5; }, 0);
   };
-  
-  const handleDragEnter = (e, planId, candidateIndex) => {
-    if (dragItemNode.current !== e.target) {
-        setPlans(oldPlans => {
-            let newPlans = JSON.parse(JSON.stringify(oldPlans));
-            const sourcePlan = newPlans.find(p => p.id === sourcePlanId);
-            const [movedItem] = sourcePlan.candidates.splice(draggedItem.priority -1, 1);
-            
-            const targetPlan = newPlans.find(p => p.id === planId);
-            targetPlan.candidates.splice(candidateIndex, 0, movedItem);
 
-            // re-assign priorities
-            sourcePlan.candidates.forEach((c, i) => c.priority = i + 1);
-            targetPlan.candidates.forEach((c, i) => c.priority = i + 1);
-            
-            setDraggedItem(movedItem);
-            setSourcePlanId(planId);
-            return newPlans;
-        });
-    }
+  const handleDrop = (e, targetPlanId, targetIndex) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Try to read structured payload
+    let payload = null;
+    try { payload = JSON.parse(e.dataTransfer.getData('application/json')); } catch (err) { payload = null; }
+    // Fallback: if we don't have structured payload, use current state
+    const srcPlanId = payload?.planId ?? sourcePlanId;
+    const srcIndex = payload?.candidateIndex ?? (draggedItem ? draggedItem.priority - 1 : null);
+    if (!srcPlanId || srcIndex === null || srcIndex === undefined) return;
+
+    setPlans(oldPlans => {
+      const newPlans = JSON.parse(JSON.stringify(oldPlans));
+      const sourcePlan = newPlans.find(p => p.id === srcPlanId);
+      const targetPlan = newPlans.find(p => p.id === targetPlanId);
+      if (!sourcePlan || !targetPlan) return oldPlans;
+
+      const [moved] = sourcePlan.candidates.splice(srcIndex, 1);
+      if (!moved) return oldPlans;
+
+      targetPlan.candidates.splice(targetIndex, 0, moved);
+
+      // reassign priorities
+      sourcePlan.candidates.forEach((c, i) => { c.priority = i + 1; });
+      targetPlan.candidates.forEach((c, i) => { c.priority = i + 1; });
+
+      return newPlans.map(p => ({ ...p, lastUpdated: p.id === sourcePlan.id || p.id === targetPlan.id ? new Date().toISOString() : p.lastUpdated }));
+    });
   };
 
 
@@ -208,10 +212,10 @@ const SuccessionPlanning = () => {
           transition: 'width 0.3s ease',
         }}
       >
-        {showNotification && <OutdatedNotification onClose={() => setShowNotification(false)} />}
+        {/* Outdated page-level banner removed — card-level chips provide notifications */}
 
         <Grid container spacing={3}>
-          {plans.map(plan => (
+          {plans.map((plan, idx) => (
             <Grid item key={plan.id} xs={12} sm={isComparisonDrawerOpen ? 6 : 6} md={isComparisonDrawerOpen ? 6 : 4} lg={isComparisonDrawerOpen ? 6 : 4} xl={isComparisonDrawerOpen ? 6 : 3}>
               <SuccessionPlanCard
                 plan={plan}
@@ -220,11 +224,12 @@ const SuccessionPlanning = () => {
                 watchlistCandidates={watchlistCandidates}
                 talentDBCandidates={talentDBCandidates}
                 onDragStart={handleDragStart}
-                onDragEnter={handleDragEnter}
+                onDrop={handleDrop}
                 onCardClick={handleCardClick}
                 isSelected={selectedPlanId === plan.id}
                 onOpenAddDrawer={handleOpenAddDrawer}
                 originTab={1}
+                highlightNeedsRefresh={plan.role === 'Strength & Conditioning Coach'}
               />
             </Grid>
           ))}
@@ -265,7 +270,7 @@ const SuccessionPlanning = () => {
             }}
           >
             <Typography variant="h5" component="div">
-              {selectedPlan ? selectedPlan.role : 'Role Comparison'}
+              {selectedPlan ? (selectedPlan.role === 'Strength & Conditioning Coach' ? 'S+C' : selectedPlan.role) : 'Role Comparison'}
             </Typography>
             <IconButton onClick={handleDrawerClose}>
               <ChevronRightIcon />
