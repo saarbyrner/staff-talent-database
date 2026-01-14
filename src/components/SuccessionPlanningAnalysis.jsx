@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Paper,
@@ -116,6 +117,29 @@ const COMPARISON_COLUMN_VISIBILITY = {
   languages: false,
 };
 
+// User-requested visibility: show only the columns the user requested.
+// We'll build a full column visibility model at runtime to ensure unspecified
+// columns are hidden.
+const USER_COMPARISON_COLUMN_VISIBILITY = {
+  picUrl: true,
+  firstName: true,
+  lastName: true,
+  priority: true,
+  license: true,
+  age: true,
+  yearsExp: true,
+  winRate: true,
+  ppm: true,
+  trophies: true,
+  xgDiff: true,
+  squadValuePerf: true,
+  possession: true,
+  ppda: true,
+  u23Minutes: true,
+  academyDebuts: true,
+  eloRating: true,
+};
+
 const ensureCoachingStats = (staff) => {
   if (!staff) return null;
   if (staff.coachingStats) return staff;
@@ -214,6 +238,7 @@ const formatDate = (value) => {
 };
 
 function SuccessionPlanningAnalysis({ filteredStaff = [], successionContext }) {
+  const navigate = useNavigate();
   const staffIndex = useMemo(() => {
     const map = new Map();
     staffTalent.forEach((staff) => {
@@ -267,11 +292,11 @@ function SuccessionPlanningAnalysis({ filteredStaff = [], successionContext }) {
   });
 
   useEffect(() => {
-    if (!contextPlan) return;
-    if (contextPlan.id !== selectedPlanId) {
-      setSelectedPlanId(contextPlan.id);
+    if (!planOptions.length) return;
+    if (!selectedPlanId || !planOptions.some((plan) => plan.id === selectedPlanId)) {
+      setSelectedPlanId(planOptions[0].id);
     }
-  }, [contextPlan, selectedPlanId]);
+  }, [planOptions, selectedPlanId]);
 
   const activePlan = planOptions.find((plan) => plan.id === selectedPlanId) || planOptions[0] || null;
 
@@ -379,6 +404,18 @@ function SuccessionPlanningAnalysis({ filteredStaff = [], successionContext }) {
       ),
     [],
   );
+
+  // Build a full visibility model from the available columns so unspecified
+  // columns are explicitly hidden. This ensures only the user's requested
+  // fields are visible in the DataGrid.
+  const comparisonColumnVisibilityModel = useMemo(() => {
+    const model = {};
+    comparisonColumns.forEach((col) => {
+      // Default to false; enable only fields present in the user's model
+      model[col.field] = !!USER_COMPARISON_COLUMN_VISIBILITY[col.field];
+    });
+    return model;
+  }, [comparisonColumns]);
 
   const comparisonRows = useMemo(() => {
     const rows = [];
@@ -497,6 +534,40 @@ function SuccessionPlanningAnalysis({ filteredStaff = [], successionContext }) {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, minWidth: 0, width: '100%' }}>
+      {/* Title and Role selector inline */}
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
+        <Box>
+          <Typography variant="h5" sx={{ fontWeight: 700 }}>
+            Succession Planning
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Role readiness benchmarking and pipeline health
+          </Typography>
+        </Box>
+        <FormControl size="small" sx={{ minWidth: 220 }}>
+          <InputLabel>Role</InputLabel>
+          <Select
+            label="Role"
+            value={selectedPlanId || ''}
+            onChange={(event) => {
+              const planId = event.target.value;
+              setSelectedPlanId(planId);
+              const targetPath = window.location.pathname.startsWith('/league') ? '/league/analysis' : '/analysis';
+              navigate(targetPath, {
+                replace: true,
+                state: { analysisTab: 'successionPlanning', successionContext: { planId } },
+              });
+            }}
+          >
+            {planOptions.map((plan) => (
+              <MenuItem key={plan.id} value={plan.id}>
+                {plan.role}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
+
       <Paper
         elevation={0}
         sx={{
@@ -509,61 +580,105 @@ function SuccessionPlanningAnalysis({ filteredStaff = [], successionContext }) {
           minWidth: 0,
         }}
       >
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-          <FormControl size="small" sx={{ minWidth: 220 }}>
-            <InputLabel>Role</InputLabel>
-            <Select
-              label="Role"
-              value={selectedPlanId || ''}
-              onChange={(event) => setSelectedPlanId(event.target.value)}
-            >
-              {planOptions.map((plan) => (
-                <MenuItem key={plan.id} value={plan.id}>
-                  {plan.role}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl size="small" sx={{ minWidth: 260 }}>
-            <InputLabel>Focus KPIs</InputLabel>
-            <Select
-              label="Focus KPIs"
-              multiple
-              value={selectedKpis}
-              onChange={handleKpiChange}
-              renderValue={(selected) =>
-                selected.map((id) => KPI_OPTIONS.find((opt) => opt.id === id)?.label).join(', ')
-              }
-            >
-              {KPI_OPTIONS.map((option) => (
-                <MenuItem key={option.id} value={option.id}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+            Full talent profile (current vs. pipeline)
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Includes the same columns available in Watchlist to keep evaluations consistent.
+          </Typography>
         </Box>
-
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center' }}>
-          <Box>
-            <Typography variant="h6" sx={{ fontWeight: 700 }}>
-              {activePlan?.role || 'Succession Plan'}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Last updated {formatDate(activePlan?.lastUpdated)} · {candidateProfiles.length} candidates tracked
-            </Typography>
+        <Box sx={{ width: '100%', overflowX: 'auto' }}>
+          <Box sx={{ minWidth: 720 }}>
+            <DataGridPro
+              autoHeight
+              rows={comparisonRows}
+              columns={comparisonColumns}
+              disableRowSelectionOnClick
+              checkboxSelection={false}
+              hideFooterSelectedRowCount
+              initialState={{
+                pagination: { paginationModel: { pageSize: 8 } },
+                columns: { 
+                  columnVisibilityModel: comparisonColumnVisibilityModel,
+                  orderedFields: ['picUrl', 'firstName', 'lastName', 'priority', 'license', 'age', 'yearsExp', 'winRate', 'ppm', 'trophies', 'xgDiff', 'squadValuePerf', 'possession', 'ppda', 'u23Minutes', 'academyDebuts', 'eloRating'],
+                },
+              }}
+              pageSizeOptions={[8, 16, 32]}
+              getCellClassName={(params) => {
+                // Skip conditional formatting for non-numeric columns
+                const numericFields = ['age', 'yearsExp', 'winRate', 'ppm', 'trophies', 'xgDiff', 'squadValuePerf', 'possession', 'ppda', 'u23Minutes', 'academyDebuts', 'eloRating'];
+                if (!numericFields.includes(params.field)) return '';
+                
+                // Ensure we have a numeric value from the current cell
+                const currentValue = typeof params.value === 'number' ? params.value : parseFloat(params.value);
+                if (isNaN(currentValue) || currentValue === null) return '';
+                
+                // Find the column definition to handle valueGetter
+                const column = comparisonColumns.find(col => col.field === params.field);
+                
+                // Get all values for this column, respecting valueGetter
+                const columnValues = [];
+                comparisonRows.forEach(row => {
+                  let val;
+                  if (column && column.valueGetter) {
+                    // Use the valueGetter function if it exists
+                    val = column.valueGetter({ row });
+                  } else {
+                    // Otherwise get the value directly
+                    val = row[params.field];
+                  }
+                  
+                  const numVal = typeof val === 'number' ? val : parseFloat(val);
+                  if (!isNaN(numVal) && numVal !== null) {
+                    columnValues.push(numVal);
+                  }
+                });
+                
+                if (columnValues.length <= 1) return '';
+                
+                const minVal = Math.min(...columnValues);
+                const maxVal = Math.max(...columnValues);
+                const range = maxVal - minVal;
+                
+                if (range === 0) return '';
+                
+                // Calculate percentile (0-1)
+                const percentile = (currentValue - minVal) / range;
+                
+                // Return CSS class based on percentile
+                if (percentile >= 0.8) return 'cell-performance-excellent';
+                if (percentile >= 0.6) return 'cell-performance-good';
+                if (percentile >= 0.4) return 'cell-performance-average';
+                if (percentile >= 0.2) return 'cell-performance-below';
+                return 'cell-performance-poor';
+              }}
+              sx={{
+                border: 'none',
+                '& .MuiDataGrid-columnHeaders': {
+                  borderBottom: '1px solid var(--color-border-primary)',
+                  backgroundColor: 'var(--color-background-secondary)',
+                },
+                '& .cell-performance-excellent': {
+                  backgroundColor: 'rgba(76, 175, 80, 0.15)',
+                },
+                '& .cell-performance-good': {
+                  backgroundColor: 'rgba(139, 195, 74, 0.12)',
+                },
+                '& .cell-performance-average': {
+                  backgroundColor: 'rgba(255, 235, 59, 0.1)',
+                },
+                '& .cell-performance-below': {
+                  backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                },
+                '& .cell-performance-poor': {
+                  backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                },
+              }}
+            />
           </Box>
-          <Chip label={`Coverage ${coverageScore}%`} color="primary" />
-          <Chip label={`${readinessBuckets.readyNow} ready now`} variant="outlined" />
-          <Chip label={`${readinessBuckets.readySoon} ready soon`} variant="outlined" />
-          <Chip label={`${readinessBuckets.emerging} emerging`} variant="outlined" />
         </Box>
       </Paper>
-
-      <Grid container spacing={2} sx={{ width: '100%', m: 0 }}>
-        {renderKpiCards()}
-      </Grid>
 
       <Paper
         elevation={0}
@@ -643,50 +758,6 @@ function SuccessionPlanningAnalysis({ filteredStaff = [], successionContext }) {
             Select at least one candidate to unlock trajectory insights.
           </Typography>
         )}
-      </Paper>
-
-      <Paper
-        elevation={0}
-        sx={{
-          border: '1px solid var(--color-border-primary)',
-          borderRadius: 1,
-          p: 3,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2,
-          minWidth: 0,
-        }}
-      >
-        <Typography variant="h6" sx={{ fontWeight: 700 }}>
-          Full talent profile (current vs. pipeline)
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Includes the same columns available in Watchlist to keep evaluations consistent.
-        </Typography>
-        <Box sx={{ width: '100%', overflowX: 'auto' }}>
-          <Box sx={{ minWidth: 720 }}>
-            <DataGridPro
-              autoHeight
-              rows={comparisonRows}
-              columns={comparisonColumns}
-              disableRowSelectionOnClick
-              checkboxSelection={false}
-              hideFooterSelectedRowCount
-              initialState={{
-                pagination: { paginationModel: { pageSize: 8 } },
-                columns: { columnVisibilityModel: COMPARISON_COLUMN_VISIBILITY },
-              }}
-              pageSizeOptions={[8, 16, 32]}
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-columnHeaders': {
-                  borderBottom: '1px solid var(--color-border-primary)',
-                  backgroundColor: 'var(--color-background-secondary)',
-                },
-              }}
-            />
-          </Box>
-        </Box>
       </Paper>
 
       {activePlanForChart && (

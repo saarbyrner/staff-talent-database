@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Drawer,
   Box,
@@ -18,13 +19,15 @@ import TagChip from './TagChip';
  * Get status chip styling based on approval status
  */
 const getStatusChip = (status) => {
+  // normalize status to avoid case-sensitive mismatches or undefined
+  const key = (status || 'pending').toString().toLowerCase();
   const configs = {
     pending: { label: 'Pending', icon: <PendingOutlined />, color: 'warning' },
     approved: { label: 'Approved', icon: <CheckCircleOutlined />, color: 'success' },
     rejected: { label: 'Rejected', icon: <CancelOutlined />, color: 'error' },
   };
   
-  const config = configs[status] || configs.pending;
+  const config = configs[key] || configs.pending;
   
   return (
     <Chip
@@ -69,7 +72,7 @@ const ClubApprovalInbox = ({ open, onClose, sentApprovals = [] }) => {
               Approval Requests
             </Typography>
           </Box>
-          <IconButton onClick={onClose} size="small">
+          <IconButton onClick={onClose} size="small" aria-label="Close approval inbox">
             <CloseOutlined />
           </IconButton>
         </Box>
@@ -170,11 +173,18 @@ const ClubApprovalInbox = ({ open, onClose, sentApprovals = [] }) => {
                   
                   <Typography variant="body2" sx={{ mx: 0.5 }}>→</Typography>
                   
-                  <Stack direction="row" spacing={0.5}>
-                    {approval.newTags.map(tag => (
-                      <TagChip key={tag} label={tag} size="small" />
-                    ))}
-                  </Stack>
+                  {/* Guard newTags rendering */}
+                  {approval.newTags && approval.newTags.length > 0 ? (
+                    <Stack direction="row" spacing={0.5}>
+                      {approval.newTags.map(tag => (
+                        <TagChip key={tag} label={tag} size="small" />
+                      ))}
+                    </Stack>
+                  ) : (
+                    <Typography variant="caption" color="text.secondary">
+                      No tags
+                    </Typography>
+                  )}
                 </Box>
                 
                 {/* Response Message (if rejected or approved with note) */}
@@ -197,6 +207,26 @@ const ClubApprovalInbox = ({ open, onClose, sentApprovals = [] }) => {
       </Box>
     </Drawer>
   );
+};
+
+ClubApprovalInbox.propTypes = {
+  open: PropTypes.bool,
+  onClose: PropTypes.func,
+  sentApprovals: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    staffName: PropTypes.string,
+    timestamp: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.instanceOf(Date)]),
+    status: PropTypes.string,
+    oldTags: PropTypes.arrayOf(PropTypes.string),
+    newTags: PropTypes.arrayOf(PropTypes.string),
+    responseMessage: PropTypes.string,
+  })),
+};
+
+ClubApprovalInbox.defaultProps = {
+  open: false,
+  onClose: () => {},
+  sentApprovals: [],
 };
 
 export default ClubApprovalInbox;

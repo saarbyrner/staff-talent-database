@@ -615,9 +615,9 @@ export const createWatchlistColumns = (
         <Chip 
           label={params.value} 
           size="small" 
-          color="warning" 
-          variant="outlined"
-          sx={{ height: 24 }}
+          color="default" 
+          variant="filled"
+          sx={{ height: 24, bgcolor: 'var(--color-background-secondary)', color: 'var(--color-text-primary)' }}
         />
       ) : <Typography variant="body2" color="text.secondary">-</Typography>;
     }

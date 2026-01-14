@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { 
   Box, 
@@ -11,6 +11,8 @@ import {
   MenuItem,
   Badge,
   Select,
+  FormControl,
+  InputLabel,
   CssBaseline,
   List,
   ListItem,
@@ -24,6 +26,7 @@ import {
 } from '@mui/icons-material'
 import MainNavigation from './MainNavigation'
 import '../styles/design-tokens.css'
+import successionPlans from '../data/successionPlans.json'
 
 // Mock current user data
 const currentUser = {
@@ -149,6 +152,8 @@ function MedinahLayoutWithMainNav({ children }) {
     { id: 'form_responses', label: 'Form responses', path: '/forms/form_answers_sets' }
   ]
 
+
+
   return (
     <>
       <CssBaseline />
@@ -254,20 +259,23 @@ function MedinahLayoutWithMainNav({ children }) {
         >
           <Toolbar sx={{ justifyContent: 'space-between' }}>
             {/* Page Title */}
-            <Typography 
-              variant="h6" 
-              component="h1"
-              sx={{ 
-                fontWeight: 600,
-                color: 'var(--color-text-primary)',
-                textTransform: 'none'
-              }}
-            >
-              {getPageTitle()}
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Typography 
+                variant="h6" 
+                component="h1"
+                sx={{ 
+                  fontWeight: 600,
+                  color: 'var(--color-text-primary)',
+                  textTransform: 'none'
+                }}
+              >
+                {getPageTitle()}
+              </Typography>
+            </Box>
 
             {/* Right Side Actions */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              {/* Succession selector removed from AppBar; moved into Succession page header */}
               {/* Squad Selector */}
               <Select
                 value={currentSquad.id}

@@ -441,6 +441,13 @@ function StaffMapDashboard() {
     }
   }, [location.state, visibleDashboards, activeTab]);
 
+  // Close filter sidebar when switching to succession planning tab
+  useEffect(() => {
+    if (visibleDashboards[activeTab]?.id === 'successionPlanning') {
+      setFilterSidebarOpen(false);
+    }
+  }, [activeTab, visibleDashboards]);
+
   // Handle settings update
   const handleUpdateSettings = (newSettings) => {
     setDashboardSettings(newSettings);
@@ -531,26 +538,27 @@ function StaffMapDashboard() {
       </Paper>
 
       <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 3, flex: 1, overflowY: 'auto', overflowX: 'hidden', maxWidth: '100%', minWidth: 0 }}>
-      {/* Header */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Box>
-          <Typography 
-            variant="h5" 
-            sx={{ 
-              fontWeight: 700, 
-              color: 'var(--color-primary)',
-              mb: 0.5
-            }}
-          >
-            {visibleDashboards[activeTab]?.label || 'Dashboard'}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {visibleDashboards[activeTab]?.description || ''}
-          </Typography>
-        </Box>
+      {/* Header - Hide for succession planning as it has its own header */}
+      {visibleDashboards[activeTab]?.id !== 'successionPlanning' && (
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box>
+            <Typography 
+              variant="h5" 
+              sx={{ 
+                fontWeight: 700, 
+                color: 'var(--color-primary)',
+                mb: 0.5
+              }}
+            >
+              {visibleDashboards[activeTab]?.label || 'Dashboard'}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {visibleDashboards[activeTab]?.description || ''}
+            </Typography>
+          </Box>
 
-        {/* Filters - Only show on Location tab */}
-        {visibleDashboards[activeTab]?.id === 'locationAnalysis' && (
+          {/* Filters - Only show on Location tab */}
+          {visibleDashboards[activeTab]?.id === 'locationAnalysis' && (
           <Box sx={{ display: 'flex', gap: 2 }}>
             <FormControl size="small" sx={{ minWidth: 150 }}>
               <InputLabel>Country</InputLabel>
@@ -580,8 +588,9 @@ function StaffMapDashboard() {
               </Select>
             </FormControl>
           </Box>
-        )}
-      </Box>
+          )}
+        </Box>
+      )}
 
       {/* Location Analysis Tab */}
       {visibleDashboards[activeTab]?.id === 'locationAnalysis' && (
