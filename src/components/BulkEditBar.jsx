@@ -178,25 +178,6 @@ function BulkEditBar({ selectedCount, onSave, onCancel, onAddToWatchlist, isLeag
           />
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          {onAddToWatchlist && (
-            <Button
-              onClick={onAddToWatchlist}
-              variant="outlined"
-              size="small"
-              startIcon={<Visibility />}
-              sx={{ 
-                textTransform: 'none',
-                borderColor: 'var(--color-primary)',
-                color: 'var(--color-primary)',
-                '&:hover': {
-                  borderColor: 'var(--color-primary-hover)',
-                  backgroundColor: 'var(--color-background-tertiary)'
-                }
-              }}
-            >
-              Add to Watchlist
-            </Button>
-          )}
           <Button
             onClick={onCancel}
             color="inherit"

@@ -285,55 +285,6 @@ const LinkCell = ({ value, type, name = '' }) => {
 };
 
 const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeagueView = false, onNotesClick, staffNotes = {}) => {
-  const watchlistColumn = isLeagueView ? {
-    field: 'watchlistCount',
-    headerName: 'Watchlist',
-    width: 100,
-    type: 'number',
-    valueGetter: (params) => {
-       const seed = params.row.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-       return (seed % 15) + 1;
-    },
-    renderCell: (params) => (
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-        <VisibilityOutlined fontSize="small" color="action" />
-        <Typography variant="body2">{params.value}</Typography>
-      </Box>
-    )
-  } : {
-    field: 'watchlist',
-    headerName: '',
-    width: 60,
-    sortable: false,
-    filterable: false,
-    renderCell: (params) => {
-      const isWatchlisted = watchlistIds.includes(params.row.id);
-      return (
-        <Tooltip title={isWatchlisted ? "Remove from Watchlist" : "Add to Watchlist"}>
-          <IconButton
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleWatchlist(params.row.id);
-            }}
-            sx={{
-              color: isWatchlisted ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-              '&:hover': {
-                backgroundColor: 'var(--color-background-tertiary)',
-              }
-            }}
-          >
-            {isWatchlisted ? (
-              <Visibility fontSize="small" />
-            ) : (
-              <VisibilityOutlined fontSize="small" />
-            )}
-          </IconButton>
-        </Tooltip>
-      );
-    }
-  };
-
   const notesColumn = {
     field: 'notes',
     headerName: '',
@@ -371,7 +322,6 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
   };
 
   return [
-  watchlistColumn,
   notesColumn,
   {
     field: 'picUrl',
