@@ -22,7 +22,6 @@ import {
   LabelOutlined,
   Visibility,
   VisibilityOutlined,
-  InboxOutlined,
   NotesOutlined,
 } from '@mui/icons-material';
 import staffData from '../data/staff_talent.json';
@@ -31,8 +30,6 @@ import BulkEditBar from './BulkEditBar';
 import TagChip from './TagChip';
 import TagSelector from './TagSelector';
 import TagManagementDrawer from './TagManagementDrawer';
-import TagApprovalDrawer from './TagApprovalDrawer';
-import ClubApprovalInbox from './ClubApprovalInbox';
 import NotesDrawer from './NotesDrawer';
 import '../styles/design-tokens.css';
 
@@ -70,7 +67,7 @@ const generateStats = (id) => {
 export const CustomToolbar = React.forwardRef((props, ref) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { onInviteClick, onManageTags, hideAddButton, onApprovals, pendingApprovalsCount = 0 } = props;
+  const { onInviteClick, onManageTags, hideAddButton } = props;
   
   const handleAddClick = () => {
     const basePath = location.pathname.startsWith('/league') ? '/league/staff' : '/staff';
@@ -144,30 +141,6 @@ export const CustomToolbar = React.forwardRef((props, ref) => {
           >
             Tags
           </Button>
-        )}
-        {onApprovals && (
-          <Badge badgeContent={pendingApprovalsCount} color="error">
-            <Button
-              variant="outlined"
-              startIcon={<InboxOutlined />}
-              onClick={onApprovals}
-              sx={{
-                textTransform: 'none',
-                fontSize: '0.875rem',
-                fontWeight: 500,
-                borderColor: 'var(--color-border-primary)',
-                color: 'var(--color-text-primary)',
-                minWidth: 'auto',
-                padding: '6px 12px',
-                '&:hover': {
-                  borderColor: 'var(--color-text-primary)',
-                  backgroundColor: 'var(--color-background-tertiary)'
-                }
-              }}
-            >
-              Approvals
-            </Button>
-          </Badge>
         )}
         {onInviteClick && (
           <Button
@@ -285,44 +258,7 @@ const LinkCell = ({ value, type, name = '' }) => {
 };
 
 const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeagueView = false, onNotesClick, staffNotes = {}) => {
-  const notesColumn = {
-    field: 'notes',
-    headerName: '',
-    width: 60,
-    sortable: false,
-    filterable: false,
-    renderCell: (params) => {
-      const noteCount = staffNotes[params.row.id]?.length || 0;
-      return (
-        <Tooltip title={noteCount > 0 ? `${noteCount} private note${noteCount > 1 ? 's' : ''}` : "Add private note"}>
-          <IconButton
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              onNotesClick(params.row.id);
-            }}
-            sx={{
-              color: noteCount > 0 ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-              '&:hover': {
-                backgroundColor: 'var(--color-background-tertiary)',
-              }
-            }}
-          >
-            {noteCount > 0 ? (
-              <Badge badgeContent={noteCount} color="primary" max={99}>
-                <NotesOutlined fontSize="small" />
-              </Badge>
-            ) : (
-              <NotesOutlined fontSize="small" />
-            )}
-          </IconButton>
-        </Tooltip>
-      );
-    }
-  };
-
   return [
-  notesColumn,
   {
     field: 'picUrl',
     headerName: '',
@@ -1131,109 +1067,6 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
   const [selectedStaffForNotes, setSelectedStaffForNotes] = React.useState(null);
   const [staffNotes, setStaffNotes] = React.useState({});
   
-  // Approval system state
-  const [pendingApprovals, setPendingApprovals] = React.useState([
-    {
-      id: 'approval-example-1',
-      staffId: '101',
-      staffName: 'James Rivera',
-      clubName: 'LAFC',
-      oldTags: ['Proven'],
-      newTags: ['High Potential'],
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-    },
-    {
-      id: 'approval-example-2',
-      staffId: '102',
-      staffName: 'Michael Okoro',
-      clubName: 'FC Cincinnati',
-      oldTags: ['Proven'],
-      newTags: ['Emerging'],
-      timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), // 5 hours ago
-    },
-    {
-      id: 'approval-example-3',
-      staffId: '105',
-      staffName: 'David Smith',
-      clubName: 'LA Galaxy',
-      oldTags: ['Proven'],
-      newTags: ['Proven', 'High Potential'],
-      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-    },
-    {
-      id: 'approval-example-4',
-      staffId: '110',
-      staffName: 'Christopher Nair',
-      clubName: 'Austin FC',
-      oldTags: ['Emerging'],
-      newTags: ['Proven'],
-      timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // 3 hours ago
-    },
-    {
-      id: 'approval-example-5',
-      staffId: '115',
-      staffName: 'Mark Wilson',
-      clubName: 'Seattle Sounders FC',
-      oldTags: ['Emerging'],
-      newTags: ['Unproven'],
-      timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 minutes ago
-    },
-  ]);
-  const [approvalDrawerOpen, setApprovalDrawerOpen] = React.useState(false);
-  
-  // Club sent approvals state (for club view)
-  const [sentApprovals, setSentApprovals] = React.useState([
-    {
-      id: 'sent-1',
-      staffId: '103',
-      staffName: 'Robert Vasiliev',
-      oldTags: ['Emerging'],
-      newTags: ['High Potential'],
-      timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), // 1 hour ago
-      status: 'pending',
-    },
-    {
-      id: 'sent-2',
-      staffId: '106',
-      staffName: 'William Martinez',
-      oldTags: ['Emerging'],
-      newTags: ['Proven'],
-      timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), // 4 hours ago
-      status: 'approved',
-    },
-    {
-      id: 'sent-3',
-      staffId: '108',
-      staffName: 'Joseph Khan',
-      oldTags: ['Emerging'],
-      newTags: ['Unproven'],
-      timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6 hours ago
-      status: 'rejected',
-      responseMessage: 'This staff member shows consistent growth and should remain in Emerging category.',
-    },
-    {
-      id: 'sent-4',
-      staffId: '112',
-      staffName: 'Daniel Chen',
-      clubName: 'LA Galaxy',
-      oldTags: ['Proven'],
-      newTags: ['High Potential'],
-      timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(), // 12 hours ago
-      status: 'approved',
-    },
-    {
-      id: 'sent-5',
-      staffId: '114',
-      staffName: 'Anthony Lee',
-      clubName: 'Seattle Sounders FC',
-      oldTags: ['High Potential'],
-      newTags: ['Proven'],
-      timestamp: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(), // 2 days ago
-      status: 'pending',
-    },
-  ]);
-  const [clubInboxOpen, setClubInboxOpen] = React.useState(false);
-  
   const [toastOpen, setToastOpen] = React.useState(false);
   const [toastMessage, setToastMessage] = React.useState('');
   
@@ -1270,33 +1103,16 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
   };
   
   const handleTagsChange = (staffId, newTags) => {
-    const staff = localStaffData.find(s => s.id === staffId);
-    const oldTags = staff?.tags || [];
+    // Apply tag changes directly for all users
+    setLocalStaffData(prevData =>
+      prevData.map(staff =>
+        staff.id === staffId ? { ...staff, tags: newTags } : staff
+      )
+    );
     
-    // For club users, create a pending approval instead of directly changing
-    if (!isLeagueView) {
-      const approval = {
-        id: `approval-${Date.now()}-${staffId}`,
-        staffId,
-        staffName: `${staff.firstName} ${staff.lastName}`,
-        clubName: 'Club User', // In a real app, get from auth context
-        oldTags,
-        newTags,
-        timestamp: new Date().toISOString(),
-      };
-      
-      setPendingApprovals(prev => [...prev, approval]);
-      setToastMessage('Tag change sent for approval');
-      setToastOpen(true);
-      handleTagSelectorClose();
-    } else {
-      // League users can directly change tags
-      setLocalStaffData(prevData =>
-        prevData.map(staff =>
-          staff.id === staffId ? { ...staff, tags: newTags } : staff
-        )
-      );
-    }
+    setToastMessage('Tags updated successfully');
+    setToastOpen(true);
+    handleTagSelectorClose();
   };
   
   const handleTagSelectorClose = () => {
@@ -1372,47 +1188,6 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
       }))
     );
   };
-  
-  // Approval handlers
-  const handleApproveTagChange = (approvalId, note = '') => {
-    const approval = pendingApprovals.find(a => a.id === approvalId);
-    if (approval) {
-      // Apply the tag change
-      setLocalStaffData(prevData =>
-        prevData.map(staff =>
-          staff.id === approval.staffId ? { ...staff, tags: approval.newTags } : staff
-        )
-      );
-      
-      // Update the sent approvals for the club (if we track those globally)
-      // For now, just remove from pending
-      setPendingApprovals(prev => prev.filter(a => a.id !== approvalId));
-      
-      // In a real app, you'd also update the approval in the club's sent list with the response
-      // setSentApprovals(prev => prev.map(a => 
-      //   a.id === approvalId ? { ...a, status: 'approved', responseMessage: note } : a
-      // ));
-      
-      setToastMessage(`Approved tag change for ${approval.staffName}${note ? ' with note' : ''}`);
-      setToastOpen(true);
-    }
-  };
-  
-  const handleRejectTagChange = (approvalId, note = '') => {
-    const approval = pendingApprovals.find(a => a.id === approvalId);
-    if (approval) {
-      // Remove from pending without applying
-      setPendingApprovals(prev => prev.filter(a => a.id !== approvalId));
-      
-      // In a real app, you'd update the approval in the club's sent list with the response
-      // setSentApprovals(prev => prev.map(a => 
-      //   a.id === approvalId ? { ...a, status: 'rejected', responseMessage: note } : a
-      // ));
-      
-      setToastMessage(`Rejected tag change for ${approval.staffName}${note ? ' with note' : ''}`);
-      setToastOpen(true);
-    }
-  };
 
   const handleBulkEditSave = (updates) => {
     console.log('Bulk editing fields:', Object.keys(updates), 'for', selectedRows.length, 'staff members');
@@ -1422,66 +1197,36 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
     if (updates.tags) {
       const { action, values } = updates.tags;
       
-      // For club users, create pending approvals for each selected staff
-      if (!isLeagueView) {
-        selectedRows.forEach(staffId => {
-          const staff = localStaffData.find(s => s.id === staffId);
-          if (staff) {
-            let newTags = staff.tags || [];
-            if (action === 'add') {
-              const tagsToAdd = values.filter(tag => !newTags.includes(tag));
-              newTags = [...newTags, ...tagsToAdd].slice(0, 5);
-            } else if (action === 'remove') {
-              newTags = newTags.filter(tag => !values.includes(tag));
-            }
-            
-            const approval = {
-              id: `approval-${Date.now()}-${staffId}`,
-              staffId,
-              staffName: `${staff.firstName} ${staff.lastName}`,
-              clubName: 'Club User',
-              oldTags: staff.tags || [],
-              newTags,
-              timestamp: new Date().toISOString(),
-            };
-            
-            setPendingApprovals(prev => [...prev, approval]);
+      // Apply tag changes directly for all users
+      setLocalStaffData(prevData =>
+        prevData.map(staff => {
+          if (!selectedRows.includes(staff.id)) return staff;
+          
+          let newTags = staff.tags || [];
+          if (action === 'add') {
+            const tagsToAdd = values.filter(tag => !newTags.includes(tag));
+            newTags = [...newTags, ...tagsToAdd].slice(0, 4);
+          } else if (action === 'remove') {
+            newTags = newTags.filter(tag => !values.includes(tag));
           }
-        });
-        
-        setToastMessage(`${selectedRows.length} tag change${selectedRows.length > 1 ? 's' : ''} sent for approval`);
-        setToastOpen(true);
-      } else {
-        // League users can directly change tags
-        setLocalStaffData(prevData =>
-          prevData.map(staff => {
-            if (!selectedRows.includes(staff.id)) return staff;
-            
-            let newTags = staff.tags || [];
-            if (action === 'add') {
-              const tagsToAdd = values.filter(tag => !newTags.includes(tag));
-              newTags = [...newTags, ...tagsToAdd].slice(0, 5);
-            } else if (action === 'remove') {
-              newTags = newTags.filter(tag => !values.includes(tag));
-            }
-            
-            return { ...staff, tags: newTags };
-          })
-        );
-      }
+          
+          return { ...staff, tags: newTags };
+        })
+      );
+      
+      setToastMessage(`Updated tags for ${selectedRows.length} staff member${selectedRows.length > 1 ? 's' : ''}`);
+      setToastOpen(true);
     }
     
     // In a real application, other updates would also be applied here
     const selectedStaff = filteredStaffData.filter(staff => selectedRows.includes(staff.id));
     console.log('Selected staff:', selectedStaff.map(s => `${s.firstName} ${s.lastName}`));
     
-    if (isLeagueView) {
-      const updateSummary = Object.entries(updates)
-        .map(([field, value]) => `${field}: ${JSON.stringify(value)}`)
-        .join(', ');
-      
-      alert(`Updated ${updateSummary} for ${selectedRows.length} staff members`);
-    }
+    const updateSummary = Object.entries(updates)
+      .map(([field, value]) => `${field}: ${JSON.stringify(value)}`)
+      .join(', ');
+    
+    alert(`Updated ${updateSummary} for ${selectedRows.length} staff members`);
     
     // Clear selection and close bulk edit bar
     setSelectedRows([]);
@@ -1535,7 +1280,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
           onChange={(newTags) => handleTagsChange(selectedStaff.id, newTags)}
           anchorEl={tagSelectorAnchor}
           onClose={handleTagSelectorClose}
-          maxTags={5}
+          maxTags={4}
           isLeagueView={isLeagueView}
         />
       )}
@@ -1554,26 +1299,6 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
         }}
         isLeagueView={isLeagueView}
       />
-      
-      {/* Tag Approval Drawer - Only for League View */}
-      {isLeagueView && (
-        <TagApprovalDrawer
-          open={approvalDrawerOpen}
-          onClose={() => setApprovalDrawerOpen(false)}
-          pendingApprovals={pendingApprovals}
-          onApprove={handleApproveTagChange}
-          onReject={handleRejectTagChange}
-        />
-      )}
-      
-      {/* Club Approval Inbox - Only for Club View */}
-      {!isLeagueView && (
-        <ClubApprovalInbox
-          open={clubInboxOpen}
-          onClose={() => setClubInboxOpen(false)}
-          sentApprovals={sentApprovals}
-        />
-      )}
       
       {/* Notes Drawer */}
       {selectedStaffForNotes && (
@@ -1613,8 +1338,6 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
           toolbar: {
             onInviteClick,
             onManageTags: () => setTagManagementOpen(true),
-            onApprovals: isLeagueView ? () => setApprovalDrawerOpen(true) : () => setClubInboxOpen(true),
-            pendingApprovalsCount: isLeagueView ? pendingApprovals.length : sentApprovals.filter(a => a.status === 'pending').length,
           },
         }}
         rowSelectionModel={selectedRows}

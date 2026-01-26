@@ -64,9 +64,6 @@ function StaffProfile() {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState(0);
-  
-  // Notes state management
-  const [staffNotes, setStaffNotes] = useState({});
 
   // Determine if we're viewing from league context
   const isLeagueView = location.pathname.startsWith('/league');
@@ -155,42 +152,6 @@ function StaffProfile() {
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
-  };
-  
-  // Notes handlers
-  const handleAddNote = (staffId, noteText) => {
-    const newNote = {
-      id: `note-${Date.now()}`,
-      staffId,
-      text: noteText,
-      authorName: 'Current User',
-      authorInitials: 'CU',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    
-    setStaffNotes(prev => ({
-      ...prev,
-      [staffId]: [...(prev[staffId] || []), newNote]
-    }));
-  };
-  
-  const handleUpdateNote = (staffId, noteId, newText) => {
-    setStaffNotes(prev => ({
-      ...prev,
-      [staffId]: (prev[staffId] || []).map(note =>
-        note.id === noteId
-          ? { ...note, text: newText, updatedAt: new Date().toISOString() }
-          : note
-      )
-    }));
-  };
-  
-  const handleDeleteNote = (staffId, noteId) => {
-    setStaffNotes(prev => ({
-      ...prev,
-      [staffId]: (prev[staffId] || []).filter(note => note.id !== noteId)
-    }));
   };
 
   if (!staffMember) {
@@ -370,7 +331,6 @@ function StaffProfile() {
           <Tab label="Experience" />
           <Tab label="Qualifications" />
           <Tab label="Preferences" />
-          <Tab label="Notes" />
           {staffMember.coachingStats && <Tab label="Coaching Performance" />}
           {staffMember.source === 'current' && <Tab label="Employment" />}
         </Tabs>
@@ -382,17 +342,8 @@ function StaffProfile() {
         {activeTab === 1 && <ExperienceTab staffMember={staffMember} />}
         {activeTab === 2 && <QualificationsTab staffMember={staffMember} />}
         {activeTab === 3 && <PreferencesTab staffMember={staffMember} />}
-        {activeTab === 4 && (
-          <NotesTab
-            staffMember={staffMember}
-            notes={staffNotes[staffMember.id] || []}
-            onAddNote={handleAddNote}
-            onUpdateNote={handleUpdateNote}
-            onDeleteNote={handleDeleteNote}
-          />
-        )}
-        {activeTab === 5 && staffMember.coachingStats && <CoachingPerformanceTab staffMember={staffMember} />}
-        {activeTab === (staffMember.coachingStats ? 6 : 5) && staffMember.source === 'current' && <EmploymentTab staffMember={staffMember} />}
+        {activeTab === 4 && staffMember.coachingStats && <CoachingPerformanceTab staffMember={staffMember} />}
+        {activeTab === (staffMember.coachingStats ? 5 : 4) && staffMember.source === 'current' && <EmploymentTab staffMember={staffMember} />}
       </Box>
     </Box>
   );
