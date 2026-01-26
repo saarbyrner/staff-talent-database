@@ -235,13 +235,15 @@ const TagManagementDrawer = ({ open, onClose, staffData, onUpdateTag, onDeleteTa
                       </Stack>
                     </Box>
                     <Box sx={{ display: 'flex', gap: 0.5 }}>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleStartEdit(tag)}
-                        sx={{ color: 'var(--color-text-secondary)' }}
-                      >
-                        <EditOutlined fontSize="small" />
-                      </IconButton>
+                      {isLeagueView && (
+                        <IconButton
+                          size="small"
+                          onClick={() => handleStartEdit(tag)}
+                          sx={{ color: 'var(--color-text-secondary)' }}
+                        >
+                          <EditOutlined fontSize="small" />
+                        </IconButton>
+                      )}
                       <IconButton
                         size="small"
                         onClick={() => handleDelete(tag)}

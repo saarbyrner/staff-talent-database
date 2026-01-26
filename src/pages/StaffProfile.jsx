@@ -331,7 +331,6 @@ function StaffProfile() {
           <Tab label="Experience" />
           <Tab label="Qualifications" />
           <Tab label="Preferences" />
-          {staffMember.coachingStats && <Tab label="Coaching Performance" />}
           {staffMember.source === 'current' && <Tab label="Employment" />}
         </Tabs>
       </Paper>
@@ -342,8 +341,7 @@ function StaffProfile() {
         {activeTab === 1 && <ExperienceTab staffMember={staffMember} />}
         {activeTab === 2 && <QualificationsTab staffMember={staffMember} />}
         {activeTab === 3 && <PreferencesTab staffMember={staffMember} />}
-        {activeTab === 4 && staffMember.coachingStats && <CoachingPerformanceTab staffMember={staffMember} />}
-        {activeTab === (staffMember.coachingStats ? 5 : 4) && staffMember.source === 'current' && <EmploymentTab staffMember={staffMember} />}
+        {activeTab === 4 && staffMember.source === 'current' && <EmploymentTab staffMember={staffMember} />}
       </Box>
     </Box>
   );
@@ -1189,124 +1187,6 @@ function NotesTab({ staffMember, notes = [], onAddNote, onUpdateNote, onDeleteNo
           </Box>
         )}
       </Box>
-    </Box>
-  );
-}
-
-// Coaching Performance Tab with Visualizations
-function CoachingPerformanceTab({ staffMember }) {
-  const stats = staffMember.coachingStats;
-  if (!stats) return null;
-  const primaryLicense = staffMember.coachingLicenses?.[0] || 'None';
-
-  return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      <Paper elevation={0} sx={{ p: 3, border: '1px solid var(--color-border-primary)' }}>
-        <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>Career Overview</Typography>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={3}>
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h3" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>{stats.age}</Typography>
-              <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)', mt: 1 }}>Years Old</Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h3" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>{stats.yearsExp}</Typography>
-              <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)', mt: 1 }}>Years Experience</Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h3" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>{stats.trophies}</Typography>
-              <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)', mt: 1 }}>Trophies Won</Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Box sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <Chip label={primaryLicense} sx={{ height: 36, fontSize: '0.875rem', fontWeight: 600, px: 2 }} color="primary" variant="outlined" />
-              <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)', mt: 1 }}>Highest License</Typography>
-            </Box>
-          </Grid>
-        </Grid>
-      </Paper>
-
-      <Paper elevation={0} sx={{ p: 3, border: '1px solid var(--color-border-primary)' }}>
-        <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>Performance Metrics</Typography>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <Box>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-              <Typography variant="body1" sx={{ fontWeight: 600 }}>Win Rate</Typography>
-              <Typography variant="body1" sx={{ fontWeight: 700, color: stats.winRate > 55 ? 'success.main' : stats.winRate > 40 ? 'warning.main' : 'error.main' }}>{stats.winRate}%</Typography>
-            </Box>
-            <LinearProgress variant="determinate" value={stats.winRate} sx={{ height: 12, borderRadius: 6, bgcolor: 'grey.200', '& .MuiLinearProgress-bar': { bgcolor: stats.winRate > 55 ? 'success.main' : stats.winRate > 40 ? 'warning.main' : 'error.main', borderRadius: 6 } }} />
-            <Typography variant="caption" sx={{ color: 'var(--color-text-secondary)', mt: 0.5, display: 'block' }}>{stats.winRate > 55 ? 'Excellent' : stats.winRate > 40 ? 'Good' : 'Needs Improvement'}</Typography>
-          </Box>
-          <Box>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-              <Typography variant="body1" sx={{ fontWeight: 600 }}>Points Per Match (PPM)</Typography>
-              <Typography variant="h5" sx={{ fontWeight: 700, color: 'var(--color-primary)' }}>{stats.ppm}</Typography>
-            </Box>
-            <Typography variant="caption" sx={{ color: 'var(--color-text-secondary)' }}>Average points earned per match</Typography>
-          </Box>
-          <Box>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-              <Typography variant="body1" sx={{ fontWeight: 600 }}>Average Possession</Typography>
-              <Typography variant="body1" sx={{ fontWeight: 700 }}>{stats.possession}%</Typography>
-            </Box>
-            <LinearProgress variant="determinate" value={stats.possession} sx={{ height: 12, borderRadius: 6, bgcolor: 'grey.200', '& .MuiLinearProgress-bar': { bgcolor: 'info.main', borderRadius: 6 } }} />
-            <Typography variant="caption" sx={{ color: 'var(--color-text-secondary)', mt: 0.5, display: 'block' }}>{stats.possession > 55 ? 'Possession-based' : stats.possession < 45 ? 'Counter-attacking' : 'Balanced'}</Typography>
-          </Box>
-          <Box>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-              <Typography variant="body1" sx={{ fontWeight: 600 }}>U23 Playing Time</Typography>
-              <Typography variant="body1" sx={{ fontWeight: 700, color: stats.u23Minutes > 25 ? 'success.main' : 'text.primary' }}>{stats.u23Minutes}%</Typography>
-            </Box>
-            <LinearProgress variant="determinate" value={stats.u23Minutes} sx={{ height: 12, borderRadius: 6, bgcolor: 'grey.200', '& .MuiLinearProgress-bar': { bgcolor: stats.u23Minutes > 25 ? 'success.main' : 'warning.main', borderRadius: 6 } }} />
-            <Typography variant="caption" sx={{ color: 'var(--color-text-secondary)', mt: 0.5, display: 'block' }}>Minutes given to U23 players</Typography>
-          </Box>
-        </Box>
-      </Paper>
-
-      <Paper elevation={0} sx={{ p: 3, border: '1px solid var(--color-border-primary)' }}>
-        <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>Advanced Analytics</Typography>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={3}>
-            <Paper elevation={0} sx={{ p: 2, bgcolor: parseFloat(stats.xgDiff) > 0 ? 'success.lighter' : 'error.lighter', border: '1px solid', borderColor: parseFloat(stats.xgDiff) > 0 ? 'success.main' : 'error.main' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                {parseFloat(stats.xgDiff) > 0 ? <TrendingUp color="success" /> : <TrendingDown color="error" />}
-                <Typography variant="h4" sx={{ fontWeight: 700, color: parseFloat(stats.xgDiff) > 0 ? 'success.main' : 'error.main' }}>{parseFloat(stats.xgDiff) > 0 ? '+' : ''}{stats.xgDiff}</Typography>
-              </Box>
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>xG Differential</Typography>
-              <Typography variant="caption" sx={{ color: 'text.secondary' }}>Goals vs Expected</Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Paper elevation={0} sx={{ p: 2, bgcolor: parseFloat(stats.squadValuePerf) > 0 ? 'success.lighter' : 'error.lighter', border: '1px solid', borderColor: parseFloat(stats.squadValuePerf) > 0 ? 'success.main' : 'error.main' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                {parseFloat(stats.squadValuePerf) > 0 ? <TrendingUp color="success" /> : <TrendingDown color="error" />}
-                <Typography variant="h4" sx={{ fontWeight: 700, color: parseFloat(stats.squadValuePerf) > 0 ? 'success.main' : 'error.main' }}>{parseFloat(stats.squadValuePerf) > 0 ? '+' : ''}{stats.squadValuePerf}%</Typography>
-              </Box>
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>Squad Value Perf</Typography>
-              <Typography variant="caption" sx={{ color: 'text.secondary' }}>vs League Avg</Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Paper elevation={0} sx={{ p: 2, bgcolor: 'info.lighter', border: '1px solid var(--color-border-primary)' }}>
-              <Typography variant="h4" sx={{ fontWeight: 700, color: 'info.main', mb: 1 }}>{stats.ppda}</Typography>
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>PPDA</Typography>
-              <Typography variant="caption" sx={{ color: 'text.secondary' }}>Pressing Intensity</Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Paper elevation={0} sx={{ p: 2, bgcolor: 'primary.lighter', border: '1px solid var(--color-border-primary)' }}>
-              <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main', mb: 1 }}>{stats.academyDebuts}</Typography>
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>Academy Debuts</Typography>
-              <Typography variant="caption" sx={{ color: 'text.secondary' }}>Youth Promoted</Typography>
-            </Paper>
-          </Grid>
-        </Grid>
-      </Paper>
     </Box>
   );
 }

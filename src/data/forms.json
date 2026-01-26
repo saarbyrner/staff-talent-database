@@ -58,6 +58,12 @@
       "type": "RadioGroup",
       "required": true,
       "options": ["Yes", "No"]
+    },
+    {
+      "name": "profilePicture",
+      "label": "Upload Profile Picture",
+      "type": "ProfilePictureUpload",
+      "required": true
     }
   ],
   "Voluntary Self Identification Section": [
@@ -71,12 +77,20 @@
     {
       "name": "ethnicity",
       "label": "Ethnicity",
-      "type": "CheckboxGroup",
+      "type": "MultiSelect",
       "required": false,
-      "options": ["White (non Hispanic)", "Hispanic / Latino", "Black", "American Indian or Alaska Native", "Canadian Indigenous or Canadian First Nations", "Asian", "Hawaiian or Pacific Islander", "Arab or Middle Eastern", "Multi-racial", "Prefer not to answer"]
+      "conditional": true,
+      "options": ["White (non Hispanic)", "Hispanic / Latino", "Black", "American Indian or Alaska Native", "Canadian Indigenous or Canadian First Nations", "Asian", "Hawaiian or Pacific Islander", "Arab or Middle Eastern", "Multi-racial", "Prefer not to answer", "Other"]
+    },
+    {
+      "name": "ethnicityOther",
+      "label": "Please specify other ethnicity",
+      "type": "TextField",
+      "required": false,
+      "dependency": "ethnicity"
     }
   ],
-  "Agent & Playing Experience Section": [
+  "Agent Information Section": [
     {
       "name": "hasAgent",
       "label": "Do you currently have an agent?",
@@ -98,7 +112,9 @@
       "type": "TextField",
       "required": true,
       "dependency": "hasAgent"
-    },
+    }
+  ],
+  "Playing Experience Section": [
     {
       "name": "proPlayerExp",
       "label": "Do you have past professional playing experience?",
@@ -118,7 +134,7 @@
     {
       "name": "mlsClubsPlayed",
       "label": "MLS Clubs (playing experience)",
-      "type": "CheckboxGroup",
+      "type": "MultiSelect",
       "required": true,
       "dependency": "mlsPlayerExp",
       "options": ["Atlanta United FC", "Austin FC", "Charlotte FC", "Chicago Fire FC", "FC Cincinnati", "Colorado Rapids", "Columbus Crew", "DC United", "FC Dallas", "Houston Dynamo FC", "Inter Miami CF", "LA Galaxy", "LAFC", "Minnesota United FC", "CF Montreal", "Nashville SC", "New England Revolution", "New York City FC", "New York Red Bulls", "Orlando City SC", "Philadelphia Union", "Portland Timbers", "Real Salt Lake", "San Jose Earthquakes", "Seattle Sounders FC", "Sporting Kansas City", "St. Louis City SC", "Toronto FC", "Vancouver Whitecaps FC", "Atlanta United 2", "Birmingham Legion FC", "Carolina Core FC", "Chicago Fire FC II", "Colorado Rapids 2", "Columbus Crew 2", "Crown Legacy FC", "FC Cincinnati 2", "Huntsville City FC", "LA Galaxy II", "New England Revolution II", "New York Red Bulls II", "North Carolina FC", "Orlando City B", "Philadelphia Union II", "Portland Timbers 2", "Real Monarchs", "San Jose Earthquakes II", "Sounders FC 2", "Sporting Kansas City II", "St. Louis City SC 2", "The Town FC", "Toronto FC II", "Ventura County FC", "Whitecaps FC 2"]
@@ -191,15 +207,21 @@
     {
       "name": "mlsCoachingExpList",
       "label": "List all previous MLS coaching experience",
-      "type": "CheckboxGroup",
+      "type": "MultiSelect",
       "required": true,
       "dependency": "prevMlsCoachExp",
-      "options": ["MLS First Team Head Coaching Experience", "MLS First Team Assistant Coaching Experience", "MLS NEXT Pro Head Coaching Experience", "MLS NEXT Pro Assistant Coaching Experience", "MLS NEXT Academy Coaching Experience"]
+      "options": [
+        "MLS First Team Head Coaching Experience",
+        "MLS First Team Assistant Coaching Experience",
+        "MLS NEXT Pro Head Coaching Experience",
+        "MLS NEXT Pro Assistant Coaching Experience",
+        "MLS NEXT Academy Coaching Experience"
+      ]
     },
     {
       "name": "mlsClubsCoached",
       "label": "MLS Clubs (coaching experience)",
-      "type": "CheckboxGroup",
+      "type": "MultiSelect",
       "required": true,
       "dependency": "prevMlsCoachExp",
       "options": ["Atlanta United FC", "Austin FC", "Charlotte FC", "Chicago Fire FC", "FC Cincinnati", "Colorado Rapids", "Columbus Crew", "DC United", "FC Dallas", "Houston Dynamo FC", "Inter Miami CF", "LA Galaxy", "LAFC", "Minnesota United FC", "CF Montreal", "Nashville SC", "New England Revolution", "New York City FC", "New York Red Bulls", "Orlando City SC", "Philadelphia Union", "Portland Timbers", "Real Salt Lake", "San Jose Earthquakes", "Seattle Sounders FC", "Sporting Kansas City", "St. Louis City SC", "Toronto FC", "Vancouver Whitecaps FC", "Atlanta United 2", "Birmingham Legion FC", "Carolina Core FC", "Chicago Fire FC II", "Colorado Rapids 2", "Columbus Crew 2", "Crown Legacy FC", "FC Cincinnati 2", "Huntsville City FC", "LA Galaxy II", "New England Revolution II", "New York Red Bulls II", "North Carolina FC", "Orlando City B", "Philadelphia Union II", "Portland Timbers 2", "Real Monarchs", "San Jose Earthquakes II", "Sounders FC 2", "Sporting Kansas City II", "St. Louis City SC 2", "The Town FC", "Toronto FC II", "Ventura County FC", "Whitecaps FC 2"]
@@ -207,10 +229,17 @@
     {
       "name": "nonMlsCoachExp",
       "label": "Do you have non-MLS coaching experience?",
-      "type": "CheckboxGroup",
+      "type": "MultiSelect",
       "required": true,
       "dependency": "proCoachExpUpdate",
-      "options": ["National Team Coaching Experience", "Other 1st Division Head Coaching Experience", "1st Division Assistant Coaching Experience", "Collegiate Coaching Experience", "Other International Coaching Experience", "Not Applicable"]
+      "options": [
+        "National Team Coaching Experience",
+        "Other 1st Division Head Coaching Experience",
+        "1st Division Assistant Coaching Experience",
+        "Collegiate Coaching Experience",
+        "Other International Coaching Experience",
+        "Not Applicable"
+      ]
     }
   ],
   "Professional Sporting Experience Section": [
@@ -233,7 +262,7 @@
     {
       "name": "mlsClubsSporting",
       "label": "MLS Clubs (sporting experience)",
-      "type": "CheckboxGroup",
+      "type": "MultiSelect",
       "required": true,
       "dependency": "prevMlsSportingExp",
       "options": ["Atlanta United FC", "Austin FC", "Charlotte FC", "Chicago Fire FC", "FC Cincinnati", "Colorado Rapids", "Columbus Crew", "DC United", "FC Dallas", "Houston Dynamo FC", "Inter Miami CF", "LA Galaxy", "LAFC", "Minnesota United FC", "CF Montreal", "Nashville SC", "New England Revolution", "New York City FC", "New York Red Bulls", "Orlando City SC", "Philadelphia Union", "Portland Timbers", "Real Salt Lake", "San Jose Earthquakes", "Seattle Sounders FC", "Sporting Kansas City", "St. Louis City SC", "Toronto FC", "Vancouver Whitecaps FC", "Atlanta United 2", "Birmingham Legion FC", "Carolina Core FC", "Chicago Fire FC II", "Colorado Rapids 2", "Columbus Crew 2", "Crown Legacy FC", "FC Cincinnati 2", "Huntsville City FC", "LA Galaxy II", "New England Revolution II", "New York Red Bulls II", "North Carolina FC", "Orlando City B", "Philadelphia Union II", "Portland Timbers 2", "Real Monarchs", "San Jose Earthquakes II", "Sounders FC 2", "Sporting Kansas City II", "St. Louis City SC 2", "The Town FC", "Toronto FC II", "Ventura County FC", "Whitecaps FC 2"]
@@ -241,18 +270,33 @@
     {
       "name": "nonMlsSportingExp",
       "label": "Do you have other non-MLS sporting experience?",
-      "type": "CheckboxGroup",
+      "type": "MultiSelect",
       "required": true,
       "dependency": "proSportingExpUpdate",
-      "options": ["National Team Sporting Experience", "USL Sporting Experience", "NWSL Sporting Experience", "Other 1st Division Sporting Experience", "Collegiate Sporting Experience", "Other International Sporting Experience", "Not Applicable"]
+      "options": [
+        "National Team Sporting Experience",
+        "USL Sporting Experience",
+        "NWSL Sporting Experience",
+        "Other 1st Division Sporting Experience",
+        "Collegiate Sporting Experience",
+        "Other International Sporting Experience",
+        "Not Applicable"
+      ]
     },
     {
       "name": "sportingVertical",
       "label": "Sporting vertical of experience",
-      "type": "CheckboxGroup",
+      "type": "MultiSelect",
       "required": false,
       "dependency": "proSportingExpUpdate",
-      "options": ["Scouting", "Analytics", "Player Development", "CAP & Player Personnel", "Other", "Not Applicable"]
+      "options": [
+        "Scouting",
+        "Analytics",
+        "Player Development",
+        "CAP & Player Personnel",
+        "Other",
+        "Not Applicable"
+      ]
     }
   ],
   "Employment History Section": [
@@ -299,9 +343,15 @@
       "type": "TextField",
       "multiline": true,
       "required": false
+    },
+    {
+      "name": "resumeUpload",
+      "label": "Upload Resume",
+      "type": "ProfilePictureUpload",
+      "required": true
     }
   ],
-  "Education & Languages Section": [
+  "Education & Language Section": [
     {
       "name": "highestDegree",
       "label": "Highest education degree obtained",
@@ -309,6 +359,15 @@
       "required": true,
       "options": ["Associates Degree", "Bachelors Degree", "Masters Degree", "Doctoral Degree (Ph.D.)", "Other", "Not Applicable"]
     },
+    {
+      "name": "languages",
+      "label": "What languages do you speak?",
+      "type": "CheckboxGroup",
+      "required": true,
+      "options": ["English", "Spanish", "French", "Portuguese", "Portuguese (Brazilian)", "German", "Italian", "Dutch", "Russian", "Arabic", "Chinese (Mandarin)", "Japanese", "Korean", "Other"]
+    }
+  ],
+  "Licenses & Certifications Section": [
     {
       "name": "mlsProgramming",
       "label": "Do you have any experience with MLS Programming?",
@@ -347,11 +406,16 @@
       "dependency": "otherLicenses"
     },
     {
-      "name": "languages",
-      "label": "What languages do you speak?",
-      "type": "CheckboxGroup",
-      "required": true,
-      "options": ["English", "Spanish", "French", "Portuguese", "Portuguese (Brazilian)", "German", "Italian", "Dutch", "Russian", "Arabic", "Chinese (Mandarin)", "Japanese", "Korean", "Other"]
+      "name": "coachingLicenseDoc",
+      "label": "Upload Coaching License",
+      "type": "ProfilePictureUpload",
+      "required": false
+    },
+    {
+      "name": "otherCertsDoc",
+      "label": "Upload other professional licenses or certifications",
+      "type": "ProfilePictureUpload",
+      "required": false
     }
   ],
   "Upload Documents": [
@@ -366,18 +430,6 @@
       "label": "Upload Resume",
       "type": "FileUpload",
       "required": true
-    },
-    {
-      "name": "coachingLicenseDoc",
-      "label": "Upload Coaching License",
-      "type": "FileUpload",
-      "required": false
-    },
-    {
-      "name": "otherCertsDoc",
-      "label": "Upload Other Professional Licensure or Certifications",
-      "type": "FileUpload",
-      "required": false
     }
   ],
   "Preferences": [
