@@ -18,9 +18,11 @@ import {
   AccordionSummary,
   AccordionDetails,
   List,
-  ListItemButton
+  ListItemButton,
+  CircularProgress,
+  Collapse
 } from '@mui/material';
-import { SaveOutlined, ExpandMoreOutlined, CloudUpload, InsertDriveFile } from '@mui/icons-material';
+import { SaveOutlined, ExpandMoreOutlined, CloudUpload, InsertDriveFile, ChevronRight as ChevronRightIcon, RadioButtonUnchecked, CheckCircle } from '@mui/icons-material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -29,6 +31,54 @@ import staffTalentData from '../data/staff_talent.json';
 import currentStaffData from '../data/users_staff.json';
 import { staffForm as staffFormDefinition } from '../data';
 import '../styles/design-tokens.css';
+
+/**
+ * Create grouped navigation structure for the form
+ * Groups sections into logical categories with progress tracking
+ */
+const createFormNavigationStructure = (formDefinition) => {
+  if (!formDefinition) return [];
+  
+  const sectionNames = Object.keys(formDefinition);
+  
+  return [
+    {
+      id: 'contact-info',
+      title: 'Profile Details',
+      subgroups: [
+        { id: 0, title: 'Staff Information', sectionIndex: 0, isCompleted: false },
+        { id: 1, title: 'Voluntary Self Identification', sectionIndex: 1, isCompleted: false },
+        { id: 2, title: 'Agent information', sectionIndex: 2, isCompleted: false }
+      ]
+    },
+    {
+      id: 'experience',
+      title: 'Experience',
+      subgroups: [
+        { id: 3, title: sectionNames[3] || 'Playing Experience', sectionIndex: 3, isCompleted: false },
+        { id: 4, title: sectionNames[5] || 'Professional Coaching', sectionIndex: 5, isCompleted: false },
+        { id: 5, title: sectionNames[6] || 'Professional Sporting Experience', sectionIndex: 6, isCompleted: false },
+        { id: 6, title: sectionNames[7] || 'Employment History', sectionIndex: 7, isCompleted: false }
+      ]
+    },
+    {
+      id: 'education',
+      title: 'Qualifications',
+      subgroups: [
+        { id: 7, title: 'Education & Language', sectionIndex: 8, isCompleted: false },
+        { id: 8, title: 'Licenses & Certifications', sectionIndex: 9, isCompleted: false }
+      ]
+    },
+    {
+      id: 'documents',
+      title: 'Preferences',
+      subgroups: [
+        { id: 9, title: sectionNames[4] || 'Role and location preferences', sectionIndex: 4, isCompleted: false },
+        { id: 11, title: sectionNames[11] || 'Profile privacy', sectionIndex: 11, isCompleted: false }
+      ]
+    }
+  ];
+};
 
 /**
  * Staff Portal View
@@ -149,31 +199,110 @@ function StaffPortalView() {
     return values;
   });
 
-  // State for accordion expansion and field refs
-  const [expandedSections, setExpandedSections] = React.useState([0]); // Start with first section expanded
-  const [selectedSectionIndex, setSelectedSectionIndex] = React.useState(0);
+  // Create navigation structure with progress tracking
+  const [navigationData, setNavigationData] = React.useState(() => 
+    createFormNavigationStructure(staffFormDefinition)
+  );
+
+  // State for accordion expansion and navigation
+  const [expandedGroups, setExpandedGroups] = React.useState(() => {
+    // Auto-expand the first group
+    const firstGroup = navigationData[0];
+    return firstGroup ? [firstGroup.id] : [];
+  });
+  const [activeSubgroupId, setActiveSubgroupId] = React.useState(() => {
+    // Set first subgroup as active
+    const firstGroup = navigationData[0];
+    return firstGroup?.subgroups[0]?.id ?? 0;
+  });
   const [selectedFieldId, setSelectedFieldId] = React.useState(null);
   const fieldRefs = React.useRef({});
+
+  // Helper functions for navigation
+  const flattenSubgroups = React.useMemo(() => {
+    return navigationData.flatMap(group => group.subgroups || []);
+  }, [navigationData]);
+
+  const getCurrentSubgroup = React.useCallback(() => {
+    return flattenSubgroups.find(sub => sub.id === activeSubgroupId);
+  }, [flattenSubgroups, activeSubgroupId]);
+
+  const getCurrentSectionIndex = React.useCallback(() => {
+    const subgroup = getCurrentSubgroup();
+    return subgroup?.sectionIndex ?? 0;
+  }, [getCurrentSubgroup]);
+
+  const canGoNext = React.useMemo(() => {
+    const currentIndex = flattenSubgroups.findIndex(sub => sub.id === activeSubgroupId);
+    return currentIndex < flattenSubgroups.length - 1;
+  }, [flattenSubgroups, activeSubgroupId]);
+
+  const canGoBack = React.useMemo(() => {
+    const currentIndex = flattenSubgroups.findIndex(sub => sub.id === activeSubgroupId);
+    return currentIndex > 0;
+  }, [flattenSubgroups, activeSubgroupId]);
+
+  const calculateGroupProgress = (group) => {
+    if (!group.subgroups || group.subgroups.length === 0) {
+      return { completed: 0, total: 0, percentage: 0 };
+    }
+    const completed = group.subgroups.filter(sub => sub.isCompleted).length;
+    const total = group.subgroups.length;
+    const percentage = total > 0 ? (completed / total) * 100 : 0;
+    return { completed, total, percentage };
+  };
+
+  const toggleGroup = (groupId) => {
+    setExpandedGroups(prev => 
+      prev.includes(groupId)
+        ? prev.filter(id => id !== groupId)
+        : [...prev, groupId]
+    );
+  };
+
+  const handleSubgroupClick = (subgroupId) => {
+    setActiveSubgroupId(subgroupId);
+    const subgroup = flattenSubgroups.find(sub => sub.id === subgroupId);
+    if (subgroup) {
+      const group = navigationData.find(g => 
+        g.subgroups?.some(s => s.id === subgroupId)
+      );
+      if (group && !expandedGroups.includes(group.id)) {
+        setExpandedGroups(prev => [...prev, group.id]);
+      }
+    }
+  };
+
+  const handleNext = () => {
+    if (canGoNext) {
+      const currentIndex = flattenSubgroups.findIndex(sub => sub.id === activeSubgroupId);
+      const nextSubgroup = flattenSubgroups[currentIndex + 1];
+      if (nextSubgroup) {
+        handleSubgroupClick(nextSubgroup.id);
+      }
+    }
+  };
+
+  const handlePrevious = () => {
+    if (canGoBack) {
+      const currentIndex = flattenSubgroups.findIndex(sub => sub.id === activeSubgroupId);
+      const prevSubgroup = flattenSubgroups[currentIndex - 1];
+      if (prevSubgroup) {
+        handleSubgroupClick(prevSubgroup.id);
+      }
+    }
+  };
 
   const handleValueChange = (fieldName, value) => {
     setFormValues(prev => ({ ...prev, [fieldName]: value }));
   };
 
-  const toggleSection = (sectionIndex) => {
-    setExpandedSections((prev) =>
-      prev.includes(sectionIndex) ? prev.filter(x => x !== sectionIndex) : [...prev, sectionIndex]
-    );
-  };
-
-  const handleSectionClick = (sectionIndex) => {
-    setSelectedSectionIndex(sectionIndex);
-  };
-
   const handleFieldClick = (fieldId, sectionIndex) => {
-    // Expand section if not already expanded
-    setExpandedSections((prev) => prev.includes(sectionIndex) ? prev : [...prev, sectionIndex]);
-    // Set selected section
-    setSelectedSectionIndex(sectionIndex);
+    // Find the subgroup for this section
+    const subgroup = flattenSubgroups.find(sub => sub.sectionIndex === sectionIndex);
+    if (subgroup) {
+      handleSubgroupClick(subgroup.id);
+    }
     // Set selected field
     setSelectedFieldId(fieldId);
     // Scroll to field
@@ -492,100 +621,208 @@ function StaffPortalView() {
             backgroundColor: 'var(--color-background-primary)'
           }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1, pl: 2, pr: 2, pt: 2 }}>
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>Sections</Typography>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>Menu</Typography>
             </Box>
 
+            {/* Nested Navigation with Groups and Subgroups */}
             <List aria-label="Form Menu" disablePadding sx={{ flexGrow: 1 }}>
-              {staffFormDefinition && Object.entries(staffFormDefinition).map(([sectionTitle, fields], sectionIndex) => (
-                <Box key={sectionIndex}>
-                  <Accordion
-                    elevation={0}
-                    expanded={expandedSections.includes(sectionIndex)}
-                    onChange={() => toggleSection(sectionIndex)}
-                    sx={{
-                      boxShadow: 'none',
-                      borderRadius: 0,
-                      '&:hover': { backgroundColor: 'var(--color-background-secondary)' },
-                      '&:before': { display: 'none' }
-                    }}
-                  >
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreOutlined />}
-                      onClick={(e) => {
-                        // Only trigger section selection if not clicking the expand icon
-                        if (!e.target.closest('.MuiAccordionSummary-expandIconWrapper')) {
-                          handleSectionClick(sectionIndex);
-                        }
-                      }}
+              {navigationData.map((group) => {
+                const isExpanded = expandedGroups.includes(group.id);
+                const { completed, total, percentage } = calculateGroupProgress(group);
+
+                return (
+                  <Box key={group.id}>
+                    {/* Group Header */}
+                    <ListItemButton
+                      onClick={() => toggleGroup(group.id)}
                       sx={{
-                        pl: 2,
-                        pr: 2,
-                        '& .MuiAccordionSummary-content': { my: 1.5 },
-                        ...(selectedSectionIndex === sectionIndex && {
-                          backgroundColor: 'var(--color-background-secondary)'
-                        })
+                        py: 1.5,
+                        px: 2,
+                        '&:hover': {
+                          bgcolor: 'var(--color-background-secondary)',
+                        },
                       }}
                     >
-                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                          <Typography variant="body1" sx={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>
-                            {sectionTitle}
-                          </Typography>
-                          <Typography variant="caption" sx={{ color: 'var(--color-text-secondary)' }}>
-                            {fields.length} field{fields.length === 1 ? '' : 's'}
-                          </Typography>
-                        </Box>
+                      {/* Progress Icon */}
+                      <Box
+                        sx={{
+                          position: 'relative',
+                          display: 'inline-flex',
+                          mr: 2,
+                        }}
+                      >
+                        <CircularProgress
+                          variant="determinate"
+                          value={percentage}
+                          size={24}
+                          thickness={4}
+                          sx={{
+                            color: percentage === 100 
+                              ? 'var(--color-success)' 
+                              : 'var(--color-primary)',
+                            '& .MuiCircularProgress-circle': {
+                              strokeLinecap: 'round',
+                            },
+                          }}
+                        />
+                        <CircularProgress
+                          variant="determinate"
+                          value={100}
+                          size={24}
+                          thickness={4}
+                          sx={{
+                            color: 'var(--color-border-primary)',
+                            position: 'absolute',
+                            left: 0,
+                            zIndex: -1,
+                          }}
+                        />
                       </Box>
-                    </AccordionSummary>
-                    <AccordionDetails sx={{ pl: 0, pr: 0, pt: 0, pb: 0 }}>
-                      <List component="div" disablePadding>
-                        {fields.map((field, fieldIndex) => {
-                          const fieldId = field.name;
+
+                      {/* Group Title and Progress */}
+                      <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            fontWeight: 600,
+                            color: 'var(--color-text-primary)',
+                            mb: 0.25,
+                          }}
+                        >
+                          {group.title}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: 'var(--color-text-secondary)',
+                          }}
+                        >
+                          {completed} of {total} completed
+                        </Typography>
+                      </Box>
+
+                      {/* Expand/Collapse Icon */}
+                      {isExpanded ? (
+                        <ExpandMoreOutlined sx={{ color: 'var(--color-text-secondary)' }} />
+                      ) : (
+                        <ChevronRightIcon sx={{ color: 'var(--color-text-secondary)' }} />
+                      )}
+                    </ListItemButton>
+
+                    {/* Subgroups */}
+                    <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+                      <List disablePadding>
+                        {group.subgroups?.map((subgroup) => {
+                          const isActive = subgroup.id === activeSubgroupId;
+
                           return (
                             <ListItemButton
-                              key={fieldId}
-                              selected={selectedFieldId === fieldId}
-                              onClick={() => handleFieldClick(fieldId, sectionIndex)}
+                              key={subgroup.id}
+                              onClick={() => handleSubgroupClick(subgroup.id)}
                               sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1.5,
-                                borderRadius: 0,
-                                pl: 4,
+                                py: 1,
+                                pl: 6,
                                 pr: 2,
-                                py: 1
+                                bgcolor: isActive ? 'var(--color-background-secondary)' : 'transparent',
+                                borderLeft: isActive ? '3px solid var(--color-primary)' : '3px solid transparent',
+                                '&:hover': {
+                                  bgcolor: 'var(--color-background-secondary)',
+                                },
                               }}
                             >
+                              {/* Completion Icon */}
+                              <Box sx={{ mr: 1.5 }}>
+                                {subgroup.isCompleted ? (
+                                  <CheckCircle
+                                    sx={{
+                                      fontSize: 18,
+                                      color: 'var(--color-success)',
+                                    }}
+                                  />
+                                ) : (
+                                  <RadioButtonUnchecked
+                                    sx={{
+                                      fontSize: 18,
+                                      color: 'var(--color-border-primary)',
+                                    }}
+                                  />
+                                )}
+                              </Box>
+
+                              {/* Subgroup Title */}
                               <Typography
                                 variant="body2"
                                 sx={{
-                                  flex: 1,
-                                  overflow: 'hidden',
-                                  textOverflow: 'ellipsis',
-                                  whiteSpace: 'nowrap'
+                                  color: isActive 
+                                    ? 'var(--color-text-primary)' 
+                                    : 'var(--color-text-secondary)',
+                                  fontWeight: isActive ? 500 : 400,
                                 }}
                               >
-                                {field.label?.length > 35 ? `${field.label.slice(0, 35)}...` : field.label}
+                                {subgroup.title}
                               </Typography>
                             </ListItemButton>
                           );
                         })}
                       </List>
-                    </AccordionDetails>
-                  </Accordion>
-                </Box>
-              ))}
+                    </Collapse>
+                  </Box>
+                );
+              })}
             </List>
+
+            {/* Bottom Navigation Buttons */}
+            <Box
+              sx={{
+                p: 2,
+                borderTop: '1px solid var(--color-border-primary)',
+                display: 'flex',
+                gap: 1,
+              }}
+            >
+              <Button
+                variant="outlined"
+                onClick={handlePrevious}
+                disabled={!canGoBack}
+                sx={{
+                  flex: 1,
+                  textTransform: 'none',
+                  borderColor: 'var(--color-border-primary)',
+                  color: 'var(--color-text-primary)',
+                  '&:hover': {
+                    borderColor: 'var(--color-border-primary)',
+                    bgcolor: 'var(--color-background-secondary)',
+                  },
+                }}
+              >
+                Back
+              </Button>
+              <Button
+                variant="contained"
+                onClick={handleNext}
+                disabled={!canGoNext}
+                sx={{
+                  flex: 1,
+                  textTransform: 'none',
+                  bgcolor: 'var(--color-primary)',
+                  '&:hover': {
+                    bgcolor: 'var(--color-primary-hover)',
+                  },
+                }}
+              >
+                Next
+              </Button>
+            </Box>
           </Box>
 
           {/* Right Content Area - Form Fields */}
           <Box sx={{ flexGrow: 1, overflow: 'auto', p: 3, backgroundColor: '#fafafa' }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
               {staffFormDefinition && Object.entries(staffFormDefinition)
-                .filter(([, ], sectionIndex) => sectionIndex === selectedSectionIndex)
+                .filter(([, ], sectionIndex) => sectionIndex === getCurrentSectionIndex())
                 .map(([sectionTitle, fields], ) => (
                 <Paper
-                  key={selectedSectionIndex}
+                  key={getCurrentSectionIndex()}
                   elevation={0}
                   sx={{
                     borderRadius: 'var(--radius-lg)',
@@ -607,7 +844,7 @@ function StaffPortalView() {
                     {fields.length} field{fields.length === 1 ? '' : 's'}
                   </Typography>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    {fields.map((field, fieldIndex) => renderField(field, selectedSectionIndex, fieldIndex))}
+                    {fields.map((field, fieldIndex) => renderField(field, getCurrentSectionIndex(), fieldIndex))}
                   </Box>
                 </Paper>
               ))}
