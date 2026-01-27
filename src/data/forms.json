@@ -1,5 +1,5 @@
 {
-  "Contact Information Section": [
+  "Staff Information": [
     {
       "name": "firstName",
       "label": "First Name",
@@ -90,7 +90,7 @@
       "dependency": "ethnicity"
     }
   ],
-  "Agent Information Section": [
+  "Agent Information": [
     {
       "name": "hasAgent",
       "label": "Do you currently have an agent?",
@@ -114,7 +114,7 @@
       "dependency": "hasAgent"
     }
   ],
-  "Playing Experience Section": [
+  "Playing Experience": [
     {
       "name": "proPlayerExp",
       "label": "Do you have past professional playing experience?",
@@ -147,7 +147,7 @@
       "required": false
     }
   ],
-  "Interest Section": [
+  "Role and location preferences": [
     {
       "name": "interestArea",
       "label": "What area in MLS are you interested in?",
@@ -158,7 +158,7 @@
     {
       "name": "coachingRoles",
       "label": "What coaching roles are you interested in?",
-      "type": "CheckboxGroup",
+      "type": "MultiSelect",
       "required": true,
       "dependency": "interestArea == 'Coaching'",
       "options": ["MLS First Team Head Coach", "MLS First Team Assistant Coach", "MLS First Team Goalkeeper Coach", "Head of Coaching", "Individual Development Plan (IDP) Coach", "MLS NEXT Pro Head Coach", "MLS NEXT Pro Assistant Coach", "MLS NEXT Pro Goalkeeper Coach", "MLS NEXT (Academy) Coach", "MLS NEXT Academy Director", "Community/Grassroots Coach", "Other", "Not Applicable"]
@@ -166,7 +166,7 @@
     {
       "name": "execRoles",
       "label": "What executive sporting roles are you interested in?",
-      "type": "CheckboxGroup",
+      "type": "MultiSelect",
       "required": true,
       "dependency": "interestArea == 'Sporting Executive'",
       "options": ["Chief Soccer Officer or President of Soccer Operations", "General Manager or Sporting Director", "Assistant General Manager or Sporting Director", "Technical Director", "Assistant Technical Director", "Other Sporting Executive Role", "Not Applicable"]
@@ -174,7 +174,7 @@
     {
       "name": "techRoles",
       "label": "What technical roles are you interested in?",
-      "type": "CheckboxGroup",
+      "type": "MultiSelect",
       "required": true,
       "dependency": "interestArea == 'Other Technical Role'",
       "options": ["Data analyst", "Scout", "Athletic trainer", "Performance coach", "Team admin", "Other", "Not Applicable"]
@@ -182,12 +182,12 @@
     {
       "name": "relocation",
       "label": "Select locations you are willing to relocate to",
-      "type": "CheckboxGroup",
+      "type": "MultiSelect",
       "required": true,
       "options": ["Northeast", "Southeast", "Midwest", "South", "West", "Canada", "I am not willing to relocate"]
     }
   ],
-  "Professional Coaching Section": [
+  "Professional Coaching": [
     {
       "name": "proCoachExpUpdate",
       "label": "Do you have professional coaching experience to update?",
@@ -242,7 +242,7 @@
       ]
     }
   ],
-  "Professional Sporting Experience Section": [
+  "Professional Sporting Experience": [
     {
       "name": "proSportingExpUpdate",
       "label": "Do you have professional sporting experience to update?",
@@ -299,7 +299,7 @@
       ]
     }
   ],
-  "Employment History Section": [
+  "Employment History": [
     {
       "name": "currentlyEmployed",
       "label": "Are you currently employed?",
@@ -351,41 +351,41 @@
       "required": true
     }
   ],
-  "Education & Language Section": [
+  "Education & Language": [
     {
       "name": "highestDegree",
       "label": "Highest education degree obtained",
-      "type": "CheckboxGroup",
+      "type": "MultiSelect",
       "required": true,
       "options": ["Associates Degree", "Bachelors Degree", "Masters Degree", "Doctoral Degree (Ph.D.)", "Other", "Not Applicable"]
     },
     {
       "name": "languages",
       "label": "What languages do you speak?",
-      "type": "CheckboxGroup",
+      "type": "MultiSelect",
       "required": true,
       "options": ["English", "Spanish", "French", "Portuguese", "Portuguese (Brazilian)", "German", "Italian", "Dutch", "Russian", "Arabic", "Chinese (Mandarin)", "Japanese", "Korean", "Other"]
     }
   ],
-  "Licenses & Certifications Section": [
+  "Licenses & Certifications": [
     {
       "name": "mlsProgramming",
       "label": "Do you have any experience with MLS Programming?",
-      "type": "CheckboxGroup",
+      "type": "MultiSelect",
       "required": true,
       "options": ["MLS Advance", "Elite Formation Coaching License", "Match Evaluator Program", "Match Director Program", "League Access Program", "Other", "Not Applicable"]
     },
     {
       "name": "coachingLicenses",
       "label": "What coaching licenses do you hold?",
-      "type": "CheckboxGroup",
+      "type": "MultiSelect",
       "required": true,
       "options": ["USSF PRO License", "USSF A - Senior License", "USSF A - Youth License", "USSF B License", "USSF C License", "USSF D License", "USSF Grassroots License", "USSF Goalkeeping A License", "UEFA Pro License", "UEFA A License", "UEFA B License", "UEFA C License", "Canada Soccer A License", "Canada Soccer B License", "Canada Soccer C License", "Elite Formation Coaching License (MLS)", "Other", "Not Applicable"]
     },
     {
       "name": "sportingDirectorCerts",
       "label": "What sporting director certifications do you hold?",
-      "type": "CheckboxGroup",
+      "type": "MultiSelect",
       "required": true,
       "options": ["FIFA", "FA", "The Global Institute of Sport", "Other", "Not Applicable"]
     },
@@ -418,21 +418,8 @@
       "required": false
     }
   ],
-  "Upload Documents": [
-    {
-      "name": "profilePic",
-      "label": "Upload Profile Picture",
-      "type": "FileUpload",
-      "required": true
-    },
-    {
-      "name": "resume",
-      "label": "Upload Resume",
-      "type": "FileUpload",
-      "required": true
-    }
-  ],
-  "Preferences": [
+  
+  "Profile privacy": [
     {
       "name": "profilePrivacy",
       "label": "Profile Privacy",
