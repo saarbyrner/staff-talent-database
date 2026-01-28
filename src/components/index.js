@@ -18,6 +18,7 @@ export { default as DashboardSettingsDrawer } from './DashboardSettingsDrawer'
 export { default as DashboardFilters } from './DashboardFilters'
 export { default as NotesDrawer } from './NotesDrawer'
 export { default as StaffProfileDetails } from './StaffProfileDetails'
+export { default as DocumentFileTile } from './DocumentFileTile'
 
 // Usage Examples:
 // import { Button, Icon, Card, PlayerAvatar, LogoImage } from '../components'

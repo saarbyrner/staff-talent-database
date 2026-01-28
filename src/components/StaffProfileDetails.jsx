@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import { EditOutlined, ExpandMoreOutlined, ChevronRight } from '@mui/icons-material';
 import { staffForm as staffFormDefinition } from '../data';
+import DocumentFileTile from './DocumentFileTile';
 import '../styles/design-tokens.css';
 
 /**
@@ -282,46 +283,74 @@ function StaffProfileDetails({ staffData, isLeagueView = false, onEdit }) {
             {/* Section Content - Grid Layout */}
             <Box sx={{ p: 3 }}>
               {sectionData && sectionData.fields ? (
-                <Grid container spacing={3} sx={{ maxWidth: '550px' }}>
-                  {sectionData.fields.map((field) => {
-                    const value = staffData?.[field.name];
-                    
-                    // Skip fields that don't have values and aren't required to show
-                    if ((value === null || value === undefined || value === '') && field.type === 'ProfilePictureUpload') {
-                      return null;
-                    }
+                <>
+                  <Grid container spacing={3} sx={{ maxWidth: '550px' }}>
+                    {sectionData.fields.map((field) => {
+                      const value = staffData?.[field.name];
+                      
+                      // Skip fields that don't have values and aren't required to show
+                      if ((value === null || value === undefined || value === '') && field.type === 'ProfilePictureUpload') {
+                        return null;
+                      }
 
-                    return (
-                      <Grid item xs={12} sm={6} key={field.name} sx={{ minWidth: '250px', maxWidth: '250px' }}>
-                        <Box>
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              display: 'block',
-                              color: 'var(--color-text-secondary)',
-                              fontSize: '0.75rem',
-                              mb: 0.5,
-                              textTransform: 'uppercase',
-                              letterSpacing: '0.5px',
-                            }}
-                          >
-                            {field.label}
-                          </Typography>
-                          <Typography
-                            variant="body1"
-                            sx={{
-                              color: 'var(--color-text-primary)',
-                              fontSize: '0.9375rem',
-                              fontWeight: 400,
-                            }}
-                          >
-                            {formatFieldValue(field, value)}
-                          </Typography>
-                        </Box>
-                      </Grid>
-                    );
-                  })}
-                </Grid>
+                      return (
+                        <Grid item xs={12} sm={6} key={field.name} sx={{ minWidth: '250px', maxWidth: '250px' }}>
+                          <Box>
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                display: 'block',
+                                color: 'var(--color-text-secondary)',
+                                fontSize: '0.75rem',
+                                mb: 0.5,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.5px',
+                              }}
+                            >
+                              {field.label}
+                            </Typography>
+                            <Typography
+                              variant="body1"
+                              sx={{
+                                color: 'var(--color-text-primary)',
+                                fontSize: '0.9375rem',
+                                fontWeight: 400,
+                              }}
+                            >
+                              {formatFieldValue(field, value)}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                      );
+                    })}
+                  </Grid>
+                  
+                  {/* Profile Picture Document Tile - Only show for Staff Information section */}
+                  {currentSubgroup?.sectionIndex === 0 && staffData?.picUrl && (
+                    <Box sx={{ mt: 3, maxWidth: '550px' }}>
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          display: 'block',
+                          color: 'var(--color-text-secondary)',
+                          fontSize: '0.75rem',
+                          mb: 1,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px',
+                        }}
+                      >
+                        Profile image
+                      </Typography>
+                      <DocumentFileTile
+                        thumbnailUrl={staffData.picUrl}
+                        fileName={`${staffData.firstName || 'profile'}_${staffData.lastName || 'picture'}.jpg`}
+                        uploadDate={staffData.picUploadDate || 'uploaded Mar 7 2025'}
+                        viewUrl={staffData.picUrl}
+                        downloadUrl={staffData.picUrl}
+                      />
+                    </Box>
+                  )}
+                </>
               ) : (
                 <Box sx={{ textAlign: 'center', py: 4 }}>
                   <Typography variant="body2" color="text.secondary">
