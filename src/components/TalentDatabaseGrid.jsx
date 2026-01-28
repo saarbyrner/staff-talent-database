@@ -147,30 +147,6 @@ export const CustomToolbar = React.forwardRef((props, ref) => {
             Tags
           </Button>
         )}
-        {onApprovals && (
-          <Badge badgeContent={pendingApprovalsCount} color="error">
-            <Button
-              variant="outlined"
-              startIcon={<InboxOutlined />}
-              onClick={onApprovals}
-              sx={{
-                textTransform: 'none',
-                fontSize: '0.875rem',
-                fontWeight: 500,
-                borderColor: 'var(--color-border-primary)',
-                color: 'var(--color-text-primary)',
-                minWidth: 'auto',
-                padding: '6px 12px',
-                '&:hover': {
-                  borderColor: 'var(--color-text-primary)',
-                  backgroundColor: 'var(--color-background-tertiary)'
-                }
-              }}
-            >
-              Approvals
-            </Button>
-          </Badge>
-        )}
         {onInviteClick && (
           <Button
             variant="outlined"
