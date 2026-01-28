@@ -562,12 +562,12 @@ function StaffPortalView() {
   }
 
   const displayName = isNewStaff
-    ? 'Staff Information Form'
+    ? 'MLS Advance Candidate Form'
     : staffMember && staffMember.source === 'talent'
     ? `${staffMember.firstName} ${staffMember.lastName}`
     : staffMember
     ? `${staffMember.firstname} ${staffMember.lastname}`
-    : 'Staff Information Form';
+    : 'MLS Advance Candidate Form';
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>

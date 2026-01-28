@@ -34,16 +34,14 @@
     {
       "name": "state",
       "label": "State",
-      "type": "Select",
-      "required": true,
-      "options": ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"]
+      "type": "TextField",
+      "required": true
     },
     {
       "name": "city",
       "label": "City",
-      "type": "Select",
-      "required": true,
-      "options": ["Atlanta", "Austin", "Baltimore", "Boston", "Charlotte", "Chicago", "Cincinnati", "Cleveland", "Columbus", "Dallas", "Denver", "Detroit", "Houston", "Indianapolis", "Jacksonville", "Kansas City", "Las Vegas", "Los Angeles", "Memphis", "Miami", "Milwaukee", "Minneapolis", "Nashville", "New York", "Oakland", "Orlando", "Philadelphia", "Phoenix", "Pittsburgh", "Portland", "Raleigh", "Sacramento", "Salt Lake City", "San Antonio", "San Diego", "San Francisco", "San Jose", "Seattle", "St. Louis", "Tampa", "Toronto", "Vancouver", "Montreal", "Calgary", "Other"]
+      "type": "TextField",
+      "required": true
     },
     {
       "name": "usSponsorship",

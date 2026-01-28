@@ -108,7 +108,7 @@ const TagManagementDrawer = ({ open, onClose, staffData, onUpdateTag, onDeleteTa
         </Box>
         
         {/* Stats */}
-        <Paper sx={{ p: 2, mb: 3, bgcolor: 'var(--color-background-secondary)' }}>
+        <Box sx={{ mb: 3 }}>
           <Stack spacing={1}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant="body2" color="text.secondary">
@@ -127,59 +127,9 @@ const TagManagementDrawer = ({ open, onClose, staffData, onUpdateTag, onDeleteTa
               </Typography>
             </Box>
           </Stack>
-        </Paper>
+        </Box>
         
         <Divider sx={{ mb: 2 }} />
-        
-        {/* Create New Tag - Only for League View */}
-        {isLeagueView && (
-          <>
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="subtitle2" fontWeight={600} sx={{ mb: 1 }}>
-                Create New Tag
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Autocomplete
-                  freeSolo
-                  size="small"
-                  options={DEFAULT_TAGS.filter(tag => !tagStats.find(t => t.name === tag))}
-                  value={newTagName}
-                  onInputChange={(event, newValue) => setNewTagName(newValue)}
-                  sx={{ flex: 1 }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      placeholder="Enter tag name..."
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          handleCreateTag();
-                        }
-                      }}
-                    />
-                  )}
-                />
-                <Button
-                  variant="contained"
-                  size="small"
-                  onClick={handleCreateTag}
-                  disabled={!newTagName.trim()}
-                  sx={{
-                    minWidth: 'auto',
-                    px: 1.5,
-                  }}
-                >
-                  <AddOutlined fontSize="small" />
-                </Button>
-              </Box>
-              <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
-                Create a tag that can be applied to any staff member
-              </Typography>
-            </Box>
-            
-            <Divider sx={{ mb: 2 }} />
-          </>
-        )}
         
         {/* Tag List */}
         {tagStats.length === 0 ? (
@@ -235,15 +185,6 @@ const TagManagementDrawer = ({ open, onClose, staffData, onUpdateTag, onDeleteTa
                       </Stack>
                     </Box>
                     <Box sx={{ display: 'flex', gap: 0.5 }}>
-                      {isLeagueView && (
-                        <IconButton
-                          size="small"
-                          onClick={() => handleStartEdit(tag)}
-                          sx={{ color: 'var(--color-text-secondary)' }}
-                        >
-                          <EditOutlined fontSize="small" />
-                        </IconButton>
-                      )}
                       <IconButton
                         size="small"
                         onClick={() => handleDelete(tag)}

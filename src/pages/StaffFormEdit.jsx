@@ -49,7 +49,7 @@ import '../styles/design-tokens.css';
  * Create grouped navigation structure for the form
  * Groups sections into logical categories with progress tracking
  */
-const createFormNavigationStructure = (formDefinition) => {
+const createFormNavigationStructure = (formDefinition, isLeagueView = true) => {
   if (!formDefinition) return [];
   
   const sectionNames = Object.keys(formDefinition);
@@ -67,7 +67,7 @@ const createFormNavigationStructure = (formDefinition) => {
     // Removed Personal Information group
     {
       id: 'experience',
-      title: 'Experience & Background',
+      title: 'Experience',
       subgroups: [
         { id: 3, title: sectionNames[3] || 'Playing Experience', sectionIndex: 3, isCompleted: false },
         { id: 4, title: sectionNames[5] || 'Professional Coaching Section', sectionIndex: 5, isCompleted: false },
@@ -77,7 +77,7 @@ const createFormNavigationStructure = (formDefinition) => {
     },
     {
       id: 'education',
-      title: 'Education & Qualifications',
+      title: 'Qualifications',
       subgroups: [
         { id: 7, title: 'Education & Language', sectionIndex: 8, isCompleted: false },
         { id: 8, title: 'Licenses & Certifications', sectionIndex: 9, isCompleted: false }
@@ -85,11 +85,18 @@ const createFormNavigationStructure = (formDefinition) => {
     },
     {
       id: 'documents',
-      title: 'Documents & Preferences',
+      title: 'Preferences',
       subgroups: [
         { id: 9, title: sectionNames[4] || 'Interest Section', sectionIndex: 4, isCompleted: false },
-        { id: 10, title: sectionNames[10] || 'Upload Documents', sectionIndex: 10, isCompleted: false },
-        { id: 11, title: sectionNames[11] || 'Preferences', sectionIndex: 11, isCompleted: false }
+        // Only show Profile privacy for league users (section index 10)
+        ...(isLeagueView ? [{ id: 10, title: sectionNames[10] || 'Profile privacy', sectionIndex: 10, isCompleted: false }] : [])
+      ]
+    },
+    {
+      id: 'consent',
+      title: 'Consent',
+      subgroups: [
+        { id: 11, title: sectionNames[11] || 'Consent', sectionIndex: 11, isCompleted: false }
       ]
     }
   ];
@@ -225,7 +232,7 @@ function StaffFormEdit() {
 
   // Create navigation structure with progress tracking
   const [navigationData, setNavigationData] = React.useState(() => 
-    createFormNavigationStructure(staffFormDefinition)
+    createFormNavigationStructure(staffFormDefinition, isLeagueView)
   );
 
   // State for accordion expansion and navigation
@@ -692,7 +699,7 @@ function StaffFormEdit() {
           </Box>
           
           <Typography variant="h5" sx={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>
-            {isNewStaff ? 'Add New Staff Member' : `Edit Staff Information: ${displayName}`}
+            {isNewStaff ? 'Add MLS Advance Candidate' : `Edit Staff Information: ${displayName}`}
           </Typography>
         </Paper>
 
