@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Box, Chip, Avatar, Link, Stack, Typography, Tooltip, Button, IconButton, Snackbar, Alert, Badge, LinearProgress, Menu, MenuItem } from '@mui/material';
+import { Box, Chip, Avatar, Link, Stack, Typography, Tooltip, Button, IconButton, Snackbar, Alert, Badge, LinearProgress } from '@mui/material';
 import {
   DataGridPro as DataGrid,
   GridToolbarContainer,
@@ -24,8 +24,8 @@ import {
   VisibilityOutlined,
   InboxOutlined,
   NotesOutlined,
-  MoreVert,
-  DeleteOutlined,
+  ArchiveOutlined,
+  UnarchiveOutlined,
 } from '@mui/icons-material';
 import staffData from '../data/staff_talent.json';
 import { generateInitialsImage } from '../utils/assetManager';
@@ -219,6 +219,30 @@ const ArrayCell = ({ value }) => {
   );
 };
 
+const RolesCell = ({ roles }) => {
+  if (!Array.isArray(roles) || roles.length === 0) return null;
+  
+  if (roles.length === 1) {
+    return (
+      <Stack direction="row" spacing={0.5} sx={{ py: 1, overflowX: 'auto', maxWidth: '100%' }}>
+        <Chip label={roles[0]} size="small" variant="outlined" />
+      </Stack>
+    );
+  }
+  
+  const remainingCount = roles.length - 1;
+  const remainingRoles = roles.slice(1).join(', ');
+  
+  return (
+    <Stack direction="row" spacing={0.5} sx={{ py: 1, overflowX: 'auto', maxWidth: '100%' }}>
+      <Chip label={roles[0]} size="small" variant="outlined" />
+      <Tooltip title={remainingRoles} arrow>
+        <Chip label={`+${remainingCount}`} size="small" variant="outlined" />
+      </Tooltip>
+    </Stack>
+  );
+};
+
 const getInitials = (name = '') => (
   name
     .split(' ')
@@ -262,7 +286,7 @@ const LinkCell = ({ value, type, name = '' }) => {
   );
 };
 
-const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeagueView = false, onNotesClick, staffNotes = {}, onDelete) => {
+const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeagueView = false, onNotesClick, staffNotes = {}, onDelete, showArchived = false, onUnarchive) => {
   const watchlistColumn = isLeagueView ? {
     field: 'watchlistCount',
     headerName: 'Watchlist',
@@ -501,12 +525,12 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
   { 
     field: 'roles', 
     headerName: 'Roles', 
-    width: 300, 
+    width: 400, 
     valueGetter: (params) => {
       const { coachingRoles = [], execRoles = [], techRoles = [] } = params.row;
       return [...coachingRoles, ...execRoles, ...techRoles];
     },
-    renderCell: (params) => <ArrayCell value={params.value} /> 
+    renderCell: (params) => <RolesCell roles={params.value} /> 
   },
   { 
     field: 'relocation', 
@@ -981,13 +1005,6 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
       );
     }
   },
-  {
-    field: 'eloRating',
-    headerName: 'Elo Rating',
-    type: 'number',
-    width: 120,
-    valueGetter: (params) => params.row.eloRating || 1200,
-  },
   ...(isLeagueView ? [{
     field: 'actions',
     headerName: '',
@@ -996,84 +1013,47 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     filterable: false,
     disableColumnMenu: true,
     renderCell: (params) => {
-      const [anchorEl, setAnchorEl] = React.useState(null);
-      const open = Boolean(anchorEl);
-
-      const handleMouseEnter = (event) => {
-        setAnchorEl(event.currentTarget);
-      };
-
-      const handleMouseLeave = () => {
-        setAnchorEl(null);
-      };
-
-      const handleDelete = () => {
-        if (window.confirm(`Are you sure you want to delete ${params.row.firstName} ${params.row.lastName}?`)) {
-          if (onDelete) {
-            onDelete(params.row.id);
+      const handleAction = (event) => {
+        event.stopPropagation(); // Prevent row click from firing
+        
+        if (showArchived) {
+          // Unarchive action
+          if (window.confirm(`Are you sure you want to unarchive ${params.row.firstName} ${params.row.lastName}?`)) {
+            if (onUnarchive) {
+              onUnarchive(params.row.id);
+            }
+          }
+        } else {
+          // Archive action
+          if (window.confirm(`Are you sure you want to archive ${params.row.firstName} ${params.row.lastName}?`)) {
+            if (onDelete) {
+              onDelete(params.row.id);
+            }
           }
         }
-        setAnchorEl(null);
       };
 
       return (
-        <Box
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          sx={{ display: 'flex', alignItems: 'center', height: '100%' }}
-        >
+        <Tooltip title={showArchived ? "Unarchive" : "Archive"} arrow>
           <IconButton
             size="small"
+            onClick={handleAction}
             sx={{
               color: 'var(--color-text-secondary)',
+              transition: 'color 0.2s',
               '&:hover': {
                 color: 'var(--color-primary)',
+                backgroundColor: 'transparent',
               }
             }}
           >
-            <MoreVert fontSize="small" />
+            {showArchived ? (
+              <UnarchiveOutlined fontSize="small" />
+            ) : (
+              <ArchiveOutlined fontSize="small" />
+            )}
           </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleMouseLeave}
-            MenuListProps={{
-              onMouseLeave: handleMouseLeave,
-              sx: { py: 0 }
-            }}
-            anchorOrigin={{
-              vertical: 'center',
-              horizontal: 'left',
-            }}
-            transformOrigin={{
-              vertical: 'center',
-              horizontal: 'right',
-            }}
-            slotProps={{
-              paper: {
-                sx: {
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                  minWidth: 120,
-                }
-              }
-            }}
-          >
-            <MenuItem
-              onClick={handleDelete}
-              sx={{
-                fontSize: '0.875rem',
-                py: 1,
-                px: 2,
-                '&:hover': {
-                  backgroundColor: 'var(--color-background-tertiary)',
-                }
-              }}
-            >
-              <DeleteOutlined fontSize="small" sx={{ mr: 1 }} />
-              Delete
-            </MenuItem>
-          </Menu>
-        </Box>
+        </Tooltip>
       );
     }
   }] : []),
@@ -1199,15 +1179,18 @@ const columnGroupingModel = [
   },
 ];
 
-export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], onAddToWatchlist }) {
+export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], onAddToWatchlist, showArchived = false, onUnarchive, staffData: externalStaffData, onArchive }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedRows, setSelectedRows] = React.useState([]);
   const [bulkEditOpen, setBulkEditOpen] = React.useState(false);
   
+  // Use external staff data if provided, otherwise use imported data
+  const sourceStaffData = externalStaffData || staffData;
+  
   // Enrich staff data with coaching statistics
   const [localStaffData, setLocalStaffData] = React.useState(() => {
-    return staffData.map(staff => {
+    return sourceStaffData.map(staff => {
       // Check multiple indicators that someone is a coach
       const currentRole = staff.currentEmployer?.split('-')[1]?.trim() || '';
       const interestArea = staff.interestArea || '';
@@ -1233,6 +1216,34 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
       return staff;
     });
   });
+  
+  // Sync external staff data changes to local state
+  React.useEffect(() => {
+    if (externalStaffData) {
+      setLocalStaffData(externalStaffData.map(staff => {
+        const currentRole = staff.currentEmployer?.split('-')[1]?.trim() || '';
+        const interestArea = staff.interestArea || '';
+        const hasCoachingRoles = staff.coachingRoles && staff.coachingRoles.length > 0;
+        const hasCoachingExp = staff.proCoachExp || staff.mlsCoachExp;
+        const hasCoachingLicenses = staff.coachingLicenses && staff.coachingLicenses.length > 0;
+        
+        const isCoach = currentRole.toLowerCase().includes('coach') || 
+                        currentRole.toLowerCase().includes('manager') || 
+                        interestArea.toLowerCase().includes('coach') ||
+                        hasCoachingRoles ||
+                        hasCoachingExp ||
+                        hasCoachingLicenses;
+        
+        if (isCoach) {
+          return {
+            ...staff,
+            coachingStats: generateStats(staff.id)
+          };
+        }
+        return staff;
+      }));
+    }
+  }, [externalStaffData]);
   
   // Tag management state
   const [tagSelectorAnchor, setTagSelectorAnchor] = React.useState(null);
@@ -1355,14 +1366,27 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
   
   // Filter data based on view context
   const filteredStaffData = React.useMemo(() => {
+    let filtered = localStaffData;
+    
+    // For league view: filter by archived status based on showArchived prop
+    // For club view: always exclude archived candidates
     if (isLeagueView) {
-      // League admins see all profiles
-      return localStaffData;
+      filtered = filtered.filter(staff => {
+        const isArchived = staff.isArchived || false;
+        return showArchived ? isArchived : !isArchived;
+      });
     } else {
-      // Club users only see Public profiles (filter out Private)
-      return localStaffData.filter(staff => staff.profilePrivacy !== 'Private');
+      // Club users should never see archived candidates
+      filtered = filtered.filter(staff => !staff.isArchived);
     }
-  }, [isLeagueView, localStaffData]);
+    
+    // Filter by privacy for non-league users
+    if (!isLeagueView) {
+      filtered = filtered.filter(staff => staff.profilePrivacy !== 'Private');
+    }
+    
+    return filtered;
+  }, [isLeagueView, localStaffData, showArchived]);
 
   const handleRowClick = (params, event) => {
     // Don't navigate if clicking on checkbox or action buttons
@@ -1612,8 +1636,34 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
   };
   
   const handleDeleteStaff = (staffId) => {
-    setLocalStaffData(prevData => prevData.filter(staff => staff.id !== staffId));
-    setToastMessage('Staff member deleted successfully');
+    if (onArchive) {
+      // Use external handler if provided
+      onArchive(staffId);
+    } else {
+      // Fall back to local state management
+      setLocalStaffData(prevData => 
+        prevData.map(staff => 
+          staff.id === staffId ? { ...staff, isArchived: true } : staff
+        )
+      );
+    }
+    setToastMessage('Staff member archived successfully');
+    setToastOpen(true);
+  };
+  
+  const handleUnarchiveStaff = (staffId) => {
+    if (onUnarchive) {
+      // Use external handler if provided
+      onUnarchive(staffId);
+    } else {
+      // Fall back to local state management
+      setLocalStaffData(prevData => 
+        prevData.map(staff => 
+          staff.id === staffId ? { ...staff, isArchived: false } : staff
+        )
+      );
+    }
+    setToastMessage('Staff member unarchived successfully');
     setToastOpen(true);
   };
   
@@ -1629,8 +1679,10 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
     isLeagueView,
     handleNotesClick,
     staffNotes,
-    handleDeleteStaff
-  ), [watchlistIds, onAddToWatchlist, isLeagueView, staffNotes]);
+    handleDeleteStaff,
+    showArchived,
+    handleUnarchiveStaff
+  ), [watchlistIds, onAddToWatchlist, isLeagueView, staffNotes, showArchived]);
   
   const selectedStaff = selectedStaffForTags 
     ? filteredStaffData.find(s => s.id === selectedStaffForTags)
@@ -1638,6 +1690,18 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
 
   return (
     <Box sx={{ height: 'calc(100vh - 100px)', width: '100%' }}>
+      {showArchived && filteredStaffData.length === 0 && (
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '100%',
+          color: 'var(--color-text-secondary)'
+        }}>
+          <Typography variant="body1">No archived candidates found.</Typography>
+        </Box>
+      )}
+      {(!showArchived || filteredStaffData.length > 0) && (<>
       {selectedRows.length > 0 && (
         <BulkEditBar
           selectedCount={selectedRows.length}
@@ -1821,7 +1885,6 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
               ppda: false,
               u23Minutes: false,
               academyDebuts: false,
-              eloRating: true,
               spacer: true,
             },
           },
@@ -1846,6 +1909,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
           }
         }}
       />
+      </>)}
     </Box>
   );
 }

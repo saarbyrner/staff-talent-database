@@ -4,10 +4,22 @@ import { Box, Typography, Paper, Tabs, Tab, Avatar } from '@mui/material';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import { CustomToolbar } from '../components/TalentDatabaseGrid';
 import TalentDatabaseGrid from '../components/TalentDatabaseGrid';
+import WatchlistGrid from '../components/WatchlistGrid';
+import SuccessionPlanning from '../pages/SuccessionPlanning';
 import InviteModal from '../components/InviteModal';
 import staffList from '../data/users_staff.json';
+import staffTalentData from '../data/staff_talent.json';
 import { generateInitialsImage } from '../utils/assetManager';
 import '../styles/design-tokens.css';
+
+// Initialize watchlist with some pre-populated staff objects
+const INITIAL_WATCHLIST = [
+  { id: '101', priority: 'High', targetRole: 'Head Coach' },
+  { id: '102', priority: 'Medium', targetRole: 'Assistant Coach' },
+  { id: '105', priority: 'Low', targetRole: 'Goalkeeper Coach' },
+  { id: '110', priority: 'High', targetRole: 'Sporting Director' },
+  { id: '115', priority: 'Medium', targetRole: 'Video Analyst' },
+];
 
 /**
  * Staff Database page
@@ -16,7 +28,7 @@ import '../styles/design-tokens.css';
 function StaffDatabase() {
   // Check if we're returning from a staff profile with a specific tab to show
   const location = useLocation();
-  const [tab, setTab] = useState(1); // 0 = Staff, 1 = Talent Database (default)
+  const [tab, setTab] = useState(3); // 0 = Staff, 1 = Succession, 2 = Watchlist, 3 = Talent Database (default)
 
   // If navigated to this page with a desired active tab in location state, apply it.
   React.useEffect(() => {
@@ -33,6 +45,17 @@ function StaffDatabase() {
     }
   }, [location]);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const [watchlist, setWatchlist] = useState(INITIAL_WATCHLIST);
+  
+  // Initialize staff data with archived status from localStorage
+  const [staffData, setStaffData] = useState(() => {
+    const archivedIds = JSON.parse(localStorage.getItem('archivedStaffIds') || '[]');
+    return staffTalentData.map(staff => ({
+      ...staff,
+      isArchived: archivedIds.includes(staff.id)
+    }));
+  });
+  
   const navigate = useNavigate();
   
   // Check if we're in league view
@@ -40,6 +63,53 @@ function StaffDatabase() {
 
   const handleChange = (event, value) => {
     setTab(value);
+  };
+
+  const handleAddToWatchlist = (staffId) => {
+    if (!watchlist.find(item => item.id === staffId)) {
+      setWatchlist([...watchlist, { id: staffId, priority: 'Medium', targetRole: '' }]);
+    }
+  };
+
+  const handleRemoveFromWatchlist = (staffId) => {
+    setWatchlist(watchlist.filter(item => item.id !== staffId));
+  };
+
+  const handleArchiveStaff = (staffId) => {
+    setStaffData(prevData => 
+      prevData.map(staff => 
+        staff.id === staffId ? { ...staff, isArchived: true } : staff
+      )
+    );
+    
+    // Persist to localStorage
+    const archivedIds = JSON.parse(localStorage.getItem('archivedStaffIds') || '[]');
+    if (!archivedIds.includes(staffId)) {
+      archivedIds.push(staffId);
+      localStorage.setItem('archivedStaffIds', JSON.stringify(archivedIds));
+    }
+  };
+
+  const handleUnarchiveStaff = (staffId) => {
+    setStaffData(prevData => 
+      prevData.map(staff => 
+        staff.id === staffId ? { ...staff, isArchived: false } : staff
+      )
+    );
+    
+    // Persist to localStorage
+    const archivedIds = JSON.parse(localStorage.getItem('archivedStaffIds') || '[]');
+    const updatedIds = archivedIds.filter(id => id !== staffId);
+    localStorage.setItem('archivedStaffIds', JSON.stringify(updatedIds));
+  };
+
+  const handleWatchlistUpdate = (updatedItem) => {
+    setWatchlist(currentWatchlist => {
+      const newWatchlist = currentWatchlist.map(item => 
+        item.id === updatedItem.id ? { ...item, ...updatedItem } : item
+      );
+      return newWatchlist;
+    });
   };
 
   const handleRowClick = (params, event) => {
@@ -71,9 +141,10 @@ function StaffDatabase() {
           mt: -3,
         }}
       >
-        <Tabs value={Number.isInteger(tab) ? tab : 1} onChange={handleChange} aria-label="Staff Tabs" sx={{ px: 0 }}>
+        <Tabs value={Number.isInteger(tab) ? tab : 3} onChange={handleChange} aria-label="Staff Tabs" sx={{ px: 0 }}>
           <Tab label="Staff" value={0} />
-          <Tab label="Talent Database" value={1} />
+          <Tab label="Talent Database" value={3} />
+          {isLeagueView && <Tab label="Archived Candidates" value={4} />}
         </Tabs>
       </Paper>
 
@@ -84,16 +155,38 @@ function StaffDatabase() {
           border: '1px solid var(--color-border-primary)',
           borderRadius: 1,
           overflow: 'hidden',
-          display: tab !== 1 ? 'none' : 'block'
+          display: tab !== 3 ? 'none' : 'block'
         }}
       >
         <TalentDatabaseGrid 
           onInviteClick={() => setInviteModalOpen(true)} 
-          watchlistIds={[]}
-          onAddToWatchlist={() => {}}
+          watchlistIds={watchlist.map(i => i.id)}
+          onAddToWatchlist={handleAddToWatchlist}
+          showArchived={false}
+          staffData={staffData}
+          onArchive={handleArchiveStaff}
         />
       </Paper>
-
+      <Paper 
+        elevation={0} 
+        sx={{ 
+          flexGrow: 1, 
+          border: '1px solid var(--color-border-primary)',
+          borderRadius: 1,
+          overflow: 'hidden',
+          display: tab !== 4 ? 'none' : 'block'
+        }}
+      >
+        <TalentDatabaseGrid 
+          onInviteClick={() => setInviteModalOpen(true)} 
+          watchlistIds={watchlist.map(i => i.id)}
+          onAddToWatchlist={handleAddToWatchlist}
+          showArchived={true}
+          staffData={staffData}
+          onUnarchive={handleUnarchiveStaff}
+        />
+      </Paper>
+      
       <Paper 
         elevation={0} 
         sx={{ 
@@ -155,11 +248,6 @@ function StaffDatabase() {
               { field: 'role', headerName: 'Role', width: 180 }
             ]}
             slots={{ toolbar: CustomToolbar }}
-            slotProps={{
-              toolbar: {
-                hideAddButton: true
-              }
-            }}
             onRowClick={handleRowClick}
             checkboxSelection
             pageSizeOptions={[25, 50]}

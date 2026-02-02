@@ -98,10 +98,12 @@ function MedinahLayoutWithMainNav({ children }) {
     if (location.pathname === '/league/analysis') return 'Analysis'
     if (location.pathname === '/league/athlete') return 'Athletes'
     if (location.pathname === '/league/staff') return 'Staff'
+    if (location.pathname.startsWith('/league/staff/')) return 'Staff'
     if (location.pathname.startsWith('/league/forms')) return 'Forms'
     if (location.pathname === '/league/planning') return 'Calendar'
     if (location.pathname === '/league/settings') return 'Admin'
     if (location.pathname === '/league/help') return 'Help'
+    if (location.pathname.startsWith('/staff/')) return 'Staff'
     return pageTitles[location.pathname] || 'Dashboard'
   }
 
