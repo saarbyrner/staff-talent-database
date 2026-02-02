@@ -936,6 +936,18 @@ function StaffFormEdit() {
                   >
                     {sectionTitle}
                   </Typography>
+                  {getCurrentSectionIndex() === 4 && (
+                    <Typography 
+                      variant="body2" 
+                      sx={{ 
+                        color: 'var(--color-text-primary)', 
+                        mb: 2,
+                        fontStyle: 'italic'
+                      }}
+                    >
+                      For the role questions, please only select roles you are currently qualified to perform given your coaching license, skillset and experience.
+                    </Typography>
+                  )}
                   <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)', mb: 2 }}>
                     {fields.length} field{fields.length === 1 ? '' : 's'}
                   </Typography>

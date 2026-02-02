@@ -73,8 +73,14 @@ const createFormNavigationStructure = (formDefinition) => {
       id: 'documents',
       title: 'Preferences',
       subgroups: [
-        { id: 9, title: sectionNames[4] || 'Role and location preferences', sectionIndex: 4, isCompleted: false },
-        { id: 11, title: sectionNames[11] || 'Profile privacy', sectionIndex: 11, isCompleted: false }
+        { id: 9, title: sectionNames[4] || 'Role and location preferences', sectionIndex: 4, isCompleted: false }
+      ]
+    },
+    {
+      id: 'consent',
+      title: 'Consent',
+      subgroups: [
+        { id: 11, title: sectionNames[11] || 'Consent', sectionIndex: 11, isCompleted: false }
       ]
     }
   ];
