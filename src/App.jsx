@@ -13,60 +13,67 @@ import Screen02_FormBuilder from './pages/forms/Screen02_FormBuilder'
 import Screen02_FormResponses from './pages/forms/Screen02_FormResponses'
 import Screen03_FormResponsesForTemplate from './pages/forms/Screen03_FormResponsesForTemplate'
 import Screen04_FormAnswerSet from './pages/forms/Screen04_FormAnswerSet'
+import ManageStaffUsers from './pages/ManageStaffUsers'
+import AddNewUser from './pages/AddNewUser'
 
 function App() {
   return (
-    <Routes>
-      {/* Staff Portal Routes - Standalone without navigation */}
-      <Route path="/portal/new" element={<StaffPortalView />} />
-      <Route path="/portal/:id" element={<StaffPortalView />} />
+    <div style={{ position: 'relative', minHeight: '100vh' }}>
+      <Routes>
+        {/* Staff Portal Routes - Standalone without navigation */}
+        <Route path="/portal/new" element={<StaffPortalView />} />
+        <Route path="/portal/:id" element={<StaffPortalView />} />
 
-      {/* All other routes with navigation */}
-      <Route path="/*" element={
-        <LayoutWithMainNav>
-          <Routes>
-            {/* Club View Routes */}
-            <Route path="/" element={<SimplePage pageName="Home" />} />
-            <Route path="/dashboard" element={<SimplePage pageName="Dashboard" />} />
-            <Route path="/medical" element={<SimplePage pageName="Medical" />} />
-            <Route path="/analysis" element={<StaffMapDashboard />} />
-            <Route path="/athlete" element={<Athletes />} />
-            <Route path="/staff" element={<StaffDatabase />} />
-            <Route path="/staff/new" element={<StaffFormEdit />} />
-            <Route path="/staff/:id" element={<StaffProfile />} />
-            <Route path="/staff/:id/edit" element={<StaffFormEdit />} />
-            <Route path="/workloads" element={<SimplePage pageName="Workload" />} />
-            <Route path="/questionnaires" element={<Screen01_FormsHome />} />
-            <Route path="/forms/form_templates" element={<Screen01_FormsHome />} />
-            <Route path="/forms/form_answers_sets" element={<Screen02_FormResponses />} />
-            <Route path="/forms/form_answers_sets/forms/:formId" element={<Screen03_FormResponsesForTemplate />} />
-            <Route path="/forms/form_answers_sets/:answerSetId" element={<Screen04_FormAnswerSet />} />
-            <Route path="/forms/:formId/build" element={<Screen02_FormBuilder />} />
-            <Route path="/planning" element={<SimplePage pageName="Calendar" />} />
-            <Route path="/activity" element={<SimplePage pageName="Activity log" />} />
-            <Route path="/settings" element={<SimplePage pageName="Admin" />} />
-            <Route path="/help" element={<SimplePage pageName="Help" />} />
+        {/* All other routes with navigation */}
+        <Route path="/*" element={
+          <LayoutWithMainNav>
+            <Routes>
+              {/* Club View Routes */}
+              <Route path="/" element={<SimplePage pageName="Home" />} />
+              <Route path="/dashboard" element={<SimplePage pageName="Dashboard" />} />
+              <Route path="/medical" element={<SimplePage pageName="Medical" />} />
+              <Route path="/analysis" element={<StaffMapDashboard />} />
+              <Route path="/athlete" element={<Athletes />} />
+              <Route path="/staff" element={<StaffDatabase />} />
+              <Route path="/staff/new" element={<StaffFormEdit />} />
+              <Route path="/staff/:id" element={<StaffProfile />} />
+              <Route path="/staff/:id/edit" element={<StaffFormEdit />} />
+              <Route path="/workloads" element={<SimplePage pageName="Workload" />} />
+              <Route path="/questionnaires" element={<Screen01_FormsHome />} />
+              <Route path="/forms/form_templates" element={<Screen01_FormsHome />} />
+              <Route path="/forms/form_answers_sets" element={<Screen02_FormResponses />} />
+              <Route path="/forms/form_answers_sets/forms/:formId" element={<Screen03_FormResponsesForTemplate />} />
+              <Route path="/forms/form_answers_sets/:answerSetId" element={<Screen04_FormAnswerSet />} />
+              <Route path="/forms/:formId/build" element={<Screen02_FormBuilder />} />
+              <Route path="/planning" element={<SimplePage pageName="Calendar" />} />
+              <Route path="/activity" element={<SimplePage pageName="Activity log" />} />
+              <Route path="/settings" element={<SimplePage pageName="Admin" />} />
+              <Route path="/help" element={<SimplePage pageName="Help" />} />
 
-            {/* League View Routes - Same data, different space */}
-            <Route path="/league" element={<League />} />
-            <Route path="/league/analysis" element={<StaffMapDashboard />} />
-            <Route path="/league/athlete" element={<Athletes />} />
-            <Route path="/league/staff" element={<StaffDatabase />} />
-            <Route path="/league/staff/new" element={<StaffFormEdit />} />
-            <Route path="/league/staff/:id" element={<StaffProfile />} />
-            <Route path="/league/staff/:id/edit" element={<StaffFormEdit />} />
-            <Route path="/league/forms/form_templates" element={<Screen01_FormsHome />} />
-            <Route path="/league/forms/form_answers_sets" element={<Screen02_FormResponses />} />
-            <Route path="/league/forms/form_answers_sets/forms/:formId" element={<Screen03_FormResponsesForTemplate />} />
-            <Route path="/league/forms/form_answers_sets/:answerSetId" element={<Screen04_FormAnswerSet />} />
-            <Route path="/league/forms/:formId/build" element={<Screen02_FormBuilder />} />
-            <Route path="/league/planning" element={<SimplePage pageName="Calendar" />} />
-            <Route path="/league/settings" element={<SimplePage pageName="Admin" />} />
-            <Route path="/league/help" element={<SimplePage pageName="Help" />} />
-          </Routes>
-        </LayoutWithMainNav>
-      } />
-    </Routes>
+              {/* League View Routes - Same data, different space */}
+              <Route path="/league" element={<League />} />
+              <Route path="/league/analysis" element={<StaffMapDashboard />} />
+              <Route path="/league/athlete" element={<Athletes />} />
+              <Route path="/league/staff" element={<StaffDatabase />} />
+              <Route path="/league/staff/new" element={<StaffFormEdit />} />
+              <Route path="/league/staff/:id" element={<StaffProfile />} />
+              <Route path="/league/staff/:id/edit" element={<StaffFormEdit />} />
+              <Route path="/league/staff/manage-users" element={<ManageStaffUsers />} />
+              <Route path="/league/forms/form_templates" element={<Screen01_FormsHome />} />
+              <Route path="/league/forms/form_answers_sets" element={<Screen02_FormResponses />} />
+              <Route path="/league/forms/form_answers_sets/forms/:formId" element={<Screen03_FormResponsesForTemplate />} />
+              <Route path="/league/forms/form_answers_sets/:answerSetId" element={<Screen04_FormAnswerSet />} />
+              <Route path="/league/forms/:formId/build" element={<Screen02_FormBuilder />} />
+              <Route path="/league/planning" element={<SimplePage pageName="Calendar" />} />
+              <Route path="/league/settings" element={<SimplePage pageName="Admin" />} />
+              <Route path="/league/help" element={<SimplePage pageName="Help" />} />
+              <Route path="/staff/manage-users" element={<ManageStaffUsers />} />
+              <Route path="/staff/add-user" element={<AddNewUser />} />
+            </Routes>
+          </LayoutWithMainNav>
+        } />
+      </Routes>
+    </div>
   )
 }
 
