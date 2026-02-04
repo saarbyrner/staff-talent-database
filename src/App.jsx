@@ -59,6 +59,7 @@ function App() {
               <Route path="/league/staff/:id" element={<StaffProfile />} />
               <Route path="/league/staff/:id/edit" element={<StaffFormEdit />} />
               <Route path="/league/staff/manage-users" element={<ManageStaffUsers />} />
+              <Route path="/league/staff/add-user" element={<AddNewUser />} />
               <Route path="/league/forms/form_templates" element={<Screen01_FormsHome />} />
               <Route path="/league/forms/form_answers_sets" element={<Screen02_FormResponses />} />
               <Route path="/league/forms/form_answers_sets/forms/:formId" element={<Screen03_FormResponsesForTemplate />} />

@@ -52,7 +52,7 @@ export default function AdministrationPanel({ color, userType = 'club' }) {
               key={item.label}
               style={{
                 padding: '12px 32px',
-                fontSize: 16,
+                fontSize: 14, // smaller type
                 cursor: path ? 'pointer' : 'default',
                 borderRadius: 8,
                 fontWeight: isActive ? 700 : 400,

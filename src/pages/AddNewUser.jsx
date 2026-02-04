@@ -3,7 +3,7 @@ import {
   Box, Typography, Grid, TextField, Select, MenuItem, InputLabel, FormControl, Divider, Checkbox, FormGroup, FormControlLabel, Button, Paper, AppBar, Toolbar, Autocomplete
 } from '@mui/material';
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const groups = [
   'Account Admin',
@@ -40,6 +40,11 @@ export default function AddNewUser() {
     permissions: {},
   });
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Detect if we're in league context
+  const isLeagueContext = location.pathname.startsWith('/league');
+  const manageUsersPath = isLeagueContext ? '/league/staff/manage-users' : '/staff/manage-users';
 
   const handleInput = (field, value) => setForm(f => ({ ...f, [field]: value }));
   const handlePermission = (group, perm) => setForm(f => ({
@@ -86,7 +91,7 @@ export default function AddNewUser() {
     };
 
     // Navigate back with new user data
-    navigate('/staff/manage-users', { state: { newUser } });
+    navigate(manageUsersPath, { state: { newUser } });
   };
 
   return (
@@ -278,7 +283,7 @@ export default function AddNewUser() {
       <AppBar position="fixed" color="inherit" sx={{ top: 'auto', bottom: 0, boxShadow: '0 -2px 8px rgba(0,0,0,0.03)', bgcolor: '#fff', borderTop: '1px solid #e0e0e0' }}>
         <Toolbar sx={{ justifyContent: 'flex-end', gap: 2 }}>
           <Button variant="outlined" sx={{ borderColor: '#cfd8dc', color: '#222', fontWeight: 500, borderRadius: 2, px: 2, bgcolor: '#fff', textTransform: 'none', '&:hover': { borderColor: '#b0bec5', bgcolor: '#f6f7fb' } }}
-            onClick={() => navigate('/staff/manage-users')}
+            onClick={() => navigate(manageUsersPath)}
           >Cancel</Button>
           <Button variant="contained" sx={{ bgcolor: '#3B4960', color: '#fff', fontWeight: 600, borderRadius: 2, px: 3, boxShadow: 'none', textTransform: 'none', '&:hover': { bgcolor: '#2c364a' } }}
             onClick={handleSubmit}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Tabs, Tab, InputBase, Paper, Avatar, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Box, Button, Tabs, Tab, TextField, Paper, Avatar, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -30,6 +30,10 @@ export default function ManageStaffUsers() {
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Detect if we're in league context
+  const isLeagueContext = location.pathname.startsWith('/league');
+  const addUserPath = isLeagueContext ? '/league/staff/add-user' : '/staff/add-user';
 
   // Check for new user from navigation state
   useEffect(() => {
@@ -48,7 +52,7 @@ export default function ManageStaffUsers() {
           <Typography variant="h4" sx={{ fontWeight: 400, fontSize: 32, mb: 0.5, color: '#222' }}>Manage Staff Users</Typography>
           <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
             <Button variant="contained" sx={{ bgcolor: '#14213d', color: '#fff', fontWeight: 600, borderRadius: 2, px: 3, boxShadow: 'none', textTransform: 'none', '&:hover': { bgcolor: '#1a2752' } }}
-              onClick={() => navigate('/staff/add-user')}
+              onClick={() => navigate(addUserPath)}
             >Create new user</Button>
             <Button variant="outlined" sx={{ borderColor: '#cfd8dc', color: '#222', fontWeight: 500, borderRadius: 2, px: 2, bgcolor: '#fff', textTransform: 'none', '&:hover': { borderColor: '#b0bec5', bgcolor: '#f6f7fb' } }}>Upload users</Button>
             <Button variant="outlined" sx={{ borderColor: '#cfd8dc', color: '#222', fontWeight: 500, borderRadius: 2, px: 2, bgcolor: '#fff', textTransform: 'none', '&:hover': { borderColor: '#b0bec5', bgcolor: '#f6f7fb' } }}>Download csv</Button>
@@ -60,30 +64,58 @@ export default function ManageStaffUsers() {
         </Tabs>
       </Box>
       {/* Search and subtitle */}
-      <Box sx={{ px: 4, pt: 3, pb: 1, display: 'flex', alignItems: 'center', gap: 3 }}>
-        <Paper component="form" sx={{ ml: 2, p: '2px 8px', display: 'flex', alignItems: 'center', width: 240, boxShadow: 'none', border: '1px solid #e0e0e0', borderRadius: 2, bgcolor: '#fff' }}>
-          <SearchIcon sx={{ color: '#888', mr: 1 }} />
-          <InputBase
-            sx={{ ml: 1, flex: 1, fontFamily: 'Inter, sans-serif' }}
-            placeholder="Search"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            inputProps={{ 'aria-label': 'search users' }}
-          />
-        </Paper>
+      {/* Removed search field outside of the table */}
+      {/* Table Toolbar */}
+      <Box sx={{ px: 3, pt: 2, pb: 0 }}>
+        <Box sx={{
+          height: 'auto',
+          px: 2,
+          py: 1,
+          borderBottom: '1px solid #e0e0e0',
+          backgroundColor: '#fff',
+          display: 'flex',
+          alignItems: 'center',
+          borderTopLeftRadius: 12,
+          borderTopRightRadius: 12,
+          borderBottomLeftRadius: 0,
+          borderBottomRightRadius: 0,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+        }}>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', width: '100%' }}>
+            <TextField
+              variant="outlined"
+              size="small"
+              placeholder="Search"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              sx={{ 
+                width: '240px',
+                my: 1.5,
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: '#f6f7fb',
+                  borderRadius: '4px',
+                  fontFamily: 'Inter, sans-serif'
+                }
+              }}
+              InputProps={{
+                startAdornment: <SearchIcon sx={{ color: '#888', mr: 1 }} />
+              }}
+            />
+          </Box>
+        </Box>
       </Box>
       {/* Table */}
       <Box sx={{ px: 3, pb: 4, maxHeight: 'calc(100vh - 180px)', overflowY: 'auto' }}>
-        <TableContainer component={Paper} sx={{ borderRadius: 3, boxShadow: '0 2px 8px rgba(0,0,0,0.03)', bgcolor: '#fff' }}>
+        <TableContainer component={Paper} sx={{ borderRadius: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)', bgcolor: '#fff' }}>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 400, color: '#222', fontSize: 15 }}>Staff name</TableCell>
-                <TableCell sx={{ fontWeight: 400, color: '#222', fontSize: 15 }}>Username</TableCell>
-                <TableCell sx={{ fontWeight: 400, color: '#222', fontSize: 15 }}>Role</TableCell>
-                <TableCell sx={{ fontWeight: 400, color: '#222', fontSize: 15 }}>Email</TableCell>
-                <TableCell sx={{ fontWeight: 400, color: '#222', fontSize: 15 }}>Creation Date</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 400, color: '#222', fontSize: 15 }}></TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#222', fontSize: 15 }}>Staff name</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#222', fontSize: 15 }}>Username</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#222', fontSize: 15 }}>Role</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#222', fontSize: 15 }}>Email</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#222', fontSize: 15 }}>Creation Date</TableCell>
+                <TableCell align="right" sx={{ fontWeight: 600, color: '#222', fontSize: 15 }}></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

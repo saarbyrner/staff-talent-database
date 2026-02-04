@@ -373,23 +373,31 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
   };
 
   return [
+  // NAME (combined with headshot)
   {
-    field: 'picUrl',
-    headerName: '',
-    width: 72,
-    sortable: false,
-    filterable: false,
+    field: 'name',
+    headerName: 'Name',
+    width: 240,
+    sortable: true,
+    filterable: true,
+    valueGetter: (params) => `${params.row.firstName || ''} ${params.row.lastName || ''}`.trim(),
     renderCell: (params) => (
-      <LinkCell
-        value={params.value}
-        type="avatar"
-        name={`${params.row.firstName || ''} ${params.row.lastName || ''}`.trim()}
-      />
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        <Avatar
+          src={params.row.picUrl}
+          sx={{ width: 32, height: 32, bgcolor: 'var(--color-background-secondary)' }}
+          imgProps={{
+            referrerPolicy: 'no-referrer',
+            style: { objectFit: 'cover' }
+          }}
+        />
+        <Typography sx={{ fontWeight: 500, fontSize: 14, color: '#222' }}>
+          {`${params.row.firstName || ''} ${params.row.lastName || ''}`.trim()}
+        </Typography>
+      </Box>
     )
   },
   // CONTACT INFO
-  { field: 'firstName', headerName: 'First Name', width: 150 },
-  { field: 'lastName', headerName: 'Last Name', width: 150 },
   { field: 'phone', headerName: 'Phone', width: 150 },
   { field: 'email', headerName: 'Email', width: 200 },
   {

@@ -139,7 +139,7 @@ function StaffProfile() {
             <ArrowBack />
           </IconButton>
           <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>
-            {isLeagueView ? 'Registration / ' : ''}{staffMember.source === 'current' ? staffMember.currentEmployer : 'Talent Database'}
+            {staffMember.source === 'current' ? staffMember.currentEmployer : 'Talent Database'}
           </Typography>
         </Box>
 
