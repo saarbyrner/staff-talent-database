@@ -26,6 +26,8 @@ import {
   NotesOutlined,
   ArchiveOutlined,
   UnarchiveOutlined,
+  CheckCircle,
+  Cancel,
 } from '@mui/icons-material';
 import staffData from '../data/staff_talent.json';
 import { generateInitialsImage } from '../utils/assetManager';
@@ -609,18 +611,45 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
   { 
     field: 'roles', 
     headerName: 'Roles', 
-    width: 400, 
+    width: 280, 
     valueGetter: (params) => {
       const { coachingRoles = [], execRoles = [], techRoles = [] } = params.row;
       return [...coachingRoles, ...execRoles, ...techRoles];
     },
     renderCell: (params) => <RolesCell roles={params.value} /> 
   },
+  // CLUB ADD (only shown in club view, not league view)
+  ...(!isLeagueView ? [{
+    field: 'clubAdd',
+    headerName: 'Club Add',
+    width: 120,
+    align: 'center',
+    headerAlign: 'center',
+    sortable: true,
+    valueGetter: (params) => {
+      // Only about 25% of staff are club-added
+      const seed = params.row.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      return seed % 4 === 0 && getStaffStatus(params.row) === 'Complete';
+    },
+    renderCell: (params) => (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+        {params.value ? (
+          <Tooltip title="Added by Club">
+            <CheckOutlined sx={{ color: 'success.main' }} />
+          </Tooltip>
+        ) : (
+          <Tooltip title="Not Added by Club">
+            <CloseOutlined sx={{ color: 'error.main' }} />
+          </Tooltip>
+        )}
+      </Box>
+    ),
+  }] : []),
   // STATUS
   {
     field: 'status',
-    headerName: 'Status',
-    width: 130,
+    headerName: 'App Status',
+    width: 110,
     sortable: true,
     valueGetter: (params) => getStaffStatus(params.row),
       renderCell: (params) => {
