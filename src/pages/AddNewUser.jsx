@@ -21,7 +21,7 @@ const groups = [
   'Match Observer'
 ];
 const languages = ['Use organisation language setting', 'English', 'Spanish', 'French'];
-const squads = ['1st Team', 'Next Pro Team', 'U13', 'U13 AD', 'U14', 'U14 AD', 'U15 AD', 'U16', 'U16 AD', 'U17', 'U17 AD', 'U19', 'U19 AD'];
+const squads = ['1st Team', 'Next Pro Team', 'Talent Database', 'U13', 'U13 AD', 'U14', 'U14 AD', 'U15 AD', 'U16', 'U16 AD', 'U17', 'U17 AD', 'U19', 'U19 AD'];
 
 const permissions = {
   Workloads: ['Workload View', 'Edit Games'],
@@ -69,6 +69,16 @@ export default function AddNewUser() {
       alert('Please fill in all required fields: First Name, Last Name, Email, and Group');
       return;
     }
+    // Require at least one Squad Access checkbox
+    if (!form.squads || form.squads.length === 0) {
+      alert('Please select at least one Squad Access option.');
+      return;
+    }
+    // Require at least one Squad Membership
+    if (!form.squadMemberships || form.squadMemberships.length === 0) {
+      alert('Please select at least one Squad Membership.');
+      return;
+    }
 
     // Generate username
     const username = generateUsername(form.firstName, form.lastName);
@@ -90,8 +100,14 @@ export default function AddNewUser() {
       date: formattedDate
     };
 
-    // Navigate back with new user data
-    navigate(manageUsersPath, { state: { newUser } });
+    // Navigate back - if returnTab is specified (e.g., from Talent Database), go there
+    if (location.state && location.state.returnTab !== undefined) {
+      const basePath = isLeagueContext ? '/league/staff' : '/staff';
+      navigate(basePath, { state: { activeTab: location.state.returnTab } });
+    } else {
+      // Otherwise go to manage users page
+      navigate(manageUsersPath, { state: { newUser } });
+    }
   };
 
   return (
@@ -283,7 +299,15 @@ export default function AddNewUser() {
       <AppBar position="fixed" color="inherit" sx={{ top: 'auto', bottom: 0, boxShadow: '0 -2px 8px rgba(0,0,0,0.03)', bgcolor: '#fff', borderTop: '1px solid #e0e0e0' }}>
         <Toolbar sx={{ justifyContent: 'flex-end', gap: 2 }}>
           <Button variant="outlined" sx={{ borderColor: '#cfd8dc', color: '#222', fontWeight: 500, borderRadius: 2, px: 2, bgcolor: '#fff', textTransform: 'none', '&:hover': { borderColor: '#b0bec5', bgcolor: '#f6f7fb' } }}
-            onClick={() => navigate(manageUsersPath)}
+            onClick={() => {
+              // If returnTab is specified (e.g., from Talent Database), go there
+              if (location.state && location.state.returnTab !== undefined) {
+                const basePath = isLeagueContext ? '/league/staff' : '/staff';
+                navigate(basePath, { state: { activeTab: location.state.returnTab } });
+              } else {
+                navigate(manageUsersPath);
+              }
+            }}
           >Cancel</Button>
           <Button variant="contained" sx={{ bgcolor: '#3B4960', color: '#fff', fontWeight: 600, borderRadius: 2, px: 3, boxShadow: 'none', textTransform: 'none', '&:hover': { bgcolor: '#2c364a' } }}
             onClick={handleSubmit}

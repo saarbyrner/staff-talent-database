@@ -336,7 +336,13 @@ function StaffFormEdit() {
   };
 
   const handleCancel = () => {
-    navigate(-1);
+    // If we have a return tab specified, navigate back to that tab
+    if (location.state && location.state.returnTab !== undefined) {
+      const basePath = isLeagueView ? '/league/staff' : '/staff';
+      navigate(basePath, { state: { activeTab: location.state.returnTab } });
+    } else {
+      navigate(-1);
+    }
   };
 
   const handleSaveInProgress = () => {
@@ -349,8 +355,14 @@ function StaffFormEdit() {
     console.log('Submit clicked', formValues);
     // TODO: Implement submit functionality
     alert('Form submitted successfully');
-    const basePath = isLeagueView ? '/league/staff' : '/staff';
-    navigate(basePath);
+    // If we have a return tab specified, navigate back to that tab
+    if (location.state && location.state.returnTab !== undefined) {
+      const basePath = isLeagueView ? '/league/staff' : '/staff';
+      navigate(basePath, { state: { activeTab: location.state.returnTab } });
+    } else {
+      const basePath = isLeagueView ? '/league/staff' : '/staff';
+      navigate(basePath);
+    }
   };
 
   const handleValueChange = (fieldName, value) => {
@@ -402,8 +414,14 @@ function StaffFormEdit() {
     } else {
       alert('Form saved successfully!');
     }
-    const basePath = isLeagueView ? '/league/staff' : '/staff';
-    navigate(basePath);
+    // If we have a return tab specified, navigate back to that tab
+    if (location.state && location.state.returnTab !== undefined) {
+      const basePath = isLeagueView ? '/league/staff' : '/staff';
+      navigate(basePath, { state: { activeTab: location.state.returnTab } });
+    } else {
+      const basePath = isLeagueView ? '/league/staff' : '/staff';
+      navigate(basePath);
+    }
   };
 
   const evaluateDependency = (field) => {

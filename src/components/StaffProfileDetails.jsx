@@ -303,7 +303,7 @@ function StaffProfileDetails({ staffData, isLeagueView = false, onEdit }) {
                                 color: 'var(--color-text-secondary)',
                                 fontSize: '0.75rem',
                                 mb: 0.5,
-                                textTransform: 'uppercase',
+                                textTransform: 'none',
                                 letterSpacing: '0.5px',
                               }}
                             >

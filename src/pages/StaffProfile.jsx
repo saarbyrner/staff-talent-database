@@ -14,6 +14,7 @@ import staffTalentData from '../data/staff_talent.json';
 import currentStaffData from '../data/users_staff.json';
 import { generateInitialsImage } from '../utils/assetManager';
 import StaffProfileDetails from '../components/StaffProfileDetails';
+import MedinahStatusChip from '../components/StatusChip';
 import '../styles/design-tokens.css';
 
 /**
@@ -100,9 +101,9 @@ function StaffProfile() {
     : `${staffMember.firstname} ${staffMember.lastname}`;
 
   const displayEmail = staffMember.email;
-  const displayPhone = staffMember.phone;
-  const displayCountry = staffMember.country || 'N/A';
-  const displayCity = staffMember.city || 'N/A';
+  const displayPhone = staffMember.phone ? staffMember.phone : '-';
+  const displayCountry = staffMember.country ? staffMember.country : '-';
+  const displayCity = staffMember.city ? staffMember.city : '-';
 
   // Generate avatar
   const initials = displayName
@@ -118,11 +119,23 @@ function StaffProfile() {
 
   // Determine role/position
   const role = staffMember.source === 'talent' 
-    ? staffMember.interestArea || 'N/A'
-    : staffMember.role || 'N/A';
+    ? (staffMember.interestArea ? staffMember.interestArea : '-')
+    : (staffMember.role ? staffMember.role : '-');
 
   // Status
-  const status = staffMember.source === 'current' && staffMember.is_active ? 'Active' : 'Available';
+  // App Status from Talent Database
+  let status = 'Incomplete';
+  if (staffMember.source === 'talent') {
+    // Use the same logic as getStaffStatus in TalentDatabaseGrid
+    const requiredFields = ['firstName', 'lastName', 'email', 'phone'];
+    const isIncomplete = requiredFields.some(field => {
+      const value = staffMember[field];
+      return !value || (typeof value === 'string' && value.trim() === '');
+    });
+    status = isIncomplete ? 'Incomplete' : 'Submitted';
+  } else if (staffMember.source === 'current' && staffMember.is_active) {
+    status = 'Active';
+  }
 
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#fafafa' }}>
@@ -238,17 +251,16 @@ function StaffProfile() {
                 <Typography variant="caption" sx={{ color: 'var(--color-text-secondary)', display: 'block' }}>
                   Status
                 </Typography>
-                <Chip
-                  label={status}
-                  size="small"
-                  sx={{
-                    height: 20,
-                    fontSize: '0.75rem',
-                    fontWeight: 600,
-                    backgroundColor: status === 'Active' ? 'var(--color-success-background)' : 'var(--color-error-background)',
-                    color: status === 'Active' ? 'var(--color-success-text)' : 'var(--color-error-text)',
-                    border: 'none',
-                  }}
+                {/* Use MedinahStatusChip for App Status styling */}
+                <MedinahStatusChip
+                  status={status}
+                  type={
+                    status === 'Submitted' ? 'success'
+                    : status === 'Incomplete' ? 'error'
+                    : status === 'Active' ? 'success'
+                    : 'default'
+                  }
+                  sx={{ height: 20, fontSize: '0.75rem', fontWeight: 600 }}
                 />
               </Box>
             </Box>

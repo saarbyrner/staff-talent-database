@@ -87,8 +87,9 @@ export const CustomToolbar = React.forwardRef((props, ref) => {
   const { onInviteClick, onManageTags, hideAddButton, onApprovals, pendingApprovalsCount = 0 } = props;
   
   const handleAddClick = () => {
-    const basePath = location.pathname.startsWith('/league') ? '/league/staff' : '/staff';
-    navigate(`${basePath}/new`);
+    // Always go to /staff/add-user as requested
+    // Pass state to indicate return to Talent Database tab (tab index 3)
+    navigate('/staff/add-user', { state: { from: location.pathname, returnTab: 3 } });
   };
   
   return (
