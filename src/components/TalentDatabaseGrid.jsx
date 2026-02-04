@@ -1826,7 +1826,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
         </Box>
       )}
       {(!showArchived || filteredStaffData.length > 0) && (<>
-      {selectedRows.length > 0 && (
+      {selectedRows.length > 0 && isLeagueView && (
         <BulkEditBar
           selectedCount={selectedRows.length}
           onSave={handleBulkEditSave}
