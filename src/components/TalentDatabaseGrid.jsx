@@ -87,9 +87,10 @@ export const CustomToolbar = React.forwardRef((props, ref) => {
   const { onInviteClick, onManageTags, hideAddButton, onApprovals, pendingApprovalsCount = 0 } = props;
   
   const handleAddClick = () => {
-    // Always go to /staff/add-user as requested
-    // Pass state to indicate return to Talent Database tab (tab index 3)
-    navigate('/staff/add-user', { state: { from: location.pathname, returnTab: 3 } });
+    // Go to league or staff add-user depending on view
+    const isLeague = location.pathname.startsWith('/league');
+    const path = isLeague ? '/league/staff/add-user' : '/staff/add-user';
+    navigate(path, { state: { from: location.pathname, returnTab: 3 } });
   };
   
   return (
@@ -160,28 +161,7 @@ export const CustomToolbar = React.forwardRef((props, ref) => {
             Tags
           </Button>
         )}
-        {onInviteClick && (
-          <Button
-            variant="outlined"
-            startIcon={<MailOutline />}
-            onClick={onInviteClick}
-            sx={{
-              textTransform: 'none',
-              fontSize: '0.875rem',
-              fontWeight: 500,
-              borderColor: 'var(--color-border-primary)',
-              color: 'var(--color-text-primary)',
-              minWidth: 'auto',
-              padding: '6px 12px',
-              '&:hover': {
-                borderColor: 'var(--color-text-primary)',
-                backgroundColor: 'var(--color-background-tertiary)'
-              }
-            }}
-          >
-            Invite
-          </Button>
-        )}
+        {/* Invite button removed as requested */}
         {!hideAddButton && (
           <Button
             variant="contained"

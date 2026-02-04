@@ -137,6 +137,14 @@ function StaffProfile() {
     status = 'Active';
   }
 
+  // Determine if this candidate is club-added (using same logic as TalentDatabaseGrid)
+  const isClubAdded = useMemo(() => {
+    if (staffMember.source !== 'talent') return false;
+    const seed = staffMember.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const isComplete = status === 'Submitted';
+    return seed % 4 === 0 && isComplete;
+  }, [staffMember.source, staffMember.id, status]);
+
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#fafafa' }}>
       {/* Header Section */}
@@ -272,7 +280,14 @@ function StaffProfile() {
       <StaffProfileDetails
         staffData={staffMember}
         isLeagueView={isLeagueView}
-        onEdit={staffMember.source === 'talent' && !staffMember.phone ? undefined : handleEdit}
+        onEdit={
+          // Don't show edit for incomplete profiles without phone
+          staffMember.source === 'talent' && !staffMember.phone ? undefined :
+          // For league view, always show edit
+          isLeagueView ? handleEdit :
+          // For club view, only show edit if candidate is club-added
+          isClubAdded ? handleEdit : undefined
+        }
       />
     </Box>
   );
