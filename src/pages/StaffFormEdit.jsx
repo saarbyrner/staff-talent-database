@@ -33,7 +33,8 @@ import {
   InsertDriveFile,
   ChevronRight as ChevronRightIcon,
   RadioButtonUnchecked,
-  CheckCircle
+  CheckCircle,
+  Edit as EditIcon
 } from '@mui/icons-material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -326,12 +327,30 @@ function StaffFormEdit() {
 
 
   const handleBack = () => {
-    const basePath = isLeagueView ? '/league/staff' : '/staff';
     if (isNewStaff) {
-      navigate(basePath);
+      navigate(-1);
     } else {
+      const basePath = isLeagueView ? '/league/staff' : '/staff';
       navigate(`${basePath}/${id}`);
     }
+  };
+
+  const handleCancel = () => {
+    navigate(-1);
+  };
+
+  const handleSaveInProgress = () => {
+    console.log('Save in Progress clicked', formValues);
+    // TODO: Implement save as draft functionality
+    alert('Progress saved as draft');
+  };
+
+  const handleSubmit = () => {
+    console.log('Submit clicked', formValues);
+    // TODO: Implement submit functionality
+    alert('Form submitted successfully');
+    const basePath = isLeagueView ? '/league/staff' : '/staff';
+    navigate(basePath);
   };
 
   const handleValueChange = (fieldName, value) => {
@@ -682,20 +701,69 @@ function StaffFormEdit() {
               Back
             </Typography>
             <Box sx={{ flexGrow: 1 }} />
-            <Button
-              variant="contained"
-              startIcon={<SaveOutlined />}
-              onClick={handleSave}
-              sx={{
-                textTransform: 'none',
-                backgroundColor: 'var(--color-primary)',
-                '&:hover': {
-                  backgroundColor: 'var(--color-primary-hover)',
-                },
-              }}
-            >
-              Save Changes
-            </Button>
+            {isNewStaff ? (
+              <>
+                <Button
+                  variant="outlined"
+                  onClick={handleCancel}
+                  sx={{
+                    textTransform: 'none',
+                    borderColor: 'var(--color-border-primary)',
+                    color: 'var(--color-text-primary)',
+                    '&:hover': {
+                      borderColor: 'var(--color-text-primary)',
+                      backgroundColor: 'var(--color-background-tertiary)',
+                    },
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="outlined"
+                  startIcon={<SaveOutlined />}
+                  onClick={handleSaveInProgress}
+                  sx={{
+                    textTransform: 'none',
+                    borderColor: 'var(--color-border-primary)',
+                    color: 'var(--color-text-primary)',
+                    '&:hover': {
+                      borderColor: 'var(--color-text-primary)',
+                      backgroundColor: 'var(--color-background-tertiary)',
+                    },
+                  }}
+                >
+                  Save in Progress
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={handleSubmit}
+                  sx={{
+                    textTransform: 'none',
+                    backgroundColor: 'var(--color-primary)',
+                    '&:hover': {
+                      backgroundColor: 'var(--color-primary-hover)',
+                    },
+                  }}
+                >
+                  Submit
+                </Button>
+              </>
+            ) : (
+              <Button
+                variant="contained"
+                startIcon={<SaveOutlined />}
+                onClick={handleSave}
+                sx={{
+                  textTransform: 'none',
+                  backgroundColor: 'var(--color-primary)',
+                  '&:hover': {
+                    backgroundColor: 'var(--color-primary-hover)',
+                  },
+                }}
+              >
+                Save Changes
+              </Button>
+            )}
           </Box>
           
           <Typography variant="h5" sx={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>

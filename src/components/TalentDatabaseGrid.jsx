@@ -38,6 +38,16 @@ import ClubApprovalInbox from './ClubApprovalInbox';
 import NotesDrawer from './NotesDrawer';
 import '../styles/design-tokens.css';
 
+// Helper to determine if a staff record is complete
+const getStaffStatus = (staff) => {
+  const requiredFields = ['firstName', 'lastName', 'email', 'phone'];
+  const isIncomplete = requiredFields.some(field => {
+    const value = staff[field];
+    return !value || (typeof value === 'string' && value.trim() === '');
+  });
+  return isIncomplete ? 'Incomplete' : 'Complete';
+};
+
 // Helper to generate consistent random stats based on staff ID
 const generateStats = (id) => {
   const seed = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -205,11 +215,11 @@ const BooleanCell = ({ value }) => {
   if (value === false) {
     return <Chip icon={<CloseOutlined />} label="No" size="small" color="default" variant="outlined" />;
   }
-  return null;
+  return <span>-</span>;
 };
 
 const ArrayCell = ({ value }) => {
-  if (!Array.isArray(value) || value.length === 0) return null;
+  if (!Array.isArray(value) || value.length === 0) return <span>-</span>;
   return (
     <Stack direction="row" spacing={0.5} sx={{ overflowX: 'auto', py: 1 }}>
       {value.map((item, index) => (
@@ -220,7 +230,7 @@ const ArrayCell = ({ value }) => {
 };
 
 const RolesCell = ({ roles }) => {
-  if (!Array.isArray(roles) || roles.length === 0) return null;
+  if (!Array.isArray(roles) || roles.length === 0) return <span>-</span>;
   
   if (roles.length === 1) {
     return (
@@ -249,7 +259,7 @@ const getInitials = (name = '') => (
     .filter(Boolean)
     .map(part => part.charAt(0).toUpperCase())
     .slice(0, 2)
-    .join('') || '—'
+    .join('') || '-'
 );
 
 const LinkCell = ({ value, type, name = '' }) => {
@@ -381,25 +391,49 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     sortable: true,
     filterable: true,
     valueGetter: (params) => `${params.row.firstName || ''} ${params.row.lastName || ''}`.trim(),
-    renderCell: (params) => (
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        <Avatar
-          src={params.row.picUrl}
-          sx={{ width: 32, height: 32, bgcolor: 'var(--color-background-secondary)' }}
-          imgProps={{
-            referrerPolicy: 'no-referrer',
-            style: { objectFit: 'cover' }
-          }}
-        />
-        <Typography sx={{ fontWeight: 500, fontSize: 14, color: '#222' }}>
-          {`${params.row.firstName || ''} ${params.row.lastName || ''}`.trim()}
-        </Typography>
-      </Box>
-    )
+    renderCell: (params) => {
+      const hasImage = params.row.picUrl && params.row.picUrl.trim() !== '';
+      const initials = `${params.row.firstName?.charAt(0) || ''}${params.row.lastName?.charAt(0) || ''}`.toUpperCase();
+      
+      return (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Avatar
+            src={hasImage ? params.row.picUrl : undefined}
+            sx={{ 
+              width: 32, 
+              height: 32, 
+              bgcolor: hasImage ? 'var(--color-background-secondary)' : '#3B4960',
+              color: '#fff',
+              fontSize: '0.75rem',
+              fontWeight: 600
+            }}
+            imgProps={{
+              referrerPolicy: 'no-referrer',
+              style: { objectFit: 'cover' }
+            }}
+          >
+            {!hasImage && initials}
+          </Avatar>
+          <Typography sx={{ fontWeight: 500, fontSize: 14, color: '#222' }}>
+            {`${params.row.firstName || ''} ${params.row.lastName || ''}`.trim()}
+          </Typography>
+        </Box>
+      );
+    }
   },
   // CONTACT INFO
-  { field: 'phone', headerName: 'Phone', width: 150 },
-  { field: 'email', headerName: 'Email', width: 200 },
+  { 
+    field: 'phone', 
+    headerName: 'Phone', 
+    width: 150,
+    renderCell: (params) => params.value || '-'
+  },
+  { 
+    field: 'email', 
+    headerName: 'Email', 
+    width: 250,
+    renderCell: (params) => params.value || '-'
+  },
   {
     field: 'tags',
     headerName: 'Tags',
@@ -451,6 +485,12 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     headerName: 'Profile Privacy', 
     width: 140,
     renderCell: (params) => {
+      // Check if profile is incomplete (missing phone)
+      const isIncomplete = !params.row.phone || params.row.phone.trim() === '';
+      if (isIncomplete) {
+        return <span>-</span>;
+      }
+      
       const value = params.value || 'Public';
       const isPrivate = value === 'Private';
       return (
@@ -476,10 +516,16 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     width: 200,
     valueGetter: (params) => {
       const { city, state, country } = params.row;
-      return [city, state, country].filter(Boolean).join(', ');
+      const location = [city, state, country].filter(Boolean).join(', ');
+      return location || '-';
     }
   },
-  { field: 'state', headerName: 'State', width: 120 },
+  { 
+    field: 'state', 
+    headerName: 'State', 
+    width: 120,
+    renderCell: (params) => params.value || '-'
+  },
   { 
     field: 'workAuthUS', 
     headerName: 'US Sponsorship?', 
@@ -494,8 +540,18 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
   },
 
   // VOLUNTARY ID
-  { field: 'gender', headerName: 'Gender', width: 120 },
-  { field: 'ethnicity', headerName: 'Ethnicity', width: 180 },
+  { 
+    field: 'gender', 
+    headerName: 'Gender', 
+    width: 120,
+    renderCell: (params) => params.value || '-'
+  },
+  { 
+    field: 'ethnicity', 
+    headerName: 'Ethnicity', 
+    width: 180,
+    renderCell: (params) => params.value || '-'
+  },
 
   // AGENT
   { 
@@ -504,8 +560,18 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     width: 120, 
     renderCell: (params) => <BooleanCell value={params.value} /> 
   },
-  { field: 'agentName', headerName: 'Agent Name', width: 150 },
-  { field: 'agencyName', headerName: 'Agency Name', width: 150 },
+  { 
+    field: 'agentName', 
+    headerName: 'Agent Name', 
+    width: 150,
+    renderCell: (params) => params.value || '-'
+  },
+  { 
+    field: 'agencyName', 
+    headerName: 'Agency Name', 
+    width: 150,
+    renderCell: (params) => params.value || '-'
+  },
 
   // EXPERIENCE
   { 
@@ -526,10 +592,20 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     width: 200, 
     renderCell: (params) => <ArrayCell value={params.value} /> 
   },
-  { field: 'otherPlayerExp', headerName: 'Other Exp', width: 250 },
+  { 
+    field: 'otherPlayerExp', 
+    headerName: 'Other Exp', 
+    width: 250,
+    renderCell: (params) => params.value || '-'
+  },
 
   // INTERESTS
-  { field: 'interestArea', headerName: 'Area of Interest', width: 180 },
+  { 
+    field: 'interestArea', 
+    headerName: 'Area of Interest', 
+    width: 180,
+    renderCell: (params) => params.value || '-'
+  },
   { 
     field: 'roles', 
     headerName: 'Roles', 
@@ -539,6 +615,29 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
       return [...coachingRoles, ...execRoles, ...techRoles];
     },
     renderCell: (params) => <RolesCell roles={params.value} /> 
+  },
+  // STATUS
+  {
+    field: 'status',
+    headerName: 'Status',
+    width: 130,
+    sortable: true,
+    valueGetter: (params) => getStaffStatus(params.row),
+      renderCell: (params) => {
+        const isComplete = params.value === 'Complete';
+        const label = isComplete ? 'Submitted' : params.value;
+        return (
+          <Chip
+            label={label}
+            size="small"
+            color={isComplete ? 'success' : 'default'}
+            variant="filled"
+            sx={{
+              fontWeight: 500,
+            }}
+          />
+        );
+      }
   },
   { 
     field: 'relocation', 
@@ -717,27 +816,32 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
   { 
     field: 'currentEmployer', 
     headerName: 'Current Employer', 
-    width: 250 
+    width: 250,
+    renderCell: (params) => params.value || '-'
   },
   { 
     field: 'prevEmployer1', 
     headerName: 'Previous Employer 1', 
-    width: 250 
+    width: 250,
+    renderCell: (params) => params.value || '-'
   },
   { 
     field: 'prevEmployer2', 
     headerName: 'Previous Employer 2', 
-    width: 250 
+    width: 250,
+    renderCell: (params) => params.value || '-'
   },
   { 
     field: 'prevEmployer3', 
     headerName: 'Previous Employer 3', 
-    width: 250 
+    width: 250,
+    renderCell: (params) => params.value || '-'
   },
   { 
     field: 'prevEmployer4', 
     headerName: 'Previous Employer 4', 
-    width: 250 
+    width: 250,
+    renderCell: (params) => params.value || '-'
   },
 
   // EDUCATION EXPANDED
@@ -768,7 +872,8 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
   { 
     field: 'otherLicensesList', 
     headerName: 'Other Licenses List', 
-    width: 200 
+    width: 200,
+    renderCell: (params) => params.value || '-'
   },
 
   // DOCS
@@ -1122,6 +1227,7 @@ const columnGroupingModel = [
     children: [
       { field: 'interestArea' },
       { field: 'roles' },
+      { field: 'status' },
       { field: 'relocation' },
     ],
   },

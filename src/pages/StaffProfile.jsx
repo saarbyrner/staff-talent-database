@@ -7,8 +7,9 @@ import {
   Avatar,
   Chip,
   IconButton,
+  Button,
 } from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
+import { ArrowBack, Edit as EditIcon } from '@mui/icons-material';
 import staffTalentData from '../data/staff_talent.json';
 import currentStaffData from '../data/users_staff.json';
 import { generateInitialsImage } from '../utils/assetManager';
@@ -81,6 +82,10 @@ function StaffProfile() {
     navigate(`${isLeagueView ? '/league' : ''}/staff/${id}/edit`);
   };
 
+  const handleCompleteProfile = () => {
+    navigate(`${isLeagueView ? '/league' : ''}/staff/new`);
+  };
+
   if (!staffMember) {
     return (
       <Box sx={{ p: 3 }}>
@@ -141,6 +146,24 @@ function StaffProfile() {
           <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>
             {staffMember.source === 'current' ? staffMember.currentEmployer : 'Talent Database'}
           </Typography>
+          <Box sx={{ flexGrow: 1 }} />
+          {staffMember.source === 'talent' && !staffMember.phone && (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleCompleteProfile}
+              sx={{
+                textTransform: 'none',
+                fontWeight: 'bold',
+                backgroundColor: '#3B4960',
+                '&:hover': {
+                  backgroundColor: '#2c3750',
+                },
+              }}
+            >
+              Complete Profile
+            </Button>
+          )}
         </Box>
 
         {/* Profile Header */}
@@ -237,7 +260,7 @@ function StaffProfile() {
       <StaffProfileDetails
         staffData={staffMember}
         isLeagueView={isLeagueView}
-        onEdit={handleEdit}
+        onEdit={staffMember.source === 'talent' && !staffMember.phone ? undefined : handleEdit}
       />
     </Box>
   );
