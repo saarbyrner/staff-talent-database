@@ -32,6 +32,31 @@ import TagManagementDrawer from './TagManagementDrawer';
 import NotesDrawer from './NotesDrawer';
 import '../styles/design-tokens.css';
 
+// Tag mapping between league and club tags
+const TAG_MAPPING = {
+  leagueToClub: {
+    'Unproven': 'Raw Talent',
+    'Emerging': 'Growth stage',
+    'High Potential': 'Top prospect',
+    'Proven': 'Vetted Elite'
+  },
+  clubToLeague: {
+    'Raw Talent': 'Unproven',
+    'Growth stage': 'Emerging',
+    'Top prospect': 'High Potential',
+    'Vetted Elite': 'Proven'
+  }
+};
+
+// Helper to map tags based on view context
+const mapTagsForView = (tags, isLeagueView) => {
+  if (!tags || !Array.isArray(tags)) return [];
+  if (isLeagueView) return tags; // League view shows original tags
+  
+  // Club view: map league tags to club tags
+  return tags.map(tag => TAG_MAPPING.leagueToClub[tag] || tag);
+};
+
 const RolesCell = ({ roles }) => {
   if (!Array.isArray(roles) || roles.length === 0) return <span>-</span>;
   
@@ -240,6 +265,8 @@ export const createWatchlistColumns = (
   onNotesClick,
   staffNotes = {},
   options = {},
+  isLeagueView = false,
+  tagColorSeeds = {}
 ) => {
   const {
     includeActions = true,
@@ -401,7 +428,8 @@ export const createWatchlistColumns = (
     width: 250,
     sortable: false,
     renderCell: (params) => {
-      const tags = params.value || [];
+      const rawTags = params.value || [];
+      const tags = mapTagsForView(rawTags, isLeagueView);
       return (
         <Stack 
           direction="row" 
@@ -413,9 +441,19 @@ export const createWatchlistColumns = (
             overflow: 'hidden'
           }}
         >
-          {tags.slice(0, 3).map((tag) => (
-            <TagChip key={tag} label={tag} size="small" />
-          ))}
+          {tags.slice(0, 3).map((tag, index) => {
+            // Get the original tag name for color seed lookup
+            const originalTag = rawTags[index];
+            return (
+              <TagChip 
+                key={`${tag}-${index}`} 
+                label={tag} 
+                size="small" 
+                isLeagueView={isLeagueView}
+                colorSeed={tagColorSeeds[originalTag]}
+              />
+            );
+          })}
           {tags.length > 3 && (
             <Typography variant="caption" color="text.secondary" sx={{ ml: 0.5 }}>
               +{tags.length - 3}
@@ -598,6 +636,9 @@ function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) 
   const [tagSelectorAnchor, setTagSelectorAnchor] = useState(null);
   const [selectedStaffForTags, setSelectedStaffForTags] = useState(null);
   const [tagManagementOpen, setTagManagementOpen] = useState(false);
+  const [availableCustomTags, setAvailableCustomTags] = useState([]);
+  // Map of tag names to their original names (for stable color generation)
+  const [tagColorSeeds, setTagColorSeeds] = useState({});
   
   // Notes management state
   const [notesDrawerOpen, setNotesDrawerOpen] = useState(false);
@@ -639,9 +680,12 @@ function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) 
   };
 
   const handleTagsChange = (staffId, newTags) => {
+    // Convert club tags back to league tags for storage (data stores league tags)
+    const tagsToStore = isLeagueView ? newTags : newTags.map(tag => TAG_MAPPING.clubToLeague[tag] || tag);
+    
     setLocalStaffData(prevData =>
       prevData.map(staff =>
-        staff.id === staffId ? { ...staff, tags: newTags } : staff
+        staff.id === staffId ? { ...staff, tags: tagsToStore } : staff
       )
     );
   };
@@ -728,20 +772,45 @@ function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) 
   };
 
   const handleUpdateTag = (oldTag, newTag) => {
+    // Update in staff data
     setLocalStaffData(prevData =>
       prevData.map(staff => ({
         ...staff,
         tags: staff.tags ? staff.tags.map(t => t === oldTag ? newTag : t) : []
       }))
     );
+    
+    // Update in available custom tags if it exists there
+    setAvailableCustomTags(prevTags =>
+      prevTags.map(tag => tag === oldTag ? newTag : tag)
+    );
+    
+    // Preserve color seed when renaming - copy from old tag to new tag
+    setTagColorSeeds(prevSeeds => {
+      const seeds = { ...prevSeeds };
+      if (seeds[oldTag]) {
+        seeds[newTag] = seeds[oldTag];
+        delete seeds[oldTag];
+      } else {
+        // If no seed exists, use the old tag name as the seed
+        seeds[newTag] = oldTag;
+      }
+      return seeds;
+    });
   };
 
   const handleDeleteTag = (tagToDelete) => {
+    // Remove from staff data
     setLocalStaffData(prevData =>
       prevData.map(staff => ({
         ...staff,
         tags: staff.tags ? staff.tags.filter(t => t !== tagToDelete) : []
       }))
+    );
+    
+    // Remove from available custom tags
+    setAvailableCustomTags(prevTags =>
+      prevTags.filter(tag => tag !== tagToDelete)
     );
   };
 
@@ -759,8 +828,10 @@ function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) 
       includeActions: true,
       includeNotes: false,
       enableTagEditing: true,
-    }
-  ), [onRemoveFromWatchlist, staffNotes]);
+    },
+    isLeagueView,
+    tagColorSeeds
+  ), [onRemoveFromWatchlist, staffNotes, isLeagueView, tagColorSeeds]);
 
   const selectedStaff = selectedStaffForTags 
     ? localStaffData.find(s => s.id === selectedStaffForTags)
@@ -793,11 +864,28 @@ function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) 
 
       {selectedStaff && (
         <TagSelector
-          selectedTags={selectedStaff.tags || []}
+          selectedTags={mapTagsForView(selectedStaff.tags || [], isLeagueView)}
           onChange={(newTags) => handleTagsChange(selectedStaff.id, newTags)}
           anchorEl={tagSelectorAnchor}
           onClose={handleTagSelectorClose}
-          maxTags={5}
+          maxTags={4}
+          isLeagueView={isLeagueView}
+          availableCustomTags={mapTagsForView(availableCustomTags, isLeagueView)}
+          tagColorSeeds={tagColorSeeds}
+          onAddCustomTag={(tag) => {
+            // Convert to league format for storage (like handleTagsChange does)
+            const tagToStore = isLeagueView ? tag : (TAG_MAPPING.clubToLeague[tag] || tag);
+            
+            // Add to availableCustomTags if not already in the list or default tags
+            const DEFAULT_LEAGUE_TAGS = ['Unproven', 'Emerging', 'High Potential', 'Proven'];
+            const isDefaultTag = DEFAULT_LEAGUE_TAGS.includes(tagToStore);
+            
+            if (!isDefaultTag && !availableCustomTags.includes(tagToStore)) {
+              setAvailableCustomTags([...availableCustomTags, tagToStore]);
+              // Initialize color seed for new custom tag
+              setTagColorSeeds(prev => ({ ...prev, [tagToStore]: tagToStore }));
+            }
+          }}
         />
       )}
 
@@ -808,9 +896,16 @@ function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) 
         onUpdateTag={handleUpdateTag}
         onDeleteTag={handleDeleteTag}
         onAddTag={(tagName) => {
-          console.log('New tag created:', tagName);
-          alert(`Tag "${tagName}" created! You can now apply it to staff members.`);
+          // Add to available custom tags if not already present
+          if (!availableCustomTags.includes(tagName)) {
+            setAvailableCustomTags(prev => [...prev, tagName]);
+            // Initialize color seed for new custom tag
+            setTagColorSeeds(prev => ({ ...prev, [tagName]: tagName }));
+          }
         }}
+        availableCustomTags={availableCustomTags}
+        isLeagueView={isLeagueView}
+        tagColorSeeds={tagColorSeeds}
       />
 
       <DataGrid

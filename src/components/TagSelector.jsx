@@ -13,23 +13,49 @@ import {
 import { AddOutlined, CloseOutlined } from '@mui/icons-material';
 import TagChip from './TagChip';
 
-/**
- * Default tag options
- */
-const DEFAULT_TAGS = ['Unproven', 'Emerging', 'High Potential', 'Proven'];
+// Tag mapping between league and club tags
+const TAG_MAPPING = {
+  leagueToClub: {
+    'Unproven': 'Raw Talent',
+    'Emerging': 'Growth stage',
+    'High Potential': 'Top prospect',
+    'Proven': 'Vetted Elite'
+  },
+  clubToLeague: {
+    'Raw Talent': 'Unproven',
+    'Growth stage': 'Emerging',
+    'Top prospect': 'High Potential',
+    'Vetted Elite': 'Proven'
+  }
+};
 
 /**
  * TagSelector component - Allows selecting from default tags and creating custom ones
  * @param {string[]} selectedTags - Currently selected tags
  * @param {function} onChange - Callback when tags change
- * @param {number} maxTags - Maximum number of tags allowed (default: 5)
+ * @param {number} maxTags - Maximum number of tags allowed (default: 4)
  * @param {object} anchorEl - Popover anchor element
  * @param {function} onClose - Close handler
- * @param {boolean} isLeagueView - Whether viewing as league admin (can create custom tags)
+ * @param {boolean} isLeagueView - Whether viewing as league admin (uses different tag set)
+ * @param {function} onAddCustomTag - Callback when a new custom tag is created
+ * @param {string[]} availableCustomTags - List of custom tags available in the system
+ * @param {object} tagColorSeeds - Map of tag names to their original names for stable color generation
  */
-const TagSelector = ({ selectedTags = [], onChange, maxTags = 5, anchorEl, onClose, isLeagueView = false }) => {
+const TagSelector = ({ selectedTags = [], onChange, maxTags = 4, anchorEl, onClose, isLeagueView = false, onAddCustomTag, availableCustomTags = [], tagColorSeeds = {} }) => {
   const [customTagInput, setCustomTagInput] = useState('');
   const open = Boolean(anchorEl);
+  
+  // Different default tags for league vs club
+  const DEFAULT_TAGS = isLeagueView 
+    ? ['Unproven', 'Emerging', 'High Potential', 'Proven']
+    : ['Raw Talent', 'Growth stage', 'Top prospect', 'Vetted Elite'];
+  
+  // Helper to get original tag name for color seed lookup
+  const getOriginalTagName = (displayTag) => {
+    if (isLeagueView) return displayTag; // League view uses original names
+    // Club view: reverse map to get original name
+    return TAG_MAPPING.clubToLeague[displayTag] || displayTag;
+  };
   
   const handleToggleTag = (tag) => {
     if (selectedTags.includes(tag)) {
@@ -47,6 +73,10 @@ const TagSelector = ({ selectedTags = [], onChange, maxTags = 5, anchorEl, onClo
     const trimmed = customTagInput.trim();
     if (trimmed && !selectedTags.includes(trimmed) && selectedTags.length < maxTags) {
       onChange([...selectedTags, trimmed]);
+      // Register the new custom tag in the system
+      if (onAddCustomTag) {
+        onAddCustomTag(trimmed);
+      }
       setCustomTagInput('');
     }
   };
@@ -103,17 +133,22 @@ const TagSelector = ({ selectedTags = [], onChange, maxTags = 5, anchorEl, onClo
         {selectedTags.length > 0 && (
           <Box sx={{ mb: 2 }}>
             <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
-              Selected ({selectedTags.length}/{maxTags})
+              Selected ({selectedTags.length}/{DEFAULT_TAGS.length + availableCustomTags.length})
             </Typography>
             <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
-              {selectedTags.map((tag) => (
-                <TagChip
-                  key={tag}
-                  label={tag}
-                  onDelete={() => handleToggleTag(tag)}
-                  size="small"
-                />
-              ))}
+              {selectedTags.map((tag) => {
+                const originalTag = getOriginalTagName(tag);
+                return (
+                  <TagChip
+                    key={tag}
+                    label={tag}
+                    onDelete={() => handleToggleTag(tag)}
+                    size="small"
+                    isLeagueView={isLeagueView}
+                    colorSeed={tagColorSeeds[originalTag]}
+                  />
+                );
+              })}
             </Stack>
           </Box>
         )}
@@ -123,7 +158,7 @@ const TagSelector = ({ selectedTags = [], onChange, maxTags = 5, anchorEl, onClo
         {/* Default Tags */}
         <Box sx={{ mb: 2 }}>
           <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
-            Default Tags
+            Tags
           </Typography>
           <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
             {DEFAULT_TAGS.map((tag) => {
@@ -144,8 +179,54 @@ const TagSelector = ({ selectedTags = [], onChange, maxTags = 5, anchorEl, onClo
                 />
               );
             })}
+            {/* Display custom tags */}
+            {availableCustomTags.map((tag) => {
+              const isSelected = selectedTags.includes(tag);
+              return (
+                <Chip
+                  key={tag}
+                  label={tag}
+                  size="small"
+                  clickable={!atMaxTags || isSelected}
+                  onClick={() => handleToggleTag(tag)}
+                  variant={isSelected ? 'filled' : 'outlined'}
+                  color={isSelected ? 'primary' : 'default'}
+                  disabled={atMaxTags && !isSelected}
+                  sx={{
+                    fontWeight: 500,
+                  }}
+                />
+              );
+            })}
           </Stack>
         </Box>
+            {/* Custom Tag Input - Always Visible */}
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
+                Create New Tag
+              </Typography>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <TextField
+                  size="small"
+                  variant="outlined"
+                  placeholder="Enter custom tag"
+                  value={customTagInput}
+                  onChange={e => setCustomTagInput(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  disabled={atMaxTags}
+                  sx={{ flex: 1 }}
+                />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  onClick={handleAddCustomTag}
+                  disabled={atMaxTags || !customTagInput.trim()}
+                >
+                  <AddOutlined />
+                </Button>
+              </Stack>
+            </Box>
       </Box>
     </Popover>
   );
