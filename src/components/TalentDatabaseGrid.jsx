@@ -297,8 +297,8 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     )
   } : {
     field: 'watchlist',
-    headerName: '',
-    width: 60,
+    headerName: 'Watchlist',
+    width: 100,
     sortable: false,
     filterable: false,
     renderCell: (params) => {
@@ -366,6 +366,8 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
   };
 
   return [
+  // WATCHLIST
+  watchlistColumn,
   // NAME (combined with headshot)
   {
     field: 'name',
@@ -1303,11 +1305,24 @@ const columnGroupingModel = [
   },
 ];
 
-export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], onAddToWatchlist, showArchived = false, onUnarchive, staffData: externalStaffData, onArchive }) {
+export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], onAddToWatchlist, onRemoveFromWatchlist, showArchived = false, onUnarchive, staffData: externalStaffData, onArchive }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedRows, setSelectedRows] = React.useState([]);
   const [bulkEditOpen, setBulkEditOpen] = React.useState(false);
+
+  // Toggle watchlist handler - adds or removes based on current state
+  const handleToggleWatchlist = (staffId) => {
+    if (watchlistIds.includes(staffId)) {
+      if (onRemoveFromWatchlist) {
+        onRemoveFromWatchlist(staffId);
+      }
+    } else {
+      if (onAddToWatchlist) {
+        onAddToWatchlist(staffId);
+      }
+    }
+  };
   
   // Use external staff data if provided, otherwise use imported data
   const sourceStaffData = externalStaffData || staffData;
@@ -1799,14 +1814,14 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
       }
     },
     watchlistIds,
-    onAddToWatchlist,
+    handleToggleWatchlist,
     isLeagueView,
     handleNotesClick,
     staffNotes,
     handleDeleteStaff,
     showArchived,
     handleUnarchiveStaff
-  ), [watchlistIds, onAddToWatchlist, isLeagueView, staffNotes, showArchived]);
+  ), [watchlistIds, handleToggleWatchlist, isLeagueView, staffNotes, showArchived]);
   
   const selectedStaff = selectedStaffForTags 
     ? filteredStaffData.find(s => s.id === selectedStaffForTags)
@@ -1938,6 +1953,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
               // Show first 5-6 columns by default
               watchlist: !isLeagueView,
               watchlistCount: isLeagueView,
+              notes: false, // Hide notes column
               picUrl: true,
               firstName: true,
               lastName: true,

@@ -922,7 +922,7 @@ function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) 
     staffNotes,
     {
       includeActions: true,
-      includeNotes: true,
+      includeNotes: false,
       enableTagEditing: true,
     }
   ), [onRemoveFromWatchlist, staffNotes]);
@@ -1095,22 +1095,6 @@ function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) 
           }
         }}
       />
-      
-      {/* Notes Drawer */}
-      {selectedStaffForNotes && (
-        <NotesDrawer
-          open={notesDrawerOpen}
-          onClose={() => {
-            setNotesDrawerOpen(false);
-            setSelectedStaffForNotes(null);
-          }}
-          staffMember={selectedStaffForNotes}
-          notes={staffNotes[selectedStaffForNotes.id] || []}
-          onAddNote={handleAddNote}
-          onUpdateNote={handleUpdateNote}
-          onDeleteNote={handleDeleteNote}
-        />
-      )}
     </Box>
   );
 }

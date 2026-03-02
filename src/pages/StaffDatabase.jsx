@@ -143,9 +143,28 @@ function StaffDatabase() {
       >
         <Tabs value={Number.isInteger(tab) ? tab : 3} onChange={handleChange} aria-label="Staff Tabs" sx={{ px: 0 }}>
           <Tab label="Staff" value={0} />
+          <Tab label="Watchlist" value={1} />
           <Tab label="Talent Database" value={3} />
           {isLeagueView && <Tab label="Archived Candidates" value={4} />}
         </Tabs>
+      </Paper>
+
+      <Paper 
+        elevation={0} 
+        sx={{ 
+          flexGrow: 1, 
+          border: '1px solid var(--color-border-primary)',
+          borderRadius: 1,
+          overflow: 'hidden',
+          display: tab !== 1 ? 'none' : 'block'
+        }}
+      >
+        <WatchlistGrid
+          watchlist={watchlist}
+          onRemoveFromWatchlist={handleRemoveFromWatchlist}
+          onUpdateWatchlist={handleWatchlistUpdate}
+          staff={staffData}
+        />
       </Paper>
 
       <Paper 
@@ -162,6 +181,7 @@ function StaffDatabase() {
           onInviteClick={() => setInviteModalOpen(true)} 
           watchlistIds={watchlist.map(i => i.id)}
           onAddToWatchlist={handleAddToWatchlist}
+          onRemoveFromWatchlist={handleRemoveFromWatchlist}
           showArchived={false}
           staffData={staffData}
           onArchive={handleArchiveStaff}
@@ -181,6 +201,7 @@ function StaffDatabase() {
           onInviteClick={() => setInviteModalOpen(true)} 
           watchlistIds={watchlist.map(i => i.id)}
           onAddToWatchlist={handleAddToWatchlist}
+          onRemoveFromWatchlist={handleRemoveFromWatchlist}
           showArchived={true}
           staffData={staffData}
           onUnarchive={handleUnarchiveStaff}
