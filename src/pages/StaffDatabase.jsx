@@ -59,12 +59,49 @@ function StaffDatabase() {
   
   // Check if we're in league view
   const isLeagueView = location.pathname.startsWith('/league');
+  
+  // Helper to determine if a staff record is complete
+  const getStaffStatus = (staff) => {
+    const requiredFields = ['firstName', 'lastName', 'email', 'phone'];
+    const isIncomplete = requiredFields.some(field => {
+      const value = staff[field];
+      return !value || (typeof value === 'string' && value.trim() === '');
+    });
+    return isIncomplete ? 'Incomplete' : 'Complete';
+  };
+  
+  // Remove incomplete users from watchlist (league view only)
+  React.useEffect(() => {
+    if (isLeagueView) {
+      setWatchlist(currentWatchlist => {
+        return currentWatchlist.filter(item => {
+          const staff = staffData.find(s => s.id === item.id);
+          if (!staff) return true; // Keep if staff not found
+          return getStaffStatus(staff) !== 'Incomplete';
+        });
+      });
+    }
+  }, [staffData, isLeagueView]);
 
   const handleChange = (event, value) => {
     setTab(value);
   };
+  
+  // If in league view and watchlist tab is selected, redirect to talent database
+  React.useEffect(() => {
+    if (isLeagueView && tab === 1) {
+      setTab(3); // Default to Talent Database
+    }
+  }, [isLeagueView, tab]);
 
   const handleAddToWatchlist = (staffId) => {
+    // At league level, prevent adding incomplete users
+    if (isLeagueView) {
+      const staff = staffData.find(s => s.id === staffId);
+      if (staff && getStaffStatus(staff) === 'Incomplete') {
+        return; // Silently ignore - error already shown by TalentDatabaseGrid
+      }
+    }
     if (!watchlist.find(item => item.id === staffId)) {
       setWatchlist([...watchlist, { id: staffId, priority: 'Medium', targetRole: '' }]);
     }
@@ -142,29 +179,31 @@ function StaffDatabase() {
       >
         <Tabs value={Number.isInteger(tab) ? tab : 3} onChange={handleChange} aria-label="Staff Tabs" sx={{ px: 0 }}>
           <Tab label="Staff" value={0} />
-          <Tab label="Watchlist" value={1} />
+          {!isLeagueView && <Tab label="Watchlist" value={1} />}
           <Tab label="Talent Database" value={3} />
           {isLeagueView && <Tab label="Archived Candidates" value={4} />}
         </Tabs>
       </Paper>
 
-      <Paper 
-        elevation={0} 
-        sx={{ 
-          flexGrow: 1, 
-          border: '1px solid var(--color-border-primary)',
-          borderRadius: 1,
-          overflow: 'hidden',
-          display: tab !== 1 ? 'none' : 'block'
-        }}
-      >
-        <WatchlistGrid
-          watchlist={watchlist}
-          onRemoveFromWatchlist={handleRemoveFromWatchlist}
-          onUpdateWatchlist={handleWatchlistUpdate}
-          staff={staffData}
-        />
-      </Paper>
+      {!isLeagueView && (
+        <Paper 
+          elevation={0} 
+          sx={{ 
+            flexGrow: 1, 
+            border: '1px solid var(--color-border-primary)',
+            borderRadius: 1,
+            overflow: 'hidden',
+            display: tab !== 1 ? 'none' : 'block'
+          }}
+        >
+          <WatchlistGrid
+            watchlist={watchlist}
+            onRemoveFromWatchlist={handleRemoveFromWatchlist}
+            onUpdateWatchlist={handleWatchlistUpdate}
+            staff={staffData}
+          />
+        </Paper>
+      )}
 
       <Paper 
         elevation={0} 

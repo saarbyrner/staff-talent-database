@@ -286,6 +286,11 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     width: 100,
     type: 'number',
     valueGetter: (params) => {
+       // Incomplete users cannot be on watchlists, so return 0
+       const staffStatus = getStaffStatus(params.row);
+       if (staffStatus === 'Incomplete') {
+         return 0;
+       }
        const seed = params.row.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
        return (seed % 15) + 1;
     },
@@ -303,27 +308,37 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     filterable: false,
     renderCell: (params) => {
       const isWatchlisted = watchlistIds.includes(params.row.id);
+      const isIncomplete = getStaffStatus(params.row) === 'Incomplete';
+      const isDisabled = isIncomplete && !isWatchlisted;
+      
       return (
-        <Tooltip title={isWatchlisted ? "Remove from Watchlist" : "Add to Watchlist"}>
-          <IconButton
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleWatchlist(params.row.id);
-            }}
-            sx={{
-              color: isWatchlisted ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-              '&:hover': {
-                backgroundColor: 'var(--color-background-tertiary)',
-              }
-            }}
-          >
-            {isWatchlisted ? (
-              <Visibility fontSize="small" />
-            ) : (
-              <VisibilityOutlined fontSize="small" />
-            )}
-          </IconButton>
+        <Tooltip title={isDisabled ? "Cannot add incomplete profiles to watchlist" : (isWatchlisted ? "Remove from Watchlist" : "Add to Watchlist")}>
+          <span>
+            <IconButton
+              size="small"
+              disabled={isDisabled}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleWatchlist(params.row.id);
+              }}
+              sx={{
+                color: isWatchlisted ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+                '&:hover': {
+                  backgroundColor: 'var(--color-background-tertiary)',
+                },
+                '&.Mui-disabled': {
+                  color: 'var(--color-text-disabled)',
+                  opacity: 0.5
+                }
+              }}
+            >
+              {isWatchlisted ? (
+                <Visibility fontSize="small" />
+              ) : (
+                <VisibilityOutlined fontSize="small" />
+              )}
+            </IconButton>
+          </span>
         </Tooltip>
       );
     }
@@ -470,14 +485,14 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     headerName: 'Profile Privacy', 
     width: 140,
     renderCell: (params) => {
-      // Check if profile is incomplete (missing phone)
-      const isIncomplete = !params.row.phone || params.row.phone.trim() === '';
-      if (isIncomplete) {
-        return <span>-</span>;
-      }
+      // Check if profile is incomplete
+      const staffStatus = getStaffStatus(params.row);
+      const isIncomplete = staffStatus === 'Incomplete';
       
-      const value = params.value || 'Public';
+      // Incomplete users always show Private
+      const value = isIncomplete ? 'Private' : (params.value || 'Public');
       const isPrivate = value === 'Private';
+      
       return (
         <Chip 
           label={value} 
@@ -1285,25 +1300,13 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
   const location = useLocation();
   const [selectedRows, setSelectedRows] = React.useState([]);
   const [bulkEditOpen, setBulkEditOpen] = React.useState(false);
-
-  // Toggle watchlist handler - adds or removes based on current state
-  const handleToggleWatchlist = (staffId) => {
-    if (watchlistIds.includes(staffId)) {
-      if (onRemoveFromWatchlist) {
-        onRemoveFromWatchlist(staffId);
-      }
-    } else {
-      if (onAddToWatchlist) {
-        onAddToWatchlist(staffId);
-      }
-    }
-  };
   
   // Use external staff data if provided, otherwise use imported data
   const sourceStaffData = externalStaffData || staffData;
   
-  // Enrich staff data with coaching statistics
+  // Enrich staff data with coaching statistics and set privacy for incomplete users
   const [localStaffData, setLocalStaffData] = React.useState(() => {
+    const isLeagueContext = location.pathname.startsWith('/league');
     return sourceStaffData.map(staff => {
       // Check multiple indicators that someone is a coach
       const currentRole = staff.currentEmployer?.split('-')[1]?.trim() || '';
@@ -1320,20 +1323,28 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
                       hasCoachingExp ||
                       hasCoachingLicenses;
       
+      // At league level, automatically set profile privacy to Private for incomplete users
+      const staffStatus = getStaffStatus(staff);
+      const updatedStaff = {
+        ...staff,
+        profilePrivacy: (isLeagueContext && staffStatus === 'Incomplete') ? 'Private' : (staff.profilePrivacy || 'Public')
+      };
+      
       // Add coaching stats if they're a coach
       if (isCoach) {
         return {
-          ...staff,
+          ...updatedStaff,
           coachingStats: generateStats(staff.id)
         };
       }
-      return staff;
+      return updatedStaff;
     });
   });
   
   // Sync external staff data changes to local state
   React.useEffect(() => {
     if (externalStaffData) {
+      const isLeagueContext = location.pathname.startsWith('/league');
       setLocalStaffData(externalStaffData.map(staff => {
         const currentRole = staff.currentEmployer?.split('-')[1]?.trim() || '';
         const interestArea = staff.interestArea || '';
@@ -1348,16 +1359,23 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
                         hasCoachingExp ||
                         hasCoachingLicenses;
         
+        // At league level, automatically set profile privacy to Private for incomplete users
+        const staffStatus = getStaffStatus(staff);
+        const updatedStaff = {
+          ...staff,
+          profilePrivacy: (isLeagueContext && staffStatus === 'Incomplete') ? 'Private' : (staff.profilePrivacy || 'Public')
+        };
+        
         if (isCoach) {
           return {
-            ...staff,
+            ...updatedStaff,
             coachingStats: generateStats(staff.id)
           };
         }
-        return staff;
+        return updatedStaff;
       }));
     }
-  }, [externalStaffData]);
+  }, [externalStaffData, location.pathname]);
   
   // Tag management state
   const [tagSelectorAnchor, setTagSelectorAnchor] = React.useState(null);
@@ -1477,6 +1495,27 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
   
   // Check if viewing from league admin context
   const isLeagueView = location.pathname.startsWith('/league');
+  
+  // Toggle watchlist handler - adds or removes based on current state
+  const handleToggleWatchlist = (staffId) => {
+    if (watchlistIds.includes(staffId)) {
+      if (onRemoveFromWatchlist) {
+        onRemoveFromWatchlist(staffId);
+      }
+    } else {
+      // At league level, prevent adding incomplete users to watchlist
+      if (isLeagueView) {
+        const staff = localStaffData.find(s => s.id === staffId);
+        if (staff && getStaffStatus(staff) === 'Incomplete') {
+          alert('Users with incomplete profiles cannot be added to watchlists.');
+          return;
+        }
+      }
+      if (onAddToWatchlist) {
+        onAddToWatchlist(staffId);
+      }
+    }
+  };
   
   // Filter data based on view context
   const filteredStaffData = React.useMemo(() => {
@@ -1742,12 +1781,28 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
   };
 
   const handleBulkAddToWatchlist = () => {
-    selectedRows.forEach(staffId => {
+    // Filter out incomplete users at league level
+    const eligibleStaffIds = selectedRows.filter(staffId => {
+      const staff = localStaffData.find(s => s.id === staffId);
+      return staff && getStaffStatus(staff) !== 'Incomplete';
+    });
+    
+    const skippedCount = selectedRows.length - eligibleStaffIds.length;
+    
+    eligibleStaffIds.forEach(staffId => {
       if (onAddToWatchlist) {
         onAddToWatchlist(staffId);
       }
     });
-    alert(`Added ${selectedRows.length} staff member${selectedRows.length > 1 ? 's' : ''} to watchlist`);
+    
+    if (eligibleStaffIds.length > 0) {
+      const message = skippedCount > 0 
+        ? `Added ${eligibleStaffIds.length} staff member${eligibleStaffIds.length > 1 ? 's' : ''} to watchlist. ${skippedCount} incomplete profile${skippedCount > 1 ? 's were' : ' was'} skipped.`
+        : `Added ${eligibleStaffIds.length} staff member${eligibleStaffIds.length > 1 ? 's' : ''} to watchlist`;
+      alert(message);
+    } else {
+      alert('Users with incomplete profiles cannot be added to watchlists.');
+    }
     setSelectedRows([]);
   };
   
