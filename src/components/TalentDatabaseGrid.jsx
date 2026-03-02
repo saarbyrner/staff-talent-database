@@ -601,56 +601,31 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     },
     renderCell: (params) => <RolesCell roles={params.value} /> 
   },
-  // CLUB ADD (only shown in club view, not league view)
-  ...(!isLeagueView ? [{
-    field: 'clubAdd',
-    headerName: 'Club Add',
-    width: 120,
-    align: 'center',
-    headerAlign: 'center',
-    sortable: true,
-    valueGetter: (params) => {
-      // Only about 25% of staff are club-added
-      const seed = params.row.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-      return seed % 4 === 0 && getStaffStatus(params.row) === 'Complete';
-    },
-    renderCell: (params) => (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-        {params.value ? (
-          <Tooltip title="Added by Club">
-            <CheckOutlined sx={{ color: 'success.main' }} />
-          </Tooltip>
-        ) : (
-          <Tooltip title="Not Added by Club">
-            <CloseOutlined sx={{ color: 'error.main' }} />
-          </Tooltip>
-        )}
-      </Box>
-    ),
-  }] : []),
+  // ...existing code...
   // STATUS
-  {
+  // Only show App Status column in league view
+  ...(isLeagueView ? [{
     field: 'status',
     headerName: 'App Status',
     width: 110,
     sortable: true,
     valueGetter: (params) => getStaffStatus(params.row),
-      renderCell: (params) => {
-        const isComplete = params.value === 'Complete';
-        const label = isComplete ? 'Submitted' : params.value;
-        return (
-          <Chip
-            label={label}
-            size="small"
-            color={isComplete ? 'success' : 'default'}
-            variant="filled"
-            sx={{
-              fontWeight: 500,
-            }}
-          />
-        );
-      }
-  },
+    renderCell: (params) => {
+      const isComplete = params.value === 'Complete';
+      const label = isComplete ? 'Submitted' : params.value;
+      return (
+        <Chip
+          label={label}
+          size="small"
+          color={isComplete ? 'success' : 'default'}
+          variant="filled"
+          sx={{
+            fontWeight: 500,
+          }}
+        />
+      );
+    }
+  }] : []),
   { 
     field: 'relocation', 
     headerName: 'Willing to Relocate', 
@@ -1506,7 +1481,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
   // Filter data based on view context
   const filteredStaffData = React.useMemo(() => {
     let filtered = localStaffData;
-    
+
     // For league view: filter by archived status based on showArchived prop
     // For club view: always exclude archived candidates
     if (isLeagueView) {
@@ -1517,13 +1492,15 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
     } else {
       // Club users should never see archived candidates
       filtered = filtered.filter(staff => !staff.isArchived);
+      // Club users should not see users with Incomplete app status
+      filtered = filtered.filter(staff => getStaffStatus(staff) !== 'Incomplete');
     }
-    
+
     // Filter by privacy for non-league users
     if (!isLeagueView) {
       filtered = filtered.filter(staff => staff.profilePrivacy !== 'Private');
     }
-    
+
     return filtered;
   }, [isLeagueView, localStaffData, showArchived]);
 

@@ -13,11 +13,10 @@ import { generateInitialsImage } from '../utils/assetManager';
 import '../styles/design-tokens.css';
 
 // Initialize watchlist with some pre-populated staff objects
+// Remove Michael Okoro (id: '102') and David Smith (id: '105') from the initial watchlist for club view
 const INITIAL_WATCHLIST = [
   { id: '101', priority: 'High', targetRole: 'Head Coach' },
-  { id: '102', priority: 'Medium', targetRole: 'Assistant Coach' },
-  { id: '105', priority: 'Low', targetRole: 'Goalkeeper Coach' },
-  { id: '110', priority: 'High', targetRole: 'Sporting Director' },
+  { id: '110', priority: 'Low', targetRole: 'Sporting Director' }, // Christopher Nair
   { id: '115', priority: 'Medium', targetRole: 'Video Analyst' },
 ];
 
