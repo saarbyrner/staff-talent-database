@@ -266,22 +266,25 @@ function StaffProfile() {
                 </Typography>
               </Box>
               
-              <Box>
-                <Typography variant="caption" sx={{ color: 'var(--color-text-secondary)', display: 'block' }}>
-                  Status
-                </Typography>
-                {/* Use MedinahStatusChip for App Status styling */}
-                <MedinahStatusChip
-                  status={status}
-                  type={
-                    status === 'Submitted' ? 'success'
-                    : status === 'Incomplete' ? 'error'
-                    : status === 'Active' ? 'success'
-                    : 'default'
-                  }
-                  sx={{ height: 20, fontSize: '0.75rem', fontWeight: 600 }}
-                />
-              </Box>
+              {/* Only show status for league view */}
+              {isLeagueView && (
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'var(--color-text-secondary)', display: 'block' }}>
+                    Status
+                  </Typography>
+                  {/* Use MedinahStatusChip for App Status styling */}
+                  <MedinahStatusChip
+                    status={status}
+                    type={
+                      status === 'Submitted' ? 'success'
+                      : status === 'Incomplete' ? 'error'
+                      : status === 'Active' ? 'success'
+                      : 'default'
+                    }
+                    sx={{ height: 20, fontSize: '0.75rem', fontWeight: 600 }}
+                  />
+                </Box>
+              )}
             </Box>
           </Box>
         </Box>
