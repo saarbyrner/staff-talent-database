@@ -285,6 +285,7 @@ function StaffDatabase() {
           staffData={staffData}
           onArchive={handleArchiveStaff}
           onAddPendingUser={handleAddPendingUser}
+          hideAddButton={!isLeagueView}
         />
       </Paper>
       <Paper 
@@ -306,6 +307,7 @@ function StaffDatabase() {
           staffData={staffData}
           onUnarchive={handleUnarchiveStaff}
           onAddPendingUser={handleAddPendingUser}
+          hideAddButton={!isLeagueView}
         />
       </Paper>
       

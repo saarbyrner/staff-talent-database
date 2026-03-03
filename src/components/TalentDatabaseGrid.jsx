@@ -1330,7 +1330,7 @@ const columnGroupingModel = [
   },
 ];
 
-export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], onAddToWatchlist, onRemoveFromWatchlist, showArchived = false, onUnarchive, staffData: externalStaffData, onArchive, onAddPendingUser }) {
+export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], onAddToWatchlist, onRemoveFromWatchlist, showArchived = false, onUnarchive, staffData: externalStaffData, onArchive, onAddPendingUser, hideAddButton = false }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedRows, setSelectedRows] = React.useState([]);
@@ -1856,6 +1856,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
             onInviteClick,
             onManageTags: () => setTagManagementOpen(true),
             onOpenInviteDrawer: () => setInviteDrawerOpen(true),
+            hideAddButton,
           },
         }}
         rowSelectionModel={selectedRows}
