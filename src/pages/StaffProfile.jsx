@@ -29,10 +29,21 @@ function StaffProfile() {
   // Determine if we're viewing from league context
   const isLeagueView = location.pathname.startsWith('/league');
 
-  // Find staff member from either talent database or current staff
+  // Find staff member from talent database, pending users, or current staff
   const staffMember = useMemo(() => {
-    // Check talent database first
-    let member = staffTalentData.find(s => s.id === id);
+    // Check pending users from localStorage first
+    const pendingUsers = JSON.parse(localStorage.getItem('pendingStaffUsers') || '[]');
+    let member = pendingUsers.find(s => s.id === id);
+    if (member) {
+      return { 
+        ...member, 
+        source: 'talent',
+        isPending: true
+      };
+    }
+    
+    // Check talent database
+    member = staffTalentData.find(s => s.id === id);
     if (member) {
       return { 
         ...member, 

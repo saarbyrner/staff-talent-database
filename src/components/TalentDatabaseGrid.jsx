@@ -36,6 +36,7 @@ import TagChip from './TagChip';
 import TagSelector from './TagSelector';
 import TagManagementDrawer from './TagManagementDrawer';
 import NotesDrawer from './NotesDrawer';
+import InviteDrawer from './InviteDrawer';
 import '../styles/design-tokens.css';
 
 // Helper to determine if a staff record is complete
@@ -107,11 +108,12 @@ const generateStats = (id) => {
 export const CustomToolbar = React.forwardRef((props, ref) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { onInviteClick, onManageTags, hideAddButton } = props;
+  const { onInviteClick, onManageTags, hideAddButton, onOpenInviteDrawer } = props;
+  
+  const isLeague = location.pathname.startsWith('/league');
   
   const handleAddClick = () => {
     // Go to league or staff add-user depending on view
-    const isLeague = location.pathname.startsWith('/league');
     const path = isLeague ? '/league/staff/add-user' : '/staff/add-user';
     navigate(path, { state: { from: location.pathname, returnTab: 3 } });
   };
@@ -184,12 +186,11 @@ export const CustomToolbar = React.forwardRef((props, ref) => {
             Tags
           </Button>
         )}
-        {/* Invite button removed as requested */}
         {!hideAddButton && (
           <Button
             variant="contained"
-            startIcon={<AddOutlined />}
-            onClick={handleAddClick}
+            startIcon={isLeague ? <MailOutline /> : <AddOutlined />}
+            onClick={isLeague ? onOpenInviteDrawer : handleAddClick}
             sx={{
               textTransform: 'none',
               fontSize: '0.875rem',
@@ -204,7 +205,7 @@ export const CustomToolbar = React.forwardRef((props, ref) => {
               }
             }}
           >
-            Add
+            {isLeague ? 'Invite' : 'Add'}
           </Button>
         )}
       </Box>
@@ -1329,7 +1330,7 @@ const columnGroupingModel = [
   },
 ];
 
-export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], onAddToWatchlist, onRemoveFromWatchlist, showArchived = false, onUnarchive, staffData: externalStaffData, onArchive }) {
+export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], onAddToWatchlist, onRemoveFromWatchlist, showArchived = false, onUnarchive, staffData: externalStaffData, onArchive, onAddPendingUser }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedRows, setSelectedRows] = React.useState([]);
@@ -1423,6 +1424,9 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
   const [notesDrawerOpen, setNotesDrawerOpen] = React.useState(false);
   const [selectedStaffForNotes, setSelectedStaffForNotes] = React.useState(null);
   const [staffNotes, setStaffNotes] = React.useState({});
+  
+  // Invite drawer state
+  const [inviteDrawerOpen, setInviteDrawerOpen] = React.useState(false);
   
   const [toastOpen, setToastOpen] = React.useState(false);
   const [toastMessage, setToastMessage] = React.useState('');
@@ -1822,6 +1826,13 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
         />
       )}
 
+      {/* Invite Drawer */}
+      <InviteDrawer
+        open={inviteDrawerOpen}
+        onClose={() => setInviteDrawerOpen(false)}
+        onAddPendingUser={onAddPendingUser}
+      />
+
       {/* Toast Notification */}
       <Snackbar
         open={toastOpen}
@@ -1844,6 +1855,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
           toolbar: {
             onInviteClick,
             onManageTags: () => setTagManagementOpen(true),
+            onOpenInviteDrawer: () => setInviteDrawerOpen(true),
           },
         }}
         rowSelectionModel={selectedRows}

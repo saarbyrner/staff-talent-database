@@ -46,13 +46,18 @@ function StaffDatabase() {
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [watchlist, setWatchlist] = useState(INITIAL_WATCHLIST);
   
-  // Initialize staff data with archived status from localStorage
+  // Initialize staff data with archived status and pending users from localStorage
   const [staffData, setStaffData] = useState(() => {
     const archivedIds = JSON.parse(localStorage.getItem('archivedStaffIds') || '[]');
-    return staffTalentData.map(staff => ({
+    const pendingUsers = JSON.parse(localStorage.getItem('pendingStaffUsers') || '[]');
+    
+    // Merge pending users with existing talent data
+    const baseData = staffTalentData.map(staff => ({
       ...staff,
       isArchived: archivedIds.includes(staff.id)
     }));
+    
+    return [...pendingUsers, ...baseData];
   });
   
   const navigate = useNavigate();
@@ -148,6 +153,62 @@ function StaffDatabase() {
     });
   };
 
+  const handleAddPendingUser = (userData) => {
+    // Get existing pending users from localStorage
+    const existingPending = JSON.parse(localStorage.getItem('pendingStaffUsers') || '[]');
+    
+    // Generate a new unique ID (check both staffData and existing pending)
+    const allIds = [...staffData.map(s => parseInt(s.id) || 0), ...existingPending.map(s => parseInt(s.id) || 0)];
+    const maxId = Math.max(...allIds, 200); // Start from 200 to avoid conflicts
+    const newId = String(maxId + 1);
+    
+    // Create a new pending user with minimal required fields
+    const newUser = {
+      id: newId,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      email: userData.email,
+      phone: '', // Empty - makes it incomplete/pending
+      status: 'Pending',
+      country: '',
+      state: '',
+      city: '',
+      workAuthUS: false,
+      workAuthCA: false,
+      gender: '',
+      ethnicity: '',
+      hasAgent: false,
+      agentName: '',
+      agencyName: '',
+      proPlayerExp: false,
+      mlsPlayerExp: false,
+      mlsClubsPlayed: [],
+      otherPlayerExp: '',
+      interestArea: '',
+      coachingRoles: [],
+      execRoles: [],
+      techRoles: [],
+      relocation: [],
+      proCoachExp: false,
+      mlsCoachExp: false,
+      mlsCoachRoles: [],
+      mlsClubsCoached: [],
+      nonMlsCoachExp: [],
+      sportingExp: false,
+      mlsSportingExp: false,
+      mlsClubsSporting: [],
+      profilePrivacy: 'Private',
+      isArchived: false,
+    };
+    
+    // Store in localStorage
+    const updatedPending = [newUser, ...existingPending];
+    localStorage.setItem('pendingStaffUsers', JSON.stringify(updatedPending));
+    
+    // Add to staff data
+    setStaffData(prevData => [newUser, ...prevData]);
+  };
+
   const handleRowClick = (params, event) => {
     // Don't navigate if clicking on checkbox or action buttons
     if (
@@ -223,6 +284,7 @@ function StaffDatabase() {
           showArchived={false}
           staffData={staffData}
           onArchive={handleArchiveStaff}
+          onAddPendingUser={handleAddPendingUser}
         />
       </Paper>
       <Paper 
@@ -243,6 +305,7 @@ function StaffDatabase() {
           showArchived={true}
           staffData={staffData}
           onUnarchive={handleUnarchiveStaff}
+          onAddPendingUser={handleAddPendingUser}
         />
       </Paper>
       
