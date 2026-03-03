@@ -372,6 +372,11 @@ function StaffDatabase() {
               { field: 'role', headerName: 'Role', width: 180 }
             ]}
             slots={{ toolbar: CustomToolbar }}
+            slotProps={{
+              toolbar: {
+                hideAddButton: !isLeagueView,
+              },
+            }}
             onRowClick={handleRowClick}
             checkboxSelection
             pageSizeOptions={[25, 50]}
