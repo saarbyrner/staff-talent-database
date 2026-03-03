@@ -41,6 +41,11 @@ import '../styles/design-tokens.css';
 
 // Helper to determine if a staff record is complete
 const getStaffStatus = (staff) => {
+  // Check if staff has pending profile status - treat as incomplete
+  if (staff.profileStatus === 'Pending') {
+    return 'Incomplete';
+  }
+  
   const requiredFields = ['firstName', 'lastName', 'email', 'phone'];
   const isIncomplete = requiredFields.some(field => {
     const value = staff[field];
@@ -310,9 +315,9 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     width: 100,
     type: 'number',
     valueGetter: (params) => {
-       // Incomplete users cannot be on watchlists, so return 0
+       // Incomplete and Pending users cannot be on watchlists, so return 0
        const staffStatus = getStaffStatus(params.row);
-       if (staffStatus === 'Incomplete') {
+       if (staffStatus === 'Incomplete') { // Pending users also return 'Incomplete'
          return 0;
        }
        const seed = params.row.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -520,12 +525,12 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     headerName: 'Profile Privacy', 
     width: 140,
     renderCell: (params) => {
-      // Check if profile is incomplete
+      // Check if profile is incomplete or pending
       const staffStatus = getStaffStatus(params.row);
-      const isIncomplete = staffStatus === 'Incomplete';
+      const isIncompleteOrPending = staffStatus === 'Incomplete'; // Pending users also return 'Incomplete'
       
-      // Incomplete users always show Private
-      const value = isIncomplete ? 'Private' : (params.value || 'Public');
+      // Incomplete/Pending users always show Private
+      const value = isIncompleteOrPending ? 'Private' : (params.value || 'Public');
       const isPrivate = value === 'Private';
       
       return (
@@ -661,13 +666,21 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     sortable: true,
     valueGetter: (params) => getStaffStatus(params.row),
     renderCell: (params) => {
-      const isComplete = params.value === 'Complete';
-      const label = isComplete ? 'Submitted' : params.value;
+      const status = params.value;
+      let label = status;
+      let color = 'default';
+      
+      if (status === 'Complete') {
+        label = 'Submitted';
+        color = 'success';
+      }
+      // Note: Pending users now return 'Incomplete' from getStaffStatus
+      
       return (
         <Chip
           label={label}
           size="small"
-          color={isComplete ? 'success' : 'default'}
+          color={color}
           variant="filled"
           sx={{
             fontWeight: 500,
@@ -1358,11 +1371,11 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
                       hasCoachingExp ||
                       hasCoachingLicenses;
       
-      // At league level, automatically set profile privacy to Private for incomplete users
+      // At league level, automatically set profile privacy to Private for incomplete/pending users
       const staffStatus = getStaffStatus(staff);
       const updatedStaff = {
         ...staff,
-        profilePrivacy: (isLeagueContext && staffStatus === 'Incomplete') ? 'Private' : (staff.profilePrivacy || 'Public')
+        profilePrivacy: (isLeagueContext && staffStatus === 'Incomplete') ? 'Private' : (staff.profilePrivacy || 'Public') // Pending users also return 'Incomplete'
       };
       
       // Add coaching stats if they're a coach
@@ -1394,11 +1407,11 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
                         hasCoachingExp ||
                         hasCoachingLicenses;
         
-        // At league level, automatically set profile privacy to Private for incomplete users
+        // At league level, automatically set profile privacy to Private for incomplete/pending users
         const staffStatus = getStaffStatus(staff);
         const updatedStaff = {
           ...staff,
-          profilePrivacy: (isLeagueContext && staffStatus === 'Incomplete') ? 'Private' : (staff.profilePrivacy || 'Public')
+          profilePrivacy: (isLeagueContext && staffStatus === 'Incomplete') ? 'Private' : (staff.profilePrivacy || 'Public') // Pending users also return 'Incomplete'
         };
         
         if (isCoach) {
