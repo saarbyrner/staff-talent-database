@@ -402,10 +402,10 @@ function StaffDatabase() {
         }}
       >
         <Tabs value={Number.isInteger(tab) ? tab : 3} onChange={handleChange} aria-label="Staff Tabs" sx={{ px: 0 }}>
-          <Tab label="Staff" value={0} />
+          {!isLeagueView && <Tab label="Staff" value={0} />}
           {!isLeagueView && <Tab label="Watchlist" value={1} />}
           <Tab label="Talent Database" value={3} />
-          {isLeagueView && <Tab label="Archived Candidates" value={4} />}
+          {isLeagueView && <Tab label="Archived" value={4} />}
           <Tab label="Nominations" value={2} />
         </Tabs>
       </Paper>
