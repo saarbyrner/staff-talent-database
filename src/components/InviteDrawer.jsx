@@ -177,7 +177,7 @@ function InviteDrawer({ open, onClose, onAddPendingUser }) {
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
               <TextField
                 label="First Name"
-                variant="outlined"
+                variant="filled"
                 fullWidth
                 required
                 value={formData.firstName}
@@ -185,15 +185,21 @@ function InviteDrawer({ open, onClose, onAddPendingUser }) {
                 error={!!errors.firstName}
                 helperText={errors.firstName}
                 sx={{
-                  '& .MuiOutlinedInput-root': {
-                    backgroundColor: '#fff',
+                  '& .MuiFilledInput-root': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.09)',
+                    },
+                    '&.Mui-focused': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                    },
                   },
                 }}
               />
 
               <TextField
                 label="Last Name"
-                variant="outlined"
+                variant="filled"
                 fullWidth
                 required
                 value={formData.lastName}
@@ -201,15 +207,21 @@ function InviteDrawer({ open, onClose, onAddPendingUser }) {
                 error={!!errors.lastName}
                 helperText={errors.lastName}
                 sx={{
-                  '& .MuiOutlinedInput-root': {
-                    backgroundColor: '#fff',
+                  '& .MuiFilledInput-root': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.09)',
+                    },
+                    '&.Mui-focused': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                    },
                   },
                 }}
               />
 
               <TextField
                 label="Email"
-                variant="outlined"
+                variant="filled"
                 fullWidth
                 required
                 type="email"
@@ -218,8 +230,14 @@ function InviteDrawer({ open, onClose, onAddPendingUser }) {
                 error={!!errors.email}
                 helperText={errors.email}
                 sx={{
-                  '& .MuiOutlinedInput-root': {
-                    backgroundColor: '#fff',
+                  '& .MuiFilledInput-root': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.09)',
+                    },
+                    '&.Mui-focused': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                    },
                   },
                 }}
               />

@@ -305,7 +305,7 @@ function NominationsDrawer({ open, onClose, onSubmitNomination, editMode = false
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
               <TextField
                 label="First Name"
-                variant="outlined"
+                variant="filled"
                 fullWidth
                 required
                 value={formData.firstName}
@@ -313,15 +313,21 @@ function NominationsDrawer({ open, onClose, onSubmitNomination, editMode = false
                 error={!!errors.firstName}
                 helperText={errors.firstName}
                 sx={{
-                  '& .MuiOutlinedInput-root': {
-                    backgroundColor: '#fff',
+                  '& .MuiFilledInput-root': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.09)',
+                    },
+                    '&.Mui-focused': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                    },
                   },
                 }}
               />
 
               <TextField
                 label="Last Name"
-                variant="outlined"
+                variant="filled"
                 fullWidth
                 required
                 value={formData.lastName}
@@ -329,15 +335,21 @@ function NominationsDrawer({ open, onClose, onSubmitNomination, editMode = false
                 error={!!errors.lastName}
                 helperText={errors.lastName}
                 sx={{
-                  '& .MuiOutlinedInput-root': {
-                    backgroundColor: '#fff',
+                  '& .MuiFilledInput-root': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.09)',
+                    },
+                    '&.Mui-focused': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                    },
                   },
                 }}
               />
 
               <TextField
                 label="Email"
-                variant="outlined"
+                variant="filled"
                 fullWidth
                 required
                 type="email"
@@ -346,15 +358,21 @@ function NominationsDrawer({ open, onClose, onSubmitNomination, editMode = false
                 error={!!errors.email}
                 helperText={errors.email}
                 sx={{
-                  '& .MuiOutlinedInput-root': {
-                    backgroundColor: '#fff',
+                  '& .MuiFilledInput-root': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.09)',
+                    },
+                    '&.Mui-focused': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                    },
                   },
                 }}
               />
 
               <TextField
                 label="Phone Number"
-                variant="outlined"
+                variant="filled"
                 fullWidth
                 required
                 value={formData.phoneNumber}
@@ -363,15 +381,21 @@ function NominationsDrawer({ open, onClose, onSubmitNomination, editMode = false
                 helperText={errors.phoneNumber}
                 placeholder="e.g., +1 (555) 123-4567"
                 sx={{
-                  '& .MuiOutlinedInput-root': {
-                    backgroundColor: '#fff',
+                  '& .MuiFilledInput-root': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.09)',
+                    },
+                    '&.Mui-focused': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                    },
                   },
                 }}
               />
 
               <TextField
                 label="Reason for Nomination"
-                variant="outlined"
+                variant="filled"
                 fullWidth
                 required
                 multiline
@@ -382,8 +406,14 @@ function NominationsDrawer({ open, onClose, onSubmitNomination, editMode = false
                 helperText={errors.reason}
                 placeholder="Please describe why you are nominating this person..."
                 sx={{
-                  '& .MuiOutlinedInput-root': {
-                    backgroundColor: '#fff',
+                  '& .MuiFilledInput-root': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.09)',
+                    },
+                    '&.Mui-focused': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                    },
                   },
                 }}
               />
