@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Box, Typography, Paper, Tabs, Tab, Avatar } from '@mui/material';
+import { Box, Typography, Paper, Tabs, Tab, Avatar, Badge } from '@mui/material';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import { CustomToolbar } from '../components/TalentDatabaseGrid';
 import TalentDatabaseGrid from '../components/TalentDatabaseGrid';
@@ -387,6 +387,9 @@ function StaffDatabase() {
     navigate(`${basePath}/${params.row.id}`, { state: { from } });
   };
 
+  // Count pending nominations
+  const pendingNominationsCount = nominations.filter(nom => nom.status === 'Pending').length;
+
   return (
     <Box sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column', gap: 2, backgroundColor: '#fafafa' }}>
       
@@ -406,7 +409,28 @@ function StaffDatabase() {
           {!isLeagueView && <Tab label="Watchlist" value={1} />}
           <Tab label="Talent Database" value={3} />
           {isLeagueView && <Tab label="Archived" value={4} />}
-          <Tab label="Nominations" value={2} />
+          <Tab 
+            label={
+              isLeagueView ? (
+                <Badge 
+                  badgeContent={pendingNominationsCount} 
+                  color="primary"
+                  sx={{ 
+                    '& .MuiBadge-badge': { 
+                      right: -12, 
+                      top: 2 
+                    } 
+                  }}
+                >
+                  Nominations
+                </Badge>
+              ) : (
+                "Nominations"
+              )
+            } 
+            value={2}
+            sx={{ minWidth: 160 }}
+          />
         </Tabs>
       </Paper>
 
@@ -426,6 +450,7 @@ function StaffDatabase() {
             onRemoveFromWatchlist={handleRemoveFromWatchlist}
             onUpdateWatchlist={handleWatchlistUpdate}
             staff={staffData}
+            hideCheckboxes={!isLeagueView}
           />
         </Paper>
       )}
@@ -471,6 +496,7 @@ function StaffDatabase() {
           onArchive={handleArchiveStaff}
           onAddPendingUser={handleAddPendingUser}
           hideAddButton={!isLeagueView}
+          hideCheckboxes={!isLeagueView}
         />
       </Paper>
       <Paper 
@@ -493,6 +519,7 @@ function StaffDatabase() {
           onUnarchive={handleUnarchiveStaff}
           onAddPendingUser={handleAddPendingUser}
           hideAddButton={!isLeagueView}
+          hideCheckboxes={!isLeagueView}
         />
       </Paper>
       
@@ -563,7 +590,7 @@ function StaffDatabase() {
               },
             }}
             onRowClick={handleRowClick}
-            checkboxSelection
+            checkboxSelection={isLeagueView}
             pageSizeOptions={[25, 50]}
             initialState={{
               pagination: { paginationModel: { pageSize: 25 } }

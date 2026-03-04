@@ -626,7 +626,7 @@ export const createWatchlistColumns = (
   return columns;
 };
 
-function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) {
+function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate, hideCheckboxes = false }) {
   const navigate = useNavigate();
   const location = useLocation();
   const isLeagueView = location.pathname.startsWith('/league');
@@ -1006,7 +1006,7 @@ function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) 
           },
         }}
         pageSizeOptions={[25, 50, 100]}
-        checkboxSelection
+        checkboxSelection={!hideCheckboxes}
         onRowClick={handleRowClick}
         sx={{
           border: 'none',
