@@ -656,12 +656,12 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     },
     renderCell: (params) => <RolesCell roles={params.value} /> 
   },
-  { 
-    field: 'submittedBy', 
-    headerName: 'Submitted By', 
+  ...(isLeagueView ? [{
+    field: 'submittedBy',
+    headerName: 'Submitted By',
     width: 180,
     renderCell: (params) => params.value || 'League'
-  },
+  }] : []),
   // ...existing code...
   // STATUS
   // Only show App Status column in league view
