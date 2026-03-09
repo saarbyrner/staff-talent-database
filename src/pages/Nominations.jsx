@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { Box } from '@mui/material';
 import NominationsGrid from '../components/NominationsGrid';
 import NominationsDrawer from '../components/NominationsDrawer';
+import SEED_NOMINATIONS from '../data/seedNominations';
 import '../styles/design-tokens.css';
 
 /**
@@ -12,11 +13,11 @@ import '../styles/design-tokens.css';
 function Nominations() {
   const location = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  
-  // Initialize nominations from localStorage
+
+  // Initialize nominations from localStorage, falling back to seed data
   const [nominations, setNominations] = useState(() => {
     const stored = localStorage.getItem('nominations');
-    return stored ? JSON.parse(stored) : [];
+    return stored ? JSON.parse(stored) : SEED_NOMINATIONS;
   });
 
   // Check if we're in league view

@@ -13,6 +13,7 @@ import { Snackbar, Alert } from '@mui/material';
 import staffList from '../data/users_staff.json';
 import staffTalentData from '../data/staff_talent.json';
 import { generateInitialsImage } from '../utils/assetManager';
+import SEED_NOMINATIONS from '../data/seedNominations';
 import '../styles/design-tokens.css';
 
 // Initialize watchlist with some pre-populated staff objects
@@ -56,24 +57,72 @@ function StaffDatabase() {
   const [nominationActionName, setNominationActionName] = useState('');
   const [watchlist, setWatchlist] = useState(INITIAL_WATCHLIST);
   
-  // Initialize nominations from localStorage
+  // Initialize nominations from localStorage, falling back to seed data
   const [nominations, setNominations] = useState(() => {
     const stored = localStorage.getItem('nominations');
-    return stored ? JSON.parse(stored) : [];
+    return stored ? JSON.parse(stored) : SEED_NOMINATIONS;
   });
   
   // Initialize staff data with archived status and pending users from localStorage
   const [staffData, setStaffData] = useState(() => {
     const archivedIds = JSON.parse(localStorage.getItem('archivedStaffIds') || '[]');
     const pendingUsers = JSON.parse(localStorage.getItem('pendingStaffUsers') || '[]');
-    
+
+    // Seed pending profile for Marcus Johnson (accepted nomination) if not already present
+    const MARCUS_SEED_ID = 'NOM-PENDING-001';
+    const marcusAlreadyAdded = pendingUsers.some(u => u.id === MARCUS_SEED_ID);
+    const marcusSeed = {
+      id: MARCUS_SEED_ID,
+      firstName: 'Marcus',
+      lastName: 'Johnson',
+      email: 'marcus.johnson@example.com',
+      phone: '+1 (503) 555-0142',
+      profileStatus: 'Pending',
+      country: '',
+      state: '',
+      city: '',
+      workAuthUS: false,
+      workAuthCA: false,
+      gender: '',
+      ethnicity: '',
+      hasAgent: false,
+      agentName: '',
+      agencyName: '',
+      proPlayerExp: false,
+      mlsPlayerExp: false,
+      mlsClubsPlayed: [],
+      otherPlayerExp: '',
+      interestArea: '',
+      coachingRoles: [],
+      execRoles: [],
+      techRoles: [],
+      relocation: [],
+      proCoachExp: false,
+      mlsCoachExp: false,
+      mlsCoachRoles: [],
+      mlsClubsCoached: [],
+      nonMlsCoachExp: [],
+      sportingExp: false,
+      mlsSportingExp: false,
+      mlsClubsSporting: [],
+      profilePrivacy: 'Private',
+      isArchived: false,
+      tags: [],
+    };
+
+    // Persist seed to localStorage so StaffProfile can find him by id
+    if (!marcusAlreadyAdded) {
+      localStorage.setItem('pendingStaffUsers', JSON.stringify([marcusSeed, ...pendingUsers]));
+    }
+    const seedPending = marcusAlreadyAdded ? [] : [marcusSeed];
+
     // Merge pending users with existing talent data
     const baseData = staffTalentData.map(staff => ({
       ...staff,
       isArchived: archivedIds.includes(staff.id)
     }));
-    
-    return [...pendingUsers, ...baseData];
+
+    return [...seedPending, ...pendingUsers, ...baseData];
   });
   
   const navigate = useNavigate();
