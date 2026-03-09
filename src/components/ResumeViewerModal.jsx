@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -11,11 +11,33 @@ import {
 import { CloseOutlined, DownloadOutlined, OpenInNewOutlined } from '@mui/icons-material';
 import '../styles/design-tokens.css';
 
+// Convert a data URL to a Blob URL so browsers can render it in <embed>
+function dataURLtoBlobURL(dataURL) {
+  const [header, base64] = dataURL.split(',');
+  const mime = header.match(/:(.*?);/)[1];
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return URL.createObjectURL(new Blob([bytes], { type: mime }));
+}
+
 /**
  * ResumeViewerModal Component
  * Displays resume files (PDF/DOC) in a modal
  */
 function ResumeViewerModal({ open, onClose, resumeData, resumeFileName, resumeType }) {
+  const [blobURL, setBlobURL] = useState(null);
+
+  useEffect(() => {
+    if (open && resumeData) {
+      const url = dataURLtoBlobURL(resumeData);
+      setBlobURL(url);
+      return () => URL.revokeObjectURL(url);
+    } else {
+      setBlobURL(null);
+    }
+  }, [open, resumeData]);
+
   const handleDownload = () => {
     if (!resumeData || !resumeFileName) return;
     
@@ -29,16 +51,8 @@ function ResumeViewerModal({ open, onClose, resumeData, resumeFileName, resumeTy
   };
 
   const handleOpenInNewTab = () => {
-    if (!resumeData) return;
-    
-    // Open PDF in new tab
-    const newWindow = window.open();
-    if (newWindow) {
-      newWindow.document.write(
-        `<iframe src="${resumeData}" width="100%" height="100%" style="border:none;"></iframe>`
-      );
-      newWindow.document.title = resumeFileName || 'Resume';
-    }
+    if (!blobURL) return;
+    window.open(blobURL, '_blank');
   };
 
   const isPDF = resumeType === 'application/pdf';
@@ -118,7 +132,7 @@ function ResumeViewerModal({ open, onClose, resumeData, resumeFileName, resumeTy
           overflow: 'hidden',
         }}
       >
-        {isPDF && resumeData && (
+        {isPDF && blobURL && (
           <Box
             sx={{
               flex: 1,
@@ -130,7 +144,7 @@ function ResumeViewerModal({ open, onClose, resumeData, resumeFileName, resumeTy
             }}
           >
             <embed
-              src={`${resumeData}#toolbar=1&navpanes=0&scrollbar=1`}
+              src={`${blobURL}#toolbar=1&navpanes=0&scrollbar=1`}
               type="application/pdf"
               style={{
                 width: '100%',
