@@ -220,7 +220,7 @@ const AthleteDataGrid = ({
       type: 'number',
       width: 110,
       filterable: true,
-      valueFormatter: (value) => `${value}%`,
+      valueFormatter: ({ value }) => `${value}%`,
     },
     {
       field: 'fitness_level',
@@ -242,7 +242,7 @@ const AthleteDataGrid = ({
       type: 'number',
       width: 130,
       filterable: true,
-      valueFormatter: (value) => (typeof value === 'number' ? value.toFixed(1) : '-'),
+      valueFormatter: ({ value }) => (typeof value === 'number' ? value.toFixed(1) : '-'),
     },
     {
       field: 'wellbeing_score',
@@ -250,7 +250,7 @@ const AthleteDataGrid = ({
       type: 'number',
       width: 110,
       filterable: true,
-      valueFormatter: (value) => (typeof value === 'number' ? value.toFixed(1) : '-'),
+      valueFormatter: ({ value }) => (typeof value === 'number' ? value.toFixed(1) : '-'),
     },
     {
       field: 'last_assessment',
