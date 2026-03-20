@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   Paper,
@@ -13,7 +13,9 @@ import {
   FormControl,
   FormGroup,
   Checkbox,
+  Chip,
   IconButton,
+  Divider,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -22,7 +24,17 @@ import {
   CircularProgress,
   Collapse
 } from '@mui/material';
-import { SaveOutlined, ExpandMoreOutlined, CloudUpload, InsertDriveFile, ChevronRight as ChevronRightIcon, RadioButtonUnchecked, CheckCircle } from '@mui/icons-material';
+import { 
+  ArrowBack, 
+  SaveOutlined, 
+  ExpandMoreOutlined, 
+  DragIndicatorOutlined, 
+  CloudUpload, 
+  InsertDriveFile,
+  ChevronRight as ChevronRightIcon,
+  RadioButtonUnchecked,
+  CheckCircle
+} from '@mui/icons-material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -30,6 +42,7 @@ import dayjs from 'dayjs';
 import staffTalentData from '../data/staff_talent.json';
 import currentStaffData from '../data/users_staff.json';
 import { staffForm as staffFormDefinition } from '../data';
+import ProfilePictureUpload from '../components/ProfilePictureUpload';
 import '../styles/design-tokens.css';
 
 /**
@@ -48,17 +61,18 @@ const createFormNavigationStructure = (formDefinition) => {
       subgroups: [
         { id: 0, title: 'Staff Information', sectionIndex: 0, isCompleted: false },
         { id: 1, title: 'Voluntary Self Identification', sectionIndex: 1, isCompleted: false },
-        { id: 2, title: 'Agent information', sectionIndex: 2, isCompleted: false }
+  { id: 2, title: 'Agent information', sectionIndex: 2, isCompleted: false }
       ]
     },
+    // Removed Personal Information group
     {
       id: 'experience',
-      title: 'Experience',
+      title: 'Experience & Background',
       subgroups: [
         { id: 3, title: sectionNames[3] || 'Playing Experience', sectionIndex: 3, isCompleted: false },
-        { id: 4, title: sectionNames[5] || 'Professional Coaching', sectionIndex: 5, isCompleted: false },
-        { id: 5, title: sectionNames[6] || 'Professional Sporting Experience', sectionIndex: 6, isCompleted: false },
-        { id: 6, title: sectionNames[7] || 'Employment History', sectionIndex: 7, isCompleted: false }
+        { id: 4, title: sectionNames[5] || 'Professional Coaching Section', sectionIndex: 5, isCompleted: false },
+        { id: 5, title: sectionNames[6] || 'Professional Sporting Experience Section', sectionIndex: 6, isCompleted: false },
+        { id: 6, title: sectionNames[7] || 'Employment History Section', sectionIndex: 7, isCompleted: false }
       ]
     },
     {
@@ -73,34 +87,38 @@ const createFormNavigationStructure = (formDefinition) => {
       id: 'documents',
       title: 'Preferences',
       subgroups: [
-        { id: 9, title: sectionNames[4] || 'Role and location preferences', sectionIndex: 4, isCompleted: false }
-      ]
-    },
-    {
-      id: 'consent',
-      title: 'Consent',
-      subgroups: [
-        { id: 11, title: sectionNames[11] || 'Consent', sectionIndex: 11, isCompleted: false }
+        { id: 9, title: sectionNames[4] || 'Interest Section', sectionIndex: 4, isCompleted: false },
+        { id: 10, title: sectionNames[10] || 'Upload Documents', sectionIndex: 10, isCompleted: false },
+        { id: 11, title: sectionNames[11] || 'Preferences', sectionIndex: 11, isCompleted: false }
       ]
     }
   ];
 };
 
 /**
- * Staff Portal View
- * A standalone view for staff members to fill in their form
- * This is isolated from the main navigation and is used when staff receive an invitation
+ * Staff Form Edit Page
+ * Displays the staff form in edit/input mode for a specific staff member
+ * Similar to the preview tab in form builder, but standalone for editing staff data
  */
-function StaffPortalView() {
+function StaffFormEdit() {
   const { id } = useParams();
-  const [searchParams] = useSearchParams();
-  const email = searchParams.get('email');
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Check if we're creating a new staff member or editing existing
-  const isNewStaff = !id || id === 'new';
+  // Check if we're creating a new staff member (either id is undefined or 'new')
+  const isNewStaff = !id || id === 'new' || location.pathname.includes('/new');
+
+  // Debug logging
+  console.log('StaffFormEdit - location.pathname:', location.pathname);
+  console.log('StaffFormEdit - id:', id);
+  console.log('StaffFormEdit - isNewStaff:', isNewStaff);
+
+  // Determine if we're viewing from league context
+  const isLeagueView = location.pathname.startsWith('/league');
 
   // Find staff member (or null if creating new)
   const staffMember = React.useMemo(() => {
+    // If creating new staff, return null
     if (isNewStaff) return null;
     
     let member = staffTalentData.find(s => s.id === id);
@@ -112,12 +130,12 @@ function StaffPortalView() {
     return null;
   }, [id, isNewStaff]);
 
+  console.log('StaffFormEdit - staffMember:', staffMember);
+  console.log('StaffFormEdit - isNewStaff check:', isNewStaff, '- Will show error?', !isNewStaff && !staffMember);
+
   // Initialize form values from staff member data
   const [formValues, setFormValues] = React.useState(() => {
-    if (!staffMember) {
-      // If email is provided from invitation, pre-fill it
-      return email ? { email } : {};
-    }
+    if (!staffMember) return {};
     
     // Map staff member data to form field names
     const values = {};
@@ -299,6 +317,16 @@ function StaffPortalView() {
     }
   };
 
+
+  const handleBack = () => {
+    const basePath = isLeagueView ? '/league/staff' : '/staff';
+    if (isNewStaff) {
+      navigate(basePath);
+    } else {
+      navigate(`${basePath}/${id}`);
+    }
+  };
+
   const handleValueChange = (fieldName, value) => {
     setFormValues(prev => ({ ...prev, [fieldName]: value }));
   };
@@ -340,10 +368,16 @@ function StaffPortalView() {
     });
   };
 
-  const handleSubmit = () => {
-    console.log('Submitting form values:', formValues);
-    alert('Form submitted successfully! Thank you for completing your staff information.');
-    // In a real app, this would submit to the backend
+  const handleSave = () => {
+    console.log('Saving form values:', formValues);
+    // In a real app, this would save to the backend
+    if (isNewStaff) {
+      alert('New staff member created successfully!');
+    } else {
+      alert('Form saved successfully!');
+    }
+    const basePath = isLeagueView ? '/league/staff' : '/staff';
+    navigate(basePath);
   };
 
   const evaluateDependency = (field) => {
@@ -357,6 +391,12 @@ function StaffPortalView() {
     
     // Simple field dependency - check if parent field is truthy or "Yes"
     const dependentValue = formValues[field.dependency];
+    
+    // For array values (MultiSelect), check if "Other" is included
+    if (Array.isArray(dependentValue)) {
+      return dependentValue.includes('Other');
+    }
+    
     return dependentValue === 'Yes' || dependentValue === true;
   };
 
@@ -396,6 +436,35 @@ function StaffPortalView() {
           >
             {field.options?.map(option => (
               <MenuItem key={option} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </TextField>
+        );
+        break;
+
+      case 'MultiSelect':
+        control = (
+          <TextField
+            select
+            variant="filled"
+            size="small"
+            fullWidth
+            value={Array.isArray(value) ? value : []}
+            onChange={(e) => handleValueChange(fieldId, e.target.value)}
+            SelectProps={{
+              multiple: true,
+              renderValue: (selected) => {
+                if (selected.length === 0) {
+                  return <em>Select options...</em>;
+                }
+                return selected.join(', ');
+              }
+            }}
+          >
+            {field.options?.map(option => (
+              <MenuItem key={option} value={option}>
+                <Checkbox checked={Array.isArray(value) ? value.includes(option) : false} />
                 {option}
               </MenuItem>
             ))}
@@ -502,6 +571,15 @@ function StaffPortalView() {
         );
         break;
 
+      case 'ProfilePictureUpload':
+        control = (
+          <ProfilePictureUpload
+            value={value}
+            onChange={(file) => handleValueChange(fieldId, file)}
+          />
+        );
+        break;
+
       default:
         control = (
           <TextField
@@ -558,26 +636,23 @@ function StaffPortalView() {
   // Only show error if staff not found and not creating a new one
   if (!isNewStaff && !staffMember) {
     return (
-      <Box sx={{ p: 3, height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Paper sx={{ p: 4, maxWidth: 400, textAlign: 'center' }}>
-          <Typography variant="h6" gutterBottom>Staff member not found</Typography>
-          <Typography color="text.secondary">The invitation link may be invalid or expired.</Typography>
-        </Paper>
+      <Box sx={{ p: 3 }}>
+        <Typography>Staff member not found</Typography>
       </Box>
     );
   }
 
   const displayName = isNewStaff
-    ? 'MLS Advance Candidate Form'
+    ? 'New Staff Member'
     : staffMember && staffMember.source === 'talent'
     ? `${staffMember.firstName} ${staffMember.lastName}`
     : staffMember
     ? `${staffMember.firstname} ${staffMember.lastname}`
-    : 'MLS Advance Candidate Form';
+    : 'New Staff Member';
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#fafafa' }}>
+      <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: '#fafafa' }}>
         {/* Header */}
         <Paper
           elevation={0}
@@ -589,11 +664,21 @@ function StaffPortalView() {
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+            <IconButton
+              onClick={handleBack}
+              size="small"
+              sx={{ color: 'var(--color-text-secondary)' }}
+            >
+              <ArrowBack />
+            </IconButton>
+            <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>
+              Back
+            </Typography>
             <Box sx={{ flexGrow: 1 }} />
             <Button
               variant="contained"
               startIcon={<SaveOutlined />}
-              onClick={handleSubmit}
+              onClick={handleSave}
               sx={{
                 textTransform: 'none',
                 backgroundColor: 'var(--color-primary)',
@@ -602,15 +687,12 @@ function StaffPortalView() {
                 },
               }}
             >
-              Submit
+              Save Changes
             </Button>
           </Box>
           
           <Typography variant="h5" sx={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>
-            {displayName}
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)', mt: 0.5 }}>
-            Please complete all required fields and submit your information.
+            {isNewStaff ? 'Add New Staff Member' : `Edit Staff Information: ${displayName}`}
           </Typography>
         </Paper>
 
@@ -635,6 +717,7 @@ function StaffPortalView() {
               {navigationData.map((group) => {
                 const isExpanded = expandedGroups.includes(group.id);
                 const { completed, total, percentage } = calculateGroupProgress(group);
+                const hasActiveSubgroup = group.subgroups?.some(sub => sub.id === activeSubgroupId);
 
                 return (
                   <Box key={group.id}>
@@ -862,4 +945,4 @@ function StaffPortalView() {
   );
 }
 
-export default StaffPortalView;
+export default StaffFormEdit;

@@ -10,6 +10,17 @@ import { Chip } from '@mui/material'
  */
 function MedinahStatusChip({ status, type = 'default', className = '', ...props }) {
   const getChipProps = () => {
+    // Custom: If status is 'Incomplete', use grey
+    if (status === 'Incomplete') {
+      return {
+        variant: 'filled',
+        size: 'small',
+        sx: {
+          backgroundColor: '#bdbdbd',
+          color: '#fff',
+        }
+      };
+    }
     switch (type) {
       case 'success':
         return {

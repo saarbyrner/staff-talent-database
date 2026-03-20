@@ -98,102 +98,73 @@
     "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/101_coaching.pdf",
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "League"
   },
   {
     "id": "102",
     "firstName": "Michael",
     "lastName": "Okoro",
-    "phone": "+44 20 7946 0958",
-    "email": "j.okoro@fake.co.uk",
-    "country": "United Kingdom",
-    "state": "London",
-    "city": "London",
-    "workAuthUS": false,
-    "workAuthCA": false,
-    "gender": "Male",
-    "ethnicity": "Black",
-    "hasAgent": false,
+    "phone": "",
+    "email": "michael.okoro@example.com",
+    "country": "",
+    "state": "",
+    "city": "",
+    "workAuthUS": null,
+    "workAuthCA": null,
+    "gender": "",
+    "ethnicity": "",
+    "hasAgent": null,
     "agentName": "",
     "agencyName": "",
-    "proPlayerExp": true,
-    "mlsPlayerExp": false,
+    "proPlayerExp": null,
+    "mlsPlayerExp": null,
     "mlsClubsPlayed": [],
-    "otherPlayerExp": "English Championship (Watford, 2010-2015)",
-    "interestArea": "Sporting Executive",
+    "otherPlayerExp": "",
+    "interestArea": "",
     "coachingRoles": [],
-    "execRoles": [
-      "Technical Director",
-      "General Manager or Sporting Director"
-    ],
+    "execRoles": [],
     "techRoles": [],
-    "relocation": [
-      "Northeast",
-      "Canada",
-      "West"
-    ],
-    "proCoachExp": false,
-    "mlsCoachExp": false,
+    "relocation": [],
+    "proCoachExp": null,
+    "mlsCoachExp": null,
     "mlsCoachRoles": [],
     "mlsClubsCoached": [],
     "nonMlsCoachExp": [],
-    "sportingExp": true,
-    "mlsSportingExp": false,
-    "mlsClubsSporting": [
-      "FC Cincinnati",
-      "Minnesota United FC"
-    ],
-    "nonMlsSportingExp": [
-      "other 1st Division Sporting Experience",
-      "Other International Sporting Experience"
-    ],
-    "sportingVertical": [
-      "Player Development",
-      "CAP & Player Personnel"
-    ],
-    "currentEmployer": "Brentford FC - Head of Recruitment (2020-Present)",
-    "prevEmployer1": "Watford FC - Chief Scout (2016-2020)",
-    "prevEmployer2": "Bayern Munich - Youth Development Coach (2019-2021)",
-    "degree": "Masters Degree",
+    "sportingExp": null,
+    "mlsSportingExp": null,
+    "mlsClubsSporting": [],
+    "nonMlsSportingExp": [],
+    "sportingVertical": [],
+    "currentEmployer": "",
+    "prevEmployer1": "",
+    "prevEmployer2": "",
+    "degree": "",
     "mlsPrograms": [],
-    "coachingLicenses": [
-      "UEFA B License"
-    ],
-    "sportingCerts": [
-      "The Global Institute of Sport",
-      "FA Level 5 (Technical Directors)"
-    ],
-    "languages": [
-      "English",
-      "French"
-    ],
-    "resumeUrl": "https://fake-s3.mls.com/resumes/okoro.pdf",
-    "picUrl": "/assets/headshots/208_421.png",
-    "proCoachExpUpdate": false,
-    "prevMlsCoachExp": false,
+    "coachingLicenses": [],
+    "sportingCerts": [],
+    "languages": [],
+    "resumeUrl": "",
+    "picUrl": "",
+    "proCoachExpUpdate": null,
+    "prevMlsCoachExp": null,
     "mlsCoachingExpList": [],
-    "proSportingExpUpdate": true,
-    "prevMlsSportingExp": true,
-    "currentlyEmployed": true,
-    "prevEmployer3": "Bayern Munich - Head Coach (2018-2022)",
+    "proSportingExpUpdate": null,
+    "prevMlsSportingExp": null,
+    "currentlyEmployed": null,
+    "prevEmployer3": "",
     "prevEmployer4": null,
-    "highestDegree": [
-      "Masters Degree"
-    ],
+    "highestDegree": [],
     "mlsProgramming": [],
-    "sportingDirectorCerts": [
-      "The Global Institute of Sport",
-      "FA Level 5 (Technical Directors)"
-    ],
-    "otherLicenses": false,
+    "sportingDirectorCerts": [],
+    "otherLicenses": null,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Private",
-    "tags": [
-      "Proven"
-    ],
-    "eloRating": 1600
+    "profilePrivacy": "Public",
+    "tags": [],
+    "eloRating": 1600,
+    "submittedBy": "Nashville SC"
   },
   {
     "id": "103",
@@ -285,7 +256,8 @@
     "tags": [
       "Emerging"
     ],
-    "eloRating": 1450
+    "eloRating": 1450,
+    "submittedBy": "LA Galaxy"
   },
   {
     "id": "104",
@@ -378,190 +350,138 @@
     "tags": [
       "Emerging"
     ],
-    "eloRating": 1400
+    "eloRating": 1400,
+    "submittedBy": "League"
   },
   {
     "id": "105",
     "firstName": "David",
     "lastName": "Smith",
-    "phone": "+1 (512) 555-9000",
-    "email": "j.smith@sportsexec.com",
-    "country": "USA",
-    "state": "Texas",
-    "city": "Austin",
-    "workAuthUS": true,
-    "workAuthCA": false,
-    "gender": "Male",
-    "ethnicity": "Multi-racial",
-    "hasAgent": true,
-    "agentName": "Creative Artists Agency",
-    "agencyName": "CAA",
-    "proPlayerExp": true,
-    "mlsPlayerExp": true,
-    "mlsClubsPlayed": [
-      "Austin FC",
-      "Columbus Crew"
-    ],
+    "phone": "",
+    "email": "david.smith@example.com",
+    "country": "",
+    "state": "",
+    "city": "",
+    "workAuthUS": null,
+    "workAuthCA": null,
+    "gender": "",
+    "ethnicity": "",
+    "hasAgent": null,
+    "agentName": "",
+    "agencyName": "",
+    "proPlayerExp": null,
+    "mlsPlayerExp": null,
+    "mlsClubsPlayed": [],
     "otherPlayerExp": "",
-    "interestArea": "Sporting Executive",
+    "interestArea": "",
     "coachingRoles": [],
-    "execRoles": [
-      "Assistant General Manager or Sporting Director",
-      "Director of Football Operations"
-    ],
+    "execRoles": [],
     "techRoles": [],
-    "relocation": [
-      "I am not willing to relocate"
-    ],
-    "proCoachExp": false,
-    "mlsCoachExp": false,
+    "relocation": [],
+    "proCoachExp": null,
+    "mlsCoachExp": null,
     "mlsCoachRoles": [],
     "mlsClubsCoached": [],
     "nonMlsCoachExp": [],
-    "sportingExp": true,
-    "mlsSportingExp": true,
-    "mlsClubsSporting": [
-      "Austin FC"
-    ],
+    "sportingExp": null,
+    "mlsSportingExp": null,
+    "mlsClubsSporting": [],
     "nonMlsSportingExp": [],
-    "sportingVertical": [
-      "Player Development",
-      "Other"
-    ],
-    "currentEmployer": "Austin FC - Director of Player Care (2022-Present)",
-    "prevEmployer1": "Austin FC - Player (2020-2022)",
-    "prevEmployer2": "Columbus Crew - Player (2017-2020)",
-    "degree": "Associates Degree",
-    "mlsPrograms": [
-      "MLS Advance"
-    ],
-    "coachingLicenses": [
-      "USSF B License"
-    ],
-    "sportingCerts": [
-      "FIFA Diploma in Club Management"
-    ],
-    "languages": [
-      "English",
-      "Spanish"
-    ],
-    "resumeUrl": "https://fake-s3.mls.com/resumes/smith.pdf",
-    "picUrl": "/assets/headshots/216_549.png",
-    "proCoachExpUpdate": false,
-    "prevMlsCoachExp": false,
+    "sportingVertical": [],
+    "currentEmployer": "",
+    "prevEmployer1": "",
+    "prevEmployer2": "",
+    "degree": "",
+    "mlsPrograms": [],
+    "coachingLicenses": [],
+    "sportingCerts": [],
+    "languages": [],
+    "resumeUrl": "",
+    "picUrl": "",
+    "proCoachExpUpdate": null,
+    "prevMlsCoachExp": null,
     "mlsCoachingExpList": [],
-    "proSportingExpUpdate": true,
-    "prevMlsSportingExp": true,
-    "currentlyEmployed": true,
+    "proSportingExpUpdate": null,
+    "prevMlsSportingExp": null,
+    "currentlyEmployed": null,
     "prevEmployer3": null,
-    "prevEmployer4": "FC Barcelona Academy - Sporting Director (2019-2021)",
-    "highestDegree": [
-      "Associates Degree"
-    ],
-    "mlsProgramming": [
-      "MLS Advance"
-    ],
-    "sportingDirectorCerts": [
-      "FIFA Diploma in Club Management"
-    ],
-    "otherLicenses": false,
+    "prevEmployer4": null,
+    "highestDegree": [],
+    "mlsProgramming": [],
+    "sportingDirectorCerts": [],
+    "otherLicenses": null,
     "otherLicensesList": null,
     "coachingLicenseDoc": null,
     "otherCertsDoc": null,
-    "profilePrivacy": "Private",
-    "tags": [
-      "Proven"
-    ],
-    "eloRating": 1550
+    "profilePrivacy": "Public",
+    "tags": [],
+    "eloRating": 1550,
+    "submittedBy": "Charlotte FC"
   },
   {
     "id": "106",
     "firstName": "William",
     "lastName": "Martinez",
-    "phone": "+1 (305) 555-0147",
-    "email": "s.martinez@coaching.org",
-    "country": "USA",
-    "state": "Florida",
-    "city": "Miami",
-    "workAuthUS": true,
-    "workAuthCA": false,
-    "gender": "Male",
-    "ethnicity": "Hispanic / Latino",
-    "hasAgent": false,
+    "phone": "",
+    "email": "william.martinez@example.com",
+    "country": "",
+    "state": "",
+    "city": "",
+    "workAuthUS": null,
+    "workAuthCA": null,
+    "gender": "",
+    "ethnicity": "",
+    "hasAgent": null,
     "agentName": "",
     "agencyName": "",
-    "proPlayerExp": false,
-    "mlsPlayerExp": false,
+    "proPlayerExp": null,
+    "mlsPlayerExp": null,
     "mlsClubsPlayed": [],
-    "otherPlayerExp": "College coach - University of Miami (player)",
-    "interestArea": "Coaching",
-    "coachingRoles": [
-      "Academy Coach",
-      "Assistant Coach"
-    ],
+    "otherPlayerExp": "",
+    "interestArea": "",
+    "coachingRoles": [],
     "execRoles": [],
     "techRoles": [],
-    "relocation": [
-      "South",
-      "West"
-    ],
-    "proCoachExp": true,
-    "mlsCoachExp": false,
+    "relocation": [],
+    "proCoachExp": null,
+    "mlsCoachExp": null,
     "mlsCoachRoles": [],
-    "mlsClubsCoached": [
-      "Vancouver Whitecaps FC"
-    ],
-    "nonMlsCoachExp": [
-      "USL Academy Coach"
-    ],
-    "sportingExp": false,
-    "mlsSportingExp": false,
+    "mlsClubsCoached": [],
+    "nonMlsCoachExp": [],
+    "sportingExp": null,
+    "mlsSportingExp": null,
     "mlsClubsSporting": [],
     "nonMlsSportingExp": [],
     "sportingVertical": [],
-    "currentEmployer": "Miami United Academy - Head Coach (2021-Present)",
-    "prevEmployer1": "University of Miami - Graduate Assistant (2018-2021)",
-    "prevEmployer2": "Ajax Amsterdam - Head Coach (2012-2015)",
-    "degree": "Bachelors Degree",
-    "mlsPrograms": [
-      "MLS Coaching Pathway"
-    ],
-    "coachingLicenses": [
-      "USSF C License"
-    ],
+    "currentEmployer": "",
+    "prevEmployer1": "",
+    "prevEmployer2": "",
+    "degree": "",
+    "mlsPrograms": [],
+    "coachingLicenses": [],
     "sportingCerts": [],
-    "languages": [
-      "English",
-      "Spanish"
-    ],
-    "resumeUrl": "https://fake-s3.mls.com/resumes/martinez.pdf",
-    "picUrl": "/assets/headshots/225_100.png",
-    "proCoachExpUpdate": true,
-    "prevMlsCoachExp": true,
-    "mlsCoachingExpList": [
-      "MLS First Team Assistant Coaching Experience"
-    ],
-    "proSportingExpUpdate": false,
-    "prevMlsSportingExp": false,
-    "currentlyEmployed": true,
-    "prevEmployer3": "Ajax Amsterdam - Assistant Coach (2018-2019)",
+    "languages": [],
+    "resumeUrl": "",
+    "picUrl": "",
+    "proCoachExpUpdate": null,
+    "prevMlsCoachExp": null,
+    "mlsCoachingExpList": [],
+    "proSportingExpUpdate": null,
+    "prevMlsSportingExp": null,
+    "currentlyEmployed": null,
+    "prevEmployer3": "",
     "prevEmployer4": null,
-    "highestDegree": [
-      "Bachelors Degree"
-    ],
-    "mlsProgramming": [
-      "MLS Coaching Pathway"
-    ],
+    "highestDegree": [],
+    "mlsProgramming": [],
     "sportingDirectorCerts": [],
-    "otherLicenses": false,
+    "otherLicenses": null,
     "otherLicensesList": null,
-    "coachingLicenseDoc": "https://fake-s3.mls.com/licenses/106_coaching.pdf",
+    "coachingLicenseDoc": null,
     "otherCertsDoc": null,
     "profilePrivacy": "Public",
-    "tags": [
-      "Emerging"
-    ],
-    "eloRating": 1300
+    "tags": [],
+    "eloRating": 1300,
+    "submittedBy": "Toronto FC"
   },
   {
     "id": "107",
@@ -649,7 +569,8 @@
     "tags": [
       "Emerging"
     ],
-    "eloRating": 1200
+    "eloRating": 1200,
+    "submittedBy": "League"
   },
   {
     "id": "108",
@@ -737,7 +658,8 @@
     "tags": [
       "Emerging"
     ],
-    "eloRating": 1250
+    "eloRating": 1250,
+    "submittedBy": "League"
   },
   {
     "id": "109",
@@ -819,7 +741,8 @@
     "tags": [
       "Emerging"
     ],
-    "eloRating": 1350
+    "eloRating": 1350,
+    "submittedBy": "CF Montreal"
   },
   {
     "id": "110",
@@ -908,7 +831,8 @@
     "tags": [
       "Emerging"
     ],
-    "eloRating": 1650
+    "eloRating": 1650,
+    "submittedBy": "Inter Miami CF"
   },
   {
     "id": "111",
@@ -1001,7 +925,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "League"
   },
   {
     "id": "112",
@@ -1090,7 +1015,8 @@
     "tags": [
       "Emerging"
     ],
-    "eloRating": 1750
+    "eloRating": 1750,
+    "submittedBy": "Austin FC"
   },
   {
     "id": "113",
@@ -1173,7 +1099,8 @@
     "tags": [
       "High Potential"
     ],
-    "eloRating": 1200
+    "eloRating": 1200,
+    "submittedBy": "St. Louis City SC"
   },
   {
     "id": "114",
@@ -1261,7 +1188,8 @@
     "tags": [
       "Emerging"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "League"
   },
   {
     "id": "115",
@@ -1350,7 +1278,8 @@
     "tags": [
       "Emerging"
     ],
-    "eloRating": 1650
+    "eloRating": 1650,
+    "submittedBy": "League"
   },
   {
     "id": "116",
@@ -1445,7 +1374,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "Minnesota United FC"
   },
   {
     "id": "117",
@@ -1538,7 +1468,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1550
+    "eloRating": 1550,
+    "submittedBy": "Houston Dynamo FC"
   },
   {
     "id": "118",
@@ -1626,7 +1557,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1750
+    "eloRating": 1750,
+    "submittedBy": "League"
   },
   {
     "id": "119",
@@ -1717,7 +1649,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "Atlanta United FC"
   },
   {
     "id": "120",
@@ -1813,7 +1746,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1650
+    "eloRating": 1650,
+    "submittedBy": "Sporting Kansas City"
   },
   {
     "id": "121",
@@ -1903,7 +1837,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "Portland Timbers"
   },
   {
     "id": "122",
@@ -1993,7 +1928,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1400
+    "eloRating": 1400,
+    "submittedBy": "League"
   },
   {
     "id": "123",
@@ -2088,7 +2024,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "LAFC"
   },
   {
     "id": "124",
@@ -2189,7 +2126,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1750
+    "eloRating": 1750,
+    "submittedBy": "FC Dallas"
   },
   {
     "id": "125",
@@ -2282,7 +2220,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "League"
   },
   {
     "id": "126",
@@ -2375,7 +2314,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1400
+    "eloRating": 1400,
+    "submittedBy": "League"
   },
   {
     "id": "127",
@@ -2460,7 +2400,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "Seattle Sounders FC"
   },
   {
     "id": "128",
@@ -2550,7 +2491,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1300
+    "eloRating": 1300,
+    "submittedBy": "Orlando City SC"
   },
   {
     "id": "129",
@@ -2643,7 +2585,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1550
+    "eloRating": 1550,
+    "submittedBy": "League"
   },
   {
     "id": "130",
@@ -2739,7 +2682,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1750
+    "eloRating": 1750,
+    "submittedBy": "LA Galaxy"
   },
   {
     "id": "131",
@@ -2830,7 +2774,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "Columbus Crew"
   },
   {
     "id": "132",
@@ -2917,7 +2862,8 @@
     "tags": [
       "Emerging"
     ],
-    "eloRating": 1200
+    "eloRating": 1200,
+    "submittedBy": "League"
   },
   {
     "id": "133",
@@ -3011,7 +2957,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "League"
   },
   {
     "id": "134",
@@ -3102,7 +3049,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "Real Salt Lake"
   },
   {
     "id": "135",
@@ -3189,7 +3137,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1750
+    "eloRating": 1750,
+    "submittedBy": "New York Red Bulls"
   },
   {
     "id": "136",
@@ -3278,7 +3227,8 @@
     "tags": [
       "Emerging"
     ],
-    "eloRating": 1300
+    "eloRating": 1300,
+    "submittedBy": "League"
   },
   {
     "id": "137",
@@ -3365,7 +3315,8 @@
     "tags": [
       "Emerging"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "Inter Miami CF"
   },
   {
     "id": "138",
@@ -3457,7 +3408,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "Colorado Rapids"
   },
   {
     "id": "139",
@@ -3541,7 +3493,8 @@
     "tags": [
       "Emerging"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "League"
   },
   {
     "id": "140",
@@ -3632,7 +3585,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "League"
   },
   {
     "id": "141",
@@ -3725,7 +3679,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "Portland Timbers"
   },
   {
     "id": "142",
@@ -3812,7 +3767,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "New York City FC"
   },
   {
     "id": "143",
@@ -3901,7 +3857,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "League"
   },
   {
     "id": "144",
@@ -3993,7 +3950,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "FC Dallas"
   },
   {
     "id": "145",
@@ -4094,7 +4052,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "FC Cincinnati"
   },
   {
     "id": "146",
@@ -4180,7 +4139,8 @@
     "tags": [
       "High Potential"
     ],
-    "eloRating": 1750
+    "eloRating": 1750,
+    "submittedBy": "Atlanta United FC"
   },
   {
     "id": "147",
@@ -4271,7 +4231,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "League"
   },
   {
     "id": "148",
@@ -4350,7 +4311,8 @@
     "tags": [
       "Unproven"
     ],
-    "eloRating": 1200
+    "eloRating": 1200,
+    "submittedBy": "Philadelphia Union"
   },
   {
     "id": "149",
@@ -4442,7 +4404,8 @@
     "tags": [
       "Emerging"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "New England Revolution"
   },
   {
     "id": "150",
@@ -4522,7 +4485,8 @@
     "tags": [
       "Unproven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "League"
   },
   {
     "id": "151",
@@ -4611,7 +4575,8 @@
     "tags": [
       "Emerging"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "League"
   },
   {
     "id": "152",
@@ -4690,7 +4655,8 @@
     "tags": [
       "Unproven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "Chicago Fire FC"
   },
   {
     "id": "153",
@@ -4769,7 +4735,8 @@
     "tags": [
       "High Potential"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "Vancouver Whitecaps FC"
   },
   {
     "id": "154",
@@ -4853,7 +4820,8 @@
     "tags": [
       "High Potential"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "League"
   },
   {
     "id": "155",
@@ -4950,7 +4918,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "Orlando City SC"
   },
   {
     "id": "156",
@@ -5036,7 +5005,8 @@
     "tags": [
       "High Potential"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "Nashville SC"
   },
   {
     "id": "157",
@@ -5113,7 +5083,8 @@
     "tags": [
       "Unproven"
     ],
-    "eloRating": 1250
+    "eloRating": 1250,
+    "submittedBy": "League"
   },
   {
     "id": "158",
@@ -5197,7 +5168,8 @@
     "tags": [
       "Unproven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "League"
   },
   {
     "id": "159",
@@ -5280,7 +5252,8 @@
     "tags": [
       "Unproven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "Charlotte FC"
   },
   {
     "id": "160",
@@ -5363,7 +5336,8 @@
     "tags": [
       "Emerging"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "St. Louis City SC"
   },
   {
     "id": "161",
@@ -5447,7 +5421,8 @@
     "tags": [
       "High Potential"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "League"
   },
   {
     "id": "162",
@@ -5531,7 +5506,8 @@
     "tags": [
       "Unproven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "New York Red Bulls"
   },
   {
     "id": "163",
@@ -5614,7 +5590,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Unproven"
-    ]
+    ],
+    "submittedBy": "Minnesota United FC"
   },
   {
     "id": "164",
@@ -5693,7 +5670,8 @@
     "tags": [
       "High Potential"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "Houston Dynamo FC"
   },
   {
     "id": "165",
@@ -5788,7 +5766,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "League"
   },
   {
     "id": "166",
@@ -5880,7 +5859,8 @@
     "tags": [
       "Proven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "Austin FC"
   },
   {
     "id": "167",
@@ -5963,7 +5943,8 @@
     "tags": [
       "Emerging"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "Sporting Kansas City"
   },
   {
     "id": "168",
@@ -6055,7 +6036,8 @@
     "tags": [
       "Emerging"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "League"
   },
   {
     "id": "169",
@@ -6143,7 +6125,8 @@
     "tags": [
       "Emerging"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "League"
   },
   {
     "id": "170",
@@ -6222,7 +6205,8 @@
     "tags": [
       "Unproven"
     ],
-    "eloRating": 1250
+    "eloRating": 1250,
+    "submittedBy": "LAFC"
   },
   {
     "id": "171",
@@ -6305,7 +6289,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Unproven"
-    ]
+    ],
+    "submittedBy": "FC Dallas"
   },
   {
     "id": "172",
@@ -6388,7 +6373,8 @@
     "tags": [
       "Unproven"
     ],
-    "eloRating": 1500
+    "eloRating": 1500,
+    "submittedBy": "League"
   },
   {
     "id": "173",
@@ -6484,7 +6470,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Proven"
-    ]
+    ],
+    "submittedBy": "Vancouver Whitecaps FC"
   },
   {
     "id": "174",
@@ -6562,7 +6549,8 @@
     "profilePrivacy": "Public",
     "tags": [
       "Unproven"
-    ]
+    ],
+    "submittedBy": "Seattle Sounders FC"
   },
   {
     "id": "175",
@@ -6660,6 +6648,7 @@
     "profilePrivacy": "Public",
     "tags": [
       "Emerging"
-    ]
+    ],
+    "submittedBy": "League"
   }
 ]

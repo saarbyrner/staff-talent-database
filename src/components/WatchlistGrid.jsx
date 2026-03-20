@@ -32,6 +32,55 @@ import TagManagementDrawer from './TagManagementDrawer';
 import NotesDrawer from './NotesDrawer';
 import '../styles/design-tokens.css';
 
+// Tag mapping between league and club tags
+const TAG_MAPPING = {
+  leagueToClub: {
+    'Unproven': 'Raw Talent',
+    'Emerging': 'Growth stage',
+    'High Potential': 'Top prospect',
+    'Proven': 'Vetted Elite'
+  },
+  clubToLeague: {
+    'Raw Talent': 'Unproven',
+    'Growth stage': 'Emerging',
+    'Top prospect': 'High Potential',
+    'Vetted Elite': 'Proven'
+  }
+};
+
+// Helper to map tags based on view context
+const mapTagsForView = (tags, isLeagueView) => {
+  if (!tags || !Array.isArray(tags)) return [];
+  if (isLeagueView) return tags; // League view shows original tags
+  
+  // Club view: map league tags to club tags
+  return tags.map(tag => TAG_MAPPING.leagueToClub[tag] || tag);
+};
+
+const RolesCell = ({ roles }) => {
+  if (!Array.isArray(roles) || roles.length === 0) return <span>-</span>;
+  
+  if (roles.length === 1) {
+    return (
+      <Stack direction="row" spacing={0.5} sx={{ py: 1, overflowX: 'auto', maxWidth: '100%' }}>
+        <Chip label={roles[0]} size="small" variant="outlined" />
+      </Stack>
+    );
+  }
+  
+  const remainingCount = roles.length - 1;
+  const remainingRoles = roles.slice(1).join(', ');
+  
+  return (
+    <Stack direction="row" spacing={0.5} sx={{ py: 1, overflowX: 'auto', maxWidth: '100%' }}>
+      <Chip label={roles[0]} size="small" variant="outlined" />
+      <Tooltip title={remainingRoles} arrow>
+        <Chip label={`+${remainingCount}`} size="small" variant="outlined" />
+      </Tooltip>
+    </Stack>
+  );
+};
+
 // Helper to generate consistent random stats based on staff ID
 export const generateStats = (id) => {
   const seed = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -216,6 +265,8 @@ export const createWatchlistColumns = (
   onNotesClick,
   staffNotes = {},
   options = {},
+  isLeagueView = false,
+  tagColorSeeds = {}
 ) => {
   const {
     includeActions = true,
@@ -301,18 +352,41 @@ export const createWatchlistColumns = (
         ]
       : []),
   {
-    field: 'picUrl',
-    headerName: '',
-    width: 72,
-    sortable: false,
-    filterable: false,
-    renderCell: (params) => (
-      <LinkCell
-        value={params.value}
-        type="avatar"
-        name={`${params.row.firstName || ''} ${params.row.lastName || ''}`.trim()}
-      />
-    )
+    // NAME (combined with headshot)
+    field: 'name',
+    headerName: 'Name',
+    width: 240,
+    sortable: true,
+    filterable: true,
+    valueGetter: (params) => `${params.row.firstName || ''} ${params.row.lastName || ''}`.trim(),
+    renderCell: (params) => {
+      const hasImage = params.row.picUrl && params.row.picUrl.trim() !== '';
+      const initials = `${params.row.firstName?.charAt(0) || ''}${params.row.lastName?.charAt(0) || ''}`.toUpperCase();
+      return (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Avatar
+            src={hasImage ? params.row.picUrl : undefined}
+            sx={{ 
+              width: 32, 
+              height: 32, 
+              bgcolor: hasImage ? 'var(--color-background-secondary)' : '#3B4960',
+              color: '#fff',
+              fontSize: '0.75rem',
+              fontWeight: 600
+            }}
+            imgProps={{
+              referrerPolicy: 'no-referrer',
+              style: { objectFit: 'cover' }
+            }}
+          >
+            {!hasImage && initials}
+          </Avatar>
+          <Typography variant="body2" fontWeight={600} color="text.primary">
+            {`${params.row.firstName || ''} ${params.row.lastName || ''}`.trim()}
+          </Typography>
+        </Box>
+      );
+    }
   },
   {
     field: 'priority',
@@ -345,8 +419,7 @@ export const createWatchlistColumns = (
     editable: true,
   },
   // CONTACT INFO
-  { field: 'firstName', headerName: 'First Name', width: 150 },
-  { field: 'lastName', headerName: 'Last Name', width: 150 },
+  // Removed separate firstName and lastName columns; now combined in 'Name' column
   { field: 'phone', headerName: 'Phone', width: 150 },
   { field: 'email', headerName: 'Email', width: 200 },
   {
@@ -355,7 +428,8 @@ export const createWatchlistColumns = (
     width: 250,
     sortable: false,
     renderCell: (params) => {
-      const tags = params.value || [];
+      const rawTags = params.value || [];
+      const tags = mapTagsForView(rawTags, isLeagueView);
       return (
         <Stack 
           direction="row" 
@@ -367,9 +441,19 @@ export const createWatchlistColumns = (
             overflow: 'hidden'
           }}
         >
-          {tags.slice(0, 3).map((tag) => (
-            <TagChip key={tag} label={tag} size="small" />
-          ))}
+          {tags.slice(0, 3).map((tag, index) => {
+            // Get the original tag name for color seed lookup
+            const originalTag = rawTags[index];
+            return (
+              <TagChip 
+                key={`${tag}-${index}`} 
+                label={tag} 
+                size="small" 
+                isLeagueView={isLeagueView}
+                colorSeed={tagColorSeeds[originalTag]}
+              />
+            );
+          })}
           {tags.length > 3 && (
             <Typography variant="caption" color="text.secondary" sx={{ ml: 0.5 }}>
               +{tags.length - 3}
@@ -417,35 +501,12 @@ export const createWatchlistColumns = (
   {
     field: 'roles',
     headerName: 'Roles',
-    width: 180,
+    width: 280,
     valueGetter: (params) => {
-      const roles = [];
-      if (params.row.coachingRoles && params.row.coachingRoles.length > 0) roles.push(...params.row.coachingRoles);
-      if (params.row.execRoles && params.row.execRoles.length > 0) roles.push(...params.row.execRoles);
-      if (params.row.techRoles && params.row.techRoles.length > 0) roles.push(...params.row.techRoles);
-      return roles.join(', ') || '—';
+      const { coachingRoles = [], execRoles = [], techRoles = [] } = params.row;
+      return [...coachingRoles, ...execRoles, ...techRoles];
     },
-    renderCell: (params) => {
-      const roles = [];
-      if (params.row.coachingRoles && params.row.coachingRoles.length > 0) roles.push(...params.row.coachingRoles);
-      if (params.row.execRoles && params.row.execRoles.length > 0) roles.push(...params.row.execRoles);
-      if (params.row.techRoles && params.row.techRoles.length > 0) roles.push(...params.row.techRoles);
-      
-      if (roles.length === 0) return <Typography variant="body2">—</Typography>;
-      
-      return (
-        <Stack direction="row" spacing={0.5} sx={{ overflowX: 'auto', py: 1 }}>
-          {roles.slice(0, 2).map((role, index) => (
-            <Chip key={index} label={role} size="small" variant="outlined" />
-          ))}
-          {roles.length > 2 && (
-            <Typography variant="caption" color="text.secondary" sx={{ ml: 0.5 }}>
-              +{roles.length - 2}
-            </Typography>
-          )}
-        </Stack>
-      );
-    }
+    renderCell: (params) => <RolesCell roles={params.value} />
   },
   // More columns following the same structure as TalentDatabaseGrid
   { 
@@ -551,195 +612,7 @@ export const createWatchlistColumns = (
       />
     )
   },
-  {
-    field: 'winRate',
-    headerName: 'Win %',
-    type: 'number',
-    width: 110,
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.winRate;
-      return null;
-    },
-    renderCell: (params) => {
-      if (!params.value) return null;
-      return (
-        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="body2" sx={{ minWidth: 35 }}>{params.value}%</Typography>
-          <LinearProgress 
-            variant="determinate" 
-            value={params.value} 
-            sx={{ 
-              flexGrow: 1, 
-              height: 6, 
-              borderRadius: 3,
-              bgcolor: 'grey.200',
-              '& .MuiLinearProgress-bar': {
-                bgcolor: params.value > 55 ? 'success.main' : params.value > 40 ? 'warning.main' : 'error.main'
-              }
-            }} 
-          />
-        </Box>
-      );
-    }
-  },
-  {
-    field: 'ppm',
-    headerName: 'PPM',
-    type: 'number',
-    width: 80,
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.ppm;
-      return null;
-    },
-    renderCell: (params) => {
-      if (!params.value) return null;
-      return (
-        <Typography variant="body2" fontWeight={params.value > 1.8 ? 700 : 400}>
-          {params.value}
-        </Typography>
-      );
-    }
-  },
-  {
-    field: 'trophies',
-    headerName: 'Trophies',
-    type: 'number',
-    width: 110,
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.trophies;
-      return null;
-    },
-    renderCell: (params) => {
-      if (params.value === null || params.value === undefined) return null;
-      return params.value > 0 ? (
-        <Chip 
-          label={params.value} 
-          size="small" 
-          color="default" 
-          variant="filled"
-          sx={{ height: 24, bgcolor: 'var(--color-background-secondary)', color: 'var(--color-text-primary)' }}
-        />
-      ) : <Typography variant="body2" color="text.secondary">-</Typography>;
-    }
-  },
-  {
-    field: 'xgDiff',
-    headerName: 'xG Diff',
-    type: 'number',
-    width: 90,
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.xgDiff;
-      return null;
-    },
-    renderCell: (params) => {
-      if (!params.value) return null;
-      return (
-        <Typography 
-          variant="body2" 
-          color={params.value > 0 ? 'success.main' : 'error.main'}
-          fontWeight={600}
-        >
-          {params.value > 0 ? '+' : ''}{params.value}
-        </Typography>
-      );
-    }
-  },
-  {
-    field: 'squadValuePerf',
-    headerName: 'Squad Val %',
-    type: 'number',
-    width: 110,
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.squadValuePerf;
-      return null;
-    },
-    renderCell: (params) => {
-      if (!params.value) return null;
-      return (
-        <Typography 
-          variant="body2" 
-          color={params.value > 0 ? 'success.main' : 'error.main'}
-        >
-          {params.value > 0 ? '+' : ''}{params.value}%
-        </Typography>
-      );
-    }
-  },
-  {
-    field: 'possession',
-    headerName: 'Possession',
-    type: 'number',
-    width: 110,
-    align: 'right',
-    headerAlign: 'right',
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.possession;
-      return null;
-    },
-    renderCell: (params) => {
-      if (!params.value) return null;
-      return (
-        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
-          <Typography variant="body2">{params.value}%</Typography>
-        </Box>
-      );
-    }
-  },
-  {
-    field: 'ppda',
-    headerName: 'PPDA',
-    description: 'Passes Allowed Per Defensive Action (Lower is more intense pressing)',
-    type: 'number',
-    width: 80,
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.ppda;
-      return null;
-    }
-  },
-  {
-    field: 'u23Minutes',
-    headerName: 'U23 Mins',
-    type: 'number',
-    width: 100,
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.u23Minutes;
-      return null;
-    },
-    renderCell: (params) => {
-      if (params.value === null || params.value === undefined) return null;
-      return `${params.value}%`;
-    }
-  },
-  {
-    field: 'academyDebuts',
-    headerName: 'Debuts',
-    type: 'number',
-    width: 120,
-    valueGetter: (params) => {
-      if (params.row.coachingStats) return params.row.coachingStats.academyDebuts;
-      return null;
-    },
-    renderHeader: () => (
-      <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', pr: 4 }}>
-        Debuts
-      </Box>
-    ),
-    renderCell: (params) => {
-      if (params.value === null || params.value === undefined) return null;
-      return (
-        <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', pr: 4 }}>
-          {params.value}
-        </Box>
-      );
-    }
-  },
-  {
-    field: 'eloRating',
-    headerName: 'Elo Rating',
-    type: 'number',
-    width: 120,
-    valueGetter: (params) => params.row.eloRating || 1200, // Default Elo Rating
-  },
+  // ...existing code...
   // Add spacing after the last column
   {
     field: 'spacer',
@@ -753,7 +626,7 @@ export const createWatchlistColumns = (
   return columns;
 };
 
-function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) {
+function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate, hideCheckboxes = false }) {
   const navigate = useNavigate();
   const location = useLocation();
   const isLeagueView = location.pathname.startsWith('/league');
@@ -763,6 +636,9 @@ function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) 
   const [tagSelectorAnchor, setTagSelectorAnchor] = useState(null);
   const [selectedStaffForTags, setSelectedStaffForTags] = useState(null);
   const [tagManagementOpen, setTagManagementOpen] = useState(false);
+  const [availableCustomTags, setAvailableCustomTags] = useState([]);
+  // Map of tag names to their original names (for stable color generation)
+  const [tagColorSeeds, setTagColorSeeds] = useState({});
   
   // Notes management state
   const [notesDrawerOpen, setNotesDrawerOpen] = useState(false);
@@ -804,9 +680,12 @@ function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) 
   };
 
   const handleTagsChange = (staffId, newTags) => {
+    // Convert club tags back to league tags for storage (data stores league tags)
+    const tagsToStore = isLeagueView ? newTags : newTags.map(tag => TAG_MAPPING.clubToLeague[tag] || tag);
+    
     setLocalStaffData(prevData =>
       prevData.map(staff =>
-        staff.id === staffId ? { ...staff, tags: newTags } : staff
+        staff.id === staffId ? { ...staff, tags: tagsToStore } : staff
       )
     );
   };
@@ -893,20 +772,45 @@ function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) 
   };
 
   const handleUpdateTag = (oldTag, newTag) => {
+    // Update in staff data
     setLocalStaffData(prevData =>
       prevData.map(staff => ({
         ...staff,
         tags: staff.tags ? staff.tags.map(t => t === oldTag ? newTag : t) : []
       }))
     );
+    
+    // Update in available custom tags if it exists there
+    setAvailableCustomTags(prevTags =>
+      prevTags.map(tag => tag === oldTag ? newTag : tag)
+    );
+    
+    // Preserve color seed when renaming - copy from old tag to new tag
+    setTagColorSeeds(prevSeeds => {
+      const seeds = { ...prevSeeds };
+      if (seeds[oldTag]) {
+        seeds[newTag] = seeds[oldTag];
+        delete seeds[oldTag];
+      } else {
+        // If no seed exists, use the old tag name as the seed
+        seeds[newTag] = oldTag;
+      }
+      return seeds;
+    });
   };
 
   const handleDeleteTag = (tagToDelete) => {
+    // Remove from staff data
     setLocalStaffData(prevData =>
       prevData.map(staff => ({
         ...staff,
         tags: staff.tags ? staff.tags.filter(t => t !== tagToDelete) : []
       }))
+    );
+    
+    // Remove from available custom tags
+    setAvailableCustomTags(prevTags =>
+      prevTags.filter(tag => tag !== tagToDelete)
     );
   };
 
@@ -922,10 +826,12 @@ function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) 
     staffNotes,
     {
       includeActions: true,
-      includeNotes: true,
+      includeNotes: false,
       enableTagEditing: true,
-    }
-  ), [onRemoveFromWatchlist, staffNotes]);
+    },
+    isLeagueView,
+    tagColorSeeds
+  ), [onRemoveFromWatchlist, staffNotes, isLeagueView, tagColorSeeds]);
 
   const selectedStaff = selectedStaffForTags 
     ? localStaffData.find(s => s.id === selectedStaffForTags)
@@ -958,11 +864,28 @@ function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) 
 
       {selectedStaff && (
         <TagSelector
-          selectedTags={selectedStaff.tags || []}
+          selectedTags={mapTagsForView(selectedStaff.tags || [], isLeagueView)}
           onChange={(newTags) => handleTagsChange(selectedStaff.id, newTags)}
           anchorEl={tagSelectorAnchor}
           onClose={handleTagSelectorClose}
-          maxTags={5}
+          maxTags={4}
+          isLeagueView={isLeagueView}
+          availableCustomTags={mapTagsForView(availableCustomTags, isLeagueView)}
+          tagColorSeeds={tagColorSeeds}
+          onAddCustomTag={(tag) => {
+            // Convert to league format for storage (like handleTagsChange does)
+            const tagToStore = isLeagueView ? tag : (TAG_MAPPING.clubToLeague[tag] || tag);
+            
+            // Add to availableCustomTags if not already in the list or default tags
+            const DEFAULT_LEAGUE_TAGS = ['Unproven', 'Emerging', 'High Potential', 'Proven'];
+            const isDefaultTag = DEFAULT_LEAGUE_TAGS.includes(tagToStore);
+            
+            if (!isDefaultTag && !availableCustomTags.includes(tagToStore)) {
+              setAvailableCustomTags([...availableCustomTags, tagToStore]);
+              // Initialize color seed for new custom tag
+              setTagColorSeeds(prev => ({ ...prev, [tagToStore]: tagToStore }));
+            }
+          }}
         />
       )}
 
@@ -973,9 +896,16 @@ function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) 
         onUpdateTag={handleUpdateTag}
         onDeleteTag={handleDeleteTag}
         onAddTag={(tagName) => {
-          console.log('New tag created:', tagName);
-          alert(`Tag "${tagName}" created! You can now apply it to staff members.`);
+          // Add to available custom tags if not already present
+          if (!availableCustomTags.includes(tagName)) {
+            setAvailableCustomTags(prev => [...prev, tagName]);
+            // Initialize color seed for new custom tag
+            setTagColorSeeds(prev => ({ ...prev, [tagName]: tagName }));
+          }
         }}
+        availableCustomTags={availableCustomTags}
+        isLeagueView={isLeagueView}
+        tagColorSeeds={tagColorSeeds}
       />
 
       <DataGrid
@@ -1076,7 +1006,7 @@ function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) 
           },
         }}
         pageSizeOptions={[25, 50, 100]}
-        checkboxSelection
+        checkboxSelection={!hideCheckboxes}
         onRowClick={handleRowClick}
         sx={{
           border: 'none',
@@ -1095,22 +1025,6 @@ function WatchlistGrid({ watchlist, onRemoveFromWatchlist, onWatchlistUpdate }) 
           }
         }}
       />
-      
-      {/* Notes Drawer */}
-      {selectedStaffForNotes && (
-        <NotesDrawer
-          open={notesDrawerOpen}
-          onClose={() => {
-            setNotesDrawerOpen(false);
-            setSelectedStaffForNotes(null);
-          }}
-          staffMember={selectedStaffForNotes}
-          notes={staffNotes[selectedStaffForNotes.id] || []}
-          onAddNote={handleAddNote}
-          onUpdateNote={handleUpdateNote}
-          onDeleteNote={handleDeleteNote}
-        />
-      )}
     </Box>
   );
 }

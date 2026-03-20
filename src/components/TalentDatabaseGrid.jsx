@@ -24,17 +24,61 @@ import {
   VisibilityOutlined,
   InboxOutlined,
   NotesOutlined,
+  ArchiveOutlined,
+  UnarchiveOutlined,
+  CheckCircle,
+  Cancel,
 } from '@mui/icons-material';
 import staffData from '../data/staff_talent.json';
+import mlsClubs from '../data/mls-clubs.json';
 import { generateInitialsImage } from '../utils/assetManager';
 import BulkEditBar from './BulkEditBar';
 import TagChip from './TagChip';
 import TagSelector from './TagSelector';
 import TagManagementDrawer from './TagManagementDrawer';
-import TagApprovalDrawer from './TagApprovalDrawer';
-import ClubApprovalInbox from './ClubApprovalInbox';
 import NotesDrawer from './NotesDrawer';
+import InviteDrawer from './InviteDrawer';
 import '../styles/design-tokens.css';
+
+// Helper to determine if a staff record is complete
+const getStaffStatus = (staff) => {
+  // Check if staff has pending profile status - treat as incomplete
+  if (staff.profileStatus === 'Pending') {
+    return 'Incomplete';
+  }
+  
+  const requiredFields = ['firstName', 'lastName', 'email', 'phone'];
+  const isIncomplete = requiredFields.some(field => {
+    const value = staff[field];
+    return !value || (typeof value === 'string' && value.trim() === '');
+  });
+  return isIncomplete ? 'Incomplete' : 'Complete';
+};
+
+// Tag mapping between league and club tags
+const TAG_MAPPING = {
+  leagueToClub: {
+    'Unproven': 'Raw Talent',
+    'Emerging': 'Growth stage',
+    'High Potential': 'Top prospect',
+    'Proven': 'Vetted Elite'
+  },
+  clubToLeague: {
+    'Raw Talent': 'Unproven',
+    'Growth stage': 'Emerging',
+    'Top prospect': 'High Potential',
+    'Vetted Elite': 'Proven'
+  }
+};
+
+// Helper to map tags based on view context
+const mapTagsForView = (tags, isLeagueView) => {
+  if (!tags || !Array.isArray(tags)) return [];
+  if (isLeagueView) return tags; // League view shows original tags
+  
+  // Club view: map league tags to club tags
+  return tags.map(tag => TAG_MAPPING.leagueToClub[tag] || tag);
+};
 
 // Helper to generate consistent random stats based on staff ID
 const generateStats = (id) => {
@@ -67,14 +111,50 @@ const generateStats = (id) => {
   };
 };
 
+// Helper to generate clubs that have added this staff member to their watchlist
+const generateWatchlistClubs = (id) => {
+  const seed = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const random = (offset = 0) => {
+    const x = Math.sin(seed + offset) * 10000;
+    return x - Math.floor(x);
+  };
+
+  // Generate number of clubs (1-15, consistent with watchlistCount)
+  const clubCount = (seed % 15) + 1;
+
+  // Generate a list of clubs
+  const clubs = [];
+  for (let i = 0; i < clubCount; i++) {
+    const clubIndex = Math.floor(random(i + 100) * mlsClubs.length);
+    const club = mlsClubs[clubIndex];
+    if (!clubs.includes(club)) {
+      clubs.push(club);
+    }
+  }
+
+  // If we have duplicates due to collisions, fill with more clubs
+  while (clubs.length < clubCount) {
+    const clubIndex = Math.floor(random(clubs.length + 200) * mlsClubs.length);
+    const club = mlsClubs[clubIndex];
+    if (!clubs.includes(club)) {
+      clubs.push(club);
+    }
+  }
+
+  return clubs.slice(0, clubCount).sort();
+};
+
 export const CustomToolbar = React.forwardRef((props, ref) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { onInviteClick, onManageTags, hideAddButton, onApprovals, pendingApprovalsCount = 0 } = props;
+  const { onInviteClick, onManageTags, hideAddButton, onOpenInviteDrawer } = props;
+  
+  const isLeague = location.pathname.startsWith('/league');
   
   const handleAddClick = () => {
-    const basePath = location.pathname.startsWith('/league') ? '/league/staff' : '/staff';
-    navigate(`${basePath}/new`);
+    // Go to league or staff add-user depending on view
+    const path = isLeague ? '/league/staff/add-user' : '/staff/add-user';
+    navigate(path, { state: { from: location.pathname, returnTab: 3 } });
   };
   
   return (
@@ -145,57 +225,11 @@ export const CustomToolbar = React.forwardRef((props, ref) => {
             Tags
           </Button>
         )}
-        {onApprovals && (
-          <Badge badgeContent={pendingApprovalsCount} color="error">
-            <Button
-              variant="outlined"
-              startIcon={<InboxOutlined />}
-              onClick={onApprovals}
-              sx={{
-                textTransform: 'none',
-                fontSize: '0.875rem',
-                fontWeight: 500,
-                borderColor: 'var(--color-border-primary)',
-                color: 'var(--color-text-primary)',
-                minWidth: 'auto',
-                padding: '6px 12px',
-                '&:hover': {
-                  borderColor: 'var(--color-text-primary)',
-                  backgroundColor: 'var(--color-background-tertiary)'
-                }
-              }}
-            >
-              Approvals
-            </Button>
-          </Badge>
-        )}
-        {onInviteClick && (
-          <Button
-            variant="outlined"
-            startIcon={<MailOutline />}
-            onClick={onInviteClick}
-            sx={{
-              textTransform: 'none',
-              fontSize: '0.875rem',
-              fontWeight: 500,
-              borderColor: 'var(--color-border-primary)',
-              color: 'var(--color-text-primary)',
-              minWidth: 'auto',
-              padding: '6px 12px',
-              '&:hover': {
-                borderColor: 'var(--color-text-primary)',
-                backgroundColor: 'var(--color-background-tertiary)'
-              }
-            }}
-          >
-            Invite
-          </Button>
-        )}
         {!hideAddButton && (
           <Button
             variant="contained"
-            startIcon={<AddOutlined />}
-            onClick={handleAddClick}
+            startIcon={isLeague ? <MailOutline /> : <AddOutlined />}
+            onClick={isLeague ? onOpenInviteDrawer : handleAddClick}
             sx={{
               textTransform: 'none',
               fontSize: '0.875rem',
@@ -210,7 +244,7 @@ export const CustomToolbar = React.forwardRef((props, ref) => {
               }
             }}
           >
-            Add
+            {isLeague ? 'Invite' : 'Add'}
           </Button>
         )}
       </Box>
@@ -227,16 +261,40 @@ const BooleanCell = ({ value }) => {
   if (value === false) {
     return <Chip icon={<CloseOutlined />} label="No" size="small" color="default" variant="outlined" />;
   }
-  return null;
+  return <span>-</span>;
 };
 
 const ArrayCell = ({ value }) => {
-  if (!Array.isArray(value) || value.length === 0) return null;
+  if (!Array.isArray(value) || value.length === 0) return <span>-</span>;
   return (
     <Stack direction="row" spacing={0.5} sx={{ overflowX: 'auto', py: 1 }}>
       {value.map((item, index) => (
         <Chip key={index} label={item} size="small" variant="outlined" />
       ))}
+    </Stack>
+  );
+};
+
+const RolesCell = ({ roles }) => {
+  if (!Array.isArray(roles) || roles.length === 0) return <span>-</span>;
+  
+  if (roles.length === 1) {
+    return (
+      <Stack direction="row" spacing={0.5} sx={{ py: 1, overflowX: 'auto', maxWidth: '100%' }}>
+        <Chip label={roles[0]} size="small" variant="outlined" />
+      </Stack>
+    );
+  }
+  
+  const remainingCount = roles.length - 1;
+  const remainingRoles = roles.slice(1).join(', ');
+  
+  return (
+    <Stack direction="row" spacing={0.5} sx={{ py: 1, overflowX: 'auto', maxWidth: '100%' }}>
+      <Chip label={roles[0]} size="small" variant="outlined" />
+      <Tooltip title={remainingRoles} arrow>
+        <Chip label={`+${remainingCount}`} size="small" variant="outlined" />
+      </Tooltip>
     </Stack>
   );
 };
@@ -247,7 +305,7 @@ const getInitials = (name = '') => (
     .filter(Boolean)
     .map(part => part.charAt(0).toUpperCase())
     .slice(0, 2)
-    .join('') || '—'
+    .join('') || '-'
 );
 
 const LinkCell = ({ value, type, name = '' }) => {
@@ -284,51 +342,85 @@ const LinkCell = ({ value, type, name = '' }) => {
   );
 };
 
-const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeagueView = false, onNotesClick, staffNotes = {}) => {
+const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeagueView = false, onNotesClick, staffNotes = {}, onDelete, showArchived = false, onUnarchive, tagColorSeeds = {}) => {
   const watchlistColumn = isLeagueView ? {
     field: 'watchlistCount',
     headerName: 'Watchlist',
     width: 100,
     type: 'number',
     valueGetter: (params) => {
+       // Incomplete and Pending users cannot be on watchlists, so return 0
+       const staffStatus = getStaffStatus(params.row);
+       if (staffStatus === 'Incomplete') { // Pending users also return 'Incomplete'
+         return 0;
+       }
        const seed = params.row.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
        return (seed % 15) + 1;
     },
-    renderCell: (params) => (
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-        <VisibilityOutlined fontSize="small" color="action" />
-        <Typography variant="body2">{params.value}</Typography>
-      </Box>
-    )
+    renderCell: (params) => {
+      const staffStatus = getStaffStatus(params.row);
+      if (staffStatus === 'Incomplete') {
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <VisibilityOutlined fontSize="small" color="action" />
+            <Typography variant="body2">0</Typography>
+          </Box>
+        );
+      }
+
+      const clubs = generateWatchlistClubs(params.row.id);
+      const tooltipText = clubs.length > 0
+        ? clubs.join(', ')
+        : 'No clubs have added this staff member to their watchlist';
+
+      return (
+        <Tooltip title={tooltipText} arrow>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, cursor: 'pointer' }}>
+            <VisibilityOutlined fontSize="small" color="action" />
+            <Typography variant="body2">{params.value}</Typography>
+          </Box>
+        </Tooltip>
+      );
+    }
   } : {
     field: 'watchlist',
-    headerName: '',
-    width: 60,
+    headerName: 'Watchlist',
+    width: 100,
     sortable: false,
     filterable: false,
     renderCell: (params) => {
       const isWatchlisted = watchlistIds.includes(params.row.id);
+      const isIncomplete = getStaffStatus(params.row) === 'Incomplete';
+      const isDisabled = isIncomplete && !isWatchlisted;
+      
       return (
-        <Tooltip title={isWatchlisted ? "Remove from Watchlist" : "Add to Watchlist"}>
-          <IconButton
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleWatchlist(params.row.id);
-            }}
-            sx={{
-              color: isWatchlisted ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-              '&:hover': {
-                backgroundColor: 'var(--color-background-tertiary)',
-              }
-            }}
-          >
-            {isWatchlisted ? (
-              <Visibility fontSize="small" />
-            ) : (
-              <VisibilityOutlined fontSize="small" />
-            )}
-          </IconButton>
+        <Tooltip title={isDisabled ? "Cannot add incomplete profiles to watchlist" : (isWatchlisted ? "Remove from Watchlist" : "Add to Watchlist")}>
+          <span>
+            <IconButton
+              size="small"
+              disabled={isDisabled}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleWatchlist(params.row.id);
+              }}
+              sx={{
+                color: isWatchlisted ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+                '&:hover': {
+                  backgroundColor: 'var(--color-background-tertiary)',
+                },
+                '&.Mui-disabled': {
+                  color: 'var(--color-text-disabled)',
+                  opacity: 0.5
+                }
+              }}
+            >
+              {isWatchlisted ? (
+                <Visibility fontSize="small" />
+              ) : (
+                <VisibilityOutlined fontSize="small" />
+              )}
+            </IconButton>
+          </span>
         </Tooltip>
       );
     }
@@ -371,34 +463,67 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
   };
 
   return [
+  // WATCHLIST
   watchlistColumn,
-  notesColumn,
+  // NAME (combined with headshot)
   {
-    field: 'picUrl',
-    headerName: '',
-    width: 72,
-    sortable: false,
-    filterable: false,
-    renderCell: (params) => (
-      <LinkCell
-        value={params.value}
-        type="avatar"
-        name={`${params.row.firstName || ''} ${params.row.lastName || ''}`.trim()}
-      />
-    )
+    field: 'name',
+    headerName: 'Name',
+    width: 240,
+    sortable: true,
+    filterable: true,
+    valueGetter: (params) => `${params.row.firstName || ''} ${params.row.lastName || ''}`.trim(),
+    renderCell: (params) => {
+      const hasImage = params.row.picUrl && params.row.picUrl.trim() !== '';
+      const initials = `${params.row.firstName?.charAt(0) || ''}${params.row.lastName?.charAt(0) || ''}`.toUpperCase();
+      
+      return (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Avatar
+            src={hasImage ? params.row.picUrl : undefined}
+            sx={{ 
+              width: 32, 
+              height: 32, 
+              bgcolor: hasImage ? 'var(--color-background-secondary)' : '#3B4960',
+              color: '#fff',
+              fontSize: '0.75rem',
+              fontWeight: 600
+            }}
+            imgProps={{
+              referrerPolicy: 'no-referrer',
+              style: { objectFit: 'cover' }
+            }}
+          >
+            {!hasImage && initials}
+          </Avatar>
+          <Typography sx={{ fontWeight: 500, fontSize: 14, color: '#222' }}>
+            {`${params.row.firstName || ''} ${params.row.lastName || ''}`.trim()}
+          </Typography>
+        </Box>
+      );
+    }
   },
   // CONTACT INFO
-  { field: 'firstName', headerName: 'First Name', width: 150 },
-  { field: 'lastName', headerName: 'Last Name', width: 150 },
-  { field: 'phone', headerName: 'Phone', width: 150 },
-  { field: 'email', headerName: 'Email', width: 200 },
+  { 
+    field: 'phone', 
+    headerName: 'Phone', 
+    width: 150,
+    renderCell: (params) => params.value || '-'
+  },
+  { 
+    field: 'email', 
+    headerName: 'Email', 
+    width: 250,
+    renderCell: (params) => params.value || '-'
+  },
   {
     field: 'tags',
     headerName: 'Tags',
     width: 250,
     sortable: false,
     renderCell: (params) => {
-      const tags = params.value || [];
+      const rawTags = params.value || [];
+      const tags = mapTagsForView(rawTags, isLeagueView);
       return (
         <Stack 
           direction="row" 
@@ -410,9 +535,19 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
             overflow: 'hidden'
           }}
         >
-          {tags.slice(0, 3).map((tag) => (
-            <TagChip key={tag} label={tag} size="small" />
-          ))}
+          {tags.slice(0, 3).map((tag, index) => {
+            // Get the original tag name for color seed lookup
+            const originalTag = rawTags[index];
+            return (
+              <TagChip 
+                key={`${tag}-${index}`} 
+                label={tag} 
+                size="small" 
+                isLeagueView={isLeagueView}
+                colorSeed={tagColorSeeds[originalTag]}
+              />
+            );
+          })}
           {tags.length > 3 && (
             <Typography variant="caption" color="text.secondary" sx={{ ml: 0.5 }}>
               +{tags.length - 3}
@@ -443,8 +578,14 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     headerName: 'Profile Privacy', 
     width: 140,
     renderCell: (params) => {
-      const value = params.value || 'Public';
+      // Check if profile is incomplete or pending
+      const staffStatus = getStaffStatus(params.row);
+      const isIncompleteOrPending = staffStatus === 'Incomplete'; // Pending users also return 'Incomplete'
+      
+      // Incomplete/Pending users always show Private
+      const value = isIncompleteOrPending ? 'Private' : (params.value || 'Public');
       const isPrivate = value === 'Private';
+      
       return (
         <Chip 
           label={value} 
@@ -468,10 +609,16 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     width: 200,
     valueGetter: (params) => {
       const { city, state, country } = params.row;
-      return [city, state, country].filter(Boolean).join(', ');
+      const location = [city, state, country].filter(Boolean).join(', ');
+      return location || '-';
     }
   },
-  { field: 'state', headerName: 'State', width: 120 },
+  { 
+    field: 'state', 
+    headerName: 'State', 
+    width: 120,
+    renderCell: (params) => params.value || '-'
+  },
   { 
     field: 'workAuthUS', 
     headerName: 'US Sponsorship?', 
@@ -486,8 +633,18 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
   },
 
   // VOLUNTARY ID
-  { field: 'gender', headerName: 'Gender', width: 120 },
-  { field: 'ethnicity', headerName: 'Ethnicity', width: 180 },
+  { 
+    field: 'gender', 
+    headerName: 'Gender', 
+    width: 120,
+    renderCell: (params) => params.value || '-'
+  },
+  { 
+    field: 'ethnicity', 
+    headerName: 'Ethnicity', 
+    width: 180,
+    renderCell: (params) => params.value || '-'
+  },
 
   // AGENT
   { 
@@ -496,8 +653,18 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     width: 120, 
     renderCell: (params) => <BooleanCell value={params.value} /> 
   },
-  { field: 'agentName', headerName: 'Agent Name', width: 150 },
-  { field: 'agencyName', headerName: 'Agency Name', width: 150 },
+  { 
+    field: 'agentName', 
+    headerName: 'Agent Name', 
+    width: 150,
+    renderCell: (params) => params.value || '-'
+  },
+  { 
+    field: 'agencyName', 
+    headerName: 'Agency Name', 
+    width: 150,
+    renderCell: (params) => params.value || '-'
+  },
 
   // EXPERIENCE
   { 
@@ -518,20 +685,69 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
     width: 200, 
     renderCell: (params) => <ArrayCell value={params.value} /> 
   },
-  { field: 'otherPlayerExp', headerName: 'Other Exp', width: 250 },
+  { 
+    field: 'otherPlayerExp', 
+    headerName: 'Other Exp', 
+    width: 250,
+    renderCell: (params) => params.value || '-'
+  },
 
   // INTERESTS
-  { field: 'interestArea', headerName: 'Area of Interest', width: 180 },
+  { 
+    field: 'interestArea', 
+    headerName: 'Area of Interest', 
+    width: 180,
+    renderCell: (params) => params.value || '-'
+  },
   { 
     field: 'roles', 
     headerName: 'Roles', 
-    width: 300, 
+    width: 280, 
     valueGetter: (params) => {
       const { coachingRoles = [], execRoles = [], techRoles = [] } = params.row;
       return [...coachingRoles, ...execRoles, ...techRoles];
     },
-    renderCell: (params) => <ArrayCell value={params.value} /> 
+    renderCell: (params) => <RolesCell roles={params.value} /> 
   },
+  ...(isLeagueView ? [{
+    field: 'submittedBy',
+    headerName: 'Submitted By',
+    width: 180,
+    renderCell: (params) => params.value || 'League'
+  }] : []),
+  // ...existing code...
+  // STATUS
+  // Only show App Status column in league view
+  ...(isLeagueView ? [{
+    field: 'status',
+    headerName: 'App Status',
+    width: 110,
+    sortable: true,
+    valueGetter: (params) => getStaffStatus(params.row),
+    renderCell: (params) => {
+      const status = params.value;
+      let label = status;
+      let color = 'default';
+      
+      if (status === 'Complete') {
+        label = 'Submitted';
+        color = 'success';
+      }
+      // Note: Pending users now return 'Incomplete' from getStaffStatus
+      
+      return (
+        <Chip
+          label={label}
+          size="small"
+          color={color}
+          variant="filled"
+          sx={{
+            fontWeight: 500,
+          }}
+        />
+      );
+    }
+  }] : []),
   { 
     field: 'relocation', 
     headerName: 'Willing to Relocate', 
@@ -709,27 +925,32 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
   { 
     field: 'currentEmployer', 
     headerName: 'Current Employer', 
-    width: 250 
+    width: 250,
+    renderCell: (params) => params.value || '-'
   },
   { 
     field: 'prevEmployer1', 
     headerName: 'Previous Employer 1', 
-    width: 250 
+    width: 250,
+    renderCell: (params) => params.value || '-'
   },
   { 
     field: 'prevEmployer2', 
     headerName: 'Previous Employer 2', 
-    width: 250 
+    width: 250,
+    renderCell: (params) => params.value || '-'
   },
   { 
     field: 'prevEmployer3', 
     headerName: 'Previous Employer 3', 
-    width: 250 
+    width: 250,
+    renderCell: (params) => params.value || '-'
   },
   { 
     field: 'prevEmployer4', 
     headerName: 'Previous Employer 4', 
-    width: 250 
+    width: 250,
+    renderCell: (params) => params.value || '-'
   },
 
   // EDUCATION EXPANDED
@@ -760,7 +981,8 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
   { 
     field: 'otherLicensesList', 
     headerName: 'Other Licenses List', 
-    width: 200 
+    width: 200,
+    renderCell: (params) => params.value || '-'
   },
 
   // DOCS
@@ -1005,13 +1227,58 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
       );
     }
   },
-  {
-    field: 'eloRating',
-    headerName: 'Elo Rating',
-    type: 'number',
-    width: 120,
-    valueGetter: (params) => params.row.eloRating || 1200,
-  },
+  ...(isLeagueView ? [{
+    field: 'actions',
+    headerName: '',
+    width: 60,
+    sortable: false,
+    filterable: false,
+    disableColumnMenu: true,
+    renderCell: (params) => {
+      const handleAction = (event) => {
+        event.stopPropagation(); // Prevent row click from firing
+        
+        if (showArchived) {
+          // Unarchive action
+          if (window.confirm(`Are you sure you want to unarchive ${params.row.firstName} ${params.row.lastName}?`)) {
+            if (onUnarchive) {
+              onUnarchive(params.row.id);
+            }
+          }
+        } else {
+          // Archive action
+          if (window.confirm(`Are you sure you want to archive ${params.row.firstName} ${params.row.lastName}?`)) {
+            if (onDelete) {
+              onDelete(params.row.id);
+            }
+          }
+        }
+      };
+
+      return (
+        <Tooltip title={showArchived ? "Unarchive" : "Archive"} arrow>
+          <IconButton
+            size="small"
+            onClick={handleAction}
+            sx={{
+              color: 'var(--color-text-secondary)',
+              transition: 'color 0.2s',
+              '&:hover': {
+                color: 'var(--color-primary)',
+                backgroundColor: 'transparent',
+              }
+            }}
+          >
+            {showArchived ? (
+              <UnarchiveOutlined fontSize="small" />
+            ) : (
+              <ArchiveOutlined fontSize="small" />
+            )}
+          </IconButton>
+        </Tooltip>
+      );
+    }
+  }] : []),
   {
     field: 'spacer',
     headerName: '',
@@ -1027,8 +1294,6 @@ const columnGroupingModel = [
   {
     groupId: 'Contact Info',
     children: [
-      { field: 'watchlist' },
-      { field: 'notes' },
       { field: 'picUrl' },
       { field: 'firstName' },
       { field: 'lastName' },
@@ -1071,6 +1336,7 @@ const columnGroupingModel = [
     children: [
       { field: 'interestArea' },
       { field: 'roles' },
+      { field: 'status' },
       { field: 'relocation' },
     ],
   },
@@ -1136,15 +1402,19 @@ const columnGroupingModel = [
   },
 ];
 
-export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], onAddToWatchlist }) {
+export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], onAddToWatchlist, onRemoveFromWatchlist, showArchived = false, onUnarchive, staffData: externalStaffData, onArchive, onAddPendingUser, hideAddButton = false, hideCheckboxes = false }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedRows, setSelectedRows] = React.useState([]);
   const [bulkEditOpen, setBulkEditOpen] = React.useState(false);
   
-  // Enrich staff data with coaching statistics
+  // Use external staff data if provided, otherwise use imported data
+  const sourceStaffData = externalStaffData || staffData;
+  
+  // Enrich staff data with coaching statistics and set privacy for incomplete users
   const [localStaffData, setLocalStaffData] = React.useState(() => {
-    return staffData.map(staff => {
+    const isLeagueContext = location.pathname.startsWith('/league');
+    return sourceStaffData.map(staff => {
       // Check multiple indicators that someone is a coach
       const currentRole = staff.currentEmployer?.split('-')[1]?.trim() || '';
       const interestArea = staff.interestArea || '';
@@ -1160,129 +1430,75 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
                       hasCoachingExp ||
                       hasCoachingLicenses;
       
+      // At league level, automatically set profile privacy to Private for incomplete/pending users
+      const staffStatus = getStaffStatus(staff);
+      const updatedStaff = {
+        ...staff,
+        profilePrivacy: (isLeagueContext && staffStatus === 'Incomplete') ? 'Private' : (staff.profilePrivacy || 'Public') // Pending users also return 'Incomplete'
+      };
+      
       // Add coaching stats if they're a coach
       if (isCoach) {
         return {
-          ...staff,
+          ...updatedStaff,
           coachingStats: generateStats(staff.id)
         };
       }
-      return staff;
+      return updatedStaff;
     });
   });
+  
+  // Sync external staff data changes to local state
+  React.useEffect(() => {
+    if (externalStaffData) {
+      const isLeagueContext = location.pathname.startsWith('/league');
+      setLocalStaffData(externalStaffData.map(staff => {
+        const currentRole = staff.currentEmployer?.split('-')[1]?.trim() || '';
+        const interestArea = staff.interestArea || '';
+        const hasCoachingRoles = staff.coachingRoles && staff.coachingRoles.length > 0;
+        const hasCoachingExp = staff.proCoachExp || staff.mlsCoachExp;
+        const hasCoachingLicenses = staff.coachingLicenses && staff.coachingLicenses.length > 0;
+        
+        const isCoach = currentRole.toLowerCase().includes('coach') || 
+                        currentRole.toLowerCase().includes('manager') || 
+                        interestArea.toLowerCase().includes('coach') ||
+                        hasCoachingRoles ||
+                        hasCoachingExp ||
+                        hasCoachingLicenses;
+        
+        // At league level, automatically set profile privacy to Private for incomplete/pending users
+        const staffStatus = getStaffStatus(staff);
+        const updatedStaff = {
+          ...staff,
+          profilePrivacy: (isLeagueContext && staffStatus === 'Incomplete') ? 'Private' : (staff.profilePrivacy || 'Public') // Pending users also return 'Incomplete'
+        };
+        
+        if (isCoach) {
+          return {
+            ...updatedStaff,
+            coachingStats: generateStats(staff.id)
+          };
+        }
+        return updatedStaff;
+      }));
+    }
+  }, [externalStaffData, location.pathname]);
   
   // Tag management state
   const [tagSelectorAnchor, setTagSelectorAnchor] = React.useState(null);
   const [selectedStaffForTags, setSelectedStaffForTags] = React.useState(null);
   const [tagManagementOpen, setTagManagementOpen] = React.useState(false);
+  const [availableCustomTags, setAvailableCustomTags] = React.useState([]);
+  // Map of tag names to their original names (for stable color generation)
+  const [tagColorSeeds, setTagColorSeeds] = React.useState({});
   
   // Notes management state
   const [notesDrawerOpen, setNotesDrawerOpen] = React.useState(false);
   const [selectedStaffForNotes, setSelectedStaffForNotes] = React.useState(null);
   const [staffNotes, setStaffNotes] = React.useState({});
   
-  // Approval system state
-  const [pendingApprovals, setPendingApprovals] = React.useState([
-    {
-      id: 'approval-example-1',
-      staffId: '101',
-      staffName: 'James Rivera',
-      clubName: 'LAFC',
-      oldTags: ['Proven'],
-      newTags: ['High Potential'],
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-    },
-    {
-      id: 'approval-example-2',
-      staffId: '102',
-      staffName: 'Michael Okoro',
-      clubName: 'FC Cincinnati',
-      oldTags: ['Proven'],
-      newTags: ['Emerging'],
-      timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), // 5 hours ago
-    },
-    {
-      id: 'approval-example-3',
-      staffId: '105',
-      staffName: 'David Smith',
-      clubName: 'LA Galaxy',
-      oldTags: ['Proven'],
-      newTags: ['Proven', 'High Potential'],
-      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-    },
-    {
-      id: 'approval-example-4',
-      staffId: '110',
-      staffName: 'Christopher Nair',
-      clubName: 'Austin FC',
-      oldTags: ['Emerging'],
-      newTags: ['Proven'],
-      timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // 3 hours ago
-    },
-    {
-      id: 'approval-example-5',
-      staffId: '115',
-      staffName: 'Mark Wilson',
-      clubName: 'Seattle Sounders FC',
-      oldTags: ['Emerging'],
-      newTags: ['Unproven'],
-      timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 minutes ago
-    },
-  ]);
-  const [approvalDrawerOpen, setApprovalDrawerOpen] = React.useState(false);
-  
-  // Club sent approvals state (for club view)
-  const [sentApprovals, setSentApprovals] = React.useState([
-    {
-      id: 'sent-1',
-      staffId: '103',
-      staffName: 'Robert Vasiliev',
-      oldTags: ['Emerging'],
-      newTags: ['High Potential'],
-      timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), // 1 hour ago
-      status: 'pending',
-    },
-    {
-      id: 'sent-2',
-      staffId: '106',
-      staffName: 'William Martinez',
-      oldTags: ['Emerging'],
-      newTags: ['Proven'],
-      timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), // 4 hours ago
-      status: 'approved',
-    },
-    {
-      id: 'sent-3',
-      staffId: '108',
-      staffName: 'Joseph Khan',
-      oldTags: ['Emerging'],
-      newTags: ['Unproven'],
-      timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6 hours ago
-      status: 'rejected',
-      responseMessage: 'This staff member shows consistent growth and should remain in Emerging category.',
-    },
-    {
-      id: 'sent-4',
-      staffId: '112',
-      staffName: 'Daniel Chen',
-      clubName: 'LA Galaxy',
-      oldTags: ['Proven'],
-      newTags: ['High Potential'],
-      timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(), // 12 hours ago
-      status: 'approved',
-    },
-    {
-      id: 'sent-5',
-      staffId: '114',
-      staffName: 'Anthony Lee',
-      clubName: 'Seattle Sounders FC',
-      oldTags: ['High Potential'],
-      newTags: ['Proven'],
-      timestamp: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(), // 2 days ago
-      status: 'pending',
-    },
-  ]);
-  const [clubInboxOpen, setClubInboxOpen] = React.useState(false);
+  // Invite drawer state
+  const [inviteDrawerOpen, setInviteDrawerOpen] = React.useState(false);
   
   const [toastOpen, setToastOpen] = React.useState(false);
   const [toastMessage, setToastMessage] = React.useState('');
@@ -1290,16 +1506,52 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
   // Check if viewing from league admin context
   const isLeagueView = location.pathname.startsWith('/league');
   
+  // Toggle watchlist handler - adds or removes based on current state
+  const handleToggleWatchlist = (staffId) => {
+    if (watchlistIds.includes(staffId)) {
+      if (onRemoveFromWatchlist) {
+        onRemoveFromWatchlist(staffId);
+      }
+    } else {
+      // At league level, prevent adding incomplete users to watchlist
+      if (isLeagueView) {
+        const staff = localStaffData.find(s => s.id === staffId);
+        if (staff && getStaffStatus(staff) === 'Incomplete') {
+          alert('Users with incomplete profiles cannot be added to watchlists.');
+          return;
+        }
+      }
+      if (onAddToWatchlist) {
+        onAddToWatchlist(staffId);
+      }
+    }
+  };
+  
   // Filter data based on view context
   const filteredStaffData = React.useMemo(() => {
+    let filtered = localStaffData;
+
+    // For league view: filter by archived status based on showArchived prop
+    // For club view: always exclude archived candidates
     if (isLeagueView) {
-      // League admins see all profiles
-      return localStaffData;
+      filtered = filtered.filter(staff => {
+        const isArchived = staff.isArchived || false;
+        return showArchived ? isArchived : !isArchived;
+      });
     } else {
-      // Club users only see Public profiles (filter out Private)
-      return localStaffData.filter(staff => staff.profilePrivacy !== 'Private');
+      // Club users should never see archived candidates
+      filtered = filtered.filter(staff => !staff.isArchived);
+      // Club users should not see users with Incomplete app status
+      filtered = filtered.filter(staff => getStaffStatus(staff) !== 'Incomplete');
     }
-  }, [isLeagueView, localStaffData]);
+
+    // Filter by privacy for non-league users
+    if (!isLeagueView) {
+      filtered = filtered.filter(staff => staff.profilePrivacy !== 'Private');
+    }
+
+    return filtered;
+  }, [isLeagueView, localStaffData, showArchived]);
 
   const handleRowClick = (params, event) => {
     // Don't navigate if clicking on checkbox or action buttons
@@ -1320,33 +1572,15 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
   };
   
   const handleTagsChange = (staffId, newTags) => {
-    const staff = localStaffData.find(s => s.id === staffId);
-    const oldTags = staff?.tags || [];
+    // Convert club tags back to league tags for storage (data stores league tags)
+    const tagsToStore = isLeagueView ? newTags : newTags.map(tag => TAG_MAPPING.clubToLeague[tag] || tag);
     
-    // For club users, create a pending approval instead of directly changing
-    if (!isLeagueView) {
-      const approval = {
-        id: `approval-${Date.now()}-${staffId}`,
-        staffId,
-        staffName: `${staff.firstName} ${staff.lastName}`,
-        clubName: 'Club User', // In a real app, get from auth context
-        oldTags,
-        newTags,
-        timestamp: new Date().toISOString(),
-      };
-      
-      setPendingApprovals(prev => [...prev, approval]);
-      setToastMessage('Tag change sent for approval');
-      setToastOpen(true);
-      handleTagSelectorClose();
-    } else {
-      // League users can directly change tags
-      setLocalStaffData(prevData =>
-        prevData.map(staff =>
-          staff.id === staffId ? { ...staff, tags: newTags } : staff
-        )
-      );
-    }
+    // Both club and league users can directly change tags
+    setLocalStaffData(prevData =>
+      prevData.map(staff =>
+        staff.id === staffId ? { ...staff, tags: tagsToStore } : staff
+      )
+    );
   };
   
   const handleTagSelectorClose = () => {
@@ -1406,64 +1640,48 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
   };
   
   const handleUpdateTag = (oldTag, newTag) => {
+    // Update in staff data
     setLocalStaffData(prevData =>
       prevData.map(staff => ({
         ...staff,
         tags: staff.tags ? staff.tags.map(t => t === oldTag ? newTag : t) : []
       }))
     );
+    
+    // Update in available custom tags if it exists there
+    setAvailableCustomTags(prevTags =>
+      prevTags.map(tag => tag === oldTag ? newTag : tag)
+    );
+    
+    // Preserve color seed when renaming - copy from old tag to new tag
+    setTagColorSeeds(prevSeeds => {
+      const seeds = { ...prevSeeds };
+      if (seeds[oldTag]) {
+        seeds[newTag] = seeds[oldTag];
+        delete seeds[oldTag];
+      } else {
+        // If no seed exists, use the old tag name as the seed
+        seeds[newTag] = oldTag;
+      }
+      return seeds;
+    });
   };
   
   const handleDeleteTag = (tagToDelete) => {
+    // Remove from staff data
     setLocalStaffData(prevData =>
       prevData.map(staff => ({
         ...staff,
         tags: staff.tags ? staff.tags.filter(t => t !== tagToDelete) : []
       }))
     );
+    
+    // Remove from available custom tags
+    setAvailableCustomTags(prevTags =>
+      prevTags.filter(tag => tag !== tagToDelete)
+    );
   };
   
-  // Approval handlers
-  const handleApproveTagChange = (approvalId, note = '') => {
-    const approval = pendingApprovals.find(a => a.id === approvalId);
-    if (approval) {
-      // Apply the tag change
-      setLocalStaffData(prevData =>
-        prevData.map(staff =>
-          staff.id === approval.staffId ? { ...staff, tags: approval.newTags } : staff
-        )
-      );
-      
-      // Update the sent approvals for the club (if we track those globally)
-      // For now, just remove from pending
-      setPendingApprovals(prev => prev.filter(a => a.id !== approvalId));
-      
-      // In a real app, you'd also update the approval in the club's sent list with the response
-      // setSentApprovals(prev => prev.map(a => 
-      //   a.id === approvalId ? { ...a, status: 'approved', responseMessage: note } : a
-      // ));
-      
-      setToastMessage(`Approved tag change for ${approval.staffName}${note ? ' with note' : ''}`);
-      setToastOpen(true);
-    }
-  };
-  
-  const handleRejectTagChange = (approvalId, note = '') => {
-    const approval = pendingApprovals.find(a => a.id === approvalId);
-    if (approval) {
-      // Remove from pending without applying
-      setPendingApprovals(prev => prev.filter(a => a.id !== approvalId));
-      
-      // In a real app, you'd update the approval in the club's sent list with the response
-      // setSentApprovals(prev => prev.map(a => 
-      //   a.id === approvalId ? { ...a, status: 'rejected', responseMessage: note } : a
-      // ));
-      
-      setToastMessage(`Rejected tag change for ${approval.staffName}${note ? ' with note' : ''}`);
-      setToastOpen(true);
-    }
-  };
-
   const handleBulkEditSave = (updates) => {
     console.log('Bulk editing fields:', Object.keys(updates), 'for', selectedRows.length, 'staff members');
     console.log('Updates:', updates);
@@ -1472,53 +1690,25 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
     if (updates.tags) {
       const { action, values } = updates.tags;
       
-      // For club users, create pending approvals for each selected staff
-      if (!isLeagueView) {
-        selectedRows.forEach(staffId => {
-          const staff = localStaffData.find(s => s.id === staffId);
-          if (staff) {
-            let newTags = staff.tags || [];
-            if (action === 'add') {
-              const tagsToAdd = values.filter(tag => !newTags.includes(tag));
-              newTags = [...newTags, ...tagsToAdd].slice(0, 5);
-            } else if (action === 'remove') {
-              newTags = newTags.filter(tag => !values.includes(tag));
-            }
-            
-            const approval = {
-              id: `approval-${Date.now()}-${staffId}`,
-              staffId,
-              staffName: `${staff.firstName} ${staff.lastName}`,
-              clubName: 'Club User',
-              oldTags: staff.tags || [],
-              newTags,
-              timestamp: new Date().toISOString(),
-            };
-            
-            setPendingApprovals(prev => [...prev, approval]);
+      // Convert club tags to league tags for storage if in club view
+      const valuesToStore = isLeagueView ? values : values.map(tag => TAG_MAPPING.clubToLeague[tag] || tag);
+      
+      // Both club and league users can directly change tags
+      setLocalStaffData(prevData =>
+        prevData.map(staff => {
+          if (!selectedRows.includes(staff.id)) return staff;
+          
+          let newTags = staff.tags || [];
+          if (action === 'add') {
+            const tagsToAdd = valuesToStore.filter(tag => !newTags.includes(tag));
+            newTags = [...newTags, ...tagsToAdd].slice(0, 4);
+          } else if (action === 'remove') {
+            newTags = newTags.filter(tag => !valuesToStore.includes(tag));
           }
-        });
-        
-        setToastMessage(`${selectedRows.length} tag change${selectedRows.length > 1 ? 's' : ''} sent for approval`);
-        setToastOpen(true);
-      } else {
-        // League users can directly change tags
-        setLocalStaffData(prevData =>
-          prevData.map(staff => {
-            if (!selectedRows.includes(staff.id)) return staff;
-            
-            let newTags = staff.tags || [];
-            if (action === 'add') {
-              const tagsToAdd = values.filter(tag => !newTags.includes(tag));
-              newTags = [...newTags, ...tagsToAdd].slice(0, 5);
-            } else if (action === 'remove') {
-              newTags = newTags.filter(tag => !values.includes(tag));
-            }
-            
-            return { ...staff, tags: newTags };
-          })
-        );
-      }
+          
+          return { ...staff, tags: newTags };
+        })
+      );
     }
     
     // In a real application, other updates would also be applied here
@@ -1539,13 +1729,61 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
   };
 
   const handleBulkAddToWatchlist = () => {
-    selectedRows.forEach(staffId => {
+    // Filter out incomplete users at league level
+    const eligibleStaffIds = selectedRows.filter(staffId => {
+      const staff = localStaffData.find(s => s.id === staffId);
+      return staff && getStaffStatus(staff) !== 'Incomplete';
+    });
+    
+    const skippedCount = selectedRows.length - eligibleStaffIds.length;
+    
+    eligibleStaffIds.forEach(staffId => {
       if (onAddToWatchlist) {
         onAddToWatchlist(staffId);
       }
     });
-    alert(`Added ${selectedRows.length} staff member${selectedRows.length > 1 ? 's' : ''} to watchlist`);
+    
+    if (eligibleStaffIds.length > 0) {
+      const message = skippedCount > 0 
+        ? `Added ${eligibleStaffIds.length} staff member${eligibleStaffIds.length > 1 ? 's' : ''} to watchlist. ${skippedCount} incomplete profile${skippedCount > 1 ? 's were' : ' was'} skipped.`
+        : `Added ${eligibleStaffIds.length} staff member${eligibleStaffIds.length > 1 ? 's' : ''} to watchlist`;
+      alert(message);
+    } else {
+      alert('Users with incomplete profiles cannot be added to watchlists.');
+    }
     setSelectedRows([]);
+  };
+  
+  const handleDeleteStaff = (staffId) => {
+    if (onArchive) {
+      // Use external handler if provided
+      onArchive(staffId);
+    } else {
+      // Fall back to local state management
+      setLocalStaffData(prevData => 
+        prevData.map(staff => 
+          staff.id === staffId ? { ...staff, isArchived: true } : staff
+        )
+      );
+    }
+    setToastMessage('Staff member archived successfully');
+    setToastOpen(true);
+  };
+  
+  const handleUnarchiveStaff = (staffId) => {
+    if (onUnarchive) {
+      // Use external handler if provided
+      onUnarchive(staffId);
+    } else {
+      // Fall back to local state management
+      setLocalStaffData(prevData => 
+        prevData.map(staff => 
+          staff.id === staffId ? { ...staff, isArchived: false } : staff
+        )
+      );
+    }
+    setToastMessage('Staff member unarchived successfully');
+    setToastOpen(true);
   };
   
   // Ensure only one Elo Rating column
@@ -1556,11 +1794,15 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
       }
     },
     watchlistIds,
-    onAddToWatchlist,
+    handleToggleWatchlist,
     isLeagueView,
     handleNotesClick,
-    staffNotes
-  ), [watchlistIds, onAddToWatchlist, isLeagueView, staffNotes]);
+    staffNotes,
+    handleDeleteStaff,
+    showArchived,
+    handleUnarchiveStaff,
+    tagColorSeeds
+  ), [watchlistIds, handleToggleWatchlist, isLeagueView, staffNotes, showArchived, tagColorSeeds]);
   
   const selectedStaff = selectedStaffForTags 
     ? filteredStaffData.find(s => s.id === selectedStaffForTags)
@@ -1568,7 +1810,19 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
 
   return (
     <Box sx={{ height: 'calc(100vh - 100px)', width: '100%' }}>
-      {selectedRows.length > 0 && (
+      {showArchived && filteredStaffData.length === 0 && (
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '100%',
+          color: 'var(--color-text-secondary)'
+        }}>
+          <Typography variant="body1">No archived candidates found.</Typography>
+        </Box>
+      )}
+      {(!showArchived || filteredStaffData.length > 0) && (<>
+      {selectedRows.length > 0 && isLeagueView && (
         <BulkEditBar
           selectedCount={selectedRows.length}
           onSave={handleBulkEditSave}
@@ -1581,12 +1835,28 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
       {/* Tag Selector Popover */}
       {selectedStaff && (
         <TagSelector
-          selectedTags={selectedStaff.tags || []}
+          selectedTags={mapTagsForView(selectedStaff.tags || [], isLeagueView)}
           onChange={(newTags) => handleTagsChange(selectedStaff.id, newTags)}
           anchorEl={tagSelectorAnchor}
           onClose={handleTagSelectorClose}
-          maxTags={5}
+          maxTags={4}
           isLeagueView={isLeagueView}
+          availableCustomTags={mapTagsForView(availableCustomTags, isLeagueView)}
+          tagColorSeeds={tagColorSeeds}
+          onAddCustomTag={(tag) => {
+            // Convert to league format for storage (like handleTagsChange does)
+            const tagToStore = isLeagueView ? tag : (TAG_MAPPING.clubToLeague[tag] || tag);
+            
+            // Add to availableCustomTags if not already in the list or default tags
+            const DEFAULT_LEAGUE_TAGS = ['Unproven', 'Emerging', 'High Potential', 'Proven'];
+            const isDefaultTag = DEFAULT_LEAGUE_TAGS.includes(tagToStore);
+            
+            if (!isDefaultTag && !availableCustomTags.includes(tagToStore)) {
+              setAvailableCustomTags([...availableCustomTags, tagToStore]);
+              // Initialize color seed for new custom tag
+              setTagColorSeeds(prev => ({ ...prev, [tagToStore]: tagToStore }));
+            }
+          }}
         />
       )}
       
@@ -1598,32 +1868,19 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
         onUpdateTag={handleUpdateTag}
         onDeleteTag={handleDeleteTag}
         onAddTag={(tagName) => {
-          // Create a new tag by adding it to the first selected staff or showing a message
-          console.log('New tag created:', tagName);
-          alert(`Tag "${tagName}" created! You can now apply it to staff members.`);
+          // Add to available custom tags if not already present
+          if (!availableCustomTags.includes(tagName)) {
+            setAvailableCustomTags(prev => [...prev, tagName]);
+            // Initialize color seed for new custom tag
+            setTagColorSeeds(prev => ({ ...prev, [tagName]: tagName }));
+          }
         }}
+        availableCustomTags={availableCustomTags}
         isLeagueView={isLeagueView}
+        tagColorSeeds={tagColorSeeds}
       />
       
-      {/* Tag Approval Drawer - Only for League View */}
-      {isLeagueView && (
-        <TagApprovalDrawer
-          open={approvalDrawerOpen}
-          onClose={() => setApprovalDrawerOpen(false)}
-          pendingApprovals={pendingApprovals}
-          onApprove={handleApproveTagChange}
-          onReject={handleRejectTagChange}
-        />
-      )}
-      
-      {/* Club Approval Inbox - Only for Club View */}
-      {!isLeagueView && (
-        <ClubApprovalInbox
-          open={clubInboxOpen}
-          onClose={() => setClubInboxOpen(false)}
-          sentApprovals={sentApprovals}
-        />
-      )}
+
       
       {/* Notes Drawer */}
       {selectedStaffForNotes && (
@@ -1640,6 +1897,13 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
           onDeleteNote={handleDeleteNote}
         />
       )}
+
+      {/* Invite Drawer */}
+      <InviteDrawer
+        open={inviteDrawerOpen}
+        onClose={() => setInviteDrawerOpen(false)}
+        onAddPendingUser={onAddPendingUser}
+      />
 
       {/* Toast Notification */}
       <Snackbar
@@ -1663,8 +1927,8 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
           toolbar: {
             onInviteClick,
             onManageTags: () => setTagManagementOpen(true),
-            onApprovals: isLeagueView ? () => setApprovalDrawerOpen(true) : () => setClubInboxOpen(true),
-            pendingApprovalsCount: isLeagueView ? pendingApprovals.length : sentApprovals.filter(a => a.status === 'pending').length,
+            onOpenInviteDrawer: () => setInviteDrawerOpen(true),
+            hideAddButton,
           },
         }}
         rowSelectionModel={selectedRows}
@@ -1680,6 +1944,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
               // Show first 5-6 columns by default
               watchlist: !isLeagueView,
               watchlistCount: isLeagueView,
+              notes: false, // Hide notes column
               picUrl: true,
               firstName: true,
               lastName: true,
@@ -1751,13 +2016,12 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
               ppda: false,
               u23Minutes: false,
               academyDebuts: false,
-              eloRating: true,
               spacer: true,
             },
           },
         }}
         pageSizeOptions={[25, 50, 100]}
-        checkboxSelection
+        checkboxSelection={!hideCheckboxes}
         onRowClick={handleRowClick}
         sx={{
           border: 'none',
@@ -1776,6 +2040,7 @@ export default function TalentDatabaseGrid({ onInviteClick, watchlistIds = [], o
           }
         }}
       />
+      </>)}
     </Box>
   );
 }

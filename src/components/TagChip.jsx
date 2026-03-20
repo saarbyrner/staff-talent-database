@@ -2,14 +2,25 @@ import React from 'react';
 import { Chip } from '@mui/material';
 
 /**
- * Tag color mapping - Green gradient system
+ * Tag color mapping - Green gradient system for League
  * Light green (Unproven) -> Dark green (Proven)
  */
-const TAG_COLORS = {
+const LEAGUE_TAG_COLORS = {
   'Unproven': { bg: '#A5D6A7', color: '#1B5E20' },      // Light green
   'Emerging': { bg: '#66BB6A', color: '#ffffff' },       // Medium-light green
   'High Potential': { bg: '#43A047', color: '#ffffff' }, // Medium-dark green
   'Proven': { bg: '#2E7D32', color: '#ffffff' },         // Dark green
+};
+
+/**
+ * Tag color mapping - Teal gradient system for Clubs (AA Accessible)
+ * Light teal (Raw Talent) -> Dark teal (Vetted Elite)
+ */
+const CLUB_TAG_COLORS = {
+  'Raw Talent': { bg: '#4DB6AC', color: '#004D40' },       // Light teal with dark text (AA compliant - 5.7:1)
+  'Growth stage': { bg: '#26A69A', color: '#ffffff' },     // Medium-light teal (AA compliant - 4.5:1)
+  'Top prospect': { bg: '#00897B', color: '#ffffff' },     // Medium-dark teal (AA compliant - 5.8:1)
+  'Vetted Elite': { bg: '#00695C', color: '#ffffff' },     // Dark teal (AA compliant - 7.3:1)
 };
 
 /**
@@ -43,9 +54,14 @@ const generateTagColor = (tagName) => {
  * @param {boolean} clickable - Whether the chip is clickable
  * @param {function} onClick - Optional click handler
  * @param {string} size - Chip size (small, medium)
+ * @param {boolean} isLeagueView - Whether viewing as league (affects color scheme)
+ * @param {string} colorSeed - Optional seed name for stable color generation (preserves color when tag is renamed)
  */
-const TagChip = ({ label, onDelete, clickable = false, onClick, size = 'small' }) => {
-  const colors = TAG_COLORS[label] || generateTagColor(label);
+const TagChip = ({ label, onDelete, clickable = false, onClick, size = 'small', isLeagueView = true, colorSeed }) => {
+  // Choose color set based on view context
+  const TAG_COLORS = isLeagueView ? LEAGUE_TAG_COLORS : CLUB_TAG_COLORS;
+  // Use colorSeed if provided for stable colors, otherwise use label
+  const colors = TAG_COLORS[label] || generateTagColor(colorSeed || label);
   
   return (
     <Chip

@@ -25,6 +25,7 @@ import {
   Notifications
 } from '@mui/icons-material'
 import MainNavigation from './MainNavigation'
+import AdministrationPanel from './AdministrationPanel'
 import '../styles/design-tokens.css'
 import successionPlans from '../data/successionPlans.json'
 
@@ -88,6 +89,7 @@ function MedinahLayoutWithMainNav({ children }) {
     }
   })()
   const [isFormsMenuOpen, setIsFormsMenuOpen] = useState(persistedForms)
+  const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false)
 
   // Determine if we're in league view mode based on path prefix
   const isLeagueView = location.pathname.startsWith('/league')
@@ -98,10 +100,16 @@ function MedinahLayoutWithMainNav({ children }) {
     if (location.pathname === '/league/analysis') return 'Analysis'
     if (location.pathname === '/league/athlete') return 'Athletes'
     if (location.pathname === '/league/staff') return 'Staff'
+    if (location.pathname.startsWith('/league/staff/manage-users')) return 'Manage Staff Users'
+    if (location.pathname.startsWith('/league/staff/add-user')) return 'Manage Staff Users'
+    if (location.pathname.startsWith('/league/staff/')) return 'Staff'
     if (location.pathname.startsWith('/league/forms')) return 'Forms'
     if (location.pathname === '/league/planning') return 'Calendar'
     if (location.pathname === '/league/settings') return 'Admin'
     if (location.pathname === '/league/help') return 'Help'
+    if (location.pathname.startsWith('/staff/manage-users')) return 'Manage Staff Users'
+    if (location.pathname.startsWith('/staff/add-user')) return 'Manage Staff Users'
+    if (location.pathname.startsWith('/staff/')) return 'Staff'
     return pageTitles[location.pathname] || 'Dashboard'
   }
 
@@ -152,218 +160,237 @@ function MedinahLayoutWithMainNav({ children }) {
     { id: 'form_responses', label: 'Form responses', path: '/forms/form_answers_sets' }
   ]
 
+  // Color logic for club/league
+  const getUserColor = () =>
+    viewMode === 'league'
+      ? 'linear-gradient(180deg, #C8102E 0%, #a00d25 40%, #8a0b1f 70%, #6a0818 90%, #6a0818 100%)'
+      : 'linear-gradient(180deg, #004812 0%, #003a0e 40%, #002a09 70%, #001f06 90%, #001f06 100%)';
 
+  // Handler for admin icon click
+  const handleAdminToggle = () => setIsAdminPanelOpen((prev) => !prev)
+  const handleAdminPanelClose = () => setIsAdminPanelOpen(false)
 
   return (
     <>
       <CssBaseline />
       <Box sx={{ display: 'flex', gap: 0, height: '100vh', bgcolor: 'var(--color-background-primary)' }}>
-      {/* Main Navigation */}
-      <MainNavigation 
-        isOpen={isNavOpen}
-        onToggle={handleNavToggle}
-        variant="permanent"
-        onFormsToggle={handleFormsToggle}
-        isFormsMenuOpen={isFormsMenuOpen}
-        viewMode={viewMode}
-      />
+        {/* Main Navigation */}
+        <MainNavigation 
+          isOpen={isNavOpen}
+          onToggle={handleNavToggle}
+          variant="permanent"
+          onFormsToggle={handleFormsToggle}
+          isFormsMenuOpen={isFormsMenuOpen}
+          viewMode={viewMode}
+          onAdminToggle={handleAdminToggle}
+          isAdminPanelOpen={isAdminPanelOpen}
+        />
 
-      {/* Secondary Navigation for Forms */}
-      {isFormsSection && (
-        <ClickAwayListener onClickAway={handleFormsMenuClose}>
-          <Box
-            className="mainNavBarDesktop__secondaryMenu mainNavBarDesktop__secondaryMenu--open mainNavBarDesktop__secondaryMenu--mainMenuOpen"
-            sx={{
-              position: 'fixed',
-              top: 0,
-              left: isNavOpen ? 'var(--layout-nav-width)' : 'var(--layout-nav-width-collapsed)',
-              height: '100vh',
-              width: 260,
-              zIndex: 1200,
-              background: viewMode === 'league'
-                ? 'linear-gradient(180deg, #C8102E 0%, #a00d25 40%, #8a0b1f 70%, #6a0818 90%, #6a0818 100%)'
-                : 'linear-gradient(180deg, #004812 0%, #003a0e 40%, #002a09 70%, #001f06 90%, #001f06 100%)',
-              color: '#ffffff',
-              boxShadow: 'var(--shadow-md)',
-              display: 'flex',
-              flexDirection: 'column',
-              borderRight: '1px solid rgba(255,255,255,0.12)'
+        {/* Admin Fly-out Panel */}
+        {isAdminPanelOpen && (
+          <ClickAwayListener onClickAway={handleAdminPanelClose}>
+            <div style={{ zIndex: 1200, position: 'fixed', top: 0, left: isNavOpen ? 240 : 60, height: '100vh' }}>
+              <AdministrationPanel color={getUserColor()} userType={viewMode === 'league' ? 'league' : 'club'} />
+            </div>
+          </ClickAwayListener>
+        )}
+
+        {/* Secondary Navigation for Forms */}
+        {isFormsSection && (
+          <ClickAwayListener onClickAway={handleFormsMenuClose}>
+            <Box
+              className="mainNavBarDesktop__secondaryMenu mainNavBarDesktop__secondaryMenu--open mainNavBarDesktop__secondaryMenu--mainMenuOpen"
+              sx={{
+                position: 'fixed',
+                top: 0,
+                left: isNavOpen ? 'var(--layout-nav-width)' : 'var(--layout-nav-width-collapsed)',
+                height: '100vh',
+                width: 260,
+                zIndex: 1200,
+                background: viewMode === 'league'
+                  ? 'linear-gradient(180deg, #C8102E 0%, #a00d25 40%, #8a0b1f 70%, #6a0818 90%, #6a0818 100%)'
+                  : 'linear-gradient(180deg, #004812 0%, #003a0e 40%, #002a09 70%, #001f06 90%, #001f06 100%)',
+                color: '#ffffff',
+                boxShadow: 'var(--shadow-md)',
+                display: 'flex',
+                flexDirection: 'column',
+                borderRight: '1px solid rgba(255,255,255,0.12)'
+              }}
+            >
+              <Box className="mainNavBarDesktop__secondaryMenuTitle" sx={{ px: 2, py: 1.5, fontWeight: 600 }}>
+                Forms
+              </Box>
+              <Divider sx={{ borderColor: 'rgba(255,255,255,0.12)' }} />
+              <List sx={{ py: 0 }}>
+                {formsSecondaryItems.map((item) => {
+                  // Check if item is active, considering league view prefix
+                  const currentPath = viewMode === 'league' ? `/league${item.path}` : item.path
+                  const isActive = location.pathname === currentPath
+                  return (
+                    <ListItem key={item.id} disablePadding className={`mainNavBarDesktop__secondaryMenuItem${isActive ? ' mainNavBarDesktop__secondaryMenuItem--active' : ''}`}>
+                      <ListItemButton
+                        onClick={() => handleFormsSecondaryClick(item.path)}
+                        sx={{
+                          height: 40,
+                          px: 2,
+                          position: 'relative',
+                          color: '#ffffff',
+                          '&::before': isActive ? {
+                            content: '""',
+                            position: 'absolute',
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            width: '3px',
+                            backgroundColor: '#ffffff'
+                          } : {},
+                          '&:hover': {
+                            backgroundColor: 'rgba(255,255,255,0.08)'
+                          }
+                        }}
+                      >
+                        <ListItemText
+                          primary={item.label}
+                          primaryTypographyProps={{ fontSize: 14 }}
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                  )
+                })}
+              </List>
+            </Box>
+          </ClickAwayListener>
+        )}
+
+        {/* Main Content Area */}
+        <Box 
+          component="main" 
+          sx={{ 
+            flexGrow: 1, 
+            display: 'flex', 
+            flexDirection: 'column',
+            overflowY: 'auto',
+            overflowX: 'hidden'
+          }}
+        >
+          {/* Top App Bar */}
+          <AppBar 
+            position="sticky" 
+            elevation={1}
+            sx={{ 
+              bgcolor: 'var(--color-background-primary)',
+              color: 'var(--color-text-primary)',
+              borderBottom: '1px solid var(--color-border-primary)',
+              boxShadow: 'var(--shadow-sm)'
             }}
           >
-            <Box className="mainNavBarDesktop__secondaryMenuTitle" sx={{ px: 2, py: 1.5, fontWeight: 600 }}>
-              Forms
-            </Box>
-            <Divider sx={{ borderColor: 'rgba(255,255,255,0.12)' }} />
-            <List sx={{ py: 0 }}>
-              {formsSecondaryItems.map((item) => {
-                // Check if item is active, considering league view prefix
-                const currentPath = viewMode === 'league' ? `/league${item.path}` : item.path
-                const isActive = location.pathname === currentPath
-                return (
-                  <ListItem key={item.id} disablePadding className={`mainNavBarDesktop__secondaryMenuItem${isActive ? ' mainNavBarDesktop__secondaryMenuItem--active' : ''}`}>
-                    <ListItemButton
-                      onClick={() => handleFormsSecondaryClick(item.path)}
-                      sx={{
-                        height: 40,
-                        px: 2,
-                        position: 'relative',
-                        color: '#ffffff',
-                        '&::before': isActive ? {
-                          content: '""',
-                          position: 'absolute',
-                          left: 0,
-                          top: 0,
-                          bottom: 0,
-                          width: '3px',
-                          backgroundColor: '#ffffff'
-                        } : {},
-                        '&:hover': {
-                          backgroundColor: 'rgba(255,255,255,0.08)'
-                        }
-                      }}
-                    >
-                      <ListItemText
-                        primary={item.label}
-                        primaryTypographyProps={{ fontSize: 14 }}
-                      />
-                    </ListItemButton>
-                  </ListItem>
-                )
-              })}
-            </List>
+            <Toolbar sx={{ justifyContent: 'space-between' }}>
+              {/* Page Title */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Typography 
+                  variant="h6" 
+                  component="h1"
+                  sx={{ 
+                    fontWeight: 600,
+                    color: 'var(--color-text-primary)',
+                    textTransform: 'none'
+                  }}
+                >
+                  {getPageTitle()}
+                </Typography>
+              </Box>
+
+              {/* Right Side Actions */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                {/* Succession selector removed from AppBar; moved into Succession page header */}
+                {/* Squad Selector */}
+                <Select
+                  value={currentSquad.id}
+                  onChange={handleSquadChange}
+                  displayEmpty
+                  size="small"
+                  sx={{ 
+                    fontSize: '14px',
+                    minWidth: 160,
+                    backgroundColor: '#ffffff',
+                    border: 'none',
+                    boxShadow: 'none',
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      border: 'none'
+                    },
+                    '& .MuiSelect-select': {
+                      py: 1,
+                      px: 2
+                    }
+                  }}
+                >
+                  {availableSquads.map(squad => (
+                    <MenuItem key={squad.id} value={squad.id}>
+                      {squad.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+
+                {/* Notifications */}
+                <IconButton 
+                  sx={{ 
+                    color: 'var(--color-text-secondary)',
+                    '&:hover': { 
+                      bgcolor: 'rgba(0, 0, 0, 0.04)' 
+                    }
+                  }}
+                >
+                  <Badge badgeContent={3} color="error">
+                    <Notifications />
+                  </Badge>
+                </IconButton>
+
+                {/* User Menu */}
+                <Avatar 
+                  onClick={handleUserMenuOpen}
+                  sx={{ 
+                    width: 32, 
+                    height: 32,
+                    bgcolor: 'var(--color-primary)',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    '&:hover': {
+                      bgcolor: 'var(--color-primary-hover)'
+                    }
+                  }}
+                >
+                  {currentUser.name.split(' ').map(n => n[0]).join('')}
+                </Avatar>
+
+                {/* User Dropdown Menu */}
+                <Menu
+                  anchorEl={userMenuAnchor}
+                  open={Boolean(userMenuAnchor)}
+                  onClose={handleUserMenuClose}
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                >
+                  <MenuItem onClick={handleUserMenuClose}>Profile</MenuItem>
+                  <MenuItem onClick={handleUserMenuClose}>Settings</MenuItem>
+                  <MenuItem onClick={handleUserMenuClose}>Logout</MenuItem>
+                </Menu>
+              </Box>
+            </Toolbar>
+          </AppBar>
+
+          {/* Page Content */}
+          <Box 
+            sx={{ 
+              flex: 1, 
+              overflow: 'auto',
+              p: 0,
+              bgcolor: 'var(--color-background-primary)'
+            }}
+          >
+            {children}
           </Box>
-        </ClickAwayListener>
-      )}
-
-      {/* Main Content Area */}
-      <Box 
-        component="main" 
-        sx={{ 
-          flexGrow: 1, 
-          display: 'flex', 
-          flexDirection: 'column',
-          overflowY: 'auto',
-          overflowX: 'hidden'
-        }}
-      >
-        {/* Top App Bar */}
-        <AppBar 
-          position="sticky" 
-          elevation={1}
-          sx={{ 
-            bgcolor: 'var(--color-background-primary)',
-            color: 'var(--color-text-primary)',
-            borderBottom: '1px solid var(--color-border-primary)',
-            boxShadow: 'var(--shadow-sm)'
-          }}
-        >
-          <Toolbar sx={{ justifyContent: 'space-between' }}>
-            {/* Page Title */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Typography 
-                variant="h6" 
-                component="h1"
-                sx={{ 
-                  fontWeight: 600,
-                  color: 'var(--color-text-primary)',
-                  textTransform: 'none'
-                }}
-              >
-                {getPageTitle()}
-              </Typography>
-            </Box>
-
-            {/* Right Side Actions */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              {/* Succession selector removed from AppBar; moved into Succession page header */}
-              {/* Squad Selector */}
-              <Select
-                value={currentSquad.id}
-                onChange={handleSquadChange}
-                displayEmpty
-                size="small"
-                sx={{ 
-                  fontSize: '14px',
-                  minWidth: 160,
-                  backgroundColor: '#ffffff',
-                  border: 'none',
-                  boxShadow: 'none',
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    border: 'none'
-                  },
-                  '& .MuiSelect-select': {
-                    py: 1,
-                    px: 2
-                  }
-                }}
-              >
-                {availableSquads.map(squad => (
-                  <MenuItem key={squad.id} value={squad.id}>
-                    {squad.name}
-                  </MenuItem>
-                ))}
-              </Select>
-
-              {/* Notifications */}
-              <IconButton 
-                sx={{ 
-                  color: 'var(--color-text-secondary)',
-                  '&:hover': { 
-                    bgcolor: 'rgba(0, 0, 0, 0.04)' 
-                  }
-                }}
-              >
-                <Badge badgeContent={3} color="error">
-                  <Notifications />
-                </Badge>
-              </IconButton>
-
-              {/* User Menu */}
-              <Avatar 
-                onClick={handleUserMenuOpen}
-                sx={{ 
-                  width: 32, 
-                  height: 32,
-                  bgcolor: 'var(--color-primary)',
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    bgcolor: 'var(--color-primary-hover)'
-                  }
-                }}
-              >
-                {currentUser.name.split(' ').map(n => n[0]).join('')}
-              </Avatar>
-
-              {/* User Dropdown Menu */}
-              <Menu
-                anchorEl={userMenuAnchor}
-                open={Boolean(userMenuAnchor)}
-                onClose={handleUserMenuClose}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-              >
-                <MenuItem onClick={handleUserMenuClose}>Profile</MenuItem>
-                <MenuItem onClick={handleUserMenuClose}>Settings</MenuItem>
-                <MenuItem onClick={handleUserMenuClose}>Logout</MenuItem>
-              </Menu>
-            </Box>
-          </Toolbar>
-        </AppBar>
-
-        {/* Page Content */}
-        <Box 
-          sx={{ 
-            flex: 1, 
-            overflow: 'auto',
-            p: 0,
-            bgcolor: 'var(--color-background-primary)'
-          }}
-        >
-          {children}
         </Box>
       </Box>
-    </Box>
     </>
   )
 }

@@ -17,6 +17,12 @@ export { default as TagManagementDrawer } from './TagManagementDrawer'
 export { default as DashboardSettingsDrawer } from './DashboardSettingsDrawer'
 export { default as DashboardFilters } from './DashboardFilters'
 export { default as NotesDrawer } from './NotesDrawer'
+export { default as InviteDrawer } from './InviteDrawer'
+export { default as NominationsDrawer } from './NominationsDrawer'
+export { default as NominationsGrid } from './NominationsGrid'
+export { default as ResumeViewerModal } from './ResumeViewerModal'
+export { default as StaffProfileDetails } from './StaffProfileDetails'
+export { default as DocumentFileTile } from './DocumentFileTile'
 
 // Usage Examples:
 // import { Button, Icon, Card, PlayerAvatar, LogoImage } from '../components'

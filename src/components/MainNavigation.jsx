@@ -119,6 +119,8 @@ function MainNavigation({
   onFormsToggle = () => {},
   isFormsMenuOpen = false,
   viewMode = 'default', // 'default' or 'league'
+  onAdminToggle = () => {},
+  isAdminPanelOpen = false,
   ...props 
 }) {
   const location = useLocation()
@@ -141,6 +143,10 @@ function MainNavigation({
       onFormsToggle()
       return
     }
+    if (item.id === 'admin') {
+      onAdminToggle()
+      return
+    }
     // If in league view, prepend /league to the path
     const targetPath = viewMode === 'league' ? `/league${item.path}` : item.path
     navigate(targetPath)
@@ -160,7 +166,9 @@ function MainNavigation({
     const currentPath = viewMode === 'league' ? `/league${item.path}` : item.path
     const isActive = item.id === 'forms'
       ? (viewMode === 'league' ? location.pathname.startsWith('/league/forms') : location.pathname.startsWith('/forms')) || isFormsMenuOpen
-      : location.pathname === currentPath
+      : item.id === 'admin'
+        ? isAdminPanelOpen || location.pathname.includes('/staff/manage-users')
+        : location.pathname === currentPath
     const IconComponent = item.icon
 
     const button = (
@@ -366,7 +374,9 @@ MainNavigation.propTypes = {
   variant: PropTypes.oneOf(['permanent', 'persistent', 'temporary']),
   onFormsToggle: PropTypes.func,
   isFormsMenuOpen: PropTypes.bool,
-  viewMode: PropTypes.oneOf(['default', 'league'])
+  viewMode: PropTypes.oneOf(['default', 'league']),
+  onAdminToggle: PropTypes.func,
+  isAdminPanelOpen: PropTypes.bool
 }
 
 export default MainNavigation

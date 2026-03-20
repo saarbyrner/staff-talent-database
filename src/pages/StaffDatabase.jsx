@@ -1,22 +1,26 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Box, Typography, Paper, Tabs, Tab, Avatar } from '@mui/material';
+import { Box, Typography, Paper, Tabs, Tab, Avatar, Badge } from '@mui/material';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import { CustomToolbar } from '../components/TalentDatabaseGrid';
 import TalentDatabaseGrid from '../components/TalentDatabaseGrid';
 import WatchlistGrid from '../components/WatchlistGrid';
 import SuccessionPlanning from '../pages/SuccessionPlanning';
 import InviteModal from '../components/InviteModal';
+import NominationsGrid from '../components/NominationsGrid';
+import NominationsDrawer from '../components/NominationsDrawer';
+import { Snackbar, Alert } from '@mui/material';
 import staffList from '../data/users_staff.json';
+import staffTalentData from '../data/staff_talent.json';
 import { generateInitialsImage } from '../utils/assetManager';
+import SEED_NOMINATIONS from '../data/seedNominations';
 import '../styles/design-tokens.css';
 
 // Initialize watchlist with some pre-populated staff objects
+// Remove Michael Okoro (id: '102') and David Smith (id: '105') from the initial watchlist for club view
 const INITIAL_WATCHLIST = [
   { id: '101', priority: 'High', targetRole: 'Head Coach' },
-  { id: '102', priority: 'Medium', targetRole: 'Assistant Coach' },
-  { id: '105', priority: 'Low', targetRole: 'Goalkeeper Coach' },
-  { id: '110', priority: 'High', targetRole: 'Sporting Director' },
+  { id: '110', priority: 'Low', targetRole: 'Sporting Director' }, // Christopher Nair
   { id: '115', priority: 'Medium', targetRole: 'Video Analyst' },
 ];
 
@@ -44,17 +48,137 @@ function StaffDatabase() {
     }
   }, [location]);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const [nominationsDrawerOpen, setNominationsDrawerOpen] = useState(false);
+  const [nominationEditMode, setNominationEditMode] = useState(false);
+  const [nominationToEdit, setNominationToEdit] = useState(null);
+  const [deleteSuccessSnackbar, setDeleteSuccessSnackbar] = useState(false);
+  const [acceptSuccessSnackbar, setAcceptSuccessSnackbar] = useState(false);
+  const [rejectSuccessSnackbar, setRejectSuccessSnackbar] = useState(false);
+  const [nominationActionName, setNominationActionName] = useState('');
   const [watchlist, setWatchlist] = useState(INITIAL_WATCHLIST);
+  
+  // Initialize nominations from localStorage, falling back to seed data
+  const [nominations, setNominations] = useState(() => {
+    const stored = localStorage.getItem('nominations');
+    return stored ? JSON.parse(stored) : SEED_NOMINATIONS;
+  });
+  
+  // Initialize staff data with archived status and pending users from localStorage
+  const [staffData, setStaffData] = useState(() => {
+    const archivedIds = JSON.parse(localStorage.getItem('archivedStaffIds') || '[]');
+    const pendingUsers = JSON.parse(localStorage.getItem('pendingStaffUsers') || '[]');
+
+    // Seed pending profile for Marcus Johnson (accepted nomination) if not already present
+    const MARCUS_SEED_ID = 'NOM-PENDING-001';
+    const marcusAlreadyAdded = pendingUsers.some(u => u.id === MARCUS_SEED_ID);
+    const marcusSeed = {
+      id: MARCUS_SEED_ID,
+      firstName: 'Marcus',
+      lastName: 'Johnson',
+      email: 'marcus.johnson@example.com',
+      phone: '+1 (503) 555-0142',
+      profileStatus: 'Pending',
+      country: '',
+      state: '',
+      city: '',
+      workAuthUS: false,
+      workAuthCA: false,
+      gender: '',
+      ethnicity: '',
+      hasAgent: false,
+      agentName: '',
+      agencyName: '',
+      proPlayerExp: false,
+      mlsPlayerExp: false,
+      mlsClubsPlayed: [],
+      otherPlayerExp: '',
+      interestArea: '',
+      coachingRoles: [],
+      execRoles: [],
+      techRoles: [],
+      relocation: [],
+      proCoachExp: false,
+      mlsCoachExp: false,
+      mlsCoachRoles: [],
+      mlsClubsCoached: [],
+      nonMlsCoachExp: [],
+      sportingExp: false,
+      mlsSportingExp: false,
+      mlsClubsSporting: [],
+      profilePrivacy: 'Private',
+      isArchived: false,
+      tags: [],
+    };
+
+    // Persist seed to localStorage so StaffProfile can find him by id
+    if (!marcusAlreadyAdded) {
+      localStorage.setItem('pendingStaffUsers', JSON.stringify([marcusSeed, ...pendingUsers]));
+    }
+    const seedPending = marcusAlreadyAdded ? [] : [marcusSeed];
+
+    // Merge pending users with existing talent data
+    const baseData = staffTalentData.map(staff => ({
+      ...staff,
+      isArchived: archivedIds.includes(staff.id)
+    }));
+
+    return [...seedPending, ...pendingUsers, ...baseData];
+  });
+  
   const navigate = useNavigate();
   
   // Check if we're in league view
   const isLeagueView = location.pathname.startsWith('/league');
+  
+  // Helper to determine if a staff record is complete
+  const getStaffStatus = (staff) => {
+    // Check if staff has pending profile status - treat as incomplete
+    if (staff.profileStatus === 'Pending') {
+      return 'Incomplete';
+    }
+    
+    const requiredFields = ['firstName', 'lastName', 'email', 'phone'];
+    const isIncomplete = requiredFields.some(field => {
+      const value = staff[field];
+      return !value || (typeof value === 'string' && value.trim() === '');
+    });
+    return isIncomplete ? 'Incomplete' : 'Complete';
+  };
+  
+  // Remove incomplete and pending users from watchlist (league view only)
+  React.useEffect(() => {
+    if (isLeagueView) {
+      setWatchlist(currentWatchlist => {
+        return currentWatchlist.filter(item => {
+          const staff = staffData.find(s => s.id === item.id);
+          if (!staff) return true; // Keep if staff not found
+          const status = getStaffStatus(staff);
+          return status !== 'Incomplete'; // Pending users also return 'Incomplete'
+        });
+      });
+    }
+  }, [staffData, isLeagueView]);
 
   const handleChange = (event, value) => {
     setTab(value);
   };
+  
+  // If in league view and watchlist tab is selected, redirect to talent database
+  React.useEffect(() => {
+    if (isLeagueView && tab === 1) {
+      setTab(3); // Default to Talent Database
+    }
+  }, [isLeagueView, tab]);
 
   const handleAddToWatchlist = (staffId) => {
+    // At league level, prevent adding incomplete/pending users
+    if (isLeagueView) {
+      const staff = staffData.find(s => s.id === staffId);
+      const status = staff ? getStaffStatus(staff) : null;
+      if (status === 'Incomplete') { // Pending users also return 'Incomplete'
+        return; // Silently ignore - error already shown by TalentDatabaseGrid
+      }
+    }
     if (!watchlist.find(item => item.id === staffId)) {
       setWatchlist([...watchlist, { id: staffId, priority: 'Medium', targetRole: '' }]);
     }
@@ -64,6 +188,34 @@ function StaffDatabase() {
     setWatchlist(watchlist.filter(item => item.id !== staffId));
   };
 
+  const handleArchiveStaff = (staffId) => {
+    setStaffData(prevData => 
+      prevData.map(staff => 
+        staff.id === staffId ? { ...staff, isArchived: true } : staff
+      )
+    );
+    
+    // Persist to localStorage
+    const archivedIds = JSON.parse(localStorage.getItem('archivedStaffIds') || '[]');
+    if (!archivedIds.includes(staffId)) {
+      archivedIds.push(staffId);
+      localStorage.setItem('archivedStaffIds', JSON.stringify(archivedIds));
+    }
+  };
+
+  const handleUnarchiveStaff = (staffId) => {
+    setStaffData(prevData => 
+      prevData.map(staff => 
+        staff.id === staffId ? { ...staff, isArchived: false } : staff
+      )
+    );
+    
+    // Persist to localStorage
+    const archivedIds = JSON.parse(localStorage.getItem('archivedStaffIds') || '[]');
+    const updatedIds = archivedIds.filter(id => id !== staffId);
+    localStorage.setItem('archivedStaffIds', JSON.stringify(updatedIds));
+  };
+
   const handleWatchlistUpdate = (updatedItem) => {
     setWatchlist(currentWatchlist => {
       const newWatchlist = currentWatchlist.map(item => 
@@ -71,6 +223,202 @@ function StaffDatabase() {
       );
       return newWatchlist;
     });
+  };
+
+  const handleAddPendingUser = (userData) => {
+    // Get existing pending users from localStorage
+    const existingPending = JSON.parse(localStorage.getItem('pendingStaffUsers') || '[]');
+    
+    // Generate a new unique ID (check both staffData and existing pending)
+    const allIds = [...staffData.map(s => parseInt(s.id) || 0), ...existingPending.map(s => parseInt(s.id) || 0)];
+    const maxId = Math.max(...allIds, 200); // Start from 200 to avoid conflicts
+    const newId = String(maxId + 1);
+    
+    // Create a new pending user with minimal required fields
+    const newUser = {
+      id: newId,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      email: userData.email,
+      phone: '', // Empty - makes it incomplete/pending
+      status: 'Pending',
+      country: '',
+      state: '',
+      city: '',
+      workAuthUS: false,
+      workAuthCA: false,
+      gender: '',
+      ethnicity: '',
+      hasAgent: false,
+      agentName: '',
+      agencyName: '',
+      proPlayerExp: false,
+      mlsPlayerExp: false,
+      mlsClubsPlayed: [],
+      otherPlayerExp: '',
+      interestArea: '',
+      coachingRoles: [],
+      execRoles: [],
+      techRoles: [],
+      relocation: [],
+      proCoachExp: false,
+      mlsCoachExp: false,
+      mlsCoachRoles: [],
+      mlsClubsCoached: [],
+      nonMlsCoachExp: [],
+      sportingExp: false,
+      mlsSportingExp: false,
+      mlsClubsSporting: [],
+      profilePrivacy: 'Private',
+      isArchived: false,
+    };
+    
+    // Store in localStorage
+    const updatedPending = [newUser, ...existingPending];
+    localStorage.setItem('pendingStaffUsers', JSON.stringify(updatedPending));
+    
+    // Add to staff data
+    setStaffData(prevData => [newUser, ...prevData]);
+  };
+
+  const handleSubmitNomination = (nomination, isEditMode = false) => {
+    let updatedNominations;
+    
+    if (isEditMode) {
+      // Update existing nomination
+      updatedNominations = nominations.map(nom =>
+        nom.id === nomination.id ? nomination : nom
+      );
+    } else {
+      // Add new nomination
+      updatedNominations = [nomination, ...nominations];
+    }
+    
+    setNominations(updatedNominations);
+    
+    // Persist to localStorage
+    localStorage.setItem('nominations', JSON.stringify(updatedNominations));
+  };
+
+  const handleEditNomination = (nomination) => {
+    setNominationToEdit(nomination);
+    setNominationEditMode(true);
+    setNominationsDrawerOpen(true);
+  };
+
+  const handleDeleteNomination = (nominationId) => {
+    const updatedNominations = nominations.filter(nom => nom.id !== nominationId);
+    setNominations(updatedNominations);
+    
+    // Persist to localStorage
+    localStorage.setItem('nominations', JSON.stringify(updatedNominations));
+    
+    // Show success message
+    setDeleteSuccessSnackbar(true);
+  };
+
+  const handleCloseNominationsDrawer = () => {
+    setNominationsDrawerOpen(false);
+    // Reset edit mode after a short delay to allow drawer to close
+    setTimeout(() => {
+      setNominationEditMode(false);
+      setNominationToEdit(null);
+    }, 300);
+  };
+
+  const handleAcceptNomination = (nominationId) => {
+    // Find the nomination being accepted
+    const nomination = nominations.find(nom => nom.id === nominationId);
+    
+    if (nomination) {
+      // Store nominee name for toast message
+      setNominationActionName(`${nomination.firstName} ${nomination.lastName}`);
+      
+      // Create a new pending staff entry from the nomination
+      const newStaffId = `pending-${Date.now()}`;
+      const newStaffEntry = {
+        id: newStaffId,
+        firstName: nomination.firstName,
+        lastName: nomination.lastName,
+        email: nomination.email,
+        phone: nomination.phoneNumber,
+        profileStatus: 'Pending',
+        nominatedBy: nomination.nominatedBy,
+        nominationReason: nomination.reason,
+        resumeFileName: nomination.resumeFileName,
+        resumeData: nomination.resumeData,
+        resumeType: nomination.resumeType,
+        // Add minimal required fields with empty defaults
+        country: '',
+        state: '',
+        city: '',
+        workAuthUS: false,
+        workAuthCA: false,
+        gender: '',
+        ethnicity: '',
+        hasAgent: false,
+        agentName: '',
+        agencyName: '',
+        proPlayerExp: false,
+        mlsPlayerExp: false,
+        mlsClubsPlayed: [],
+        otherPlayerExp: '',
+        interestArea: '',
+        coachingRoles: [],
+        execRoles: [],
+        techRoles: [],
+        relocation: [],
+        proCoachExp: false,
+        mlsCoachExp: false,
+        mlsCoachRoles: [],
+        mlsClubsCoached: [],
+        nonMlsCoachExp: [],
+        sportingExp: false,
+        mlsSportingExp: false,
+        mlsClubsSporting: [],
+      };
+      
+      // Update pending staff users in localStorage
+      const pendingUsers = JSON.parse(localStorage.getItem('pendingStaffUsers') || '[]');
+      pendingUsers.push(newStaffEntry);
+      localStorage.setItem('pendingStaffUsers', JSON.stringify(pendingUsers));
+      
+      // Update staffData state to include the new pending user
+      setStaffData(prevData => [newStaffEntry, ...prevData]);
+    }
+    
+    // Update nomination status to Approved
+    const updatedNominations = nominations.map(nom =>
+      nom.id === nominationId ? { ...nom, status: 'Approved' } : nom
+    );
+    setNominations(updatedNominations);
+    
+    // Persist to localStorage
+    localStorage.setItem('nominations', JSON.stringify(updatedNominations));
+    
+    // Show success toast
+    setAcceptSuccessSnackbar(true);
+  };
+
+  const handleRejectNomination = (nominationId) => {
+    // Find the nomination being rejected
+    const nomination = nominations.find(nom => nom.id === nominationId);
+    
+    if (nomination) {
+      // Store nominee name for toast message
+      setNominationActionName(`${nomination.firstName} ${nomination.lastName}`);
+    }
+    
+    const updatedNominations = nominations.map(nom =>
+      nom.id === nominationId ? { ...nom, status: 'Rejected' } : nom
+    );
+    setNominations(updatedNominations);
+    
+    // Persist to localStorage
+    localStorage.setItem('nominations', JSON.stringify(updatedNominations));
+    
+    // Show success toast
+    setRejectSuccessSnackbar(true);
   };
 
   const handleRowClick = (params, event) => {
@@ -88,6 +436,9 @@ function StaffDatabase() {
     navigate(`${basePath}/${params.row.id}`, { state: { from } });
   };
 
+  // Count pending nominations
+  const pendingNominationsCount = nominations.filter(nom => nom.status === 'Pending').length;
+
   return (
     <Box sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column', gap: 2, backgroundColor: '#fafafa' }}>
       
@@ -103,11 +454,75 @@ function StaffDatabase() {
         }}
       >
         <Tabs value={Number.isInteger(tab) ? tab : 3} onChange={handleChange} aria-label="Staff Tabs" sx={{ px: 0 }}>
-          <Tab label="Staff" value={0} />
-          {!isLeagueView && <Tab label="Succession Planning" value={1} />}
-          {!isLeagueView && <Tab label="Watchlist" value={2} />}
+          {!isLeagueView && <Tab label="Staff" value={0} />}
+          {!isLeagueView && <Tab label="Watchlist" value={1} />}
           <Tab label="Talent Database" value={3} />
+          {isLeagueView && <Tab label="Archived" value={4} />}
+          <Tab 
+            label={
+              isLeagueView ? (
+                <Badge 
+                  badgeContent={pendingNominationsCount} 
+                  color="primary"
+                  sx={{ 
+                    '& .MuiBadge-badge': { 
+                      right: -12, 
+                      top: 2 
+                    } 
+                  }}
+                >
+                  Nominations
+                </Badge>
+              ) : (
+                "Nominations"
+              )
+            } 
+            value={2}
+            sx={{ minWidth: 160 }}
+          />
         </Tabs>
+      </Paper>
+
+      {!isLeagueView && (
+        <Paper 
+          elevation={0} 
+          sx={{ 
+            flexGrow: 1, 
+            border: '1px solid var(--color-border-primary)',
+            borderRadius: 1,
+            overflow: 'hidden',
+            display: tab !== 1 ? 'none' : 'block'
+          }}
+        >
+          <WatchlistGrid
+            watchlist={watchlist}
+            onRemoveFromWatchlist={handleRemoveFromWatchlist}
+            onUpdateWatchlist={handleWatchlistUpdate}
+            staff={staffData}
+            hideCheckboxes={!isLeagueView}
+          />
+        </Paper>
+      )}
+
+      <Paper 
+        elevation={0} 
+        sx={{ 
+          flexGrow: 1, 
+          border: '1px solid var(--color-border-primary)',
+          borderRadius: 1,
+          overflow: 'hidden',
+          display: tab !== 2 ? 'none' : 'block'
+        }}
+      >
+        <NominationsGrid
+          nominations={nominations}
+          onNominateClick={() => setNominationsDrawerOpen(true)}
+          isLeagueView={isLeagueView}
+          onAcceptNomination={handleAcceptNomination}
+          onRejectNomination={handleRejectNomination}
+          onEditNomination={handleEditNomination}
+          onDeleteNomination={handleDeleteNomination}
+        />
       </Paper>
 
       <Paper 
@@ -124,6 +539,13 @@ function StaffDatabase() {
           onInviteClick={() => setInviteModalOpen(true)} 
           watchlistIds={watchlist.map(i => i.id)}
           onAddToWatchlist={handleAddToWatchlist}
+          onRemoveFromWatchlist={handleRemoveFromWatchlist}
+          showArchived={false}
+          staffData={isLeagueView ? staffData : staffData.filter(s => s.profileStatus !== 'Pending')}
+          onArchive={handleArchiveStaff}
+          onAddPendingUser={handleAddPendingUser}
+          hideAddButton={!isLeagueView}
+          hideCheckboxes={!isLeagueView}
         />
       </Paper>
       <Paper 
@@ -133,18 +555,23 @@ function StaffDatabase() {
           border: '1px solid var(--color-border-primary)',
           borderRadius: 1,
           overflow: 'hidden',
-          display: tab !== 2 ? 'none' : 'block'
+          display: tab !== 4 ? 'none' : 'block'
         }}
       >
-        <WatchlistGrid 
-          watchlist={watchlist}
-          onWatchlistUpdate={handleWatchlistUpdate}
+        <TalentDatabaseGrid 
+          onInviteClick={() => setInviteModalOpen(true)} 
+          watchlistIds={watchlist.map(i => i.id)}
+          onAddToWatchlist={handleAddToWatchlist}
           onRemoveFromWatchlist={handleRemoveFromWatchlist}
+          showArchived={true}
+          staffData={isLeagueView ? staffData : staffData.filter(s => s.profileStatus !== 'Pending')}
+          onUnarchive={handleUnarchiveStaff}
+          onAddPendingUser={handleAddPendingUser}
+          hideAddButton={!isLeagueView}
+          hideCheckboxes={!isLeagueView}
         />
       </Paper>
       
-      {tab === 1 && <SuccessionPlanning />}
-
       <Paper 
         elevation={0} 
         sx={{ 
@@ -206,8 +633,13 @@ function StaffDatabase() {
               { field: 'role', headerName: 'Role', width: 180 }
             ]}
             slots={{ toolbar: CustomToolbar }}
+            slotProps={{
+              toolbar: {
+                hideAddButton: !isLeagueView,
+              },
+            }}
             onRowClick={handleRowClick}
-            checkboxSelection
+            checkboxSelection={isLeagueView}
             pageSizeOptions={[25, 50]}
             initialState={{
               pagination: { paginationModel: { pageSize: 25 } }
@@ -236,6 +668,66 @@ function StaffDatabase() {
         open={inviteModalOpen} 
         onClose={() => setInviteModalOpen(false)} 
       />
+
+      <NominationsDrawer
+        open={nominationsDrawerOpen}
+        onClose={handleCloseNominationsDrawer}
+        onSubmitNomination={handleSubmitNomination}
+        editMode={nominationEditMode}
+        nominationToEdit={nominationToEdit}
+        clubName="Portland Timbers"
+      />
+
+      {/* Delete Success Snackbar */}
+      <Snackbar
+        open={deleteSuccessSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setDeleteSuccessSnackbar(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setDeleteSuccessSnackbar(false)}
+          severity="success"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          Nomination deleted successfully!
+        </Alert>
+      </Snackbar>
+
+      {/* Accept Success Snackbar */}
+      <Snackbar
+        open={acceptSuccessSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setAcceptSuccessSnackbar(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setAcceptSuccessSnackbar(false)}
+          severity="success"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {nominationActionName} has been accepted!
+        </Alert>
+      </Snackbar>
+
+      {/* Reject Success Snackbar */}
+      <Snackbar
+        open={rejectSuccessSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setRejectSuccessSnackbar(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setRejectSuccessSnackbar(false)}
+          severity="info"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {nominationActionName} has been rejected.
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
