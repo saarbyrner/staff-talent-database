@@ -30,6 +30,7 @@ import {
   Cancel,
 } from '@mui/icons-material';
 import staffData from '../data/staff_talent.json';
+import mlsClubs from '../data/mls-clubs.json';
 import { generateInitialsImage } from '../utils/assetManager';
 import BulkEditBar from './BulkEditBar';
 import TagChip from './TagChip';
@@ -108,6 +109,39 @@ const generateStats = (id) => {
     u23Minutes: Math.floor(random(10) * 40), // 0-40%
     academyDebuts: Math.floor(random(11) * 12), // 0-11
   };
+};
+
+// Helper to generate clubs that have added this staff member to their watchlist
+const generateWatchlistClubs = (id) => {
+  const seed = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const random = (offset = 0) => {
+    const x = Math.sin(seed + offset) * 10000;
+    return x - Math.floor(x);
+  };
+
+  // Generate number of clubs (1-15, consistent with watchlistCount)
+  const clubCount = (seed % 15) + 1;
+
+  // Generate a list of clubs
+  const clubs = [];
+  for (let i = 0; i < clubCount; i++) {
+    const clubIndex = Math.floor(random(i + 100) * mlsClubs.length);
+    const club = mlsClubs[clubIndex];
+    if (!clubs.includes(club)) {
+      clubs.push(club);
+    }
+  }
+
+  // If we have duplicates due to collisions, fill with more clubs
+  while (clubs.length < clubCount) {
+    const clubIndex = Math.floor(random(clubs.length + 200) * mlsClubs.length);
+    const club = mlsClubs[clubIndex];
+    if (!clubs.includes(club)) {
+      clubs.push(club);
+    }
+  }
+
+  return clubs.slice(0, clubCount).sort();
 };
 
 export const CustomToolbar = React.forwardRef((props, ref) => {
@@ -323,12 +357,31 @@ const createColumns = (onTagsClick, watchlistIds = [], onToggleWatchlist, isLeag
        const seed = params.row.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
        return (seed % 15) + 1;
     },
-    renderCell: (params) => (
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-        <VisibilityOutlined fontSize="small" color="action" />
-        <Typography variant="body2">{params.value}</Typography>
-      </Box>
-    )
+    renderCell: (params) => {
+      const staffStatus = getStaffStatus(params.row);
+      if (staffStatus === 'Incomplete') {
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <VisibilityOutlined fontSize="small" color="action" />
+            <Typography variant="body2">0</Typography>
+          </Box>
+        );
+      }
+
+      const clubs = generateWatchlistClubs(params.row.id);
+      const tooltipText = clubs.length > 0
+        ? clubs.join(', ')
+        : 'No clubs have added this staff member to their watchlist';
+
+      return (
+        <Tooltip title={tooltipText} arrow>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, cursor: 'pointer' }}>
+            <VisibilityOutlined fontSize="small" color="action" />
+            <Typography variant="body2">{params.value}</Typography>
+          </Box>
+        </Tooltip>
+      );
+    }
   } : {
     field: 'watchlist',
     headerName: 'Watchlist',
